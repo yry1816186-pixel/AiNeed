@@ -94,6 +94,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   onVoiceEnd,
   onVoiceResult,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();

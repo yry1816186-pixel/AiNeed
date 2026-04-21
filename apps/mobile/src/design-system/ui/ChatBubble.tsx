@@ -34,6 +34,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   timestamp,
   showAvatar = true,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (

@@ -45,7 +45,7 @@ import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -476,6 +476,7 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   enableGestureClose = true,
   snapPoints = [0.9, 0.5, 0],
 }) => {
+  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdrop = useSharedValue(0);
   const modalScale = useSharedValue(0.9);
@@ -591,6 +592,7 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
   backdropComponent,
   handleComponent,
 }) => {
+  const styles = useStyles(colors);
   const animatedPosition = useSharedValue(1);
   const _currentPosition = useSharedValue(snapPoints[initialSnap]);
   const backdropOpacity = useSharedValue(0);
@@ -858,6 +860,7 @@ export const CrossFadeTransition: React.FC<CrossFadeTransitionProps> = ({
   duration = 300,
   style,
 }) => {
+  const styles = useStyles(colors);
   const fromOpacity = useSharedValue(1 - progress);
   const toOpacity = useSharedValue(progress);
   const fromScale = useSharedValue(1 - progress * 0.05);
@@ -905,6 +908,7 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
   visible,
   duration = 400,
 }) => {
+  const styles = useStyles(colors);
   const scale = useSharedValue(visible ? 1 : 0.5);
   const opacity = useSharedValue(visible ? 1 : 0);
   const borderRadius = useSharedValue(visible ? 0 : 20);

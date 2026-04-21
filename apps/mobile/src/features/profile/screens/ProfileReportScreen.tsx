@@ -98,6 +98,7 @@ function getProfileCompletion(profile: UserProfile): number {
 }
 
 export const ProfileReportScreenComponent: React.FC = () => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<ProfileReportNavigationProp>();

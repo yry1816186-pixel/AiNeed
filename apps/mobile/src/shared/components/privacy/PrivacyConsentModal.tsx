@@ -16,6 +16,7 @@ export const PrivacyConsentModal: React.FC<PrivacyConsentModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (

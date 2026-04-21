@@ -17,6 +17,7 @@ const COLUMN_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - COLUMN_GAP) / NUM_
  */
 export const CommunitySkeleton: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   // Simulate masonry with alternating heights
   const heights = [220, 180, 200, 240, 190, 210, 230, 170];

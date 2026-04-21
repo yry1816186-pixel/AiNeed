@@ -49,6 +49,7 @@ export function Dialog({
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const getIconColor = () => {
+    const { colors } = useTheme();
     if (iconColor) {
       return iconColor;
     }
@@ -63,6 +64,7 @@ export function Dialog({
   };
 
   const getConfirmButtonStyle = () => {
+    const { colors } = useTheme();
     switch (variant) {
       case "danger":
         return { backgroundColor: theme.colors.error };

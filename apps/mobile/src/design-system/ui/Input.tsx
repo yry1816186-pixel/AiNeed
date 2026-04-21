@@ -96,6 +96,7 @@ export const Input: React.FC<InputProps> = ({
   onBlur,
   ...textInputProps
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [isFocused, setIsFocused] = React.useState(false);
@@ -149,6 +150,7 @@ export const Input: React.FC<InputProps> = ({
 
   // Label animated style - uses transform for native driver
   const labelAnimatedStyle = useAnimatedStyle(() => {
+    const { colors } = useTheme();
     const progress = labelProgress.value;
     const translateY = interpolate(progress, [0, 1], [config.height / 2 - 8, 6]);
     const scale = interpolate(progress, [0, 1], [1, 12 / config.fontSize]);
@@ -174,10 +176,11 @@ export const Input: React.FC<InputProps> = ({
   const borderColor = error
     ? Colors.semantic.error
     : isFocused
-      ? colors.primary[500]
-      : colors.neutral[200];
+    ? colors.primary[500]
+    : colors.neutral[200];
 
   const getVariantStyle = (): ViewStyle => {
+    const { colors } = useTheme();
     switch (variant) {
       case "outlined":
         return {

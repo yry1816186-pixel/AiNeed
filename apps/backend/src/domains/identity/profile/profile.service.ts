@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
+import { Prisma , BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { StylePreference } from "../../../common/types/common.types";
@@ -57,10 +56,7 @@ export class ProfileService {
   private static readonly BEHAVIOR_AUTO_UPDATE_THRESHOLD = 5;
   private readonly behaviorCounters = new Map<string, number>();
 
-  constructor(
-    private prisma: PrismaService,
-    private readonly eventEmitter: ProfileEventEmitter
-  ) {}
+  constructor(private prisma: PrismaService, private readonly eventEmitter: ProfileEventEmitter) {}
 
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({

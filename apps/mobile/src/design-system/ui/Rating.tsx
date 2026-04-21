@@ -28,6 +28,7 @@ export const Rating: React.FC<RatingProps> = ({
   onRatingChange,
   style,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const sizes = { default: 20, compact: 14, large: 28 };
@@ -50,6 +51,7 @@ export const Rating: React.FC<RatingProps> = ({
   return (
     <View style={[styles.container, style]}>
       {Array.from({ length: maxStars }).map((_, index) => {
+        const { colors } = useTheme();
         const filled = index < Math.floor(value);
         const halfFilled = !filled && index < value;
         return (

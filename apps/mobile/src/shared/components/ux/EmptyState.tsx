@@ -4,7 +4,7 @@ import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 /**
  * EmptyState - UX layer variant

@@ -33,6 +33,8 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   itemId,
   aiRecommendation,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const [color, setColor] = useState(selectedColor);
@@ -89,6 +91,7 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
               </View>
               <View style={styles.sizeRow}>
                 {sizes.map((s) => {
+                  const styles = useStyles(colors);
                   const outOfStock = stock <= 0;
                   const isRecommended = aiRecommendation?.recommendedSize === s;
                   return (

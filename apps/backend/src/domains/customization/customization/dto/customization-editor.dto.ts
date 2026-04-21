@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ProductTemplateType } from "@/types/prisma-enums";
+import { ProductTemplateType } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
   IsString,

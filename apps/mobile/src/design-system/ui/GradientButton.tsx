@@ -16,6 +16,7 @@ import {
   DesignTokens,
   SpringConfigs,
 } from "../../design-system/theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 interface GradientButtonProps {
   title: string;

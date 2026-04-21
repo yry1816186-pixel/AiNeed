@@ -90,6 +90,7 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({
   bestColors,
   avoidColors,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const size = 200;

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-nativ
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export type ErrorType = "network" | "server" | "permission" | "timeout";
 

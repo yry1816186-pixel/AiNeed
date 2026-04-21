@@ -98,6 +98,7 @@ export interface CircleSkeletonProps {
 
 /** @deprecated Use `skeleton/Skeleton` instead */
 export const CircleSkeleton: React.FC<CircleSkeletonProps> = ({ size = 48, style }) => {
+  const { colors } = useTheme();
   const animatedStyle = useShimmerAnimation();
   return (
     <Animated.View
@@ -129,6 +130,7 @@ export const TextSkeleton: React.FC<TextSkeletonProps> = ({
   lastLineWidth = 60,
   style,
 }) => {
+  const { colors } = useTheme();
   const animatedStyle = useShimmerAnimation();
   return (
     <View style={[{ width: "100%" }, style]}>
@@ -155,6 +157,8 @@ export interface CardSkeletonProps {
 
 /** @deprecated Use `skeleton/SkeletonCard` instead */
 export const CardSkeleton: React.FC<CardSkeletonProps> = ({ style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const animatedStyle = useShimmerAnimation();
   return (
     <Animated.View style={[styles.card, animatedStyle, style]}>

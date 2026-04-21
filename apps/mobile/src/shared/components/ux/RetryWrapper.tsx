@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface RetryConfig {
   maxRetries?: number;

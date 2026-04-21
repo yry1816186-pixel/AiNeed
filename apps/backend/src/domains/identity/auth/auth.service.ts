@@ -11,8 +11,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma } from "@prisma/client";
-import { Gender } from "@/types/prisma-enums";
+import { Prisma , Gender } from "@prisma/client";
 import type { StringValue } from "ms";
 
 import {

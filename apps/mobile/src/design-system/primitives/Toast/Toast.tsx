@@ -143,6 +143,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
   };
 
   const getColor = () => {
+    const { colors } = useTheme();
     switch (toast.type) {
       case "success":
         return theme.colors.success;

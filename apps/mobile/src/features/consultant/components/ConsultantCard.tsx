@@ -33,6 +33,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
   onPress,
   index = 0,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (

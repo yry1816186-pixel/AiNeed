@@ -17,7 +17,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, Spacing } from "../../../design-system/theme";
 import type { ScrollEvent } from "../../../types/events";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -63,10 +63,12 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   scrollEventThrottle = 16,
 }) => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
   const renderContent = () => {
+    const styles = useStyles(colors);
     const { colors } = useTheme();
     if (scrollable) {
       return (
@@ -224,6 +226,7 @@ export const Header: React.FC<HeaderProps> = ({
   gradient,
   style,
 }) => {
+  const styles = useStyles(colors);
   const content = (
     <View style={[styles.header, style]}>
       <View style={styles.headerLeft}>{leftAction}</View>
@@ -290,6 +293,7 @@ export const Section: React.FC<SectionProps> = ({
   showSeeAll = false,
   onSeeAllPress,
 }) => {
+  const styles = useStyles(colors);
   return (
     <View style={[styles.section, style]}>
       {(title || subtitle || action || showSeeAll) && (

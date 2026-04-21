@@ -32,6 +32,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const ChatScreen: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
@@ -123,6 +124,7 @@ export const ChatScreen: React.FC = () => {
   };
 
   const renderMessage = ({ item }: { item: ChatMessage }) => {
+    const styles = useStyles(colors);
     const isUser = item.senderType === "user";
 
     if (item.messageType === "proposal") {

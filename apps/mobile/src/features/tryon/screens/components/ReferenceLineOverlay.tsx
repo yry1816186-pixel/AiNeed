@@ -43,6 +43,7 @@ export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
   width,
   height,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const opacityAnim = useRef(new Animated.Value(0)).current;

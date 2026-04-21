@@ -19,6 +19,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
   size = "medium",
   onFollowChange,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [following, setFollowing] = useState(initialFollowing);

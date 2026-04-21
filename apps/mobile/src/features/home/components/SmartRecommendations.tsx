@@ -103,6 +103,7 @@ const RecommendationItemCard: React.FC<{
   index: number;
   onItemPress?: (item: RecommendationItem) => void;
 }> = ({ item, index, onItemPress }) => {
+  const styles = useStyles(colors);
   const itemOpacity = useSharedValue(0);
   const itemTranslateX = useSharedValue(30);
   const imageScale = useSharedValue(0.95);
@@ -186,6 +187,7 @@ const FeedSectionCard: React.FC<{
   onItemPress?: (item: RecommendationItem, sectionId: string) => void;
   onSeeAll?: (sectionId: string) => void;
 }> = ({ section, sectionIndex, onItemPress, onSeeAll }) => {
+  const styles = useStyles(colors);
   const sectionOpacity = useSharedValue(0);
   const sectionTranslateY = useSharedValue(50);
 
@@ -219,6 +221,7 @@ const TimelineHistoryItem: React.FC<{
   totalItems: number;
   currentStyle: string;
 }> = ({ item, index, totalItems, currentStyle }) => {
+  const styles = useStyles(colors);
   const dotScale = useSharedValue(0);
 
   useEffect(() => {
@@ -249,6 +252,7 @@ const TypeIconHeader: React.FC<{
   type: "style" | "similar" | "trending" | "seasonal" | "personalized";
   typeConfig: Record<string, { icon: string; label: string; color: string }>;
 }> = ({ type, typeConfig }) => {
+  const styles = useStyles(colors);
   const config = typeConfig[type];
   const iconScale = useSharedValue(0);
 
@@ -298,6 +302,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   onSeeAll,
   style,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scrollX = useSharedValue(0);
@@ -346,6 +351,8 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   }));
 
   const renderHeader = () => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const config = typeConfig[type];
 
     return (
@@ -415,6 +422,7 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   _refreshing = false,
   style,
 }) => {
+  const styles = useStyles(colors);
   const scrollY = useSharedValue(0);
   const headerOpacity = useSharedValue(0);
 
@@ -491,6 +499,8 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   confidence,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const checkScale = useSharedValue(0);
 
@@ -587,6 +597,8 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   onDismiss,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -655,6 +667,7 @@ export interface StyleEvolutionProps {
 }
 
 export const StyleEvolution: React.FC<StyleEvolutionProps> = ({ history, currentStyle, style }) => {
+  const styles = useStyles(colors);
   const _scrollX = useSharedValue(0);
   const progress = useSharedValue(0);
 

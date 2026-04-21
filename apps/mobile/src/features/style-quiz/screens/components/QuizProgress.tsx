@@ -10,6 +10,7 @@ interface QuizProgressProps {
 }
 
 export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSteps }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const progressAnim = React.useRef(new Animated.Value(0)).current;
@@ -28,6 +29,7 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSt
       <View style={styles.header}>
         <View style={styles.dotsContainer}>
           {Array.from({ length: totalSteps }).map((_, index) => {
+            const styles = useStyles(colors);
             const isCompleted = index < currentStep;
             const isCurrent = index === currentStep;
             return (

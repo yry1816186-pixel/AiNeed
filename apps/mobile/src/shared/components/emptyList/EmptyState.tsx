@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;

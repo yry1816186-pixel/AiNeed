@@ -67,6 +67,8 @@ export function RecommendationFeedScreen() {
   const keyExtractor = useCallback((item: FeedItem) => item.id, []);
 
   const renderFooter = useCallback(() => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     if (isLoading && !isRefreshing && items.length > 0) {
       return (
         <View style={styles.footerLoader}>

@@ -23,7 +23,7 @@ import {
 } from "../../utils/errorHandling";
 import type { ErrorInfo } from "react";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 // ============================================================================
 // 类型定义
@@ -87,6 +87,7 @@ const getErrorIcon = (category: ErrorCategory): keyof typeof Ionicons.glyphMap =
  * 根据错误严重级别获取颜色
  */
 const getSeverityColor = (severity: ErrorSeverity): string => {
+  const { colors } = useTheme();
   switch (severity) {
     case ErrorSeverity.LOW:
       return colors.warning[500];
@@ -118,6 +119,7 @@ const RecoveryButton: React.FC<RecoveryButtonProps> = ({
   disabled,
   loading,
 }) => {
+  const styles = useStyles(colors);
   const getButtonConfig = () => {
     const { colors } = useTheme();
     switch (strategy) {
@@ -204,6 +206,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   maxRetries = 3,
   isRecovering = false,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const severityColor = getSeverityColor(structuredError.severity);

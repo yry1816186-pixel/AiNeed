@@ -28,6 +28,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const AdvisorProfileScreen: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();

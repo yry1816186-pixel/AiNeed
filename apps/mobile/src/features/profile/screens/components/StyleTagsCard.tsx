@@ -100,6 +100,7 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const tagItems = useMemo(

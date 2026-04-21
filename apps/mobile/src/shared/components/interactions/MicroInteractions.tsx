@@ -42,7 +42,7 @@ import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -86,6 +86,7 @@ interface RippleCircleProps {
 }
 
 const RippleCircle: React.FC<RippleCircleProps> = ({ color, duration, onComplete, ripple }) => {
+  const styles = useStyles(colors);
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -123,6 +124,7 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   enableHaptic = true,
   hapticStyle = "light",
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [ripples, setRipples] = useState<Ripple[]>([]);
@@ -464,6 +466,8 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
   onSwipeLeft,
   onSwipeRight,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const actionOpacity = useSharedValue(0);
   const _activeAction = useSharedValue<string | null>(null);
@@ -565,6 +569,8 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   headerHeight = 80,
   renderHeader,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(0);
   const progress = useSharedValue(0);
   const isRefreshing = useSharedValue(false);

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Gender } from "@/types/prisma-enums";
+import { Gender } from "@prisma/client";
 import { IsOptional, IsString, IsEnum, MaxLength, MinLength } from "class-validator";
 
 export class UpdateUserDto {

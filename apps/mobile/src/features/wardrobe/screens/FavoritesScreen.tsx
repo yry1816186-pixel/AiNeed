@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useCallback, useState, memo } from "react";
+﻿import React, { useCallback, useState, memo } from "react";
 import {
   View,
   Text,
@@ -13,16 +13,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useTranslation } from '../../../i18n';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { favoriteApi } from '../../../services/api/commerce.api';
-import { useAuthStore } from '../../../stores';
-import type { ClothingItem } from '../../../types/clothing';
-import type { RootStackParamList } from '../../../types/navigation';
-import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
-import { Spacing } from '../../../design-system/theme';
-
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTranslation } from "../../../i18n";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { favoriteApi } from "../../../services/api/commerce.api";
+import { useAuthStore } from "../../../stores";
+import type { ClothingItem } from "../../../types/clothing";
+import type { RootStackParamList } from "../../../types/navigation";
+import { ImageWithPlaceholder } from "../../../shared/components/common/ImageWithPlaceholder";
+import { Spacing } from "../../../design-system/theme";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -40,7 +39,7 @@ interface FavoriteItemProps {
 }
 
 const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: FavoriteItemProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(item.id)} activeOpacity={0.7}>
@@ -74,6 +73,7 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
 });
 
 export const FavoritesScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const navigation = useNavigation<NavProp>();
   const { colors } = useTheme();
   const styles = useStyles(colors);
@@ -120,7 +120,7 @@ export const FavoritesScreen: React.FC = () => {
       await favoriteApi.remove(id);
       setItems((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
-      console.error('Favorites operation failed:', error);
+      console.error("Favorites operation failed:", error);
       Alert.alert("操作失败", "取消收藏失败，请重试");
     }
   }, []);
@@ -206,53 +206,85 @@ export const FavoritesScreen: React.FC = () => {
   );
 };
 
-const useStyles = createStyles((colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: Spacing.md,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-  },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: '#1A1A1A' },
-  backBtn: { width: Spacing.xl, height: Spacing.xl, alignItems: "center", justifyContent: "center" },
-  list: { padding: Spacing.md},
-  emptyList: { flex: 1 },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: DesignTokens.spacing[3],
-    overflow: "hidden",
-    flexDirection: "row",
-    elevation: 2,
-  },
-  image: { width: 100, height: 100 },
-  placeholder: {
-    width: 100,
-    height: 100,
-    backgroundColor: DesignTokens.colors.neutral[100],
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  info: { flex: 1, padding: DesignTokens.spacing[3], justifyContent: "center" },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: '#1A1A1A' },
-  brand: { fontSize: DesignTokens.typography.sizes.sm, color: '#C67B5C', marginTop: DesignTokens.spacing['0.5']},
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: '#C67B5C', marginTop: Spacing.xs},
-  actions: { justifyContent: "center", paddingRight: DesignTokens.spacing[3]},
-  removeBtn: { padding: Spacing.sm},
-  centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: '#888888', marginTop: Spacing.sm},
-  emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 60,
-  },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: '#888888', marginTop: Spacing.sm},
-  emptyAction: { fontSize: DesignTokens.typography.sizes.base, color: '#C67B5C', marginTop: DesignTokens.spacing[3]},
-}));
+const useStyles = createStyles((colors) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#FFFFFF" },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: Spacing.md,
+      backgroundColor: "#FFFFFF",
+      borderBottomWidth: 1,
+      borderBottomColor: "#E5E5E5",
+    },
+    headerTitle: {
+      fontSize: DesignTokens.typography.sizes.lg,
+      fontWeight: "700",
+      color: "#1A1A1A",
+    },
+    backBtn: {
+      width: Spacing.xl,
+      height: Spacing.xl,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    list: { padding: Spacing.md },
+    emptyList: { flex: 1 },
+    card: {
+      backgroundColor: "#FFFFFF",
+      borderRadius: 12,
+      marginBottom: DesignTokens.spacing[3],
+      overflow: "hidden",
+      flexDirection: "row",
+      elevation: 2,
+    },
+    image: { width: 100, height: 100 },
+    placeholder: {
+      width: 100,
+      height: 100,
+      backgroundColor: DesignTokens.colors.neutral[100],
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    info: { flex: 1, padding: DesignTokens.spacing[3], justifyContent: "center" },
+    name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: "#1A1A1A" },
+    brand: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      color: "#C67B5C",
+      marginTop: DesignTokens.spacing["0.5"],
+    },
+    price: {
+      fontSize: DesignTokens.typography.sizes.base,
+      fontWeight: "700",
+      color: "#C67B5C",
+      marginTop: Spacing.xs,
+    },
+    actions: { justifyContent: "center", paddingRight: DesignTokens.spacing[3] },
+    removeBtn: { padding: Spacing.sm },
+    centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
+    loadingText: {
+      fontSize: DesignTokens.typography.sizes.base,
+      color: "#888888",
+      marginTop: Spacing.sm,
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 60,
+    },
+    emptyText: {
+      fontSize: DesignTokens.typography.sizes.base,
+      color: "#888888",
+      marginTop: Spacing.sm,
+    },
+    emptyAction: {
+      fontSize: DesignTokens.typography.sizes.base,
+      color: "#C67B5C",
+      marginTop: DesignTokens.spacing[3],
+    },
+  })
+);
 
 export default FavoritesScreen;

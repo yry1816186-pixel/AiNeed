@@ -52,6 +52,7 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
   styleTags,
   personalityLine,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);

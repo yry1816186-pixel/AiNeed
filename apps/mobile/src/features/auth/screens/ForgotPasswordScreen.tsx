@@ -35,6 +35,7 @@ const COUNTDOWN_SECONDS = 60;
 const CODE_LENGTH = 6;
 
 export const ForgotPasswordScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const navigation = useNavigation<ForgotPasswordNavProp>();
   const t = useTranslation();
   const { colors } = useTheme();
@@ -219,6 +220,7 @@ export const ForgotPasswordScreen: React.FC = () => {
               <Text style={styles.codeLabel}>输入验证码</Text>
               <View style={styles.codeRow}>
                 {Array.from({ length: CODE_LENGTH }).map((_, i) => {
+                  const styles = useStyles(colors);
                   const digit = code[i] || "";
                   const isFocused = code.length === i;
                   return (

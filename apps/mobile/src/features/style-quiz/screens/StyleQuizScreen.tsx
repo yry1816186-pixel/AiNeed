@@ -28,6 +28,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 const QUIZ_ID = "default";
 
 export const StyleQuizScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();

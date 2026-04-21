@@ -18,6 +18,7 @@ export interface TagCloudProps {
 }
 
 const getTagStyle = (weight: number, active: boolean) => {
+  const { colors } = useTheme();
   let fontSize: number;
   let paddingVertical: number;
   let paddingHorizontal: number;
@@ -52,6 +53,7 @@ const getTagStyle = (weight: number, active: boolean) => {
 };
 
 export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const defaultA11yLabel = accessibilityLabel || `标签云: ${tags.map((t) => t.label).join(", ")}`;
@@ -64,6 +66,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) 
       accessibilityRole="list"
     >
       {tags.map((tag, index) => {
+        const styles = useStyles(colors);
         const tagStyle = getTagStyle(tag.weight, tag.active);
 
         return (

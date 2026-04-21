@@ -66,6 +66,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
   onClose,
   onImported,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeSource, setActiveSource] = useState<ImportSource>(source ?? "community");

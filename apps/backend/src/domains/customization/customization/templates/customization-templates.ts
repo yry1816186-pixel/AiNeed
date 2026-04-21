@@ -1,4 +1,4 @@
-import { ProductTemplateType } from "@/types/prisma-enums";
+import { ProductTemplateType } from "@prisma/client";
 
 export interface TemplateSeedData {
   type: ProductTemplateType;

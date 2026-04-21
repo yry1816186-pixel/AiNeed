@@ -86,6 +86,7 @@ const SingleCard: React.FC<{
   onDislike: () => void;
   onItemClick: (item: OutfitItem) => void;
 }> = ({ card, index, currentIndex, translateY, onLike, onDislike, onItemClick }) => {
+  const styles = useStyles(colors);
   const isActive = index === currentIndex;
   const scale = useSharedValue(1);
   const likeOpacity = useSharedValue(0);
@@ -240,6 +241,7 @@ export const ImmersiveCardViewer: React.FC<ImmersiveCardViewerProps> = ({
   onBack,
   trackViewDuration = true,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();

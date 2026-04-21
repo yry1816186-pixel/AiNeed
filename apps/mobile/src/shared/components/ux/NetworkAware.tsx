@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-na
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { Colors, Spacing, Typography, ZIndex } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface NetworkAwareProps {
   children: React.ReactNode;

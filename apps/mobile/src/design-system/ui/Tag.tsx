@@ -16,6 +16,7 @@ export const Tag: React.FC<TagProps> = ({
   onPress,
   variant = "primary",
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const variantColors: Record<string, string> = {

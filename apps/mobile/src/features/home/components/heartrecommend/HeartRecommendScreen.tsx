@@ -35,6 +35,7 @@ interface HeartRecommendScreenProps {
 }
 
 export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onClose }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { user, isAuthenticated } = useAuthStore();

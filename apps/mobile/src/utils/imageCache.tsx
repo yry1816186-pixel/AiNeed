@@ -247,6 +247,8 @@ export const CachedImage = ({
   onError,
   ...props
 }: CachedImageProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
+import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 

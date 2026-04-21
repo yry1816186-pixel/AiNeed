@@ -47,6 +47,7 @@ function getPasswordStrength(password: string): StrengthLevel {
 }
 
 export const ResetPasswordScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const navigation = useNavigation<ResetPasswordNavProp>();
   const route = useRoute<ResetPasswordRouteProp>();
   const { codeToken } = route.params;

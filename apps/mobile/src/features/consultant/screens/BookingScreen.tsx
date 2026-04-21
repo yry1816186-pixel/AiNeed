@@ -31,6 +31,7 @@ const SERVICE_TYPES = [
 
 export const BookingScreen: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute();

@@ -32,6 +32,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   overlay = false,
   text,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const rotation = useSharedValue(0);
@@ -118,6 +119,8 @@ export const InlineSpinner: React.FC<{ size?: SpinnerSize; color?: string; style
   color,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const spinnerSize = sizeMap[size];
   const c = color || colors.primary[500];

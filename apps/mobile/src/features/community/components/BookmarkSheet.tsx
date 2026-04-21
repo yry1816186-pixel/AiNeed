@@ -38,6 +38,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
   onClose,
   onBookmarked,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [collections, setCollections] = useState<Collection[]>([]);

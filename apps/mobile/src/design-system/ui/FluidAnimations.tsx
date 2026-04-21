@@ -57,6 +57,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   enableGlow = true,
   glowColor = colors.primary[500],
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(1);
@@ -148,6 +149,8 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   style,
   disabled = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -272,6 +275,7 @@ export const ParallaxScrollView: React.FC<ParallaxScrollViewProps> = ({
   headerComponent,
   headerHeight = 300,
 }) => {
+  const styles = useStyles(colors);
   const scrollY = useSharedValue(0);
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
@@ -409,6 +413,7 @@ interface ParticleDotProps {
 }
 
 const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
+  const styles = useStyles(colors);
   const initialX = useRef(Math.random() * SCREEN_WIDTH).current;
   const initialScale = useRef(Math.random() * 0.5 + 0.5).current;
   const initialOpacity = useRef(Math.random() * 0.5 + 0.2).current;
@@ -453,6 +458,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
   size = 4,
   style,
 }) => {
+  const styles = useStyles(colors);
   return (
     <View style={[styles.particleContainer, style]}>
       {Array.from({ length: count }, (_, i) => (
@@ -475,6 +481,7 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   rippleColor = "rgba(198, 123, 92, 0.3)",
   style,
 }) => {
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0.5);
   const x = useSharedValue(0);
@@ -521,6 +528,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   borderRadius = 8,
   style,
 }) => {
+  const styles = useStyles(colors);
   const shimmerPosition = useSharedValue(-1);
 
   useEffect(() => {

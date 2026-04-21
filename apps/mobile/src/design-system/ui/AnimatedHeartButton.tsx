@@ -43,6 +43,7 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
   size = 24,
   style,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { reducedMotion } = useReducedMotion();

@@ -112,6 +112,7 @@ export const ThemedText: React.FC<ThemedTextProps> = ({
   size = "md",
   weight = "normal",
 }) => {
+  const { colors } = useTheme();
   const { colors } = useUnifiedTheme();
 
   const color = {
@@ -152,6 +153,8 @@ export interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { mode, isDark, setMode, colors } = useUnifiedTheme();
   const switchTranslateX = useSharedValue(isDark ? 24 : 0);
   const iconRotation = useSharedValue(isDark ? 180 : 0);
@@ -231,6 +234,8 @@ export interface AccentColorPickerProps {
 }
 
 export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors } = useUnifiedTheme();
 
   return (
@@ -262,6 +267,8 @@ export interface ThemeSettingsSheetProps {
 }
 
 export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible, onClose }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors, mode, setMode, isDark } = useUnifiedTheme();
   const translateY = useSharedValue(SCREEN_WIDTH);
   const backdropOpacity = useSharedValue(0);
@@ -305,6 +312,8 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible,
 
         <View style={styles.themeOptions}>
           {themeOptions.map((option) => {
+            const { colors } = useTheme();
+            const styles = useStyles(colors);
             const isSelected = mode === option.mode;
             const effectiveDark = option.mode === "system" ? isDark : option.mode === "dark";
 
@@ -402,6 +411,8 @@ export interface GlassCardProps {
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity = 80, tint }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { isDark, colors } = useUnifiedTheme();
   const defaultTint = tint || (isDark ? "dark" : "light");
 

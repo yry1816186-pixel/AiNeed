@@ -35,6 +35,7 @@ const DEFAULT_COMMENTS: PostComment[] = [];
 
 export const PostDetailScreen: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
@@ -223,6 +224,7 @@ export const PostDetailScreen: React.FC = () => {
   }
 
   const renderComment = (comment: PostComment) => {
+    const styles = useStyles(colors);
     const isExpanded = expandedReplies.has(comment.id);
     const hasReplies = comment.repliesCount > 0;
 

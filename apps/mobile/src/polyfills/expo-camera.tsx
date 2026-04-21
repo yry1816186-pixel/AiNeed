@@ -26,6 +26,7 @@ export const Camera: React.FC<CameraProps> = ({
   onMountError,
   children,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   React.useEffect(() => {
@@ -49,6 +50,7 @@ export const CameraView: React.FC<CameraProps & { facing?: "front" | "back"; fla
       },
       ref
     ) => {
+      const styles = useStyles(colors);
       React.useEffect(() => {
         onCameraReady?.();
       }, []);
@@ -84,7 +86,7 @@ export async function requestCameraPermissionsAsync(): Promise<{
 
 export function useCameraPermissions(): [
   { status: string; granted: boolean },
-  () => Promise<void>,
+  () => Promise<void>
 ] {
   const requestPermission = async () => {};
   return [{ status: "granted", granted: true }, requestPermission];

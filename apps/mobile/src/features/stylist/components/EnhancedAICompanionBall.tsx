@@ -121,6 +121,7 @@ interface ParticleProps {
 }
 
 const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive }) => {
+  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const angle = useSharedValue(index * 72 * (Math.PI / 180));
@@ -248,6 +249,7 @@ export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = (
   enableParticleEffect = true,
   enableColorFlow = true,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();

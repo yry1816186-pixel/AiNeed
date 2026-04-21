@@ -30,6 +30,7 @@ const DIRECTION_CONFIG = {
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [tags, setTags] = useState<TrendingTag[]>([]);
@@ -47,8 +48,8 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
           direction: (item.direction === "up"
             ? "up"
             : item.direction === "down"
-              ? "down"
-              : "stable") as TrendingTag["direction"],
+            ? "down"
+            : "stable") as TrendingTag["direction"],
           count: item.count,
         }));
         setTags(trendingTags);
@@ -85,6 +86,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
         contentContainerStyle={styles.scrollContent}
       >
         {tags.map((tag) => {
+          const styles = useStyles(colors);
           const dirConfig = DIRECTION_CONFIG[tag.direction] ?? DIRECTION_CONFIG.stable;
           return (
             <TouchableOpacity

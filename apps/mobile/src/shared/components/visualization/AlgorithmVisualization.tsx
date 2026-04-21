@@ -62,6 +62,7 @@ const BreakdownItem: React.FC<{
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ item, index, getScoreColor }) => {
+  const styles = useStyles(colors);
   const itemWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ const ColorBarRow: React.FC<{
   index: number;
   showAnimation: boolean;
 }> = ({ colorItem, index, showAnimation }) => {
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
   const barOpacity = useSharedValue(0);
 
@@ -143,6 +145,7 @@ const ColorSwatchItem: React.FC<{
   index: number;
   baseDelay: number;
 }> = ({ colorItem, index, baseDelay }) => {
+  const styles = useStyles(colors);
   const swatchScale = useSharedValue(0);
 
   useEffect(() => {
@@ -167,6 +170,7 @@ const MeasurementItem: React.FC<{
   value: number;
   index: number;
 }> = ({ label, value, index }) => {
+  const styles = useStyles(colors);
   const itemOpacity = useSharedValue(0);
   const itemTranslateY = useSharedValue(20);
 
@@ -190,6 +194,7 @@ const MeasurementItem: React.FC<{
 };
 
 const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, index }) => {
+  const styles = useStyles(colors);
   const recOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -214,6 +219,7 @@ const ItemPreviewCard: React.FC<{
   isSelected: boolean;
   onPress: () => void;
 }> = ({ item, index, isSelected, onPress }) => {
+  const styles = useStyles(colors);
   const itemScale = useSharedValue(0);
 
   useEffect(() => {
@@ -245,6 +251,7 @@ const AnalysisBarItem: React.FC<{
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ label, value, index, getScoreColor }) => {
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -289,6 +296,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   breakdown,
   style,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const animatedScore = useSharedValue(0);
@@ -349,6 +357,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   }));
 
   const getScoreColor = (value: number) => {
+    const { colors } = useTheme();
     if (value >= 90) {
       return colors.success; // custom color
     }
@@ -477,6 +486,8 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   showAnimation = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -541,6 +552,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         </Defs>
 
         {Array.from({ length: levels }).map((_, levelIndex) => {
+          const { colors } = useTheme();
           const levelRadius = (radius * (levelIndex + 1)) / levels;
           const points = dimensions
             .map((_, dimIndex) => {
@@ -564,6 +576,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         })}
 
         {dimensions.map((_, index) => {
+          const { colors } = useTheme();
           const angle = index * angleStep - Math.PI / 2;
           const endX = centerX + radius * Math.cos(angle);
           const endY = centerY + radius * Math.sin(angle);
@@ -590,6 +603,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         />
 
         {dimensions.map((dim, index) => {
+          const { colors } = useTheme();
           const point = getPoint(index, dim.value, dim.maxValue || 100);
           return (
             <Circle
@@ -606,6 +620,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
 
         {showLabels &&
           dimensions.map((dim, index) => {
+            const { colors } = useTheme();
             const angle = index * angleStep - Math.PI / 2;
             const labelRadius = radius + 25;
             const labelX = centerX + labelRadius * Math.cos(angle);
@@ -649,6 +664,8 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
   showAnimation = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -716,6 +733,8 @@ export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
   showAnimation = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const bodyOpacity = useSharedValue(0);
   const highlightScale = useSharedValue(1);
@@ -838,6 +857,8 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   suggestions,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -850,6 +871,7 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   }));
 
   const getScoreColor = (score: number) => {
+    const { colors } = useTheme();
     if (score >= 80) {
       return colors.success; // custom color
     }
@@ -931,6 +953,8 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
   period,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const arrowTranslateY = useSharedValue(0);
 

@@ -76,6 +76,7 @@ export const Badge: React.FC<BadgeProps> = ({
   style,
   textStyle,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const vStyle = variantStyles[variant];
@@ -115,6 +116,8 @@ export const Badge: React.FC<BadgeProps> = ({
 };
 
 export const SeasonBadge: React.FC<SeasonBadgeProps> = ({ season, size = "md", style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const seasonData = Colors.colorSeasons[season];
   const sStyle = sizeStyles[size];
 

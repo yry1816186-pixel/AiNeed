@@ -5,9 +5,10 @@ import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { Colors, Shadows } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export const OfflineBanner: React.FC = () => {
+  const styles = useStyles(colors);
   const styles = useStyles(colors);
   const { colors } = useTheme();
   const { isConnected } = useNetworkStatus();

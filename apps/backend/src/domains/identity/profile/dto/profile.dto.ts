@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
+import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
   IsOptional,

@@ -121,6 +121,7 @@ export function ProductBottomSheet({
                 <Text style={styles.sectionTitle}>选择尺码</Text>
                 <View style={styles.optionsGrid}>
                   {product.sizes.map((size) => {
+                    const styles = useStyles(colors);
                     const isSelected = selectedSize === size.id;
                     const isUnavailable = size.available === false;
                     return (
@@ -156,6 +157,7 @@ export function ProductBottomSheet({
                 <Text style={styles.sectionTitle}>选择颜色</Text>
                 <View style={styles.optionsGrid}>
                   {product.colors.map((color) => {
+                    const styles = useStyles(colors);
                     const isSelected = selectedColor === color.id;
                     return (
                       <TouchableOpacity

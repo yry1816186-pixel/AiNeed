@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
-import { Gender } from "@/types/prisma-enums";
+import { Gender } from "@prisma/client";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type User = any;
 

@@ -31,7 +31,7 @@ import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
 import { TryOnProgress } from "../loading/TryOnProgress";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 

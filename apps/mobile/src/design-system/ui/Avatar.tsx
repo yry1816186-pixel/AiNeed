@@ -31,6 +31,7 @@ const onlineDotSize: Record<AvatarSize, number> = {
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", online, style }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const avatarSize = sizeMap[size];
@@ -38,6 +39,7 @@ export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", onlin
   const initial = name?.charAt(0)?.toUpperCase() || "?";
 
   const renderAvatar = () => {
+    const styles = useStyles(colors);
     if (source) {
       return (
         <Image
@@ -94,6 +96,7 @@ export const AvatarGroup: React.FC<{
   max?: number;
   style?: ViewStyle;
 }> = ({ avatars, size = "md", max = 4, style }) => {
+  const styles = useStyles(colors);
   const visible = avatars.slice(0, max);
   const remaining = avatars.length - max;
   const avatarSize = sizeMap[size];

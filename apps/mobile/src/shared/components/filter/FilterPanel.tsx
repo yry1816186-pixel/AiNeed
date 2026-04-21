@@ -5,7 +5,7 @@ import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface FilterOption {
   label: string;
@@ -33,6 +33,7 @@ function FilterSection({
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.options}>
         {options.map((option) => {
+          const styles = useStyles(colors);
           const isSelected = selected.includes(option.value);
           return (
             <TouchableOpacity

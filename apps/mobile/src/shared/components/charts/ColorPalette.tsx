@@ -41,6 +41,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   const itemHeight = blockSize + (showLabel ? gap + labelHeight : 0);
 
   const renderIndicator = (x: number, y: number) => {
+    const { colors } = useTheme();
     if (type === "best") {
       return (
         <G>
@@ -102,6 +103,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
     <View accessible={true} accessibilityLabel={defaultA11yLabel} accessibilityRole="list">
       <Svg width={totalWidth} height={totalHeight}>
         {paletteColors.map((item, index) => {
+          const { colors } = useTheme();
           const col = index % columns;
           const row = Math.floor(index / columns);
           const x = col * (blockSize + gap);

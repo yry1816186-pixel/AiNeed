@@ -19,6 +19,7 @@ const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - CARD_GAP) / NUM_COLU
  */
 export const WardrobeSkeleton: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   return (
     <View style={styles.container}>

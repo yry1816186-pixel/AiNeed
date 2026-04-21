@@ -15,6 +15,7 @@ import {
 
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { flatColors as colors } from "../theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 interface OutfitCardProps {
   id: string;

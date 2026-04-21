@@ -139,6 +139,7 @@ function ColorPalette({
   return (
     <Svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
       {colorNames.map((name, index) => {
+        const { colors } = useTheme();
         const col = index % columns;
         const row = Math.floor(index / columns);
         const x = col * (blockSize + gap);
@@ -215,6 +216,7 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const season = colorAnalysis?.colorSeason?.type || "";

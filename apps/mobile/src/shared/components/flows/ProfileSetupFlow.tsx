@@ -36,7 +36,7 @@ import {
 import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -104,6 +104,7 @@ const STEP_CONFIG = [
 ];
 
 export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComplete }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [currentStep, setCurrentStep] = useState(0);
@@ -151,6 +152,8 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   }));
 
   const WelcomeStep: React.FC = () => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const logoScale = useSharedValue(0);
     const textOpacity = useSharedValue(0);
     const buttonOpacity = useSharedValue(0);
@@ -203,6 +206,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   };
 
   const BasicStep: React.FC = () => {
+    const styles = useStyles(colors);
     const inputScale = useSharedValue(0.9);
     const inputOpacity = useSharedValue(0);
     const inputFocus = useSharedValue(0);
@@ -227,7 +231,8 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     };
 
     const borderAnimatedStyle = useAnimatedStyle(() => {
-      "worklet";
+      const { colors } = useTheme();
+      ("worklet");
       const focusValue = inputFocus.value;
       return {
         borderColor: focusValue > 0.5 ? colors.primary[500] : "rgba(255, 255, 255, 0.2)",
@@ -281,6 +286,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     selected: boolean;
     onPress: () => void;
   }> = ({ option, index, selected, onPress }) => {
+    const styles = useStyles(colors);
     const scale = useSharedValue(0);
 
     useEffect(() => {
@@ -334,6 +340,8 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   };
 
   const GenderStep: React.FC = () => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const options = [
       {
         id: "male",
@@ -398,6 +406,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   };
 
   const BodyStep: React.FC = () => {
+    const styles = useStyles(colors);
     const heightValue = useSharedValue(0);
     const weightValue = useSharedValue(0);
 
@@ -475,6 +484,8 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     selected: boolean;
     onPress: () => void;
   }> = ({ option, index, selected, onPress }) => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const scale = useSharedValue(0);
 
     useEffect(() => {
@@ -529,6 +540,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   };
 
   const StyleStep: React.FC = () => {
+    const styles = useStyles(colors);
     const toggleStyle = (styleId: string) => {
       setSelectedStyles((prev) =>
         prev.includes(styleId) ? prev.filter((id) => id !== styleId) : [...prev, styleId]
@@ -573,6 +585,8 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   };
 
   const CompleteStep: React.FC = () => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const scale = useSharedValue(0);
     const opacity = useSharedValue(0);
     const buttonOpacity = useSharedValue(0);

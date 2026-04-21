@@ -15,7 +15,7 @@ import {
 import FastImage, { FastImageProps } from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -34,6 +34,7 @@ const SkeletonPlaceholder: React.FC<{
   animationSpeed: number;
   style?: ViewStyle;
 }> = ({ width, height, borderRadius, animationSpeed, style }) => {
+  const { colors } = useTheme();
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -131,10 +132,8 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
 /**
  * ImageWithPlaceholder 组件属性
  */
-export interface ImageWithPlaceholderProps extends Omit<
-  FastImageProps,
-  "onLoad" | "onError" | "style"
-> {
+export interface ImageWithPlaceholderProps
+  extends Omit<FastImageProps, "onLoad" | "onError" | "style"> {
   /** 图片源 */
   source: { uri: string; priority?: string } | number;
   /** 容器样式 */
@@ -294,6 +293,7 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
    * 渲染占位符
    */
   const renderPlaceholder = () => {
+    const styles = useStyles(colors);
     const { colors } = useTheme();
     if (status === "loaded") {
       return null;

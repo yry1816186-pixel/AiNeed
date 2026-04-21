@@ -47,6 +47,7 @@ const AnimatedItemCard: React.FC<{
   onItemReplace: (outfitIndex: number, itemIndex: number) => void;
   activeOutfitIndex: number;
 }> = ({ item, itemIdx, cardWidth, onItemPress, onItemReplace, activeOutfitIndex }) => {
+  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const { reducedMotion } = useReducedMotion();
@@ -101,6 +102,7 @@ export const OutfitPlanView: React.FC<OutfitPlanViewProps> = ({
   onItemPress,
   onFeedback,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);

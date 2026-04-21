@@ -158,12 +158,12 @@ function BodySilhouette({
         {bodyType === "hourglass"
           ? "X"
           : bodyType === "rectangle"
-            ? "H"
-            : bodyType === "triangle"
-              ? "A"
-              : bodyType === "inverted_triangle"
-                ? "Y"
-                : "O"}
+          ? "H"
+          : bodyType === "triangle"
+          ? "A"
+          : bodyType === "inverted_triangle"
+          ? "Y"
+          : "O"}
       </SvgText>
       <Path d={pathD} fill={colors.brand.warmPrimary} opacity={0.12} />
       <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={2} />
@@ -179,6 +179,7 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const bodyType = bodyAnalysis?.bodyType?.type || "";

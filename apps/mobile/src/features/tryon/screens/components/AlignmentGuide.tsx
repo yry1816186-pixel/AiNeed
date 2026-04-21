@@ -49,6 +49,7 @@ function getStatusMessage(status: AlignmentStatus): { message: string; color: st
 }
 
 const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
+  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const opacityAnim = useRef(new Animated.Value(0)).current;

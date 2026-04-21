@@ -21,13 +21,14 @@ import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
 import type { TryOnStackParamList } from "../../../navigation/types";
 import { navigateTryOn } from "../../../navigation/navigationService";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 type TryOnHistoryNavProp = NativeStackNavigationProp<TryOnStackParamList>;
 
 type FilterTab = "all" | "completed" | "failed";
 
 export const TryOnHistoryScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const styles = useStyles(colors);
   const { colors } = useTheme();
   const navigation = useNavigation<TryOnHistoryNavProp>();
@@ -133,21 +134,23 @@ export const TryOnHistoryScreen: React.FC = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: TryOnResult }) => {
+      const { colors } = useTheme();
+      const styles = useStyles(colors);
       const statusColor =
         item.status === "completed"
           ? colors.warmPrimary.mint[500]
           : item.status === "failed"
-            ? colors.semantic.error.main
-            : colors.warmPrimary.ocean[500];
+          ? colors.semantic.error.main
+          : colors.warmPrimary.ocean[500];
 
       const statusLabel =
         item.status === "completed"
           ? "已完成"
           : item.status === "failed"
-            ? "失败"
-            : item.status === "processing"
-              ? "处理中"
-              : "等待中";
+          ? "失败"
+          : item.status === "processing"
+          ? "处理中"
+          : "等待中";
 
       return (
         <Animated.View entering={FadeInUp.duration(300)}>

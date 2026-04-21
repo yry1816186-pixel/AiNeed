@@ -59,7 +59,7 @@ const CATEGORIES = [
     icon: "footsteps-outline" as const,
     gradient: [DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.camel"] as [
       string,
-      string,
+      string
     ], // custom color
   },
   {
@@ -79,6 +79,7 @@ const CATEGORIES = [
  * but rendered inline as a static preview (no drag/gesture).
  */
 export const AIBallPreview: React.FC<{ size: number }> = React.memo(({ size }) => {
+  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const glow = useSharedValue(0);
 
@@ -158,6 +159,7 @@ export const RecommendationCarouselCard: React.FC<{
   item: RecommendedItem & { occasion: string };
   onPress: () => void;
 }> = React.memo(({ item, onPress }) => {
+  const { colors } = useTheme();
   const gradient = OCCASION_GRADIENTS[item.occasion] ?? OCCASION_GRADIENTS["休闲"];
 
   return (

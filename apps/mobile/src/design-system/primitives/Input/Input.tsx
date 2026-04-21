@@ -77,6 +77,7 @@ export const Input: React.FC<InputProps> = ({
   onBlur,
   ...textInputProps
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [isFocused, setIsFocused] = React.useState(false);
@@ -130,6 +131,7 @@ export const Input: React.FC<InputProps> = ({
 
   // Label animated style - uses transform for translateY and scale to enable native driver
   const labelAnimatedStyle = useAnimatedStyle(() => {
+    const { colors } = useTheme();
     const progress = labelProgress.value;
     // Use translateY transform instead of top layout property
     const translateY = interpolate(progress, [0, 1], [config.height / 2 - 8, 6]);
@@ -155,6 +157,7 @@ export const Input: React.FC<InputProps> = ({
   }));
 
   const getBorderColor = () => {
+    const { colors } = useTheme();
     if (error) {
       return Colors.error[500];
     }
@@ -165,6 +168,7 @@ export const Input: React.FC<InputProps> = ({
   };
 
   const getVariantStyle = (): ViewStyle => {
+    const { colors } = useTheme();
     switch (variant) {
       case "outlined":
         return {

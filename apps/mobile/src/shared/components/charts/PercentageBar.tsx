@@ -18,6 +18,7 @@ export const PercentageBar: React.FC<PercentageBarProps> = ({
   color = colors.brand.primary,
   showPercentage = true,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const clampedPercentage = Math.max(0, Math.min(100, percentage));

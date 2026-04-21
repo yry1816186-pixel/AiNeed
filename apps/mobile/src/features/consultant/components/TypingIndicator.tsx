@@ -13,6 +13,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const TypingIndicator: React.FC = () => {
   const styles = useStyles(colors);
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const dot1Y = useSharedValue(0);
   const dot2Y = useSharedValue(0);

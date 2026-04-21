@@ -62,6 +62,7 @@ const PostCard: React.FC<{
   onAuthorPress: (authorId: string) => void;
   onLikePress: (postId: string) => void;
 }> = ({ post, index, onPostPress, onAuthorPress, onLikePress }) => {
+  const styles = useStyles(colors);
   const imageHeight = useMemo(() => {
     const heights = [180, 220, 200, 240, 190, 210];
     return heights[index % heights.length];
@@ -193,6 +194,7 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   refreshing = false,
   onRefresh,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
@@ -225,6 +227,8 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   }, [isLoading, hasMore, onLoadMore]);
 
   const renderFooter = useCallback(() => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     if (!isLoading) {
       return null;
     }

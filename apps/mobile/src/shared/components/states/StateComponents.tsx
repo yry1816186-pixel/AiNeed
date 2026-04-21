@@ -32,7 +32,7 @@ import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -88,6 +88,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   style,
   animated = true,
 }) => {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
@@ -218,6 +219,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   showIllustration = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const shakeX = useSharedValue(0);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
@@ -294,6 +297,8 @@ export interface NetworkErrorProps {
 }
 
 export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const pulseScale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
@@ -364,6 +369,8 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
   message = "我们正在进行系统维护，请稍后再试",
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -425,6 +432,8 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
   onOpenSettings,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -505,6 +514,7 @@ interface ConfettiPieceProps {
 }
 
 const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
+  const styles = useStyles(colors);
   const initialX = useRef(Math.random() * SCREEN_WIDTH).current;
   const drift1 = useRef((Math.random() - 0.5) * 100).current;
   const drift2 = useRef((Math.random() - 0.5) * 100).current;
@@ -571,6 +581,8 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   confetti = false,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const checkScale = useSharedValue(0);
@@ -635,6 +647,8 @@ export interface OfflineBannerProps {
 }
 
 export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(-60);
   const opacity = useSharedValue(0);
 

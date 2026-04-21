@@ -2,8 +2,7 @@
 import { Injectable, NotFoundException, ForbiddenException, Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
-import { Prisma } from "@prisma/client";
-import { BehaviorEventType } from "@/types/prisma-enums";
+import { Prisma , BehaviorEventType } from "@prisma/client";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MembershipPlan = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -421,7 +420,9 @@ export class SubscriptionService {
         userId,
         type: "subscription_expiring",
         title: "会员即将到期",
-        content: `您的${plan.displayName}会员将于 ${expiresAt.toLocaleDateString()} 到期，请及时续费以继续享受会员权益。`,
+        content: `您的${
+          plan.displayName
+        }会员将于 ${expiresAt.toLocaleDateString()} 到期，请及时续费以继续享受会员权益。`,
         targetType: "subscription",
         targetId: subscription.id,
       },

@@ -61,6 +61,7 @@ function getBirthDateFromRange(range: string): string {
 }
 
 export const OnboardingScreen: React.FC = () => {
+  const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const styles = useStyles(colors);
@@ -232,6 +233,8 @@ export const OnboardingScreen: React.FC = () => {
           </Text>
           <View style={styles.genderRow}>
             {GENDER_OPTIONS.map((option) => {
+              const { colors } = useTheme();
+              const styles = useStyles(colors);
               const isSelected = gender === option.id;
               return (
                 <TouchableOpacity
@@ -269,6 +272,7 @@ export const OnboardingScreen: React.FC = () => {
             contentContainerStyle={styles.ageRow}
           >
             {AGE_RANGES.map((range) => {
+              const styles = useStyles(colors);
               const isSelected = ageRange === range;
               return (
                 <TouchableOpacity
