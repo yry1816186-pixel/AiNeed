@@ -1,39 +1,36 @@
-# Roadmap: XUNO AI Fashion Decision Platform
+# Roadmap: 寻裳 XUNO — AI 穿搭搭子 伊伊
 
 ## Overview
 
-Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decision-first app, followed by a long-term build-out (Phases 6-10) spanning 13-19 weeks to reach production launch. The sprint phases follow the fusion plan timing exactly -- each delivers a coherent, testable capability slice. Long-term phases follow strict dependency chains: compliance before real data, data before AI tuning, AI quality before monetization, monetization before launch.
+Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decision-first app, followed by a long-term build-out (Phases 6-10) spanning 4-8 weeks. The sprint delivers a complete interview-outfit Agent demo for competition. Post-sprint focuses on model upgrade, data flywheel, mini program, and production launch.
+
+**Authoritative Source:** XUNO_FINAL_PLAN.md (42 frozen decisions, 10-dimension coverage)
 
 ## Phases
 
-**Phase Numbering:**
-
-- Integer phases (1-10): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-
 **Track A: 48-Hour Sprint (Phases 1-5)**
 
-- [ ] **Phase 1: Foundation + TS Cleanup** - Zero compile errors, data schema enriched, gender demoted
-- [ ] **Phase 2: Pipeline + Cold Start** - Recommendation pipeline single entry, cold start refactored, mock data seeded
-- [ ] **Phase 3: Navigation + Core Screens** - 4-tab navigation, Today Screen, Discover Screen
-- [ ] **Phase 4: Stylist + Onboarding** - AI Stylist single-screen, 4-step onboarding, fashion rules fixed
-- [ ] **Phase 5: E2E Integration + Polish** - Full flow test, visual consistency, demo ready
+- [ ] **Phase 1: Foundation + TS Cleanup + Visual Base** - Zero compile errors, data schema enriched, gender demoted, visual system initialized, FashionSigLIP visualization component
+- [ ] **Phase 2: Pipeline + Cold Start + Curated Wardrobe** - Recommendation pipeline single entry, cold start refactored, mock data seeded, curated wardrobe model, A/B experiment ID
+- [ ] **Phase 3: Navigation + Core Screens + Calendar** - 4-tab navigation, Today Screen with Yiyi proactive push, Discover Screen with curation space, simplified 7-day calendar
+- [ ] **Phase 4: Yiyi Agent + Voice + Onboarding + Studio** - Agent state machine, interview outfit dialog, voice button, Edge-TTS, new 4-step onboarding, studio smart recommendation
+- [ ] **Phase 5: E2E Integration + Competition Demo** - Full flow test, visual consistency, competition-specific demo path, tech depth showcase
 
 **Track B: Long-Term Build (Phases 6-10)**
 
-- [ ] **Phase 6: Compliance + Security + Contract Freeze** - PIPL consent, security blockers, product contract frozen
-- [ ] **Phase 7: Data Pipeline + FashionCLIP Embeddings** - Real product sync, batch embedding pipeline, color standardization
-- [ ] **Phase 8: Recommendation Advanced + AI Tuning** - SASRec pipeline, 6-layer funnel, FashionCLIP bias audit, fashion rules completion
-- [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features
-- [ ] **Phase 10: Production + Launch** - Nginx/TLS/monitoring, app store submission, performance testing
+- [ ] **Phase 6: Model Upgrade + Compliance + Security** - FashionSigLIP replacement + Chinese fine-tune, SASRec pipeline, compliance, security blockers, product contract frozen
+- [ ] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization
+- [ ] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching
+- [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission
+- [ ] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials
 
 ## Phase Details
 
-### Phase 1: Foundation + TS Cleanup
+### Phase 1: Foundation + TS Cleanup + Visual Base
 
-**Goal**: The app compiles with zero TypeScript errors and the data schema supports all downstream recommendation and profiling features
+**Goal**: The app compiles with zero TypeScript errors, the data schema supports all downstream features, gender is demoted, visual design tokens are applied, and FashionSigLIP visualization component exists for tech demo
 **Depends on**: Nothing (first phase)
-**Requirements**: FND-01, FND-02, FND-03, FND-04, FND-05, GND-01, GND-02, GND-03, GND-04, GND-05
+**Requirements**: FND-01, FND-02, FND-03, FND-04, FND-05, GND-01, GND-02, GND-03, GND-04, GND-05, VIS-01, VIS-02, VIS-03, VIS-04
 **Success Criteria** (what must be TRUE):
 
 1. `tsc --noEmit` returns zero errors across the entire monorepo (backend + mobile)
@@ -41,13 +38,15 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 3. RecommendationBatch and RecommendationImpression tables exist in the database schema
 4. UserBehavior is unified into a single UserBehaviorEvent model
 5. gender field is @IsOptional in auth DTO, and onboardingStore requires primaryScenarios/ageBand/styleExpression instead of gender
+6. Design tokens applied: warm camel #C4956A + charcoal #2D3436 + warm orange #E17055 + warm white #FAFAF8
+7. FashionSigLIP similarity visualization component renders (even with mock data)
    **Plans**: TBD
 
-### Phase 2: Pipeline + Cold Start
+### Phase 2: Pipeline + Cold Start + Curated Wardrobe
 
-**Goal**: Every recommendation flows through a single Orchestrator entry point, cold-start users get coherent results from onboarding data, and mock products cover the recommendation matrix
+**Goal**: Every recommendation flows through a single Orchestrator entry point, cold-start users get coherent results from onboarding data, mock products cover the matrix, curated wardrobe model replaces inventory model
 **Depends on**: Phase 1
-**Requirements**: REC-01, REC-02, REC-03, REC-04, REC-05
+**Requirements**: REC-01, REC-02, REC-03, REC-04, REC-05, REC-06, CUR-01, CUR-02
 **Success Criteria** (what must be TRUE):
 
 1. All recommendation requests go through Orchestrator -- no controller bypasses it
@@ -55,132 +54,152 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 3. StyleQuiz results flow back into recommendation scoring weights
 4. Every recommendation output includes items + outfit + explanation (why, alternative, nextAction, confidence)
 5. When AI pipeline is unavailable, a weather+season+scene template still produces a visible outfit plan
+6. Every recommendation carries an A/B experiment_id
+7. Wardrobe model stores savedOutfits + wishlistedItems + purchasedItems (not ownedItems)
    **Plans**: TBD
 
-### Phase 3: Navigation + Core Screens
+### Phase 3: Navigation + Core Screens + Calendar
 
-**Goal**: Users see a 4-tab decision-first navigation and can interact with Today and Discover screens that surface recommendations
+**Goal**: Users see a 4-tab decision-first navigation, Today Screen shows Yiyi's proactive push with voice button, Discover shows curation space, simplified 7-day calendar exists
 **Depends on**: Phase 2
-**Requirements**: NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, TOD-01, TOD-02, TOD-03, TOD-04, DIS-01, DIS-02, DIS-03, DIS-04
+**Requirements**: NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, TOD-01, TOD-02, TOD-03, TOD-04, TOD-05, DIS-01, DIS-02, DIS-03, DIS-04, CAL-01, CAL-02
 **Success Criteria** (what must be TRUE):
 
 1. App shows exactly 4 tabs: Today / Discover / Stylist / Me (old 5-tab layout gone)
-2. Today Screen displays a scene card (weather + scene + AI summary), 2-3 outfit plans, a candidate fit-check area, and a degradation fallback
-3. Discover Screen shows recommendation feed for new users and wardrobe management + gap recommendations for users with 5+ items
-4. Wardrobe is accessible from Discover Stack, not buried in Profile
-5. Old users do not crash on update (NAV_VERSION migration handles state transition)
+2. Today Screen displays: scene card (weather + Yiyi summary), today's outfits (Yiyi recommended + user saved), outfit collections by scene, voice button
+3. Discover Screen shows recommendation feed + curation space (saved/wishlist/purchased tabs)
+4. Old users do not crash on update (NAV_VERSION migration)
+5. 7-day calendar view renders with weather + scene tags + outfit thumbnails
    **UI hint**: yes
    **Plans**: TBD
 
-### Phase 4: Stylist + Onboarding
+### Phase 4: Yiyi Agent + Voice + Onboarding + Studio
 
-**Goal**: Users complete a 4-step gender-optional onboarding that immediately feeds recommendations, and the AI Stylist delivers a single-screen decision experience with embedded try-on
+**Goal**: Yiyi delivers structured agent conversations (interview outfit as showcase), voice button triggers STT+TTS, new 4-step onboarding ends with "let Yiyi dress you", studio smart recommendation triggers contextually
 **Depends on**: Phase 3
-**Requirements**: STY-01, STY-02, STY-03, STY-04, STY-05, ONB-01, ONB-02, ONB-03, ONB-04, ONB-05, RUL-01, RUL-02, RUL-03
+**Requirements**: YIYI-01, YIYI-02, YIYI-03, YIYI-04, YIYI-05, YIYI-06, YIYI-07, VOI-01, VOI-02, VOI-03, WKS-01, WKS-02, WKS-03, WKS-04, ONB-01, ONB-02, ONB-03, ONB-04, ONB-05, RUL-01, RUL-02, RUL-03, ETH-01, ETH-02
 **Success Criteria** (what must be TRUE):
 
-1. New users complete a 4-step onboarding (scene selection -> quick profile with garmentPreference -> style expression + image seeds -> optional photo) with no gender field
-2. Onboarding data flows into ColdStartService immediately -- first recommendation reflects onboarding choices
-3. AI Stylist is a single screen: conversation with outfit plans + try-on triggered as a BottomSheet within the chat (no page navigation)
-4. Stylist responses include structured output (outfit + reason + alternative + next action) and fashion rules are filtered by bodyType+occasion+colorSeason
-5. above_30 temperature zone tips are differentiated by occasion, and 0_10 interview layer_details show proper layering
+1. Agent state machine processes: GREET→CONTEXT→SCENE/DIRECT→GENERATE→ACTION/REFINE→WRAP with proper fallbacks
+2. Interview outfit dialog works end-to-end: "什么公司?→ 什么岗位?→ 预算?→3 套方案 → 试穿 → 保存"
+3. Yiyi personality enforced: warm opinionated friend, no "亲~", no "根据算法分析"
+4. Try-on triggered as BottomSheet within agent chat (no page navigation)
+5. Voice button records → STT → sends to Yiyi → TTS plays response
+6. 4-step onboarding ends with "让伊伊搭第一套" (3 outfit options, user picks one → saved to wardrobe)
+7. Studio recommendation triggers on signals (luxury budget, 3 rejections, special events, "独一无二")
+8. Fashion rules filtered by bodyType+occasion+colorSeason
+9. Body-positive language enforced: describe clothes not body, try-on failure blames garment
    **UI hint**: yes
    **Plans**: TBD
 
-### Phase 5: E2E Integration + Polish
+### Phase 5: E2E Integration + Competition Demo
 
-**Goal**: The complete user journey (register -> onboarding -> Today recommendation -> stylist -> try-on -> save/cart) works end-to-end and looks coherent for demo
+**Goal**: Complete user journey works end-to-end, visual consistency achieved, competition-specific demo path showcases "experience revolution → interview outfit → inclusivity" three-layer narrative
 **Depends on**: Phase 4
-**Requirements**: None (integration, testing, and polish -- all requirements delivered in Phases 1-4)
+**Requirements**: None new (integration, testing, polish, demo path)
 **Success Criteria** (what must be TRUE):
 
-1. A new user can register, complete onboarding, see personalized recommendations on Today, chat with Stylist, trigger try-on, and save an item -- without hitting a crash or blank screen
-2. All design tokens are consistent (no stray gradient/spacing variations across key screens)
-3. Loading states and empty states are handled on Today, Discover, Stylist, and Onboarding screens
-4. Both backend and mobile compile with zero errors after all changes
+1. New user can: register → 4-step onboarding → see Yiyi's proactive push on Today → chat with Yiyi → trigger try-on → save outfit → view in calendar — no crashes or blank screens
+2. Competition demo path: "明天 12°C 面试推荐 3 套" → user says "不喜欢正式的" → AI adjusts → 6-layer funnel visualization → different profiles get different results
+3. All design tokens consistent across Today/Discover/Stylist/Me/Onboarding
+4. Loading states and empty states handled on all screens
+5. Both backend and mobile compile with zero errors
    **UI hint**: yes
    **Plans**: TBD
 
-### Phase 6: Compliance + Security + Contract Freeze
+### Phase 6: Model Upgrade + Compliance + Security
 
-**Goal**: All legal and security blockers are resolved, product contracts are frozen, and the system is safe for real user data
+**Goal**: FashionSigLIP replaces FashionCLIP, Chinese fine-tune completes, SASRec pipeline works, all legal/security blockers resolved
 **Depends on**: Phase 5
-**Requirements**: CMP-01, CMP-02, CMP-03, CMP-04, CMP-05, SEC-01, SEC-02, SEC-03, SEC-04
+**Requirements**: MOD-01, MOD-02, MOD-03, RAD-01, RAD-02, RAD-03, RAD-04, DAT-01, DAT-02, DAT-03, DAT-04, DAT-05, CMP-01, CMP-02, CMP-03, CMP-04, CMP-05, SEC-01, SEC-02, SEC-03, SEC-04
 **Success Criteria** (what must be TRUE):
 
-1. Users provide separate consent for each sensitive data category (body measurements, photos, body fat) -- no bundled consent
-2. All API traffic is TLS-terminated; no ports are exposed to public internet; no API keys in plaintext or client bundles
-3. Software copyright application is filed (60-90 day critical path started)
-4. 4-tab navigation definition, 6-layer profile model, product attribute taxonomy, and RecommendationOutput interface are frozen and documented
+1. Marqo-FashionSigLIP replaces FashionCLIP in all vector operations, Recall@10 improves ≥15% vs old model
+2. Chinese fine-tune on 5000 Taobao items + DeepFashion Chinese subset completes successfully on AutoDL
+3. SASRec trained on user behavior sequences, scoring weight increases with interaction count
+4. 6-layer funnel pipeline executes L1-L4 hard filters then L5-L6 soft scoring
+5. FashionSigLIP bias audit: 5 profiles with same scenario but different styleExpression produce visibly different results
+6. Users provide separate consent for each sensitive data category
+7. All API traffic TLS-terminated, no exposed ports, no plaintext API keys
+8. Software copyright filed, trademark applications for "寻裳" and "伊伊" submitted
    **Plans**: TBD
 
-### Phase 7: Data Pipeline + FashionCLIP Embeddings
+### Phase 7: Data Flywheel + Calendar Full + Advanced Rec
 
-**Goal**: Real product data replaces mock data and every product has a pre-computed FashionCLIP embedding ready for vector search
+**Goal**: Complete feedback loop from user behavior to model retraining, full calendar with AI auto-planning, style evolution visualization
 **Depends on**: Phase 6
-**Requirements**: DAT-01, DAT-02, DAT-03, DAT-04, DAT-05
+**Requirements**: FLY-01, FLY-02, FLY-03, FLY-04, CAL-03, CAL-04, CAL-05, MOD-04
 **Success Criteria** (what must be TRUE):
 
-1. Product catalog is synced daily from Taobao Ke + JD Alliance APIs with incremental updates every 2 hours
-2. Every ingested product has a 512-dim FashionCLIP embedding stored in Qdrant before it appears in recommendations
-3. Colors are standardized across all product sources (no "navy blue" vs "深蓝" discrepancy)
-4. Sync health is monitorable (sync logs, error counts, last successful sync timestamp)
+1. User behavior pipeline collects: selection/skip/save/purchase with (profile, scene, weather, time) context
+2. SASRec retraining runs monthly on accumulated behavior data
+3. FashionSigLIP fine-tune runs monthly with new user interaction data
+4. Weekly "outfit diary" auto-generated: satisfaction + style distribution + trend + evolution curve
+5. Full calendar auto-generates 7-day plans based on weather forecast + calendar events + wardrobe
+6. Coordination model (10M params) trained and produces compatibility scores
    **Plans**: TBD
 
-### Phase 8: Recommendation Advanced + AI Tuning
+### Phase 8: Mini Program + Photo Search + Social
 
-**Goal**: Recommendations use behavioral signals (SASRec), visual similarity (FashionCLIP with diversity constraints), and complete fashion rules -- quality measurable by CTR
+**Goal**: WeChat mini program with core features live, photo-based item search as acquisition hook, style DNA social matching
 **Depends on**: Phase 7
-**Requirements**: RAD-01, RAD-02, RAD-03, RAD-04
+**Requirements**: MINI-01, MINI-02, PHO-01, PHO-02, SOC-01
 **Success Criteria** (what must be TRUE):
 
-1. SASRec model is trained on user behavior sequences and contributes scoring weight that increases with interaction count
-2. The 6-layer funnel pipeline executes L1-L4 hard filters then L5-L6 soft scoring on every recommendation request
-3. FashionCLIP retrieval includes diversity constraints -- 5 profiles with same scenario/budget but different styleExpression produce visibly different results
-4. Recommendation explanations combine rule-engine evidence with LLM-polished language
+1. WeChat mini program: Yiyi chat + try-on + share, accessible via QR code scan
+2. Mini program share to Moments/Groups drives >10x conversion vs App download
+3. Photo → FashionSigLIP encode → Qdrant search → 5 similar items with prices
+4. "Find similar" flow naturally leads to "AI can dress you better" → registration
+5. Style DNA matches users by FashionSigLIP vector cosine similarity
    **Plans**: TBD
 
 ### Phase 9: Monetization + Community + Sharing
 
-**Goal**: Users can upgrade to paid tiers for tangible content products, share outfit plans and reports to social platforms, and see community inspiration woven into product surfaces
+**Goal**: Free tier limits enforced, content products purchasable, share seed features drive viral growth, studio commission operational
 **Depends on**: Phase 8
-**Requirements**: MON-01, MON-02, MON-03, MON-04
+**Requirements**: MON-01, MON-02, MON-03, MON-04, SOC-02
 **Success Criteria** (what must be TRUE):
 
-1. Free-tier users hit daily limits (5 AI chats, 3 try-ons, 20 wardrobe items) and see upgrade prompts tied to result outcomes
-2. Paid users can generate and save color-season reports, body-type reports, and capsule wardrobe plans as shareable content products
-3. Outfit plans, try-on results, and membership reports can be exported as share images with QR codes for WeChat/Xiaohongshu
-4. Community content appears as "inspiration evidence" in Today Screen bottom section and product detail pages
+1. Free-tier users hit daily limits (5 AI chats, 3 try-ons, 20 wardrobe items) with upgrade prompts
+2. One-time purchases: color report 9.9 yuan, body-type report, capsule wardrobe plan 19 yuan
+3. Premium subscription 9.9 yuan/month: continuous outfit plan + deep wardrobe diagnosis + AI proactive push
+4. Share images generated with QR codes for WeChat/Xiaohongshu
+5. Studio referral commission 15-20% operational
    **UI hint**: yes
    **Plans**: TBD
 
-### Phase 10: Production + Launch
+### Phase 10: Production + Launch + Competition
 
-**Goal**: The platform is deployed behind Nginx with TLS/monitoring, passes performance and security audits, and is listed on Chinese Android app stores
+**Goal**: Production deployment, app store listing, offline capability, competition materials submitted
 **Depends on**: Phase 9
-**Requirements**: PRD-01, PRD-02, PRD-03, PRD-04, PRD-05
+**Requirements**: PRD-01, PRD-02, PRD-03, PRD-04, PRD-05, CMP-06, CMP-07, CMP-08, CMP-09
 **Success Criteria** (what must be TRUE):
 
-1. Nginx reverse proxy with Let's Encrypt TLS terminates all traffic; monitoring and alerting are active
-2. On-device inference works for CIELAB color analysis and rule engine scoring (server fallback available)
-3. System handles load test targets without degradation; security audit passes with no CRITICAL findings
-4. App is listed on at least 2 Chinese Android app stores (Huawei, Xiaomi, OPPO, or Vivo)
+1. Nginx + TLS + monitoring + alerting active
+2. Offline mode: cached 50 recommendations + wardrobe + calendar browsable without network
+3. Load test passes without degradation, security audit no CRITICAL findings
+4. App listed on 2+ Chinese Android stores (Huawei, Xiaomi, OPPO, or Vivo)
+5. Competition materials submitted: PPT + demo video + seed user data + advisor letter
    **Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term)
+Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 8 → 9 → 10 (long-term)
 
-| Phase                                      | Plans Complete | Status      | Completed |
-| ------------------------------------------ | -------------- | ----------- | --------- |
-| 1. Foundation + TS Cleanup                 | 0/?            | Not started | -         |
-| 2. Pipeline + Cold Start                   | 0/?            | Not started | -         |
-| 3. Navigation + Core Screens               | 0/?            | Not started | -         |
-| 4. Stylist + Onboarding                    | 0/?            | Not started | -         |
-| 5. E2E Integration + Polish                | 0/?            | Not started | -         |
-| 6. Compliance + Security + Contract Freeze | 0/?            | Not started | -         |
-| 7. Data Pipeline + FashionCLIP Embeddings  | 0/?            | Not started | -         |
-| 8. Recommendation Advanced + AI Tuning     | 0/?            | Not started | -         |
-| 9. Monetization + Community + Sharing      | 0/?            | Not started | -         |
-| 10. Production + Launch                    | 0/?            | Not started | -         |
+| Phase                                           | Plans Complete | Status      | Completed |
+| ----------------------------------------------- | -------------- | ----------- | --------- |
+| 1. Foundation + TS Cleanup + Visual Base        | 0/?            | Not started | -         |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 0/?            | Not started | -         |
+| 3. Navigation + Core Screens + Calendar         | 0/?            | Not started | -         |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 0/?            | Not started | -         |
+| 5. E2E Integration + Competition Demo           | 0/?            | Not started | -         |
+| 6. Model Upgrade + Compliance + Security        | 0/?            | Not started | -         |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 0/?            | Not started | -         |
+| 8. Mini Program + Photo Search + Social         | 0/?            | Not started | -         |
+| 9. Monetization + Community + Sharing           | 0/?            | Not started | -         |
+| 10. Production + Launch + Competition           | 0/?            | Not started | -         |
+
+---
+
+_Roadmap re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
