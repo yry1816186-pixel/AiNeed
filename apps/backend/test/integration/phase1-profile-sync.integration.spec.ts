@@ -13,8 +13,8 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-import { ProfileCompletenessService } from "../../src/modules/profile/services/profile-completeness.service";
-import { ProfileEventEmitter } from "../../src/modules/profile/services/profile-event-emitter.service";
+import { ProfileCompletenessService } from "../../src/domains/identity/profile/services/profile-completeness.service";
+import { ProfileEventEmitter } from "../../src/domains/identity/profile/services/profile-event-emitter.service";
 import {
   createRedisKeyTracker,
   RedisKeyTracker,
@@ -64,10 +64,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
 
       await profileEventEmitter.emitProfileUpdated(TEST_USER_ID, ["nickname"]);
 
-      expect(publishSpy).toHaveBeenCalledWith(
-        "profile:updated",
-        expect.any(String),
-      );
+      expect(publishSpy).toHaveBeenCalledWith("profile:updated", expect.any(String));
 
       const callArgs = publishSpy.mock.calls[0]!;
       const message = JSON.parse(callArgs[1]);
@@ -90,12 +87,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
 
       const callArgs = publishSpy.mock.calls[0]!;
       const message = JSON.parse(callArgs[1]);
-      expect(message.changedFields).toEqual([
-        "gender",
-        "birthDate",
-        "height",
-        "weight",
-      ]);
+      expect(message.changedFields).toEqual(["gender", "birthDate", "height", "weight"]);
     });
   });
 
@@ -109,10 +101,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
 
       await profileEventEmitter.emitQuizResultSaved(TEST_USER_ID, quizId);
 
-      expect(publishSpy).toHaveBeenCalledWith(
-        "quiz:completed",
-        expect.any(String),
-      );
+      expect(publishSpy).toHaveBeenCalledWith("quiz:completed", expect.any(String));
 
       const callArgs = publishSpy.mock.calls[0]!;
       const message = JSON.parse(callArgs[1]);
@@ -262,7 +251,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
       expect(publishSpy).toHaveBeenCalledTimes(1);
       expect(publishSpy).toHaveBeenCalledWith(
         "profile:updated",
-        expect.stringContaining(TEST_USER_ID),
+        expect.stringContaining(TEST_USER_ID)
       );
     });
 
@@ -274,7 +263,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
       expect(publishSpy).toHaveBeenCalledTimes(1);
       expect(publishSpy).toHaveBeenCalledWith(
         "quiz:completed",
-        expect.stringContaining("quiz-default"),
+        expect.stringContaining("quiz-default")
       );
     });
 
@@ -285,16 +274,8 @@ describe("Phase 1 Integration: Profile Sync", () => {
       await profileEventEmitter.emitQuizResultSaved(TEST_USER_ID, "quiz-002");
 
       expect(publishSpy).toHaveBeenCalledTimes(2);
-      expect(publishSpy).toHaveBeenNthCalledWith(
-        1,
-        "profile:updated",
-        expect.any(String),
-      );
-      expect(publishSpy).toHaveBeenNthCalledWith(
-        2,
-        "quiz:completed",
-        expect.any(String),
-      );
+      expect(publishSpy).toHaveBeenNthCalledWith(1, "profile:updated", expect.any(String));
+      expect(publishSpy).toHaveBeenNthCalledWith(2, "quiz:completed", expect.any(String));
     });
   });
 });

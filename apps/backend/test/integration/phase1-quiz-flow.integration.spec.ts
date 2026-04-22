@@ -12,9 +12,9 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-import { ProfileEventEmitter } from "../../src/modules/profile/services/profile-event-emitter.service";
-import { ColorDerivationEngine } from "../../src/modules/style-quiz/services/color-derivation.service";
-import { QuizProgressService } from "../../src/modules/style-quiz/services/quiz-progress.service";
+import { ProfileEventEmitter } from "../../src/domains/identity/profile/services/profile-event-emitter.service";
+import { ColorDerivationEngine } from "../../src/domains/fashion/style-assessment/quiz/services/color-derivation.service";
+import { QuizProgressService } from "../../src/domains/fashion/style-assessment/quiz/services/quiz-progress.service";
 import {
   createRedisKeyTracker,
   RedisKeyTracker,
@@ -70,46 +70,33 @@ describe("Phase 1 Integration: Quiz Flow", () => {
         TEST_USER_ID,
         TEST_QUIZ_ID,
         2, // questionIndex
-        answers,
+        answers
       );
 
-      const progress = await quizProgressService.getProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-      );
+      const progress = await quizProgressService.getProgress(TEST_USER_ID, TEST_QUIZ_ID);
 
       expect(progress).toBeDefined();
       expect(progress!.questionIndex).toBe(2);
     });
 
     it("should return default progress when no progress saved", async () => {
-      const progress = await quizProgressService.getProgress(
-        TEST_USER_ID,
-        "nonexistent-quiz",
-      );
+      const progress = await quizProgressService.getProgress(TEST_USER_ID, "nonexistent-quiz");
 
       expect(progress).toBeDefined();
     });
 
     it("should overwrite progress on subsequent save", async () => {
-      await quizProgressService.saveProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-        1,
-        { "question-1": "option-A" },
-      );
+      await quizProgressService.saveProgress(TEST_USER_ID, TEST_QUIZ_ID, 1, {
+        "question-1": "option-A",
+      });
 
-      await quizProgressService.saveProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-        3,
-        { "question-1": "option-A", "question-2": "option-B", "question-3": "option-C" },
-      );
+      await quizProgressService.saveProgress(TEST_USER_ID, TEST_QUIZ_ID, 3, {
+        "question-1": "option-A",
+        "question-2": "option-B",
+        "question-3": "option-C",
+      });
 
-      const progress = await quizProgressService.getProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-      );
+      const progress = await quizProgressService.getProgress(TEST_USER_ID, TEST_QUIZ_ID);
 
       expect(progress!.questionIndex).toBe(3);
     });
@@ -175,9 +162,7 @@ describe("Phase 1 Integration: Quiz Flow", () => {
     it("should produce deterministic results for same input", () => {
       const selections = [
         {
-          colorTags: [
-            { hex: "#FF6B6B", category: "warm", weight: 0.8 },
-          ],
+          colorTags: [{ hex: "#FF6B6B", category: "warm", weight: 0.8 }],
         },
       ];
 
@@ -197,10 +182,7 @@ describe("Phase 1 Integration: Quiz Flow", () => {
 
       await profileEventEmitter.emitQuizResultSaved(TEST_USER_ID, TEST_QUIZ_ID);
 
-      expect(publishSpy).toHaveBeenCalledWith(
-        "quiz:completed",
-        expect.any(String),
-      );
+      expect(publishSpy).toHaveBeenCalledWith("quiz:completed", expect.any(String));
 
       const callArgs = publishSpy.mock.calls[0]!;
       const message = JSON.parse(callArgs[1]);
@@ -235,22 +217,14 @@ describe("Phase 1 Integration: Quiz Flow", () => {
   describe("Full quiz flow integration", () => {
     it("should complete full quiz flow: save progress -> derive colors -> emit event", async () => {
       // Step 1: Save progress for 3 questions
-      await quizProgressService.saveProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-        3,
-        {
-          "question-1": "option-A",
-          "question-2": "option-C",
-          "question-3": "option-B",
-        },
-      );
+      await quizProgressService.saveProgress(TEST_USER_ID, TEST_QUIZ_ID, 3, {
+        "question-1": "option-A",
+        "question-2": "option-C",
+        "question-3": "option-B",
+      });
 
       // Step 2: Verify progress was saved
-      const progress = await quizProgressService.getProgress(
-        TEST_USER_ID,
-        TEST_QUIZ_ID,
-      );
+      const progress = await quizProgressService.getProgress(TEST_USER_ID, TEST_QUIZ_ID);
       expect(progress!.questionIndex).toBe(3);
 
       // Step 3: Derive color preferences from selections
@@ -262,9 +236,7 @@ describe("Phase 1 Integration: Quiz Flow", () => {
           ],
         },
         {
-          colorTags: [
-            { hex: "#FFE66D", category: "warm", weight: 0.7 },
-          ],
+          colorTags: [{ hex: "#FFE66D", category: "warm", weight: 0.7 }],
         },
         {
           colorTags: [
@@ -283,7 +255,7 @@ describe("Phase 1 Integration: Quiz Flow", () => {
 
       expect(publishSpy).toHaveBeenCalledWith(
         "quiz:completed",
-        expect.stringContaining(TEST_USER_ID),
+        expect.stringContaining(TEST_USER_ID)
       );
     });
   });

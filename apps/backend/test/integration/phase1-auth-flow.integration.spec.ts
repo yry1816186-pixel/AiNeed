@@ -19,13 +19,13 @@ import request from "supertest";
 import { StructuredLoggerService } from "../../src/common/logging/structured-logger.service";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
 import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-import { AuthController } from "../../src/modules/auth/auth.controller";
-import { AuthHelpersService } from "../../src/modules/auth/auth.helpers";
-import { AuthService } from "../../src/modules/auth/auth.service";
-import { SmsService, ISmsService } from "../../src/modules/auth/services/sms.service";
-import { TokenBlacklistService } from "../../src/modules/auth/services/token-blacklist.service";
-import { WechatService } from "../../src/modules/auth/services/wechat.service";
-import { JwtStrategy } from "../../src/modules/auth/strategies/jwt.strategy";
+import { AuthController } from "../../src/domains/identity/auth/auth.controller";
+import { AuthHelpersService } from "../../src/domains/identity/auth/auth.helpers";
+import { AuthService } from "../../src/domains/identity/auth/auth.service";
+import { SmsService, ISmsService } from "../../src/domains/identity/auth/services/sms.service";
+import { TokenBlacklistService } from "../../src/domains/identity/auth/services/token-blacklist.service";
+import { WechatService } from "../../src/domains/identity/auth/services/wechat.service";
+import { JwtStrategy } from "../../src/domains/identity/auth/strategies/jwt.strategy";
 import {
   RedisKeyTracker,
   createRedisKeyTracker,
@@ -136,7 +136,8 @@ describe("Phase 1 Integration: Auth Flow", () => {
             get: jest.fn((key: string, defaultValue?: string) => {
               const config: Record<string, string> = {
                 JWT_SECRET: "test-jwt-secret-key-for-testing-only-at-least-64-chars-long-aaaaaa",
-                JWT_REFRESH_SECRET: "test-jwt-refresh-secret-key-for-testing-only-at-least-64-chars-long",
+                JWT_REFRESH_SECRET:
+                  "test-jwt-refresh-secret-key-for-testing-only-at-least-64-chars-long",
                 JWT_ACCESS_EXPIRES_IN: "15m",
                 JWT_REFRESH_EXPIRES_IN: "7d",
                 FRONTEND_URL: "http://localhost:3000",
@@ -215,20 +216,22 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
-        const txMock = {
-          user: {
-            create: jest.fn().mockResolvedValue(mockCreatedUser),
-          },
-          userProfile: {
-            create: jest.fn().mockResolvedValue({ userId: mockCreatedUser.id }),
-          },
-          userConsent: {
-            createMany: jest.fn().mockResolvedValue({ count: 2 }),
-          },
-        };
-        return fn(txMock);
-      });
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (fn: (tx: unknown) => Promise<unknown>) => {
+          const txMock = {
+            user: {
+              create: jest.fn().mockResolvedValue(mockCreatedUser),
+            },
+            userProfile: {
+              create: jest.fn().mockResolvedValue({ userId: mockCreatedUser.id }),
+            },
+            userConsent: {
+              createMany: jest.fn().mockResolvedValue({ count: 2 }),
+            },
+          };
+          return fn(txMock);
+        }
+      );
       (prisma.refreshToken.create as jest.Mock).mockResolvedValue({
         id: "rt-001",
         token: "hashed-token",
@@ -329,17 +332,19 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
-        const txMock = {
-          user: {
-            create: jest.fn().mockResolvedValue(mockCreatedUser),
-          },
-          userProfile: {
-            create: jest.fn().mockResolvedValue({ userId: mockCreatedUser.id }),
-          },
-        };
-        return fn(txMock);
-      });
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (fn: (tx: unknown) => Promise<unknown>) => {
+          const txMock = {
+            user: {
+              create: jest.fn().mockResolvedValue(mockCreatedUser),
+            },
+            userProfile: {
+              create: jest.fn().mockResolvedValue({ userId: mockCreatedUser.id }),
+            },
+          };
+          return fn(txMock);
+        }
+      );
       (prisma.refreshToken.create as jest.Mock).mockResolvedValue({
         id: "rt-auto",
         token: "hashed-token",
@@ -382,17 +387,19 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
-        const txMock = {
-          user: {
-            create: jest.fn().mockResolvedValue(mockWechatUser),
-          },
-          userProfile: {
-            create: jest.fn().mockResolvedValue({ userId: mockWechatUser.id }),
-          },
-        };
-        return fn(txMock);
-      });
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (fn: (tx: unknown) => Promise<unknown>) => {
+          const txMock = {
+            user: {
+              create: jest.fn().mockResolvedValue(mockWechatUser),
+            },
+            userProfile: {
+              create: jest.fn().mockResolvedValue({ userId: mockWechatUser.id }),
+            },
+          };
+          return fn(txMock);
+        }
+      );
       (prisma.refreshToken.create as jest.Mock).mockResolvedValue({
         id: "rt-wechat",
         token: "hashed-token",
@@ -445,7 +452,10 @@ describe("Phase 1 Integration: Auth Flow", () => {
       // JwtStrategy.validate() requires jti claim; without it, the token is rejected with 401
       const token = jwtService.sign(
         { sub: "user-protected-001", email: "test@protected.com", jti: "test-jti-001" },
-        { secret: "test-jwt-secret-key-for-testing-only-at-least-64-chars-long-aaaaaa", expiresIn: "15m" },
+        {
+          secret: "test-jwt-secret-key-for-testing-only-at-least-64-chars-long-aaaaaa",
+          expiresIn: "15m",
+        }
       );
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue({
@@ -466,9 +476,7 @@ describe("Phase 1 Integration: Auth Flow", () => {
     });
 
     it("should reject access without token", async () => {
-      await request(app.getHttpServer())
-        .get("/auth/me")
-        .expect(401);
+      await request(app.getHttpServer()).get("/auth/me").expect(401);
     });
   });
 });
