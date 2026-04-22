@@ -1,62 +1,75 @@
----
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: planning
-last_updated: "2026-04-17T22:00:00.000Z"
-progress:
-  total_phases: 11
-  completed_phases: 2
-  total_plans: 47
-  completed_plans: 32
-  percent: 68
----
+# Project State
 
-# State: 寻裳代码规整
+## Project Reference
 
-**Updated:** 2026-04-17
+See: .planning/PROJECT.md (updated 2026-04-22)
 
-## Current Phase
+**Core value:** Users reach a today's outfit decision in 1-2 steps on the Today Tab -- every suggestion has a clear reason and next action, gender-optional, full-population coverage.
+**Current focus:** Phase 1 -- Foundation + TS Cleanup
 
-**Phase:** 09
-**Status:** Ready to plan
-**Next action:** Run `/gsd-complete-milestone` or continue to next phase
+## Current Position
 
-## Completed Phases
+Phase: 1 of 10 (Foundation + TS Cleanup)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-04-22 -- Roadmap created, all 33 v1 + 21 v2 requirements mapped to 10 phases
 
-1. **Phase 1: 清理与基础修复** — All 5 plans executed across 3 waves
-5. **Phase 5: 移动端页面重组** — All 8 plans executed (stores deduped, screens migrated, barrels converted)
+Progress: [..........] 0%
 
-## Key Decisions Log
+## Performance Metrics
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-04-16 | 保留 Theme Tokens，去掉 Tailwind/Paper 混用 | 已有完整 Token 体系，NativeWind/Paper 几乎未使用 |
-| 2026-04-16 | 后端 6 域 + 1 平台层 | 按业务域划分，解耦循环依赖 |
-| 2026-04-16 | Recommendations 降级为 platform 层 | 消除与 AiStylistModule 的循环依赖 |
-| 2026-04-16 | 废弃 demo + code-rag | 无外部消费者 |
-| 2026-04-16 | Turborepo 而非 Nx | 轻量，与 pnpm 兼容 |
-| 2026-04-16 | eslint-plugin-boundaries + dependency-cruiser | 强制域间依赖规则 |
+**Velocity:**
 
-## Active Blockers
+- Total plans completed: 0
+- Average duration: -
+- Total execution time: 0 hours
 
-None.
+**By Phase:**
 
-## Metrics Baseline
+| Phase | Plans | Total | Avg/Plan |
+| ----- | ----- | ----- | -------- |
+| -     | 0     | -     | -        |
 
-| Metric | Backend | Mobile | AI Service |
-|--------|---------|--------|------------|
-| `any` types | 668 | 121 | — |
-| Test coverage | ~15% | ~5% | Limited |
-| Hardcoded colors | — | 778 | — |
-| Hardcoded fontSize | — | 921 | — |
-| Hardcoded spacing | — | 971 | — |
-| Circular deps (forwardRef) | 16 files | — | — |
-| Module count | 35+ | 50+ screens | 30+ services |
+**Recent Trend:**
 
-## Research References
+- No execution history yet.
 
-- `.planning/research/STACK.md` — 工具链推荐
-- `.planning/research/FEATURES.md` — 能力矩阵
-- `.planning/research/ARCHITECTURE.md` — 目标架构
-- `.planning/research/PITFALLS.md` — 10 个陷阱
+## Accumulated Context
+
+### Decisions
+
+Decisions are logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- gender demoted to L6 optional field (garmentPreference replaces it for recommendation)
+- 4-tab navigation (Today/Discover/Stylist/Me) replaces 5-tab layout
+- Virtual try-on from standalone tab to embedded decision action
+- Recommendation simplified to 3-layer pipeline (rules -> retrieval -> explanation)
+- Zero new npm packages for 48-hour sprint
+
+### Pending Todos
+
+None yet.
+
+### Blockers/Concerns
+
+- FashionCLIP embeddings carry latent gender bias from Farfetch training data -- diversity constraints needed (Phase 8)
+- Software copyright is 60-90 day critical path for app store listing (Phase 6 starts it)
+- garmentPreference MUST be in Onboarding Step 2 to avoid incoherent cold start (Phase 4)
+- 264+ JSON fashion rules are NEVER loaded into LLM -- filtered context injection needed (Phase 4)
+
+## Deferred Items
+
+Items acknowledged and carried forward from previous milestone close:
+
+| Category     | Item                                                      | Status             | Deferred At |
+| ------------ | --------------------------------------------------------- | ------------------ | ----------- |
+| Feature Flag | Not needed -- one-time refactor, no coexistence mechanism | Permanent deferral | 2026-04-22  |
+| Deep Link    | Not needed for demo, pre-launch task                      | Deferred           | 2026-04-22  |
+| SASRec ONNX  | Server inference sufficient until >1000 users             | Deferred           | 2026-04-22  |
+
+## Session Continuity
+
+Last session: 2026-04-22
+Stopped at: Roadmap created, ready to plan Phase 1
+Resume file: None

@@ -1,11 +1,11 @@
-# Requirements: XUNO AI 穿搭决策平台
+# Requirements: XUNO AI Fashion Decision Platform
 
 **Created:** 2026-04-22
 **Status:** Active (auto-mode, derived from XUNO_FUSION_PLAN.md + 7-domain research)
 
 ---
 
-## v1 Requirements — 48-Hour Sprint (Demo-Ready)
+## v1 Requirements -- 48-Hour Sprint (Demo-Ready)
 
 ### Foundation (基础)
 
@@ -63,10 +63,10 @@
 
 ### Onboarding (引导流程)
 
-- [ ] **ONB-01**: Step 1 — 场景选择（8 卡片多选 1-3 个）
-- [ ] **ONB-02**: Step 2 — 快速画像（年龄段+身高体重+常穿尺码+garmentPreference）
-- [ ] **ONB-03**: Step 3 — 风格表达（5 选 1）+ 穿搭图选择（6 选 2，FashionCLIP 种子提取）
-- [ ] **ONB-04**: Step 4 — 可选照片上传 + 衣橱连接（可跳过）
+- [ ] **ONB-01**: Step 1 -- 场景选择（8 卡片多选 1-3 个）
+- [ ] **ONB-02**: Step 2 -- 快速画像（年龄段+身高体重+常穿尺码+garmentPreference）
+- [ ] **ONB-03**: Step 3 -- 风格表达（5 选 1）+ 穿搭图选择（6 选 2，FashionCLIP 种子提取）
+- [ ] **ONB-04**: Step 4 -- 可选照片上传 + 衣橱连接（可跳过）
 - [ ] **ONB-05**: Onboarding 数据立即流入 ColdStartService，首次推荐可见效果
 
 ### Fashion Rules (时尚规则修复)
@@ -77,7 +77,7 @@
 
 ---
 
-## v2 Requirements — Long-term (13-19 Weeks)
+## v2 Requirements -- Long-term (13-19 Weeks)
 
 ### Compliance (合规前置)
 
@@ -150,10 +150,78 @@
 
 ## Traceability
 
-| Phase | Requirements                   |
-| ----- | ------------------------------ |
-| —     | _(to be filled by ROADMAP.md)_ |
+| Requirement | Phase    | Status  |
+| ----------- | -------- | ------- |
+| FND-01      | Phase 1  | Pending |
+| FND-02      | Phase 1  | Pending |
+| FND-03      | Phase 1  | Pending |
+| FND-04      | Phase 1  | Pending |
+| FND-05      | Phase 1  | Pending |
+| GND-01      | Phase 1  | Pending |
+| GND-02      | Phase 1  | Pending |
+| GND-03      | Phase 1  | Pending |
+| GND-04      | Phase 1  | Pending |
+| GND-05      | Phase 1  | Pending |
+| REC-01      | Phase 2  | Pending |
+| REC-02      | Phase 2  | Pending |
+| REC-03      | Phase 2  | Pending |
+| REC-04      | Phase 2  | Pending |
+| REC-05      | Phase 2  | Pending |
+| NAV-01      | Phase 3  | Pending |
+| NAV-02      | Phase 3  | Pending |
+| NAV-03      | Phase 3  | Pending |
+| NAV-04      | Phase 3  | Pending |
+| NAV-05      | Phase 3  | Pending |
+| TOD-01      | Phase 3  | Pending |
+| TOD-02      | Phase 3  | Pending |
+| TOD-03      | Phase 3  | Pending |
+| TOD-04      | Phase 3  | Pending |
+| DIS-01      | Phase 3  | Pending |
+| DIS-02      | Phase 3  | Pending |
+| DIS-03      | Phase 3  | Pending |
+| DIS-04      | Phase 3  | Pending |
+| STY-01      | Phase 4  | Pending |
+| STY-02      | Phase 4  | Pending |
+| STY-03      | Phase 4  | Pending |
+| STY-04      | Phase 4  | Pending |
+| STY-05      | Phase 4  | Pending |
+| ONB-01      | Phase 4  | Pending |
+| ONB-02      | Phase 4  | Pending |
+| ONB-03      | Phase 4  | Pending |
+| ONB-04      | Phase 4  | Pending |
+| ONB-05      | Phase 4  | Pending |
+| RUL-01      | Phase 4  | Pending |
+| RUL-02      | Phase 4  | Pending |
+| RUL-03      | Phase 4  | Pending |
+| CMP-01      | Phase 6  | Pending |
+| CMP-02      | Phase 6  | Pending |
+| CMP-03      | Phase 6  | Pending |
+| CMP-04      | Phase 6  | Pending |
+| CMP-05      | Phase 6  | Pending |
+| SEC-01      | Phase 6  | Pending |
+| SEC-02      | Phase 6  | Pending |
+| SEC-03      | Phase 6  | Pending |
+| SEC-04      | Phase 6  | Pending |
+| DAT-01      | Phase 7  | Pending |
+| DAT-02      | Phase 7  | Pending |
+| DAT-03      | Phase 7  | Pending |
+| DAT-04      | Phase 7  | Pending |
+| DAT-05      | Phase 7  | Pending |
+| RAD-01      | Phase 8  | Pending |
+| RAD-02      | Phase 8  | Pending |
+| RAD-03      | Phase 8  | Pending |
+| RAD-04      | Phase 8  | Pending |
+| MON-01      | Phase 9  | Pending |
+| MON-02      | Phase 9  | Pending |
+| MON-03      | Phase 9  | Pending |
+| MON-04      | Phase 9  | Pending |
+| PRD-01      | Phase 10 | Pending |
+| PRD-02      | Phase 10 | Pending |
+| PRD-03      | Phase 10 | Pending |
+| PRD-04      | Phase 10 | Pending |
+| PRD-05      | Phase 10 | Pending |
 
 ---
 
 _Requirements defined: 2026-04-22_
+_Traceability updated: 2026-04-22_

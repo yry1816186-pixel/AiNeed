@@ -1,374 +1,186 @@
-# Roadmap: 寻裳代码规整
+# Roadmap: XUNO AI Fashion Decision Platform
+
+## Overview
 
-**Created:** 2026-04-16
-**Granularity:** fine (8 phases)
-**Priority Order:** 样式统一 > 工程规范 > 代码质量
+Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decision-first app, followed by a long-term build-out (Phases 6-10) spanning 13-19 weeks to reach production launch. The sprint phases follow the fusion plan timing exactly -- each delivers a coherent, testable capability slice. Long-term phases follow strict dependency chains: compliance before real data, data before AI tuning, AI quality before monetization, monetization before launch.
 
-## Milestone 1: 代码规整 v1
+## Phases
 
-### Phase 0: 工程基础设施准备
+**Phase Numbering:**
+
+- Integer phases (1-10): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-**Goal:** 建立 CI 门禁和工程规范，为后续规整提供安全网
+**Track A: 48-Hour Sprint (Phases 1-5)**
+
+- [ ] **Phase 1: Foundation + TS Cleanup** - Zero compile errors, data schema enriched, gender demoted
+- [ ] **Phase 2: Pipeline + Cold Start** - Recommendation pipeline single entry, cold start refactored, mock data seeded
+- [ ] **Phase 3: Navigation + Core Screens** - 4-tab navigation, Today Screen, Discover Screen
+- [ ] **Phase 4: Stylist + Onboarding** - AI Stylist single-screen, 4-step onboarding, fashion rules fixed
+- [ ] **Phase 5: E2E Integration + Polish** - Full flow test, visual consistency, demo ready
 
-**Depends on:** None
+**Track B: Long-Term Build (Phases 6-10)**
+
+- [ ] **Phase 6: Compliance + Security + Contract Freeze** - PIPL consent, security blockers, product contract frozen
+- [ ] **Phase 7: Data Pipeline + FashionCLIP Embeddings** - Real product sync, batch embedding pipeline, color standardization
+- [ ] **Phase 8: Recommendation Advanced + AI Tuning** - SASRec pipeline, 6-layer funnel, FashionCLIP bias audit, fashion rules completion
+- [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features
+- [ ] **Phase 10: Production + Launch** - Nginx/TLS/monitoring, app store submission, performance testing
+
+## Phase Details
+
+### Phase 1: Foundation + TS Cleanup
 
-**Plans:**
-1. 配置 husky + lint-staged + commitlint
-2. 统一 monorepo ESLint 配置（根级 .eslintrc）
-3. 统一 monorepo Prettier 配置（根级 .prettierrc）
-4. 配置 Turborepo 增量构建
-5. 配置 Changesets 版本管理
-6. 建立 CI 流水线（lint + typecheck + test 门禁）
+**Goal**: The app compiles with zero TypeScript errors and the data schema supports all downstream recommendation and profiling features
+**Depends on**: Nothing (first phase)
+**Requirements**: FND-01, FND-02, FND-03, FND-04, FND-05, GND-01, GND-02, GND-03, GND-04, GND-05
+**Success Criteria** (what must be TRUE):
+
+1. `tsc --noEmit` returns zero errors across the entire monorepo (backend + mobile)
+2. ClothingItem Prisma model includes material, season, gender(optional), source, and DataSource enum fields
+3. RecommendationBatch and RecommendationImpression tables exist in the database schema
+4. UserBehavior is unified into a single UserBehaviorEvent model
+5. gender field is @IsOptional in auth DTO, and onboardingStore requires primaryScenarios/ageBand/styleExpression instead of gender
+   **Plans**: TBD
 
-**Requirements:** ENGR-01, ENGR-03, ENGR-04, ENGR-05, ENGR-06, ENGR-07
-
-**UAT Criteria:**
-- [ ] `git commit` 自动触发 lint-staged
-- [ ] CI 流水线在 PR 上运行 lint + typecheck + test
-- [ ] Turborepo 缓存生效，二次构建速度提升
-- [ ] Changesets 可正确管理包版本
-
-**Risk:** 低 — 纯增量，不修改业务代码
-
----
-
-### Phase 1: 清理与基础修复
-
-**Goal:** 清理杂乱文件、修复已知错误、配置基础质量规则
-
-**Depends on:** Phase 0
-
-**Plans:**
-1. 清理根目录杂乱文件（ESLint 输出、截图、临时文件、非项目文件）
-2. 废弃 demo 模块（标记 @deprecated + 移除 AppModule 注册）
-3. 废弃 code-rag 模块（标记 @deprecated + 移除 AppModule 注册）
-4. 修复已知 TypeScript 错误（imagePicker.ts, user-key.service.ts）
-5. 配置 ESLint no-explicit-any: error
-6. 配置移动端 ESLint recommended-requiring-type-checking
-7. 统一命名规范（文件名、模块名、API 端点）
-
-**Requirements:** ENGR-02, ENGR-08, ARCH-06, ARCH-07, QUAL-01, QUAL-06, QUAL-07
-
-**UAT Criteria:**
-- [x] 根目录无杂乱文件（ESLint 输出、截图、临时文件）
-- [x] demo/code-rag 模块已从 AppModule 移除
-- [x] `tsc --noEmit` 无已知错误（user-key.service.ts, imagePicker.ts 已修复）
-- [x] 新增 `any` 类型被 ESLint 阻止（no-explicit-any: error）
-- [x] 移动端 ESLint 包含 recommended-requiring-type-checking
-
-**Risk:** 低 — 清理和配置为主，不涉及业务逻辑变更
-
----
-
-### Phase 2: 设计系统统一 ✅
-
-**Goal:** 将所有硬编码样式值迁移至 Theme Token，统一设计系统
-
-**Depends on:** Phase 1
-
-**Plans:**
-1. ✅ 审计所有硬编码颜色值，按语义分类（text, bg, border, etc.）
-2. ✅ 创建语义化颜色 Token（text.primary, bg.secondary, border.subtle, etc.）
-3. ✅ 编写 codemod 批量替换硬编码颜色 → DesignTokens.colors.xxx
-4. ✅ 审计所有硬编码 fontSize，按语义分类
-5. ✅ 创建语义化字体 Token（FontSizes aligned with DesignTokens.typography.sizes）
-6. ✅ 编写 codemod 批量替换硬编码字体 → DesignTokens.typography.sizes.xxx
-7. ✅ 审计所有硬编码间距，按语义分类
-8. ✅ 创建语义化间距 Token（Spacing.xs/sm/md/lg/xl/2xl/3xl/4xl/5xl）
-9. ✅ 编写 codemod 批量替换硬编码间距 → Spacing.xxx / DesignTokens.spacing.xxx
-10. ✅ 移除 NativeWind/Tailwind 死配置 + src/theme/ shim 目录
-11. ✅ 统一 PlayfairDisplay → Georgia/serif fallback
-
-**Requirements:** DSGN-01, DSGN-02, DSGN-03, DSGN-04, DSGN-05, DSGN-06
-
-**UAT Criteria:**
-- [x] 硬编码颜色值大幅减少（60+ hex colors → DesignTokens references in 50 files）
-- [x] 硬编码 fontSize 已迁移（767 处 → DesignTokens.typography.sizes）
-- [x] 硬编码间距已迁移（1939 处 → Spacing / DesignTokens.spacing）
-- [x] NativeWind/Tailwind 配置已移除
-- [x] src/theme/ shim 目录已删除
-- [ ] 暗色模式正常工作（需 Phase 9 完善）
-- [ ] TS 错误清零（~1105 处，codemod 引入的 flatColors as colors 命名冲突需后续修复）
-
-**Risk:** 🟠 中 — 2600+ 处替换，需按语义分类避免错误合并
-
-**Pitfall Mitigation:** 按 PITFALLS-03，先审计语义再替换，保留原始值注释
-
-**Execution Notes:**
-- Plan 02-01: 统一令牌定义冲突 + 废弃 PlayfairDisplay ✅
-- Plan 02-02: 紫色/品牌冲突色替换为 Terracotta ✅ (已完成)
-- Plan 02-03: 屏幕 hardcoded 颜色迁移 → DesignTokens ✅ (30 files, 25+ replacements)
-- Plan 02-04: 组件 hardcoded 颜色迁移 → DesignTokens ✅ (20 files, 35+ replacements)
-- Plan 02-05: fontSize + 间距 codemod 迁移 ✅ (149 files, 2700+ replacements)
-- Plan 02-06: 移除死配置 + 导入修复 ✅ (src/theme/ deleted, 20+ imports fixed)
-
-**Known Issues:**
-- ~100 files have `flatColors as colors` import conflicting with `const { colors } = useTheme()` — needs follow-up
-- SmartRecommendations.tsx was truncated and fixed
-- commerce/types/index.ts has pre-existing duplicate enum declarations
-
----
-
-### Phase 3: 后端域划分 — identity + platform
-
-**Goal:** 建立域架构基础，先处理 identity 域和 platform 层
-
-**Depends on:** Phase 2
-
-**Plans:**
-1. ✅ 创建域目录结构（src/domains/identity/, src/domains/platform/）
-2. ✅ 迁移 auth, users, profile, onboarding, privacy → identity 域
-3. ✅ 迁移 recommendations, admin, merchant, analytics, notification, feature-flags, health, queue, metrics → platform 域
-4. ✅ 将 Recommendations 降级为 platform 层共享服务
-5. ✅ 消除 identity ↔ platform 间的循环依赖
-6. ✅ 配置 eslint-plugin-boundaries 域间依赖规则
-7. ✅ 配置 dependency-cruiser 可视化
-
-**Requirements:** ARCH-01 (partial), ARCH-04, ARCH-05, ARCH-11
-
-**UAT Criteria:**
-- [ ] identity 域模块正确迁移，无循环依赖
-- [ ] platform 域模块正确迁移，无循环依赖
-- [ ] eslint-plugin-boundaries 规则生效
-- [ ] dependency-cruiser 可视化可用
-- [ ] 所有现有 API 端点正常工作
-- [ ] PII 加密功能不受影响
-
-**Risk:** 🟠 中 — PII 加密在 identity 域，需特别小心
-
-**Pitfall Mitigation:** 按 PITFALLS-08，PII 加密代码标记为不可移动
-
----
-
-### Phase 4: 后端域划分 — fashion + ai-core + commerce + social + customization
-
-**Goal:** 完成所有业务域的划分，消除所有循环依赖
-
-**Depends on:** Phase 3
-
-**Plans:**
-1. ✅ 迁移 clothing, brands, search, favorites, wardrobe-collection, style-quiz, style-profiles, weather → fashion 域
-2. ✅ 合并 style-profiles + style-quiz 为统一风格评估模块
-3. ✅ 合并 wardrobe-collection + favorites 为统一衣橱管理模块
-4. ✅ 迁移 ai-stylist, try-on, ai, ai-safety, photos → ai-core 域
-5. ✅ 消除 AiStylistModule ↔ RecommendationsModule 循环依赖
-6. ✅ 迁移 cart, order, payment, coupon, address, refund-request, subscription, stock-notification, size-recommendation → commerce 域
-7. ✅ 合并 notification + stock-notification 为统一消息推送模块
-8. ✅ 迁移 community, blogger, consultant, chat → social 域
-9. ✅ 迁移 customization, share-template → customization 域
-10. ✅ 消除所有剩余 forwardRef 循环依赖（3 个跨域 forwardRef 已消除）
-11. ✅ 将跨域共享类型提取到 @xuno/types
-
-**Requirements:** ARCH-01, ARCH-02, ARCH-03, ARCH-08, ARCH-09, ARCH-10, MOBL-06 (partial)
-
-**UAT Criteria:**
-- [x] 所有 6 域 + 1 平台层模块正确迁移
-- [x] 0 处 forwardRef 循环依赖（仅保留 AuthModule→RedisModule，common 层可接受）
-- [x] eslint-plugin-boundaries 域间规则全部通过
-- [x] 所有现有 API 端点正常工作
-- [x] 事件驱动架构正确（payment→subscription 等事件监听器正常）
-
-**Risk:** 🔴 高 — 16 处循环依赖需逐一消除，事件监听器跨域需重新设计
-
-**Pitfall Mitigation:** 按 PITFALLS-02 和 PITFALLS-06，逐步解耦+事件驱动
-
----
-
-### Phase 5: 移动端页面重组
-
-**Goal:** 将移动端从扁平结构迁移到 feature-based 架构
-
-**Depends on:** Phase 2 (设计系统统一完成)
-
-**Plans:**
-1. ✅ 创建 feature-based 目录结构（src/features/*, src/shared/*, src/design-system/*）
-2. ✅ 迁移设计系统相关文件 → src/design-system/
-3. ✅ 迁移共享组件/工具 → src/shared/
-4. ✅ 按功能域迁移页面和组件 → src/features/auth/, src/features/stylist/, etc.
-5. ✅ 合并 auth.store + user.store → 统一 authStore
-6. ✅ 合并 quizStore + styleQuizStore → 统一 quizStore
-7. ⚠️ clothingStore + homeStore 未合并（零功能重叠，违反 SRP，保留独立 store）
-8. ✅ 提取 stores/index.ts 内联 store 为独立文件
-9. ✅ 更新导航配置适配新目录结构
-10. ✅ 激活 @xuno/types 和 @xuno/shared 的实际使用
-
-**Requirements:** MOBL-01, MOBL-02, MOBL-03, MOBL-04, MOBL-05, MOBL-06
-
-**UAT Criteria:**
-- [x] 所有页面迁移到 features/*/screens/ 结构 (63 screens)
-- [x] Store 合并完成，无重复 store (auth+user merged, quiz+styleQuiz merged)
-- [x] 导航正常工作（含深层链接）(0 stale ../screens/ imports)
-- [x] @xuno/types 在移动端和后端均有引用 (15 refs mobile, backend via domains)
-- [x] Metro bundler 正常启动 (alias configured)
-- [x] 所有核心页面可正常渲染 (navigation paths updated)
-
-**Risk:** 🟠 中 — 50+ 页面迁移，导航系统复杂
-
-**Pitfall Mitigation:** 按 PITFALLS-07，保持路由名称不变
-
----
-
-### Phase 6: AI 服务规整 ✅
-
-**Goal:** 清理 Python AI 服务代码，规范化项目结构
-
-**Depends on:** Phase 4 (后端域划分完成，AI 相关模块已归入 ai-core 域)
-
-**Plans:**
-1. ✅ 创建 pyproject.toml 替代 requirements.txt
-2. ✅ 移除 sys.path hack
-3. ✅ 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
-4. ✅ 合并 body_analysis + style_analysis + photo_quality → analysis
-5. ✅ 按能力域重组服务文件（stylist/, tryon/, analysis/, common/, recommender/）
-6. ✅ 统一错误处理和日志格式
-
-**Requirements:** AISV-01, AISV-02, AISV-03, AISV-04
-
-**UAT Criteria:**
-- [x] pyproject.toml 替代 requirements.txt
-- [x] 无 sys.path hack
-- [x] 路由结构清晰（stylist, analysis, recommend, tryon, health）
-- [x] 服务文件按能力域组织
-- [x] 统一错误处理（MLError 子类替代 HTTPException）
-- [x] 结构化日志格式（extra={} 字典）
-
-**Risk:** 低 — AI 服务相对独立，不影响主应用
-
----
-
-### Phase 7: 代码质量提升
-
-**Goal:** 消灭 any 类型，提升测试覆盖率
-
-**Depends on:** Phase 4, Phase 5
-
-**Plans:**
-1. 手动修复后端生产代码 any 类型（简单模式：request: any → Request, status as any → JobStatus 等）
-2. 手动修复后端中等 any 模式 + Prisma 层 eslint-disable 豁免
-3. 修复后端测试文件 any 模式（mock 对象类型化）
-4. 手动修复移动端组件 props/事件 any 模式（style?: any → ViewStyle 等）
-5. 手动修复移动端导航/API any 模式（类型安全导航 + API 响应类型）
-6. 为后端 10 个无测试模块补充测试（coupon, refund-request, feature-flags 等）
-7. 为移动端 Store/API/组件补充测试（cartStore, stylistStore 等）
-8. ESLint no-explicit-any 升级为 error（后端 + 移动端）
-
-**Requirements:** QUAL-02, QUAL-03, QUAL-04, QUAL-05
-
-**UAT Criteria:**
-- [x] 后端 any 类型 < 50 处（从 668 降低）→ 生产代码 ~100 处（含 spec），ESLint no-explicit-any 已设为 error
-- [x] 移动端 any 类型 < 20 处（从 121 降低）→ 生产代码 ~24 处（含 test），ESLint no-explicit-any 已设为 error
-- [x] 后端测试覆盖率 ≥ 50% → 新增 9 个测试套件 123 个用例，覆盖 coupon/refund-request/feature-flags/queue/blogger/cache/share-template/style-profiles/weather
-- [x] 移动端测试覆盖率 ≥ 30% → 新增 5 个测试套件 62 个用例，覆盖 cart.store/aiStylistStore/notificationStore/ai-stylist.api
-- [x] CI 测试门禁通过 → TypeScript 编译无新增错误，所有测试通过
-
-**Risk:** 🟡 中 — any 修复可能需要理解业务逻辑，测试编写耗时
-
-**Pitfall Mitigation:** 按 PITFALLS-05，any 修复不改业务逻辑，只补类型
-
----
-
-### Phase 8: 移动端错误处理与 API 对接
-
-**Goal:** 消除静默吞错，补全 Stub 方法，完善 API 对接
-
-**Depends on:** Phase 5
-
-**Plans:**
-1. 关键 Store 添加 error 状态字段和 setError/clearError 方法（useOrderStore、useCouponStore、useNotificationStore）
-2. 空 catch 块添加 error state 更新或 Toast 提示（约 75 处）
-3. Stub 方法连接真实 API 或添加"功能开发中"提示（约 20 处）
-4. Mock 数据降级时显示"当前为示例数据"提示
-5. 替换 console.log 为 console.error 或移除（约 20 处）
-6. 替换占位符信息（LegalScreen 400-XXX-XXXX）
-7. 清理重复 Store 定义（auth.store.ts 旧版 vs features/auth/stores 新版）
-
-**Requirements:** MOBL-07, QUAL-08
-
-**UAT Criteria:**
-- [ ] 所有关键 Store 包含 error 状态字段
-- [ ] 无空 catch 块（至少包含 error state 更新或 Toast）
-- [ ] Stub 方法要么连接真实 API，要么显示"功能开发中"Toast
-- [ ] Mock 数据降级时用户可见提示
-- [ ] 无 console.log 残留（仅 console.error/warn）
-- [ ] 无占位符电话号码
-- [ ] 无重复 Store 定义
-
-**Risk:** 🟡 中 — 涉及 Store 状态管理变更，需确保不破坏现有流程
-
-**Pitfall Mitigation:** 优先修复用户可感知错误（支付、登录、收藏），不为未实现的后端 API 编造前端逻辑
-
----
-
-### Phase 9: 深色模式可用化
-
-**Goal:** 将深色模式从"纸上谈兵"变为真正可用，组件响应主题切换
-
-**Depends on:** Phase 2 (设计系统统一完成), Phase 5 (移动端重组完成)
-
-**Plans:**
-1. 基础设施修复 — 开启 dark_mode feature flag + 统一 FlatColors + createStyles 工具
-2. 核心页面迁移 — App.tsx + Home + Profile + TryOn
-3. 重要页面迁移 — Stylist + Wardrobe + Commerce + Auth
-4. 次要页面迁移 — Community + Customization + Notifications + 旧版 screens/
-5. 组件与导航迁移 — 子组件 + elevation 修复 + 最终审计
-
-**Requirements:** DSGN-01, DSGN-02, DSGN-05
-
-**UAT Criteria:**
-- [ ] dark_mode feature flag 默认开启
-- [ ] ThemeContext 消费 dark_mode 标志
-- [ ] 所有屏幕使用 useTheme() 动态颜色
-- [ ] StatusBar barStyle 响应主题切换
-- [ ] 硬编码 #FFFFFF 背景数量 < 5
-- [ ] FlatColors 接口唯一定义
-- [ ] Paper elevation 深色模式有层级差异
-- [ ] 浅色模式视觉无回归
-
-**Risk:** 🟠 中 — ~100 文件迁移，需逐文件验证浅色/深色模式
-
-**Pitfall Mitigation:** 渐进式迁移，每迁移一个页面验证浅色/深色模式都正常
-
----
-
-## Phase Dependency Graph
-
-```
-Phase 0 (工程基础)
-    ↓
-Phase 1 (清理修复)
-    ↓
-Phase 2 (设计系统) ← 最高优先级（用户可见）
-    ↓
-Phase 3 (后端: identity + platform)
-    ↓
-Phase 4 (后端: 其余域 + 循环依赖)
-    ↓                ↓
-Phase 5 (移动端)    Phase 6 (AI 服务)
-    ↓                ↓
-    └───────┬────────┘
-            ↓
-      Phase 7 (质量提升)
-            ↓
-      Phase 8 (错误处理与 API 对接)
-            ↓
-      Phase 9 (深色模式可用化)
-```
-
-## Estimated Scope
-
-| Phase | Plans | Requirements | Risk |
-|-------|-------|-------------|------|
-| 0 | 6 | 6 | 低 |
-| 1 | 7 | 7 | 低 |
-| 2 | 11 | 6 | 🟠 中 |
-| 3 | 7 | 4 | 🟠 中 |
-| 4 | 11 | 7 | 🔴 高 |
-| 5 | 10 | 6 | 🟠 中 |
-| 6 | 6 | 4 | 低 |
-| 7 | 6 | 4 | 🟡 中 |
-| 8 | 7 | 2 | 🟡 中 |
-| 9 | 5 | 3 | 🟠 中 |
-| **Total** | **76** | **41** | — |
-
----
-*Roadmap created: 2026-04-16*
+### Phase 2: Pipeline + Cold Start
+
+**Goal**: Every recommendation flows through a single Orchestrator entry point, cold-start users get coherent results from onboarding data, and mock products cover the recommendation matrix
+**Depends on**: Phase 1
+**Requirements**: REC-01, REC-02, REC-03, REC-04, REC-05
+**Success Criteria** (what must be TRUE):
+
+1. All recommendation requests go through Orchestrator -- no controller bypasses it
+2. ColdStartService produces recommendations driven by bodyType + styleExpression + primaryScenarios (no gender bucket)
+3. StyleQuiz results flow back into recommendation scoring weights
+4. Every recommendation output includes items + outfit + explanation (why, alternative, nextAction, confidence)
+5. When AI pipeline is unavailable, a weather+season+scene template still produces a visible outfit plan
+   **Plans**: TBD
+
+### Phase 3: Navigation + Core Screens
+
+**Goal**: Users see a 4-tab decision-first navigation and can interact with Today and Discover screens that surface recommendations
+**Depends on**: Phase 2
+**Requirements**: NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, TOD-01, TOD-02, TOD-03, TOD-04, DIS-01, DIS-02, DIS-03, DIS-04
+**Success Criteria** (what must be TRUE):
+
+1. App shows exactly 4 tabs: Today / Discover / Stylist / Me (old 5-tab layout gone)
+2. Today Screen displays a scene card (weather + scene + AI summary), 2-3 outfit plans, a candidate fit-check area, and a degradation fallback
+3. Discover Screen shows recommendation feed for new users and wardrobe management + gap recommendations for users with 5+ items
+4. Wardrobe is accessible from Discover Stack, not buried in Profile
+5. Old users do not crash on update (NAV_VERSION migration handles state transition)
+   **UI hint**: yes
+   **Plans**: TBD
+
+### Phase 4: Stylist + Onboarding
+
+**Goal**: Users complete a 4-step gender-optional onboarding that immediately feeds recommendations, and the AI Stylist delivers a single-screen decision experience with embedded try-on
+**Depends on**: Phase 3
+**Requirements**: STY-01, STY-02, STY-03, STY-04, STY-05, ONB-01, ONB-02, ONB-03, ONB-04, ONB-05, RUL-01, RUL-02, RUL-03
+**Success Criteria** (what must be TRUE):
+
+1. New users complete a 4-step onboarding (scene selection -> quick profile with garmentPreference -> style expression + image seeds -> optional photo) with no gender field
+2. Onboarding data flows into ColdStartService immediately -- first recommendation reflects onboarding choices
+3. AI Stylist is a single screen: conversation with outfit plans + try-on triggered as a BottomSheet within the chat (no page navigation)
+4. Stylist responses include structured output (outfit + reason + alternative + next action) and fashion rules are filtered by bodyType+occasion+colorSeason
+5. above_30 temperature zone tips are differentiated by occasion, and 0_10 interview layer_details show proper layering
+   **UI hint**: yes
+   **Plans**: TBD
+
+### Phase 5: E2E Integration + Polish
+
+**Goal**: The complete user journey (register -> onboarding -> Today recommendation -> stylist -> try-on -> save/cart) works end-to-end and looks coherent for demo
+**Depends on**: Phase 4
+**Requirements**: None (integration, testing, and polish -- all requirements delivered in Phases 1-4)
+**Success Criteria** (what must be TRUE):
+
+1. A new user can register, complete onboarding, see personalized recommendations on Today, chat with Stylist, trigger try-on, and save an item -- without hitting a crash or blank screen
+2. All design tokens are consistent (no stray gradient/spacing variations across key screens)
+3. Loading states and empty states are handled on Today, Discover, Stylist, and Onboarding screens
+4. Both backend and mobile compile with zero errors after all changes
+   **UI hint**: yes
+   **Plans**: TBD
+
+### Phase 6: Compliance + Security + Contract Freeze
+
+**Goal**: All legal and security blockers are resolved, product contracts are frozen, and the system is safe for real user data
+**Depends on**: Phase 5
+**Requirements**: CMP-01, CMP-02, CMP-03, CMP-04, CMP-05, SEC-01, SEC-02, SEC-03, SEC-04
+**Success Criteria** (what must be TRUE):
+
+1. Users provide separate consent for each sensitive data category (body measurements, photos, body fat) -- no bundled consent
+2. All API traffic is TLS-terminated; no ports are exposed to public internet; no API keys in plaintext or client bundles
+3. Software copyright application is filed (60-90 day critical path started)
+4. 4-tab navigation definition, 6-layer profile model, product attribute taxonomy, and RecommendationOutput interface are frozen and documented
+   **Plans**: TBD
+
+### Phase 7: Data Pipeline + FashionCLIP Embeddings
+
+**Goal**: Real product data replaces mock data and every product has a pre-computed FashionCLIP embedding ready for vector search
+**Depends on**: Phase 6
+**Requirements**: DAT-01, DAT-02, DAT-03, DAT-04, DAT-05
+**Success Criteria** (what must be TRUE):
+
+1. Product catalog is synced daily from Taobao Ke + JD Alliance APIs with incremental updates every 2 hours
+2. Every ingested product has a 512-dim FashionCLIP embedding stored in Qdrant before it appears in recommendations
+3. Colors are standardized across all product sources (no "navy blue" vs "深蓝" discrepancy)
+4. Sync health is monitorable (sync logs, error counts, last successful sync timestamp)
+   **Plans**: TBD
+
+### Phase 8: Recommendation Advanced + AI Tuning
+
+**Goal**: Recommendations use behavioral signals (SASRec), visual similarity (FashionCLIP with diversity constraints), and complete fashion rules -- quality measurable by CTR
+**Depends on**: Phase 7
+**Requirements**: RAD-01, RAD-02, RAD-03, RAD-04
+**Success Criteria** (what must be TRUE):
+
+1. SASRec model is trained on user behavior sequences and contributes scoring weight that increases with interaction count
+2. The 6-layer funnel pipeline executes L1-L4 hard filters then L5-L6 soft scoring on every recommendation request
+3. FashionCLIP retrieval includes diversity constraints -- 5 profiles with same scenario/budget but different styleExpression produce visibly different results
+4. Recommendation explanations combine rule-engine evidence with LLM-polished language
+   **Plans**: TBD
+
+### Phase 9: Monetization + Community + Sharing
+
+**Goal**: Users can upgrade to paid tiers for tangible content products, share outfit plans and reports to social platforms, and see community inspiration woven into product surfaces
+**Depends on**: Phase 8
+**Requirements**: MON-01, MON-02, MON-03, MON-04
+**Success Criteria** (what must be TRUE):
+
+1. Free-tier users hit daily limits (5 AI chats, 3 try-ons, 20 wardrobe items) and see upgrade prompts tied to result outcomes
+2. Paid users can generate and save color-season reports, body-type reports, and capsule wardrobe plans as shareable content products
+3. Outfit plans, try-on results, and membership reports can be exported as share images with QR codes for WeChat/Xiaohongshu
+4. Community content appears as "inspiration evidence" in Today Screen bottom section and product detail pages
+   **UI hint**: yes
+   **Plans**: TBD
+
+### Phase 10: Production + Launch
+
+**Goal**: The platform is deployed behind Nginx with TLS/monitoring, passes performance and security audits, and is listed on Chinese Android app stores
+**Depends on**: Phase 9
+**Requirements**: PRD-01, PRD-02, PRD-03, PRD-04, PRD-05
+**Success Criteria** (what must be TRUE):
+
+1. Nginx reverse proxy with Let's Encrypt TLS terminates all traffic; monitoring and alerting are active
+2. On-device inference works for CIELAB color analysis and rule engine scoring (server fallback available)
+3. System handles load test targets without degradation; security audit passes with no CRITICAL findings
+4. App is listed on at least 2 Chinese Android app stores (Huawei, Xiaomi, OPPO, or Vivo)
+   **Plans**: TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term)
+
+| Phase                                      | Plans Complete | Status      | Completed |
+| ------------------------------------------ | -------------- | ----------- | --------- |
+| 1. Foundation + TS Cleanup                 | 0/?            | Not started | -         |
+| 2. Pipeline + Cold Start                   | 0/?            | Not started | -         |
+| 3. Navigation + Core Screens               | 0/?            | Not started | -         |
+| 4. Stylist + Onboarding                    | 0/?            | Not started | -         |
+| 5. E2E Integration + Polish                | 0/?            | Not started | -         |
+| 6. Compliance + Security + Contract Freeze | 0/?            | Not started | -         |
+| 7. Data Pipeline + FashionCLIP Embeddings  | 0/?            | Not started | -         |
+| 8. Recommendation Advanced + AI Tuning     | 0/?            | Not started | -         |
+| 9. Monetization + Community + Sharing      | 0/?            | Not started | -         |
+| 10. Production + Launch                    | 0/?            | Not started | -         |
