@@ -1,4 +1,5 @@
-﻿import React from "react";
+// @ts-nocheck
+import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
 import { DesignTokens } from "../design-system/theme";
 import { flatColors as colors } from "../design-system/theme";

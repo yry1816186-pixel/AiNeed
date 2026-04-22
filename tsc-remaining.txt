@@ -1,6 +1,0 @@
-﻿
-apps/mobile/src/features/onboarding/screens/st
-eps/BasicInfoStep.tsx(286,3): error TS1005: ')
-' expected.
-
-

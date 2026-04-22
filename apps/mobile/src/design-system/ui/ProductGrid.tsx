@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";

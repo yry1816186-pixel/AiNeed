@@ -26,6 +26,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   onboardingCompleted: boolean;
+  isVip: boolean;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -90,6 +91,7 @@ interface PersistedAuthState {
   token: string | null;
   isAuthenticated: boolean;
   onboardingCompleted: boolean;
+  isVip: boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -100,6 +102,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: true,
       onboardingCompleted: false,
+      isVip: false,
       setUser: (user) =>
         set((state) => ({
           user,
@@ -115,7 +118,13 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         void apiClient.setToken(null);
         void apiClient.setRefreshToken(null);
-        set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false });
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          onboardingCompleted: false,
+          isVip: false,
+        });
       },
       setLoading: (isLoading) => set({ isLoading }),
       loginWithPhone: async (phone, code) => {
@@ -178,6 +187,7 @@ export const useAuthStore = create<AuthState>()(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         onboardingCompleted: state.onboardingCompleted,
+        isVip: state.isVip,
       }),
     } as const
   )
@@ -498,3 +508,24 @@ export const useHeartRecommendStore = create<HeartRecommendState>()(
     }
   )
 );
+
+// ============================================================
+// Clear All Stores (used on logout / account deletion)
+// ============================================================
+export const clearAllStores = () => {
+  try {
+    useAuthStore.getState().logout();
+  } catch {}
+  try {
+    useAnalysisStore.getState().clearAnalysis();
+  } catch {}
+  try {
+    useRecommendationStore.getState().clear();
+  } catch {}
+  try {
+    useCartStore.getState().clear();
+  } catch {}
+  try {
+    useHeartRecommendStore.getState().clearSession();
+  } catch {}
+};

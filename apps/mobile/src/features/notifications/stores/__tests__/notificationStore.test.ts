@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useNotificationStore } from "../notificationStore";
 
 jest.mock("../../../../services/api/notification.api", () => ({

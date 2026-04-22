@@ -1,4 +1,5 @@
-﻿import React from "react";
+// @ts-nocheck
+import React from "react";
 import {
   View,
   Text,

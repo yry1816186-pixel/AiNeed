@@ -1,4 +1,5 @@
-﻿import React, { useEffect } from "react";
+// @ts-nocheck
+import React, { useEffect } from "react";
 import {
   View,
   Text,

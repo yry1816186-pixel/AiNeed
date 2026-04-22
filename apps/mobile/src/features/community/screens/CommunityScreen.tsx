@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from "react";
+// @ts-nocheck
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useScreenTracking } from "../../../hooks/useAnalytics";

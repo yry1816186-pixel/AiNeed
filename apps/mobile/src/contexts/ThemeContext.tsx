@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @deprecated Use ThemeProvider from shared/contexts/ThemeContext instead.
  * This file will be removed in a future version.

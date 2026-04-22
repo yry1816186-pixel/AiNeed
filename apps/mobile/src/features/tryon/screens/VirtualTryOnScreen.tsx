@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";

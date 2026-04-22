@@ -8,6 +8,9 @@ export type AuthStackParamList = {
   Login: undefined;
   PhoneLogin: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { phone: string; codeToken: string };
+  Legal: { type: "terms" | "privacy" };
   Onboarding: undefined;
   ProfileSetup: undefined;
 };
@@ -113,6 +116,17 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
+  Product: { clothingId: string };
+  OrderDetail: { orderId: string };
+  BloggerProfile: { bloggerId?: string };
+  BloggerProduct: { productId?: string };
+  ClothingDetail: { clothingId: string };
+  AddClothing: { editId?: string };
+  VirtualTryOn: { clothingId?: string };
+  Legal: { type: "terms" | "privacy" };
+  ResetPassword: { phone: string; codeToken: string };
+  Onboarding: undefined;
+  Login: undefined;
 };
 
 // ============================================================
@@ -125,18 +139,18 @@ export type HomeStackScreenProps<T extends keyof HomeStackParamList = keyof Home
   NativeStackScreenProps<HomeStackParamList, T>;
 
 export type StylistStackScreenProps<
-  T extends keyof StylistStackParamList = keyof StylistStackParamList,
+  T extends keyof StylistStackParamList = keyof StylistStackParamList
 > = NativeStackScreenProps<StylistStackParamList, T>;
 
 export type TryOnStackScreenProps<T extends keyof TryOnStackParamList = keyof TryOnStackParamList> =
   NativeStackScreenProps<TryOnStackParamList, T>;
 
 export type CommunityStackScreenProps<
-  T extends keyof CommunityStackParamList = keyof CommunityStackParamList,
+  T extends keyof CommunityStackParamList = keyof CommunityStackParamList
 > = NativeStackScreenProps<CommunityStackParamList, T>;
 
 export type ProfileStackScreenProps<
-  T extends keyof ProfileStackParamList = keyof ProfileStackParamList,
+  T extends keyof ProfileStackParamList = keyof ProfileStackParamList
 > = NativeStackScreenProps<ProfileStackParamList, T>;
 
 export type RootStackScreenProps<T extends keyof RootStackParamList = keyof RootStackParamList> =

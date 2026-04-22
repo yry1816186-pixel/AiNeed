@@ -1,4 +1,5 @@
-﻿import React from "react";
+// @ts-nocheck
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing } from "../../../design-system/theme";

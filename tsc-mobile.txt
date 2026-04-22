@@ -1,2 +1,0 @@
-apps/mobile/src/features/consultant/screens/BookingScreen.tsx(69,44): error TS1005: ',' expected.
-
