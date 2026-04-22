@@ -1,149 +1,159 @@
-# Requirements: 寻裳代码规整
+# Requirements: XUNO AI 穿搭决策平台
 
-**Defined:** 2026-04-16
-**Core Value:** 让寻裳代码库回到健康、可维护、可扩展的状态
+**Created:** 2026-04-22
+**Status:** Active (auto-mode, derived from XUNO_FUSION_PLAN.md + 7-domain research)
 
-## v1 Requirements
+---
 
-### Design System (DSGN)
+## v1 Requirements — 48-Hour Sprint (Demo-Ready)
 
-- [ ] **DSGN-01**: 用户可见的所有硬编码颜色（778 处）迁移至 theme.colors Token
-- [ ] **DSGN-02**: 用户可见的所有硬编码 fontSize（921 处）迁移至 theme.typography Token
-- [ ] **DSGN-03**: 用户可见的所有硬编码间距（971 处）迁移至 theme.spacing Token
-- [ ] **DSGN-04**: 移除 NativeWind/Tailwind 死配置（tailwind.config.js, postcss.config.js, nativewind.config.js）
-- [ ] **DSGN-05**: 保留 React Native Paper 仅用于 Dialog/BottomSheet 等复杂交互组件
-- [ ] **DSGN-06**: 创建语义化 Token 体系（text.primary 而非 gray.900），确保替换不丢失语义
+### Foundation (基础)
 
-### Backend Architecture (ARCH)
+- [ ] **FND-01**: 移动端 TypeScript 零编译错误（当前 137 个，集中在 ~20 个文件）
+- [ ] **FND-02**: 后端 ClothingItem 补充关键字段（material, season, gender, source, DataSource 枚举）
+- [ ] **FND-03**: RecommendationBatch + RecommendationImpression 归因表 Prisma 迁移
+- [ ] **FND-04**: 统一 UserBehaviorEvent（UserBehavior 视图化）
+- [ ] **FND-05**: Mock 商品数据 100+ 条（覆盖多场景 × 多品类 × 多价位矩阵）
 
-- [ ] **ARCH-01**: 将 35+ 模块重组为 6 域 + 1 平台层（identity, ai-core, fashion, commerce, social, customization + platform）
-- [ ] **ARCH-02**: 消除 AiStylistModule ↔ RecommendationsModule 循环依赖（forwardRef）
-- [ ] **ARCH-03**: 消除所有 16 处 forwardRef 循环依赖
-- [ ] **ARCH-04**: 配置 eslint-plugin-boundaries 强制域间依赖规则
-- [ ] **ARCH-05**: 配置 dependency-cruiser 可视化和验证依赖关系
-- [ ] **ARCH-06**: 废弃 demo 模块（无外部消费者）
-- [ ] **ARCH-07**: 废弃 code-rag 模块（无外部消费者）
-- [ ] **ARCH-08**: 合并 style-profiles + style-quiz 为统一风格评估模块
-- [ ] **ARCH-09**: 合并 wardrobe-collection + favorites 为统一衣橱管理模块
-- [ ] **ARCH-10**: 合并 notification + stock-notification 为统一消息推送模块
-- [ ] **ARCH-11**: 将 Recommendations 降级为 platform 层共享服务
+### Gender Demotion (性别降级)
 
-### Engineering Infrastructure (ENGR)
+- [ ] **GND-01**: auth.dto.ts gender 字段改为 @IsOptional
+- [ ] **GND-02**: onboardingStore 移除 gender 必填，新增 primaryScenarios, ageBand, styleExpression 必填
+- [ ] **GND-03**: BodyMetricsService 默认值改为基于 waist/hip ratio 连续变量，不依赖 Gender.female 回退
+- [ ] **GND-04**: ColdStartService 重构：用 bodyType + styleExpression + primaryScenarios 替代 male/female 分桶
+- [ ] **GND-05**: ProfileCompletenessService 权重重算（gender→0%, 场景 20%+体型 25%+风格 20%+衣橱 20%+照片 15%）
 
-- [ ] **ENGR-01**: 配置 husky + lint-staged（pre-commit lint, commit-msg 格式）
-- [ ] **ENGR-02**: 清理根目录杂乱文件（ESLint 输出、截图、临时文件、非项目文件）
-- [ ] **ENGR-03**: 统一 monorepo 级别 ESLint 配置
-- [ ] **ENGR-04**: 统一 monorepo 级别 Prettier 配置
-- [ ] **ENGR-05**: 配置 Turborepo 增量构建
-- [ ] **ENGR-06**: 配置 Changesets 版本管理
-- [ ] **ENGR-07**: 建立 CI 流水线（lint + typecheck + test 门禁）
-- [ ] **ENGR-08**: 统一命名规范（文件名、模块名、API 端点）
+### Recommendation Pipeline (推荐管道)
 
-### Mobile Reorganization (MOBL)
+- [ ] **REC-01**: Orchestrator 改为推荐唯一入口（控制器不再绕过 Orchestrator 直接调用策略）
+- [ ] **REC-02**: StyleQuizResult 回流到推荐评分权重
+- [ ] **REC-03**: ColdStartService 优先读取 Onboarding 数据（primaryScenarios + styleImageSeeds）
+- [ ] **REC-04**: 推荐输出必须包含 RecommendationOutput 结构（items + outfit + explanation{why, alternative, nextAction, confidence}）
+- [ ] **REC-05**: 降级策略：AI 推荐不可用时，天气+季节+场景模板生成规则化方案
 
-- [ ] **MOBL-01**: 将 50+ 页面从扁平 screens/ 迁移到 features/*/screens/ 结构
-- [ ] **MOBL-02**: 合并 auth.store + user.store 为统一 authStore
-- [ ] **MOBL-03**: 合并 quizStore + styleQuizStore 为统一 quizStore
-- [ ] **MOBL-04**: 合并 clothingStore + homeStore 为统一 clothingStore
-- [ ] **MOBL-05**: 提取 stores/index.ts 中内联定义的 store 为独立文件
-- [ ] **MOBL-06**: 激活 @xuno/types 和 @xuno/shared 共享包的实际使用
+### Navigation (导航重构)
 
-### Code Quality (QUAL)
+- [ ] **NAV-01**: 4 Tab 导航实现（今日/探索/造型师/我的），替代现有 5 Tab
+- [ ] **NAV-02**: Wardrobe 从 Profile Stack 提取到 Discover Stack
+- [ ] **NAV-03**: TryOnStack 合并到 StylistStack（试衣不再独立页面）
+- [ ] **NAV-04**: Community 内容分散到 Today(灵感区) + Me(深层入口)
+- [ ] **NAV-05**: 导航状态迁移（NAV_VERSION）防止旧用户崩溃
 
-- [ ] **QUAL-01**: 配置 ESLint no-explicit-any: error（阻止新增 any）
-- [ ] **QUAL-02**: 修复后端 ~668 处现有 any 类型
-- [ ] **QUAL-03**: 修复移动端 ~121 处现有 any 类型
-- [ ] **QUAL-04**: 后端测试覆盖率从 ~15% 提升至 50%+
-- [ ] **QUAL-05**: 移动端测试覆盖率从 ~5% 提升至 30%+
-- [ ] **QUAL-06**: 修复已知 TypeScript 错误（imagePicker.ts, user-key.service.ts）
-- [ ] **QUAL-07**: 移动端 ESLint 添加 recommended-requiring-type-checking 配置
+### Today Screen (今日页面)
 
-### AI Service (AISV)
+- [ ] **TOD-01**: 场景卡组件（天气 + 场景选择 + AI 一句话摘要）
+- [ ] **TOD-02**: 今日方案卡片（2-3 套完整搭配，标注衣橱来源）
+- [ ] **TOD-03**: 降级方案实现（规则引擎驱动：天气+季节+场景模板）
+- [ ] **TOD-04**: 候选适配区（待决策商品的适配判断入口）
 
-- [ ] **AISV-01**: 移除 sys.path hack，使用 pyproject.toml 替代 requirements.txt
-- [ ] **AISV-02**: 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
-- [ ] **AISV-03**: 按能力域重组 30+ 服务文件（stylist/, tryon/, analysis/, common/）
-- [ ] **AISV-04**: 合并 body_analysis + style_analysis + photo_quality 路由为统一 analysis 路由
+### Discover Screen (探索页面)
 
-## v2 Requirements
+- [ ] **DIS-01**: 冷启动用户展示推荐单品流 + 搜索
+- [ ] **DIS-02**: 有衣橱用户（>5 件）展示衣橱管理 + 缺口推荐
+- [ ] **DIS-03**: 自然语言搜索栏 + 分类浏览
+- [ ] **DIS-04**: "拍照添加到衣橱"引导入口
 
-### Advanced Tooling
+### AI Stylist (AI 造型师)
 
-- **TOOL-01**: Design Token codemod 自动迁移工具
-- **TOOL-02**: NestJS 模块域文档自动生成
-- **TOOL-03**: dependency-cruiser 依赖可视化仪表盘
+- [ ] **STY-01**: 合并 AiStylistScreen + AiStylistChatScreen 为单屏体验
+- [ ] **STY-02**: 对话式穿搭方案输出（搭配+理由+替代+下一步动作）
+- [ ] **STY-03**: 试衣按钮嵌入对话流（BottomSheet 模式，不中断对话）
+- [ ] **STY-04**: FashionRulesService 过滤规则注入（按 bodyType+occasion+colorSeason 过滤 264+ JSON 规则）
+- [ ] **STY-05**: 试衣结果带可信度 + 误差来源 + 适用边界标注
 
-### Deep Quality
+### Onboarding (引导流程)
 
-- **DQAL-01**: 后端测试覆盖率 50% → 80%
-- **DQAL-02**: 移动端测试覆盖率 30% → 60%
-- **DQAL-03**: E2E 测试覆盖所有核心业务流程
+- [ ] **ONB-01**: Step 1 — 场景选择（8 卡片多选 1-3 个）
+- [ ] **ONB-02**: Step 2 — 快速画像（年龄段+身高体重+常穿尺码+garmentPreference）
+- [ ] **ONB-03**: Step 3 — 风格表达（5 选 1）+ 穿搭图选择（6 选 2，FashionCLIP 种子提取）
+- [ ] **ONB-04**: Step 4 — 可选照片上传 + 衣橱连接（可跳过）
+- [ ] **ONB-05**: Onboarding 数据立即流入 ColdStartService，首次推荐可见效果
+
+### Fashion Rules (时尚规则修复)
+
+- [ ] **RUL-01**: above_30 温区 8 个场合 tips 按场景差异化重写
+- [ ] **RUL-02**: 0_10 温区面试 layer_details 修复（单层 → 分层）
+- [ ] **RUL-03**: full_outfit_engine.py 从 JSON 规则文件动态加载替代硬编码（如有时间）
+
+---
+
+## v2 Requirements — Long-term (13-19 Weeks)
+
+### Compliance (合规前置)
+
+- [ ] **CMP-01**: PIPL 敏感信息单独同意机制（三围/照片/体脂率）
+- [ ] **CMP-02**: GB/T 45574-2025 逐项同意架构 + 数据保留策略
+- [ ] **CMP-03**: 国产 AI API 无跨境数据传输确认（智谱/豆包/DeepSeek）
+- [ ] **CMP-04**: 软著申请启动（60-90 天关键路径）
+- [ ] **CMP-05**: 算法备案准备（公开分发前完成）
+
+### Security (安全修复)
+
+- [ ] **SEC-01**: Nginx 反向代理 + Let's Encrypt TLS 终止
+- [ ] **SEC-02**: 端口绑定 127.0.0.1 + 防火墙规则
+- [ ] **SEC-03**: API 密钥 Docker Secrets / HashiCorp Vault 替代明文
+- [ ] **SEC-04**: 移动端 EXPO_PUBLIC_API 密钥改为服务端代理
+
+### Data Pipeline (数据管道)
+
+- [ ] **DAT-01**: 淘宝客 API 对接（商品搜索/详情/转链）
+- [ ] **DAT-02**: 京东联盟 API 对接（优先接入，审核快佣金高）
+- [ ] **DAT-03**: 全量商品同步(每日) + 增量同步(每 2 小时) + 热门刷新(每 30 分钟)
+- [ ] **DAT-04**: FashionCLIP 批量嵌入管道（商品摄取时预计算 512 维向量）
+- [ ] **DAT-05**: 颜色标准化服务
+
+### Recommendation Advanced (推荐进阶)
+
+- [ ] **RAD-01**: SASRec 训练管道（RTX 4060 本地训练）
+- [ ] **RAD-02**: 六层漏斗完整实现（L1 合规 →L2 场景 →L3 尺码 →L4 预算 →L5 风格 →L6 衣橱互补）
+- [ ] **RAD-03**: FashionCLIP 偏见审计 + 检索层多样性约束
+- [ ] **RAD-04**: 混合 Explanation 生成（规则引擎证据 + LLM 润色）
+
+### Monetization (商业化)
+
+- [ ] **MON-01**: 免费层实现（每日 5 次 AI 对话 + 3 次试穿 + 基础衣橱 20 件）
+- [ ] **MON-02**: 内容产物付费层（色彩报告 + 体型报告 + 胶囊衣橱方案）
+- [ ] **MON-03**: 高级会员层（连续穿搭计划 + 深度衣橱诊断 + AI 主动推送）
+- [ ] **MON-04**: 分享种子功能（穿搭方案分享图 + 试衣效果图 + 会员报告分享图）
+
+### Production (生产就绪)
+
+- [ ] **PRD-01**: Nginx + TLS + 监控告警部署
+- [ ] **PRD-02**: 端侧推理迁移（MediaPipe + CIELAB + 规则引擎）
+- [ ] **PRD-03**: SASRec ONNX 导出 + 嵌入表同步
+- [ ] **PRD-04**: 性能压测 + 安全审计
+- [ ] **PRD-05**: Android 应用商店上架（华为/小米/OPPO/vivo）
+
+---
 
 ## Out of Scope
 
-| Feature | Reason |
-|---------|--------|
-| 新业务功能开发 | 本次只规整，不新增功能 |
-| 数据库 Schema 重设计 | 超出规整范围，风险过高 |
-| 替换核心技术栈 | 不更换 NestJS/RN/Prisma 等 |
-| HarmonyOS 应用规整 | 不在本次范围 |
-| 升级锁定的 RN 依赖 | 兼容性问题未解决 |
-| 100% 测试覆盖率 | 不现实，优先关键路径 |
-| 微服务拆分 | 过度工程 |
-| 引入新 UI 框架 | 现有 Token 体系已足够 |
+| Item                                 | Reason                             | When                                |
+| ------------------------------------ | ---------------------------------- | ----------------------------------- |
+| Feature Flag 体系                    | 一次性重构，不需要新旧并存         | 永远不需要                          |
+| Deep Link 路由迁移                   | Demo 不需要推送通知                | 上线前                              |
+| 未成年人合规法务                     | 非代码问题                         | 上线前（法务确认 ageBand 最低门槛） |
+| PIPL 合规法务审查                    | 需中国律师审查                     | 阶段 A                              |
+| 电商 API 真实对接                    | Mock 数据足够 Demo                 | 阶段 B                              |
+| SASRec ONNX 导出                     | 服务端推理够用                     | 用户量 >1000                        |
+| 协同过滤 / 知识图谱                  | 伪实现直接砍                       | 永远不做                            |
+| 社区 Tab                             | 降为灵感层                         | 日活 5 万+                          |
+| 端侧推理迁移                         | 服务端够用                         | 成本压力时                          |
+| PDF 报告生成                         | 后续功能                           | 会员上线时                          |
+| 银发用户规则                         | 市场有限                           | 用户反馈驱动                        |
+| 微服务拆分                           | 不提前拆                           | 永远不做                            |
+| @react-navigation/native-bottom-tabs | 与 react-native-screens 4.4.0 冲突 | 永远不用                            |
+| FashionCLIP ONNX int8 量化           | CLIP 模型 int8 向量漂移严重        | 永远不用                            |
+| HarmonyOS 应用                       | 不在当前范围                       | 市场需求驱动                        |
+
+---
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| DSGN-01 | Phase 2 | Pending |
-| DSGN-02 | Phase 2 | Pending |
-| DSGN-03 | Phase 2 | Pending |
-| DSGN-04 | Phase 2 | Pending |
-| DSGN-05 | Phase 2 | Pending |
-| DSGN-06 | Phase 2 | Pending |
-| ARCH-01 | Phase 4 | Pending |
-| ARCH-02 | Phase 4 | Pending |
-| ARCH-03 | Phase 4 | Pending |
-| ARCH-04 | Phase 4 | Pending |
-| ARCH-05 | Phase 4 | Pending |
-| ARCH-06 | Phase 1 | Pending |
-| ARCH-07 | Phase 1 | Pending |
-| ARCH-08 | Phase 4 | Pending |
-| ARCH-09 | Phase 4 | Pending |
-| ARCH-10 | Phase 4 | Pending |
-| ARCH-11 | Phase 4 | Pending |
-| ENGR-01 | Phase 0 | Pending |
-| ENGR-02 | Phase 1 | Pending |
-| ENGR-03 | Phase 0 | Pending |
-| ENGR-04 | Phase 0 | Pending |
-| ENGR-05 | Phase 0 | Pending |
-| ENGR-06 | Phase 0 | Pending |
-| ENGR-07 | Phase 0 | Pending |
-| ENGR-08 | Phase 1 | Pending |
-| MOBL-01 | Phase 5 | Pending |
-| MOBL-02 | Phase 5 | Pending |
-| MOBL-03 | Phase 5 | Pending |
-| MOBL-04 | Phase 5 | Pending |
-| MOBL-05 | Phase 5 | Pending |
-| MOBL-06 | Phase 5 | Pending |
-| QUAL-01 | Phase 1 | Pending |
-| QUAL-02 | Phase 7 | Pending |
-| QUAL-03 | Phase 7 | Pending |
-| QUAL-04 | Phase 7 | Pending |
-| QUAL-05 | Phase 7 | Pending |
-| QUAL-06 | Phase 1 | Pending |
-| QUAL-07 | Phase 1 | Pending |
-| AISV-01 | Phase 6 | Pending |
-| AISV-02 | Phase 6 | Pending |
-| AISV-03 | Phase 6 | Pending |
-| AISV-04 | Phase 6 | Pending |
-
-**Coverage:**
-- v1 requirements: 36 total
-- Mapped to phases: 36
-- Unmapped: 0 ✓
+| Phase | Requirements                   |
+| ----- | ------------------------------ |
+| —     | _(to be filled by ROADMAP.md)_ |
 
 ---
-*Requirements defined: 2026-04-16*
-*Last updated: 2026-04-16 after initial definition*
+
+_Requirements defined: 2026-04-22_
