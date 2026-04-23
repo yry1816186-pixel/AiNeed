@@ -24,13 +24,15 @@ class ModelPaths:
 
     @staticmethod
     def get_clip_model_path() -> Path:
-        """获取CLIP模型路径"""
-        # 优先使用微调后的FashionCLIP
+        """获取CLIP模型路径（优先ChineseFashionCLIP > clip_fashion > 原始CLIP）"""
+        chinese_clip_path = ML_MODELS_ROOT / "chinese-fashion-clip" / "best_model"
+        if chinese_clip_path.exists() and (chinese_clip_path / "config.json").exists():
+            return chinese_clip_path
+
         fashion_clip_path = ML_MODELS_ROOT / "clip_fashion"
         if fashion_clip_path.exists() and (fashion_clip_path / "model.safetensors").exists():
             return fashion_clip_path
 
-        # 后备：使用原始CLIP
         clip_cache = ML_MODELS_ROOT / "clip"
         return clip_cache
 
@@ -74,7 +76,11 @@ class ModelPaths:
 
     @staticmethod
     def get_fashion_clip_path() -> Optional[Path]:
-        """获取FashionCLIP微调模型路径"""
+        """获取FashionCLIP微调模型路径（优先ChineseFashionCLIP）"""
+        chinese_clip_path = ML_MODELS_ROOT / "chinese-fashion-clip" / "best_model"
+        if chinese_clip_path.exists() and (chinese_clip_path / "config.json").exists():
+            return chinese_clip_path
+
         path = ML_MODELS_ROOT / "clip_fashion"
         if path.exists() and (path / "model.safetensors").exists():
             return path
@@ -106,6 +112,10 @@ class ModelPaths:
         return PROJECT_ROOT / "data" / "raw" / "new-data-fashion" / "Apparel images dataset new"
 
     @staticmethod
+    def get_deepfashion2_path() -> Path:
+        return PROJECT_ROOT / "data" / "raw" / "DeepFashion2"
+
+    @staticmethod
     def get_styles_csv_path() -> Path:
         """获取 styles.csv 元数据路径"""
         return PROJECT_ROOT / "data" / "raw" / "styles.csv"
@@ -128,11 +138,11 @@ def check_model_availability() -> dict:
 
 
 def check_dataset_availability() -> dict:
-    """检查所有数据集的可用状态"""
     fashion_images = ModelPaths.get_fashion_product_images_path()
     outfit_items = ModelPaths.get_outfit_items_path()
     new_fashion = ModelPaths.get_new_data_fashion_path()
     styles_csv = ModelPaths.get_styles_csv_path()
+    deepfashion2 = ModelPaths.get_deepfashion2_path()
     
     return {
         "fashion_product_images": fashion_images.exists() if fashion_images else False,
@@ -143,6 +153,8 @@ def check_dataset_availability() -> dict:
         "new_data_fashion_path": str(new_fashion),
         "styles_csv": styles_csv.exists() if styles_csv else False,
         "styles_csv_path": str(styles_csv),
+        "deepfashion2": deepfashion2.exists(),
+        "deepfashion2_path": str(deepfashion2),
     }
 
 
