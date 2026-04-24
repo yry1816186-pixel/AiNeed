@@ -1,40 +1,47 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
 
-import { BusinessException } from '../exceptions/business.exception';
-import { ForbiddenException } from '../exceptions/forbidden.exception';
-import { NotFoundException } from '../exceptions/not-found.exception';
-import { ValidationException } from '../exceptions/validation.exception';
+import { BusinessException } from "../exceptions/business.exception";
+import { ForbiddenException } from "../exceptions/forbidden.exception";
+import { NotFoundException } from "../exceptions/not-found.exception";
+import { ValidationException } from "../exceptions/validation.exception";
 
-import { HttpExceptionFilter } from './http-exception.filter';
+import { HttpExceptionFilter } from "./http-exception.filter";
+
+interface MockResponse {
+  status: jest.Mock;
+  json: jest.Mock;
+}
+
+interface MockRequest {
+  requestId?: string;
+  headers: Record<string, string>;
+}
 
 function createMockHost(requestId?: string, headerRequestId?: string) {
   const json = jest.fn();
   const status = jest.fn().mockReturnValue({ json });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = { status, json } as any;
-  const request = {
+  const response: MockResponse = { status, json };
+  const request: MockRequest = {
     requestId,
-    headers: headerRequestId ? { 'x-request-id': headerRequestId } : {},
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any;
+    headers: headerRequestId ? { "x-request-id": headerRequestId } : {},
+  };
 
-  return {
+  const host = {
     switchToHttp: () => ({
       getResponse: () => response,
       getRequest: () => request,
     }),
-    json,
-    response,
-    request,
-  };
+  } as unknown as ArgumentsHost;
+
+  return { host, response, json };
 }
 
-describe('HttpExceptionFilter', () => {
+describe("HttpExceptionFilter", () => {
   let filter: HttpExceptionFilter;
   const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
-    process.env.NODE_ENV = 'test';
+    process.env.NODE_ENV = "test";
     filter = new HttpExceptionFilter();
   });
 
@@ -42,66 +49,64 @@ describe('HttpExceptionFilter', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  describe('ValidationException', () => {
-    it('should map each error with source.pointer=/data/attributes/{field}', () => {
+  describe("ValidationException", () => {
+    it("should map each error with source.pointer=/data/attributes/{field}", () => {
       const exception = new ValidationException([
-        { field: 'email', message: 'Invalid email' },
-        { field: 'name', message: 'Name required' },
+        { field: "email", message: "Invalid email" },
+        { field: "name", message: "Name required" },
       ]);
-      const host = createMockHost(undefined, 'req-1');
+      const { host, response, json } = createMockHost(undefined, "req-1");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.response.status).toHaveBeenCalledWith(HttpStatus.UNPROCESSABLE_ENTITY);
-      expect(host.json).toHaveBeenCalledWith({
+      expect(response.status).toHaveBeenCalledWith(HttpStatus.UNPROCESSABLE_ENTITY);
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '422',
-            code: '42200',
-            title: 'Unprocessable Entity',
-            detail: 'Invalid email',
-            source: { pointer: '/data/attributes/email' },
-            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: 'req-1' }),
+            status: "422",
+            code: "42200",
+            title: "Unprocessable Entity",
+            detail: "Invalid email",
+            source: { pointer: "/data/attributes/email" },
+            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: "req-1" }),
           },
           {
-            status: '422',
-            code: '42200',
-            title: 'Unprocessable Entity',
-            detail: 'Name required',
-            source: { pointer: '/data/attributes/name' },
-            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: 'req-1' }),
+            status: "422",
+            code: "42200",
+            title: "Unprocessable Entity",
+            detail: "Name required",
+            source: { pointer: "/data/attributes/name" },
+            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: "req-1" }),
           },
         ],
       });
     });
   });
 
-  describe('BusinessException', () => {
-    it('should map with businessCode, errorKey as title, details in meta', () => {
+  describe("BusinessException", () => {
+    it("should map with businessCode, errorKey as title, details in meta", () => {
       const exception = new BusinessException(
-        'INSUFFICIENT_BALANCE',
-        'Balance too low',
+        "INSUFFICIENT_BALANCE",
+        "Balance too low",
         { currentBalance: 50, required: 100 },
         40103,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
-      const host = createMockHost(undefined, 'req-2');
+      const { host, response, json } = createMockHost(undefined, "req-2");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.response.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
-      expect(host.json).toHaveBeenCalledWith({
+      expect(response.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '400',
-            code: '40103',
-            title: 'INSUFFICIENT_BALANCE',
-            detail: 'Balance too low',
+            status: "400",
+            code: "40103",
+            title: "INSUFFICIENT_BALANCE",
+            detail: "Balance too low",
             meta: expect.objectContaining({
               timestamp: expect.any(String),
-              requestId: 'req-2',
+              requestId: "req-2",
               details: { currentBalance: 50, required: 100 },
             }),
           },
@@ -110,108 +115,103 @@ describe('HttpExceptionFilter', () => {
     });
   });
 
-  describe('NotFoundException', () => {
-    it('should map to 404 with code RESOURCE_NOT_FOUND', () => {
-      const exception = new NotFoundException('User', 'user-123');
-      const host = createMockHost(undefined, 'req-3');
+  describe("NotFoundException", () => {
+    it("should map to 404 with code RESOURCE_NOT_FOUND", () => {
+      const exception = new NotFoundException("User", "user-123");
+      const { host, response, json } = createMockHost(undefined, "req-3");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-      expect(host.json).toHaveBeenCalledWith({
+      expect(response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '404',
-            code: 'RESOURCE_NOT_FOUND',
-            title: 'Not Found',
-            detail: 'User 不存在',
-            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: 'req-3' }),
+            status: "404",
+            code: "RESOURCE_NOT_FOUND",
+            title: "Not Found",
+            detail: "User 不存在",
+            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: "req-3" }),
           },
         ],
       });
     });
   });
 
-  describe('ForbiddenException', () => {
-    it('should map to 403 with code FORBIDDEN', () => {
-      const exception = new ForbiddenException('delete_user', 'user:delete');
-      const host = createMockHost(undefined, 'req-4');
+  describe("ForbiddenException", () => {
+    it("should map to 403 with code FORBIDDEN", () => {
+      const exception = new ForbiddenException("delete_user", "user:delete");
+      const { host, response, json } = createMockHost(undefined, "req-4");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.response.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
-      expect(host.json).toHaveBeenCalledWith({
+      expect(response.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '403',
-            code: 'FORBIDDEN',
-            title: 'Forbidden',
+            status: "403",
+            code: "FORBIDDEN",
+            title: "Forbidden",
             detail: expect.any(String),
-            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: 'req-4' }),
+            meta: expect.objectContaining({ timestamp: expect.any(String), requestId: "req-4" }),
           },
         ],
       });
     });
   });
 
-  describe('Generic HttpException', () => {
-    it('should map with status-derived code and title', () => {
-      const exception = new HttpException('Not found', HttpStatus.NOT_FOUND);
-      const host = createMockHost();
+  describe("Generic HttpException", () => {
+    it("should map with status-derived code and title", () => {
+      const exception = new HttpException("Not found", HttpStatus.NOT_FOUND);
+      const { host, response, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-      expect(host.json).toHaveBeenCalledWith({
+      expect(response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '404',
-            code: 'NOT_FOUND',
-            title: 'Not Found',
-            detail: 'Not found',
+            status: "404",
+            code: "NOT_FOUND",
+            title: "Not Found",
+            detail: "Not found",
             meta: expect.objectContaining({ timestamp: expect.any(String) }),
           },
         ],
       });
     });
 
-    it('should map 500 to INTERNAL_ERROR', () => {
-      const exception = new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
-      const host = createMockHost();
+    it("should map 500 to INTERNAL_ERROR", () => {
+      const exception = new HttpException("Server error", HttpStatus.INTERNAL_SERVER_ERROR);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.json).toHaveBeenCalledWith({
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '500',
-            code: 'INTERNAL_ERROR',
-            title: 'Internal Server Error',
-            detail: 'Server error',
+            status: "500",
+            code: "INTERNAL_ERROR",
+            title: "Internal Server Error",
+            detail: "Server error",
             meta: expect.objectContaining({ timestamp: expect.any(String) }),
           },
         ],
       });
     });
 
-    it('should map unknown status to ERROR code', () => {
-      const exception = new HttpException('Custom', 418);
-      const host = createMockHost();
+    it("should map unknown status to ERROR code", () => {
+      const exception = new HttpException("Custom", 418);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      expect(host.json).toHaveBeenCalledWith({
+      expect(json).toHaveBeenCalledWith({
         errors: [
           {
-            status: '418',
-            code: 'ERROR',
-            title: 'Error',
-            detail: 'Custom',
+            status: "418",
+            code: "ERROR",
+            title: "Error",
+            detail: "Custom",
             meta: expect.objectContaining({ timestamp: expect.any(String) }),
           },
         ],
@@ -219,146 +219,136 @@ describe('HttpExceptionFilter', () => {
     });
   });
 
-  describe('HttpException with array message', () => {
-    it('should map to validation errors with source.pointer', () => {
+  describe("HttpException with array message", () => {
+    it("should map to validation errors with source.pointer", () => {
       const exception = new HttpException(
-        { message: ['email must be a valid email', 'password is too short'] },
-        HttpStatus.BAD_REQUEST,
+        { message: ["email must be a valid email", "password is too short"] },
+        HttpStatus.BAD_REQUEST
       );
-      const host = createMockHost();
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
+      const call = json.mock.calls[0][0];
       expect(call.errors).toHaveLength(2);
-      expect(call.errors[0].code).toBe('VALIDATION_ERROR');
-      expect(call.errors[0].detail).toBe('email must be a valid email');
-      expect(call.errors[0].source.pointer).toBe('/data/attributes/email');
-      expect(call.errors[1].source.pointer).toBe('/data/attributes/password');
+      expect(call.errors[0].code).toBe("VALIDATION_ERROR");
+      expect(call.errors[0].detail).toBe("email must be a valid email");
+      expect(call.errors[0].source.pointer).toBe("/data/attributes/email");
+      expect(call.errors[1].source.pointer).toBe("/data/attributes/password");
     });
 
-    it('should handle array message without field pattern', () => {
+    it("should handle array message without field pattern", () => {
       const exception = new HttpException(
-        { message: ['validation failed on multiple fields'] },
-        HttpStatus.BAD_REQUEST,
+        { message: ["validation failed on multiple fields"] },
+        HttpStatus.BAD_REQUEST
       );
-      const host = createMockHost();
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
-      expect(call.errors[0].code).toBe('VALIDATION_ERROR');
-      expect(call.errors[0].source).toEqual({ pointer: '/data/attributes/validation' });
+      const call = json.mock.calls[0][0];
+      expect(call.errors[0].code).toBe("VALIDATION_ERROR");
+      expect(call.errors[0].source).toEqual({ pointer: "/data/attributes/validation" });
     });
   });
 
-  describe('Production mode', () => {
+  describe("Production mode", () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      process.env.NODE_ENV = "production";
       filter = new HttpExceptionFilter();
     });
 
-    it('should exclude stack trace', () => {
-      const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
-      const host = createMockHost();
+    it("should exclude stack trace", () => {
+      const exception = new HttpException("Error", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
+      const call = json.mock.calls[0][0];
       expect(call.errors[0].meta.stack).toBeUndefined();
     });
   });
 
-  describe('Non-production mode', () => {
-    it('should include stack trace', () => {
-      const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
-      const host = createMockHost();
+  describe("Non-production mode", () => {
+    it("should include stack trace", () => {
+      const exception = new HttpException("Error", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
+      const call = json.mock.calls[0][0];
       expect(call.errors[0].meta.stack).toBeDefined();
     });
   });
 
-  describe('requestId', () => {
-    it('should use request.requestId when available', () => {
-      const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
-      const host = createMockHost('direct-request-id');
+  describe("requestId", () => {
+    it("should use request.requestId when available", () => {
+      const exception = new HttpException("Error", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost("direct-request-id");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
-      expect(call.errors[0].meta.requestId).toBe('direct-request-id');
+      const call = json.mock.calls[0][0];
+      expect(call.errors[0].meta.requestId).toBe("direct-request-id");
     });
 
-    it('should fall back to X-Request-Id header', () => {
-      const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
-      const host = createMockHost(undefined, 'header-request-id');
+    it("should fall back to X-Request-Id header", () => {
+      const exception = new HttpException("Error", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost(undefined, "header-request-id");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
-      expect(call.errors[0].meta.requestId).toBe('header-request-id');
+      const call = json.mock.calls[0][0];
+      expect(call.errors[0].meta.requestId).toBe("header-request-id");
     });
 
-    it('should omit requestId when neither is available', () => {
-      const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
-      const host = createMockHost();
+    it("should omit requestId when neither is available", () => {
+      const exception = new HttpException("Error", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
+      const call = json.mock.calls[0][0];
       expect(call.errors[0].meta.requestId).toBeUndefined();
     });
   });
 
-  describe('extractDetail', () => {
-    it('should extract string response', () => {
-      const exception = new HttpException('Simple message', HttpStatus.BAD_REQUEST);
-      const host = createMockHost();
+  describe("extractDetail", () => {
+    it("should extract string response", () => {
+      const exception = new HttpException("Simple message", HttpStatus.BAD_REQUEST);
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
-      expect(call.errors[0].detail).toBe('Simple message');
+      const call = json.mock.calls[0][0];
+      expect(call.errors[0].detail).toBe("Simple message");
     });
 
-    it('should extract message from object response', () => {
+    it("should extract message from object response", () => {
       const exception = new HttpException(
-        { message: 'Object message', code: 400 },
-        HttpStatus.BAD_REQUEST,
+        { message: "Object message", code: 400 },
+        HttpStatus.BAD_REQUEST
       );
-      const host = createMockHost();
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
-      expect(call.errors[0].detail).toBe('Object message');
+      const call = json.mock.calls[0][0];
+      expect(call.errors[0].detail).toBe("Object message");
     });
 
-    it('should fall back to exception.message when response has no message string', () => {
+    it("should fall back to exception.message when response has no message string", () => {
       const exception = new HttpException(
-        { error: 'Bad Request', statusCode: 400 },
-        HttpStatus.BAD_REQUEST,
+        { error: "Bad Request", statusCode: 400 },
+        HttpStatus.BAD_REQUEST
       );
-      const host = createMockHost();
+      const { host, json } = createMockHost();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      filter.catch(exception, host as any);
+      filter.catch(exception, host);
 
-      const call = host.json.mock.calls[0][0];
+      const call = json.mock.calls[0][0];
       expect(call.errors[0].detail).toBeDefined();
-      expect(typeof call.errors[0].detail).toBe('string');
+      expect(typeof call.errors[0].detail).toBe("string");
     });
   });
 });

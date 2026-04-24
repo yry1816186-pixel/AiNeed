@@ -5,11 +5,18 @@ import { IMAGE_SIZES } from "../utils/image-sizes";
 import { ImageProcessingService } from "./image-processing.service";
 
 jest.mock("sharp", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allChains: any[] = [];
+  interface MockChain {
+    resize: jest.Mock;
+    webp: jest.Mock;
+    jpeg: jest.Mock;
+    png: jest.Mock;
+    toBuffer: jest.Mock;
+    metadata: jest.Mock;
+  }
+  const allChains: MockChain[] = [];
 
   const createChain = () => {
-    const chain = {
+    const chain: MockChain = {
       resize: jest.fn().mockReturnThis(),
       webp: jest.fn().mockReturnThis(),
       jpeg: jest.fn().mockReturnThis(),
@@ -23,8 +30,12 @@ jest.mock("sharp", () => {
     return chain;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sharp = jest.fn().mockImplementation(() => createChain()) as any;
+  const sharp = jest.fn().mockImplementation(() => createChain()) as unknown as {
+    (): MockChain;
+    strategy: { attention: string };
+    _getAllChains: () => MockChain[];
+    _clearAllChains: () => void;
+  };
   sharp.strategy = { attention: "attention" };
   sharp._getAllChains = () => allChains;
   sharp._clearAllChains = () => {
@@ -81,10 +92,16 @@ describe("ImageProcessingService", () => {
       await service.generateSizes(buffer, ["thumbnail"]);
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
-      expect(resizeChain.resize).toHaveBeenCalledWith(
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const resizeChain = chains.find((c) => c.resize.mock.calls.length > 0);
+      expect(resizeChain!.resize).toHaveBeenCalledWith(
         IMAGE_SIZES.thumbnail.width,
         IMAGE_SIZES.thumbnail.height,
         expect.objectContaining({ fit: "cover" })
@@ -96,10 +113,16 @@ describe("ImageProcessingService", () => {
       await service.generateSizes(buffer, ["small"]);
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
-      expect(resizeChain.resize).toHaveBeenCalledWith(
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const resizeChain = chains.find((c) => c.resize.mock.calls.length > 0);
+      expect(resizeChain!.resize).toHaveBeenCalledWith(
         IMAGE_SIZES.small.width,
         IMAGE_SIZES.small.height,
         expect.objectContaining({ fit: "inside" })
@@ -111,9 +134,15 @@ describe("ImageProcessingService", () => {
       await service.generateSizes(buffer, ["original"]);
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const resizeChain = chains.find((c) => c.resize.mock.calls.length > 0);
       expect(resizeChain).toBeUndefined();
     });
 
@@ -132,9 +161,15 @@ describe("ImageProcessingService", () => {
       await service.optimize(buffer);
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const webpChain = chains.find((c: any) => c.webp.mock.calls.length > 0);
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const webpChain = chains.find((c) => c.webp.mock.calls.length > 0);
       expect(webpChain).toBeDefined();
     });
 
@@ -143,9 +178,15 @@ describe("ImageProcessingService", () => {
       await service.optimize(buffer, { format: "jpeg" });
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const jpegChain = chains.find((c: any) => c.jpeg.mock.calls.length > 0);
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const jpegChain = chains.find((c) => c.jpeg.mock.calls.length > 0);
       expect(jpegChain).toBeDefined();
     });
 
@@ -154,10 +195,16 @@ describe("ImageProcessingService", () => {
       await service.optimize(buffer, { width: 500, height: 500 });
 
       const sharpMock = jest.requireMock("sharp").default;
-      const chains = sharpMock._getAllChains();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
-      expect(resizeChain.resize).toHaveBeenCalledWith(
+      const chains: Array<{
+        resize: jest.Mock;
+        webp: jest.Mock;
+        jpeg: jest.Mock;
+        png: jest.Mock;
+        toBuffer: jest.Mock;
+        metadata: jest.Mock;
+      }> = sharpMock._getAllChains();
+      const resizeChain = chains.find((c) => c.resize.mock.calls.length > 0);
+      expect(resizeChain!.resize).toHaveBeenCalledWith(
         500,
         500,
         expect.objectContaining({ fit: "inside" })
