@@ -81,7 +81,7 @@ export const notificationApi = {
   }): Promise<NotificationListResponse> {
     const response = await apiClient.get<NotificationListResponse>(
       "/notifications",
-      params as Record<string, unknown>,
+      params as Record<string, unknown>
     );
     if (response.success && response.data) {
       return response.data as unknown as NotificationListResponse;
@@ -114,9 +114,7 @@ export const notificationApi = {
    * Get notification settings
    */
   async getNotificationSettings(): Promise<NotificationSettingsResponse | null> {
-    const response = await apiClient.get<NotificationSettingsResponse>(
-      "/notifications/settings",
-    );
+    const response = await apiClient.get<NotificationSettingsResponse>("/notifications/settings");
     if (response.success && response.data) {
       return response.data as unknown as NotificationSettingsResponse;
     }
@@ -126,9 +124,7 @@ export const notificationApi = {
   /**
    * Update notification settings
    */
-  async updateNotificationSettings(
-    settings: Partial<PushNotificationSettings>,
-  ): Promise<void> {
+  async updateNotificationSettings(settings: Partial<PushNotificationSettings>): Promise<void> {
     await apiClient.post("/notifications/settings", { push: settings });
   },
 
@@ -138,7 +134,7 @@ export const notificationApi = {
   async registerDeviceToken(
     token: string,
     platform: "ios" | "android",
-    appId?: string,
+    appId?: string
   ): Promise<void> {
     await apiClient.post("/notifications/device-token", {
       token,

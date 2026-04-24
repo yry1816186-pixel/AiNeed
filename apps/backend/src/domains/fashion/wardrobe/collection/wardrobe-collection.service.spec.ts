@@ -105,9 +105,7 @@ describe("WardrobeCollectionService", () => {
     it("should throw when collection not found", async () => {
       mockPrismaService.wardrobeCollection.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getCollectionById("user-1", "col-1"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getCollectionById("user-1", "col-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should throw when user does not own the collection", async () => {
@@ -116,9 +114,9 @@ describe("WardrobeCollectionService", () => {
         userId: "user-2",
       });
 
-      await expect(
-        service.getCollectionById("user-1", "col-1"),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.getCollectionById("user-1", "col-1")).rejects.toThrow(
+        ForbiddenException
+      );
     });
 
     it("should return collection when owned by user", async () => {
@@ -156,7 +154,7 @@ describe("WardrobeCollectionService", () => {
         expect.objectContaining({
           where: { id: "col-1" },
           data: expect.objectContaining({ name: "Updated" }),
-        }),
+        })
       );
     });
   });
@@ -169,9 +167,7 @@ describe("WardrobeCollectionService", () => {
         isDefault: true,
       });
 
-      await expect(
-        service.deleteCollection("user-1", "col-1"),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.deleteCollection("user-1", "col-1")).rejects.toThrow(ForbiddenException);
     });
 
     it("should delete non-default collection", async () => {
@@ -222,7 +218,14 @@ describe("WardrobeCollectionService", () => {
         userId: "user-1",
       });
       const mockItems = [
-        { id: "ci-1", collectionId: "col-1", itemType: CollectionItemType.POST, itemId: "post-1", sortOrder: 0, createdAt: new Date() },
+        {
+          id: "ci-1",
+          collectionId: "col-1",
+          itemType: CollectionItemType.POST,
+          itemId: "post-1",
+          sortOrder: 0,
+          createdAt: new Date(),
+        },
       ];
       mockPrismaService.wardrobeCollectionItem.findMany.mockResolvedValue(mockItems);
       mockPrismaService.wardrobeCollectionItem.count.mockResolvedValue(1);

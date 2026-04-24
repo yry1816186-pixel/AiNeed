@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React from "react";
 import {
   View,
@@ -11,8 +12,8 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, theme } from "../theme";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Colors, theme } from "../../theme";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

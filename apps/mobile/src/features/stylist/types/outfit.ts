@@ -1,4 +1,4 @@
-import { ClothingCategory } from '../../../types/clothing';
+import { ClothingCategory } from "../../../types/clothing";
 
 export interface OutfitItem {
   clothingId: string;

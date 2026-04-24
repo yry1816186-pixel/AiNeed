@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
 
 import { sizeRecommendationApi, type SizeRecommendation } from "../../../services/api/commerce.api";
@@ -36,7 +37,7 @@ export const useSizeRecommendationStore = create<SizeRecommendationStore>((set, 
       }
     } catch (error) {
       set((state) => ({
-        error: '获取尺码推荐失败',
+        error: "获取尺码推荐失败",
         isLoading: { ...state.isLoading, [itemId]: false },
       }));
     } finally {

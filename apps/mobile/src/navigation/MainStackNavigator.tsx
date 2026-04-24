@@ -1,21 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type {
-  HomeStackParamList,
+  TodayStackParamList,
+  DiscoverStackParamList,
   StylistStackParamList,
-  TryOnStackParamList,
-  CommunityStackParamList,
   ProfileStackParamList,
 } from "./types";
-import { useTheme, createStyles } from "../shared/contexts/ThemeContext";
+import { useTheme } from "../shared/contexts/ThemeContext";
 import { GuardedScreen } from "./RouteGuards";
-import { PageTransitions } from "../design-system/theme/tokens/animations";
+
 import { flatColors as colors } from "../design-system/theme";
 
 const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
 const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));
-const AIStylistScreen = lazy(() => import("../features/stylist/screens/AiStylistUnifiedScreen"));
+const AIStylistScreen = lazy(() => import("../features/stylist/screens/StylistScreen"));
 
 const TryOnResultScreenLazy = lazy(() => import("../features/tryon/screens/TryOnResultScreen"));
 
@@ -52,7 +52,12 @@ const screenLoader = (
 
 const commonScreenOptions = { headerShown: false } as const;
 
-const HomeFeedScreen = lazy(() => import("../features/home/screens/HomeScreen"));
+const TodayScreen = lazy(() =>
+  import("../features/today/screens/TodayScreen").then((m) => ({ default: m.TodayScreen }))
+);
+const DiscoverScreen = lazy(() =>
+  import("../features/discover/screens/DiscoverScreen").then((m) => ({ default: m.DiscoverScreen }))
+);
 const SearchScreen = lazy(() =>
   import("../features/search/screens/SearchScreen").then((m) => ({ default: m.SearchScreen }))
 );
@@ -151,23 +156,23 @@ function G({ route, children }: { route: string; children: React.ReactNode }) {
 }
 
 // ============================================================
-// Home Stack (Phase 4) — SharedElement for Product
+// Today Stack (replaces Home)
 // ============================================================
-const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const TodayStack = createNativeStackNavigator<TodayStackParamList>();
 
-export function HomeStackNavigator() {
+export function TodayStackNavigator() {
   return (
-    <HomeStack.Navigator screenOptions={commonScreenOptions} initialRouteName="HomeFeed">
-      <HomeStack.Screen
-        name="HomeFeed"
+    <TodayStack.Navigator screenOptions={commonScreenOptions} initialRouteName="TodayMain">
+      <TodayStack.Screen
+        name="TodayMain"
         options={{ animation: "slide_from_right" }}
         component={() => (
           <SuspenseScreen>
-            <HomeFeedScreen />
+            <TodayScreen />
           </SuspenseScreen>
         )}
       />
-      <HomeStack.Screen
+      <TodayStack.Screen
         name="Search"
         options={{ animation: "slide_from_right" }}
         component={() => (
@@ -176,7 +181,7 @@ export function HomeStackNavigator() {
           </SuspenseScreen>
         )}
       />
-      <HomeStack.Screen
+      <TodayStack.Screen
         name="Notifications"
         options={{ animation: "slide_from_right" }}
         component={() => (
@@ -187,7 +192,7 @@ export function HomeStackNavigator() {
           </G>
         )}
       />
-      <HomeStack.Screen
+      <TodayStack.Screen
         name="RecommendationDetail"
         options={{ animation: "slide_from_right" }}
         component={() => (
@@ -196,7 +201,7 @@ export function HomeStackNavigator() {
           </SuspenseScreen>
         )}
       />
-      <HomeStack.Screen
+      <TodayStack.Screen
         name="Product"
         options={{ animation: "slide_from_right" }}
         component={() => (
@@ -205,7 +210,7 @@ export function HomeStackNavigator() {
           </SuspenseScreen>
         )}
       />
-      <HomeStack.Screen
+      <TodayStack.Screen
         name="OutfitDetail"
         options={{ animation: "slide_from_right" }}
         component={() => (
@@ -214,7 +219,135 @@ export function HomeStackNavigator() {
           </SuspenseScreen>
         )}
       />
-    </HomeStack.Navigator>
+    </TodayStack.Navigator>
+  );
+}
+
+// ============================================================
+// Discover Stack (replaces Community + TryOn)
+// ============================================================
+const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
+
+export function DiscoverStackNavigator() {
+  return (
+    <DiscoverStack.Navigator screenOptions={commonScreenOptions} initialRouteName="DiscoverMain">
+      <DiscoverStack.Screen
+        name="DiscoverMain"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <SuspenseScreen>
+            <DiscoverScreen />
+          </SuspenseScreen>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="CommunityFeed"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <SuspenseScreen>
+            <CommunityFeedScreen />
+          </SuspenseScreen>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="PostDetail"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <SuspenseScreen>
+            <PostDetailScreenLazy />
+          </SuspenseScreen>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="PostCreate"
+        options={{ animation: "slide_from_bottom" }}
+        component={() => (
+          <G route="PostCreate">
+            <SuspenseScreen>
+              <PostCreateScreenLazy />
+            </SuspenseScreen>
+          </G>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="InfluencerProfile"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <G route="InfluencerProfile">
+            <SuspenseScreen>
+              <InfluencerProfileScreenLazy />
+            </SuspenseScreen>
+          </G>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="InspirationWardrobe"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <G route="InspirationWardrobe">
+            <SuspenseScreen>
+              <InspirationWardrobeScreenLazy />
+            </SuspenseScreen>
+          </G>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="BloggerDashboard"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <G route="BloggerDashboard">
+            <SuspenseScreen>
+              <BloggerDashboardScreen />
+            </SuspenseScreen>
+          </G>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="BloggerProfile"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <SuspenseScreen>
+            <BloggerProfileScreen />
+          </SuspenseScreen>
+        )}
+      />
+      <DiscoverStack.Screen
+        name="BloggerProduct"
+        options={{ animation: "slide_from_right" }}
+        component={() => (
+          <SuspenseScreen>
+            <BloggerProductScreen />
+          </SuspenseScreen>
+        )}
+      />
+      <DiscoverStack.Screen name="VirtualTryOn" options={{ animation: "slide_from_right" }}>
+        {() => (
+          <G route="VirtualTryOn">
+            <SuspenseScreen>
+              <VirtualTryOnScreen />
+            </SuspenseScreen>
+          </G>
+        )}
+      </DiscoverStack.Screen>
+      <DiscoverStack.Screen name="TryOnResult" options={{ animation: "fade" }}>
+        {() => (
+          <G route="TryOnResult">
+            <SuspenseScreen>
+              <TryOnResultScreenLazy />
+            </SuspenseScreen>
+          </G>
+        )}
+      </DiscoverStack.Screen>
+      <DiscoverStack.Screen name="TryOnHistory" options={{ animation: "slide_from_right" }}>
+        {() => (
+          <G route="TryOnHistory">
+            <SuspenseScreen>
+              <TryOnHistoryScreenLazy />
+            </SuspenseScreen>
+          </G>
+        )}
+      </DiscoverStack.Screen>
+    </DiscoverStack.Navigator>
   );
 }
 
@@ -276,138 +409,7 @@ export function StylistStackNavigator() {
 }
 
 // ============================================================
-// TryOn Stack (Phase 3 - 虚拟试衣)
-// ============================================================
-const TryOnStack = createNativeStackNavigator<TryOnStackParamList>();
-
-export function TryOnStackNavigator() {
-  return (
-    <TryOnStack.Navigator screenOptions={commonScreenOptions} initialRouteName="VirtualTryOn">
-      <TryOnStack.Screen name="VirtualTryOn" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="VirtualTryOn">
-            <SuspenseScreen>
-              <VirtualTryOnScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </TryOnStack.Screen>
-      <TryOnStack.Screen name="TryOnResult" options={{ animation: "fade" }}>
-        {() => (
-          <G route="TryOnResult">
-            <SuspenseScreen>
-              <TryOnResultScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </TryOnStack.Screen>
-      <TryOnStack.Screen name="TryOnHistory" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="TryOnHistory">
-            <SuspenseScreen>
-              <TryOnHistoryScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </TryOnStack.Screen>
-    </TryOnStack.Navigator>
-  );
-}
-
-// ============================================================
-// Community Stack (Phase 6 - 社区 & 博主生态) — SharedElement for PostDetail
-// ============================================================
-const CommunityStack = createNativeStackNavigator<CommunityStackParamList>();
-
-export function CommunityStackNavigator() {
-  return (
-    <CommunityStack.Navigator screenOptions={commonScreenOptions} initialRouteName="CommunityFeed">
-      <CommunityStack.Screen
-        name="CommunityFeed"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <CommunityFeedScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <CommunityStack.Screen
-        name="PostDetail"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <PostDetailScreenLazy />
-          </SuspenseScreen>
-        )}
-      />
-      <CommunityStack.Screen
-        name="PostCreate"
-        options={{ animation: "slide_from_bottom" }}
-        component={() => (
-          <G route="PostCreate">
-            <SuspenseScreen>
-              <PostCreateScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <CommunityStack.Screen
-        name="InfluencerProfile"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="InfluencerProfile">
-            <SuspenseScreen>
-              <InfluencerProfileScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <CommunityStack.Screen
-        name="InspirationWardrobe"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="InspirationWardrobe">
-            <SuspenseScreen>
-              <InspirationWardrobeScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <CommunityStack.Screen
-        name="BloggerDashboard"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="BloggerDashboard">
-            <SuspenseScreen>
-              <BloggerDashboardScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <CommunityStack.Screen
-        name="BloggerProfile"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <BloggerProfileScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <CommunityStack.Screen
-        name="BloggerProduct"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <BloggerProductScreen />
-          </SuspenseScreen>
-        )}
-      />
-    </CommunityStack.Navigator>
-  );
-}
-
-// ============================================================
-// Profile Stack (Phase 1/5/7/8 - 综合)
+// Profile Stack (Me Tab - Phase 1/5/7/8 - 综合)
 // ============================================================
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 

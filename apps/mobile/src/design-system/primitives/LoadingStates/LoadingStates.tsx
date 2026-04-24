@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
 import {
   View,
@@ -18,7 +19,7 @@ import Animated, {
   interpolate,
   interpolateColor,
 } from "react-native-reanimated";
-import { Colors, theme, DesignTokens } from "../theme";
+import { Colors, theme, DesignTokens } from "../../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -32,7 +33,7 @@ interface SpinnerProps {
 
 export function Spinner({ size = "large", color, style }: SpinnerProps) {
   const { colors } = useTheme();
-  const styles = useStyles(colors);
+
   return <ActivityIndicator size={size} color={color || Colors.primary[500]} style={style} />;
 }
 

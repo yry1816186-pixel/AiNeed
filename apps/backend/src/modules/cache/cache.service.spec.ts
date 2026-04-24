@@ -1,8 +1,9 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { RedisService } from "../../common/redis/redis.service";
 
 import { CacheService } from "./cache.service";
-import { RedisService } from "../../common/redis/redis.service";
 
 describe("CacheService", () => {
   let service: CacheService;
@@ -100,28 +101,21 @@ describe("CacheService", () => {
       expect(redisService.setex).toHaveBeenCalledWith(
         "test-key",
         300,
-        JSON.stringify({ data: "value" }),
+        JSON.stringify({ data: "value" })
       );
     });
 
     it("should call set without TTL when TTL is not provided", async () => {
       await service.set("test-key", { data: "value" });
 
-      expect(redisService.set).toHaveBeenCalledWith(
-        "test-key",
-        JSON.stringify({ data: "value" }),
-      );
+      expect(redisService.set).toHaveBeenCalledWith("test-key", JSON.stringify({ data: "value" }));
       expect(redisService.setex).not.toHaveBeenCalled();
     });
 
     it("should not double-serialize string values", async () => {
       await service.set("test-key", "raw-string-value", 60);
 
-      expect(redisService.setex).toHaveBeenCalledWith(
-        "test-key",
-        60,
-        "raw-string-value",
-      );
+      expect(redisService.setex).toHaveBeenCalledWith("test-key", 60, "raw-string-value");
     });
   });
 
@@ -146,9 +140,7 @@ describe("CacheService", () => {
     });
 
     it("should call fetcher and cache result on cache miss", async () => {
-      (redisService.get as jest.Mock)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null);
+      (redisService.get as jest.Mock).mockResolvedValueOnce(null).mockResolvedValueOnce(null);
       const fetchedData = { items: [4, 5, 6] };
       const fetcher = jest.fn().mockResolvedValue(fetchedData);
 
@@ -160,19 +152,13 @@ describe("CacheService", () => {
     });
 
     it("should cache null placeholder when fetcher returns null", async () => {
-      (redisService.get as jest.Mock)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null);
+      (redisService.get as jest.Mock).mockResolvedValueOnce(null).mockResolvedValueOnce(null);
       const fetcher = jest.fn().mockResolvedValue(null);
 
       const result = await service.getOrSet("test-key", fetcher, 3600, 120);
 
       expect(result).toBeNull();
-      expect(redisService.setex).toHaveBeenCalledWith(
-        "test-key",
-        120,
-        "__NULL__",
-      );
+      expect(redisService.setex).toHaveBeenCalledWith("test-key", 120, "__NULL__");
     });
   });
 
@@ -199,18 +185,11 @@ describe("CacheService", () => {
 
       const result = await service.getWithLock("test-key", fetcher, 3600);
 
-      expect(redisService.acquireLock).toHaveBeenCalledWith(
-        "lock:test-key",
-        10000,
-        1,
-      );
+      expect(redisService.acquireLock).toHaveBeenCalledWith("lock:test-key", 10000, 1);
       expect(fetcher).toHaveBeenCalled();
       expect(result).toEqual(fetchedData);
       expect(redisService.setex).toHaveBeenCalled();
-      expect(redisService.releaseLock).toHaveBeenCalledWith(
-        "lock:test-key",
-        "lock-token-123",
-      );
+      expect(redisService.releaseLock).toHaveBeenCalledWith("lock:test-key", "lock-token-123");
     });
   });
 

@@ -1,4 +1,5 @@
-﻿import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Spacing, BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";

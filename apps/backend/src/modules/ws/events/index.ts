@@ -1,9 +1,9 @@
 export const PROFILE_EVENTS = {
-  PROFILE_UPDATED: 'profile.updated',
-  ONBOARDING_COMPLETED: 'profile.onboarding_completed',
+  PROFILE_UPDATED: "profile.updated",
+  ONBOARDING_COMPLETED: "profile.onboarding_completed",
 } as const;
 
-export type ProfileEventType = typeof PROFILE_EVENTS[keyof typeof PROFILE_EVENTS];
+export type ProfileEventType = (typeof PROFILE_EVENTS)[keyof typeof PROFILE_EVENTS];
 
 export interface ProfileUpdatedPayload {
   userId: string;
@@ -18,12 +18,12 @@ export interface OnboardingCompletedPayload {
 export type ProfileEventPayload = ProfileUpdatedPayload | OnboardingCompletedPayload;
 
 export const AI_EVENTS = {
-  AI_TASK_STARTED: 'ai.task_started',
-  AI_TASK_PROGRESS: 'ai.task_progress',
-  AI_TASK_COMPLETED: 'ai.task_completed',
+  AI_TASK_STARTED: "ai.task_started",
+  AI_TASK_PROGRESS: "ai.task_progress",
+  AI_TASK_COMPLETED: "ai.task_completed",
 } as const;
 
-export type AIEventType = typeof AI_EVENTS[keyof typeof AI_EVENTS];
+export type AIEventType = (typeof AI_EVENTS)[keyof typeof AI_EVENTS];
 
 export interface AITaskStartedPayload {
   userId: string;
@@ -49,10 +49,10 @@ export interface AITaskCompletedPayload {
 export type AIEventPayload = AITaskStartedPayload | AITaskProgressPayload | AITaskCompletedPayload;
 
 export const QUIZ_EVENTS = {
-  QUIZ_PROGRESS_SAVED: 'quiz.progress_saved',
+  QUIZ_PROGRESS_SAVED: "quiz.progress_saved",
 } as const;
 
-export type QuizEventType = typeof QUIZ_EVENTS[keyof typeof QUIZ_EVENTS];
+export type QuizEventType = (typeof QUIZ_EVENTS)[keyof typeof QUIZ_EVENTS];
 
 export interface QuizProgressSavedPayload {
   userId: string;
@@ -64,11 +64,11 @@ export interface QuizProgressSavedPayload {
 export type QuizEventPayload = QuizProgressSavedPayload;
 
 export const NOTIFICATION_EVENTS = {
-  NEW_NOTIFICATION: 'notification.new',
-  NOTIFICATION_READ: 'notification.read',
+  NEW_NOTIFICATION: "notification.new",
+  NOTIFICATION_READ: "notification.read",
 } as const;
 
-export type NotificationEventType = typeof NOTIFICATION_EVENTS[keyof typeof NOTIFICATION_EVENTS];
+export type NotificationEventType = (typeof NOTIFICATION_EVENTS)[keyof typeof NOTIFICATION_EVENTS];
 
 export interface NewNotificationPayload {
   userId: string;
@@ -86,12 +86,12 @@ export interface NotificationReadPayload {
 export type NotificationEventPayload = NewNotificationPayload | NotificationReadPayload;
 
 export const COMMUNITY_EVENTS = {
-  NEW_POST: 'community.new_post',
-  NEW_COMMENT: 'community.new_comment',
-  NEW_LIKE: 'community.new_like',
+  NEW_POST: "community.new_post",
+  NEW_COMMENT: "community.new_comment",
+  NEW_LIKE: "community.new_like",
 } as const;
 
-export type CommunityEventType = typeof COMMUNITY_EVENTS[keyof typeof COMMUNITY_EVENTS];
+export type CommunityEventType = (typeof COMMUNITY_EVENTS)[keyof typeof COMMUNITY_EVENTS];
 
 export interface NewPostPayload {
   userId: string;
@@ -116,13 +116,13 @@ export interface NewLikePayload {
 export type CommunityEventPayload = NewPostPayload | NewCommentPayload | NewLikePayload;
 
 export const CHAT_EVENTS = {
-  MESSAGE_CREATED: 'chat.message_created',
-  MESSAGE_READ: 'chat.message_read',
-  TYPING_START: 'chat.typing_start',
-  TYPING_STOP: 'chat.typing_stop',
+  MESSAGE_CREATED: "chat.message_created",
+  MESSAGE_READ: "chat.message_read",
+  TYPING_START: "chat.typing_start",
+  TYPING_STOP: "chat.typing_stop",
 } as const;
 
-export type ChatEventType = typeof CHAT_EVENTS[keyof typeof CHAT_EVENTS];
+export type ChatEventType = (typeof CHAT_EVENTS)[keyof typeof CHAT_EVENTS];
 
 export interface ChatMessageCreatedPayload {
   roomId: string;
@@ -146,7 +146,10 @@ export interface ChatTypingPayload {
   isTyping: boolean;
 }
 
-export type ChatEventPayload = ChatMessageCreatedPayload | ChatMessageReadPayload | ChatTypingPayload;
+export type ChatEventPayload =
+  | ChatMessageCreatedPayload
+  | ChatMessageReadPayload
+  | ChatTypingPayload;
 
 export type WSEventType =
   | ProfileEventType

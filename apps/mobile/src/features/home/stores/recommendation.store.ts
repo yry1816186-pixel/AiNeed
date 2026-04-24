@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { create } from "zustand";
 import { recommendationFeedApi } from "../../../services/api/recommendation-feed.api";
 
@@ -39,12 +40,17 @@ export const useRecommendationStore = create<RecommendationState>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
-  clear: () => set({ recommendations: [], similarItems: [], outfitRecommendations: {}, error: null }),
+  clear: () =>
+    set({ recommendations: [], similarItems: [], outfitRecommendations: {}, error: null }),
 
   fetchRecommendations: async (category = "daily", page = 1, pageSize = 10) => {
     set({ isLoading: true, error: null });
     try {
-      const result = await recommendationFeedApi.getFeed({ category: category as "daily" | "occasion" | "trending" | "explore", page, pageSize });
+      const result = await recommendationFeedApi.getFeed({
+        category: category as "daily" | "occasion" | "trending" | "explore",
+        page,
+        pageSize,
+      });
       // Map FeedItem to RecommendationItem format
       const mapped: RecommendationItem[] = result.items.map((item) => ({
         item_id: item.id,
@@ -56,7 +62,7 @@ export const useRecommendationStore = create<RecommendationState>((set) => ({
       }));
       set({ recommendations: mapped, isLoading: false });
     } catch {
-      set({ error: '获取推荐失败，请稍后重试', isLoading: false });
+      set({ error: "获取推荐失败，请稍后重试", isLoading: false });
     }
   },
 
@@ -64,9 +70,9 @@ export const useRecommendationStore = create<RecommendationState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       // TODO: 连接后端 GET /recommendations/complete-the-look/:clothingId API 后替换
-      set({ error: '功能开发中，敬请期待', isLoading: false });
+      set({ error: "功能开发中，敬请期待", isLoading: false });
     } catch {
-      set({ error: '获取相似商品失败，请稍后重试', isLoading: false });
+      set({ error: "获取相似商品失败，请稍后重试", isLoading: false });
     }
   },
 }));

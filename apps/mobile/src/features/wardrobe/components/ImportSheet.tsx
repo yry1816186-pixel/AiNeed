@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -10,12 +9,11 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
-  FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from "../../../design-system/theme";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
-import { communityApi } from "../../services/api/community.api";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { communityApi } from "../../../services/api/community.api";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -83,6 +81,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
       void fetchItems();
       void fetchCollections();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, source]);
 
   const fetchItems = useCallback(async () => {
@@ -287,7 +286,9 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
           {/* Import button */}
           <TouchableOpacity
             style={[styles.importBtn, importing && styles.importBtnDisabled]}
-            onPress={handleImport}
+            onPress={() => {
+              void handleImport();
+            }}
             disabled={importing}
           >
             {importing ? (
@@ -391,7 +392,11 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  itemName: {
+    flex: 1,
+    fontSize: DesignTokens.typography.sizes.base,
+    color: theme.colors.textPrimary,
+  },
   checkbox: {
     width: 20,
     height: 20,

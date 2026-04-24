@@ -14,11 +14,11 @@ inputs/outputs, mathematical foundations, key parameters, and integration points
 
 ### Pipeline Stages
 
-| Stage | Component | Description |
-|-------|-----------|-------------|
-| 1 | TryonPreprocessor | Analyzes person/garment images, extracts keypoints, lighting, garment features |
-| 2 | TryonPromptEngine | Generates dynamic prompt from preprocessing results |
-| 3 | TryonPostprocessor | Validates result quality (proportion, color, face preservation) |
+| Stage | Component          | Description                                                                    |
+| ----- | ------------------ | ------------------------------------------------------------------------------ |
+| 1     | TryonPreprocessor  | Analyzes person/garment images, extracts keypoints, lighting, garment features |
+| 2     | TryonPromptEngine  | Generates dynamic prompt from preprocessing results                            |
+| 3     | TryonPostprocessor | Validates result quality (proportion, color, face preservation)                |
 
 ### Input
 
@@ -52,7 +52,7 @@ prompt: Optional[str]  # User-provided prompt override
 ### Key Algorithms
 
 - **Body region segmentation**: MediaPipe 33 keypoints, convex hull + dilation
-- **Skin tone extraction**: CIELAB L*/a*/b* sampling from face region
+- **Skin tone extraction**: CIELAB L*/a*/b\* sampling from face region
 - **Garment color extraction**: K-means (k=3) in CIELAB space
 - **Color consistency**: CIEDE2000 DeltaE between original and result garment
 - **Face preservation**: SSIM (Structural Similarity Index) on face crops
@@ -95,9 +95,11 @@ ColorSeasonResult {
 ### Key Algorithms
 
 **ITA (Individual Typology Angle)**:
+
 ```
 ITA = arctan((L* - 50) / b*) * (180 / pi)
 ```
+
 - ITA > 55: Very Light | 41-55: Light | 30-41: Intermediate | 19-30: Tan | 10-19: Brown | < 10: Dark
 
 **12-Season Classification**:
@@ -111,7 +113,7 @@ ITA = arctan((L* - 50) / b*) * (180 / pi)
 | COOL | LIGHT | CLEAR | Light Summer |
 | COOL | DEEP | MUTED | Soft Summer |
 | COOL | DEEP | CLEAR | Winter Cool Deep Clear |
-| NEUTRAL | * | * | Grouped with WARM (default) |
+| NEUTRAL | _ | _ | Grouped with WARM (default) |
 
 **Face Mesh Regions**: MediaPipe 468 landmarks for forehead, cheeks, nose bridge, chin.
 
@@ -153,9 +155,11 @@ CompatibilityResult {
 ### Key Algorithms
 
 **CIEDE2000 Color Scoring**:
+
 ```
 score = max(0, 1 - deltaE / 50)
 ```
+
 - deltaE < 10: very harmonious (score ~0.9)
 - deltaE 10-25: complementary (score 0.6-0.8)
 - deltaE > 50: clashing (score < 0.3)
@@ -169,6 +173,7 @@ score = max(0, 1 - deltaE / 50)
 | accessories-any | 0.40 | 0.10 | 0.25-0.30 | 0.20-0.25 |
 
 **Outfit-Level Score**:
+
 ```
 outfit_score = min(pairwise) * 0.4 + avg(pairwise) * 0.6
 diversity = min(1, sqrt(variance) * 5)
@@ -213,19 +218,22 @@ PredictResponse {
 ### Key Algorithms
 
 **Architecture**: Multi-block transformer with:
+
 - Positional encoding (sinusoidal)
 - Multi-head self-attention (4 heads, causal mask)
 - Layer normalization (eps=1e-5)
-- Feed-forward network (dim -> 4*dim -> dim, ReLU)
+- Feed-forward network (dim -> 4\*dim -> dim, ReLU)
 - Residual connections
 - Dropout (0.1, training only)
 
 **BPR Loss** (Bayesian Personalized Ranking):
+
 ```
 loss = -log(sigmoid(pos_score - neg_score))
 ```
 
 **Initialization**: Xavier/Glorot
+
 ```
 scale = sqrt(2 / (fan_in + fan_out))
 W = randn(fan_in, fan_out) * scale
@@ -268,21 +276,23 @@ RecommendationResult {
 ### Key Algorithms
 
 **Gaussian Distance Scoring**:
+
 ```
 score = 1.0                                    if min <= m <= max
 score = exp(-(distance^2) / (2 * sigma^2))     otherwise
 ```
 
 | Dimension | Weight | Sigma |
-|-----------|--------|-------|
+| --------- | ------ | ----- |
 | Bust      | 3.0    | 4 cm  |
-| Waist    | 2.5    | 3 cm  |
-| Hip      | 2.5    | 4 cm  |
-| Height   | 1.0    | 6 cm  |
+| Waist     | 2.5    | 3 cm  |
+| Hip       | 2.5    | 4 cm  |
+| Height    | 1.0    | 6 cm  |
 
 **Fit Preference Offset**: tight = -2cm, regular = 0cm, loose = +2cm
 
 **Brand Offset**: Computed from order history vs return history
+
 ```
 offset = size_index(kept) - size_index(returned)
 ```
@@ -332,6 +342,7 @@ ColdStartStrategy {
 
 **Color Season Filtering**: Items filtered by CIEDE2000 distance to
 seasonal palette:
+
 - deltaE < 20: very harmonious
 - deltaE 20-40: acceptable
 - deltaE > 40: excluded
@@ -375,6 +386,7 @@ hybridSearch(query: string, options?: {
 ### Key Algorithms
 
 **Reciprocal Rank Fusion (RRF)**:
+
 ```
 RRF_score = sum(weight_i / (k + rank_i)) for each ranking i
 k = 60  (standard RRF constant)
@@ -421,6 +433,7 @@ the CIEDE2000 weighting functions with G factor for chroma, T factor for hue,
 and RT rotation term.
 
 **sRGB to CIELAB conversion**: Uses IEC 61966-2-1 standard linearization:
+
 ```
 linear = ((c + 0.055) / 1.055) ^ 2.4   if c > 0.04045
 linear = c / 12.92                      otherwise
@@ -430,11 +443,11 @@ linear = c / 12.92                      otherwise
 
 ## Environment Variables
 
-| Variable | Used By | Description |
-|----------|---------|-------------|
-| `GLM_API_KEY` | intelligent_stylist, visual_outfit, tryon | GLM/Zhipu AI API key |
-| `ZHIPU_API_KEY` | intelligent_stylist | Zhipu AI API key (fallback) |
-| `DOUBAO_SEEDREAM_API_KEY` | virtual_tryon | Doubao image generation key |
-| `DOUBAO_SEEDREAM_API_URL` | virtual_tryon | Seedream API endpoint |
-| `ML_SERVICE_URL` | search, sasrec-client | Python ML service URL (default :8001) |
-| `QDRANT_URL` | qdrant.service | Qdrant vector DB URL |
+| Variable                  | Used By                                   | Description                           |
+| ------------------------- | ----------------------------------------- | ------------------------------------- |
+| `GLM_API_KEY`             | intelligent_stylist, visual_outfit, tryon | GLM/Zhipu AI API key                  |
+| `ZHIPU_API_KEY`           | intelligent_stylist                       | Zhipu AI API key (fallback)           |
+| `DOUBAO_SEEDREAM_API_KEY` | virtual_tryon                             | Doubao image generation key           |
+| `DOUBAO_SEEDREAM_API_URL` | virtual_tryon                             | Seedream API endpoint                 |
+| `ML_SERVICE_URL`          | search, sasrec-client                     | Python ML service URL (default :8001) |
+| `QDRANT_URL`              | qdrant.service                            | Qdrant vector DB URL                  |

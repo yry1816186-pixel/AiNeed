@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getOptimizedImageUrl, getPlaceholder, getSrcSet } from "../imageOptimizer";
 
 describe("getOptimizedImageUrl", () => {

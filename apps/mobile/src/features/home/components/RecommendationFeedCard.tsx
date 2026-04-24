@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires */
 import React, { memo, useCallback } from "react";
-import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
+import { View, Text, Pressable, type ViewStyle, type ImageStyle } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import type { FeedItem } from "../../../services/api/recommendation-feed.api";
-import { OptimizedImage } from "../common/OptimizedImage";
+import { OptimizedImage } from "../../../shared/components/common/OptimizedImage";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface RecommendationCardProps {
   item: FeedItem;
@@ -39,7 +40,7 @@ export const RecommendationCard = memo(function RecommendationCard({
       <View style={styles.imageContainer}>
         <OptimizedImage
           source={item.mainImage}
-          style={styles.image as ViewStyle}
+          style={styles.image as ImageStyle}
           resizeMode="cover"
         />
         {discount > 0 && (

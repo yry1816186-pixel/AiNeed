@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";

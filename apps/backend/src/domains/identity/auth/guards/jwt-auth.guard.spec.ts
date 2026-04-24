@@ -100,7 +100,7 @@ describe("JwtAuthGuard", () => {
       // Mock super.canActivate to track if it's called
       const superCanActivateSpy = jest.spyOn(
         Object.getPrototypeOf(Object.getPrototypeOf(guard)),
-        "canActivate",
+        "canActivate"
       );
 
       const result = guard.canActivate(context);
@@ -117,10 +117,9 @@ describe("JwtAuthGuard", () => {
       const context = createMockExecutionContext();
 
       // Mock super.canActivate to avoid the "Unknown authentication strategy" error
-      const superCanActivateSpy = jest.spyOn(
-        Object.getPrototypeOf(Object.getPrototypeOf(guard)),
-        "canActivate",
-      ).mockReturnValue(true as unknown as Observable<boolean>);
+      const superCanActivateSpy = jest
+        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(guard)), "canActivate")
+        .mockReturnValue(true as unknown as Observable<boolean>);
 
       const _result = guard.canActivate(context);
 
@@ -137,11 +136,13 @@ describe("JwtAuthGuard", () => {
       const context = createMockExecutionContext();
 
       // Mock super.canActivate
-      jest.spyOn(
-        Object.getPrototypeOf(Object.getPrototypeOf(guard)),
-        "canActivate",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ).mockReturnValue(true as any);
+      jest
+        .spyOn(
+          Object.getPrototypeOf(Object.getPrototypeOf(guard)),
+          "canActivate"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        )
+        .mockReturnValue(true as any);
 
       const result = guard.canActivate(context);
 
@@ -159,10 +160,9 @@ describe("JwtAuthGuard", () => {
       const context = createMockExecutionContext();
 
       // Mock super.canActivate to return false (denied access)
-      jest.spyOn(
-        Object.getPrototypeOf(Object.getPrototypeOf(guard)),
-        "canActivate",
-      ).mockReturnValue(false as unknown as Observable<boolean>);
+      jest
+        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(guard)), "canActivate")
+        .mockReturnValue(false as unknown as Observable<boolean>);
 
       const result = guard.canActivate(context);
 

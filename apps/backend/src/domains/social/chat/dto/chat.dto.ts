@@ -100,7 +100,12 @@ export class CreateChatMessageDto {
   @MinLength(1)
   content!: string;
 
-  @ApiPropertyOptional({ description: "消息类型", enum: MessageTypeDto, example: MessageTypeDto.TEXT, default: MessageTypeDto.TEXT })
+  @ApiPropertyOptional({
+    description: "消息类型",
+    enum: MessageTypeDto,
+    example: MessageTypeDto.TEXT,
+    default: MessageTypeDto.TEXT,
+  })
   @IsOptional()
   @IsEnum(MessageTypeDto)
   messageType?: MessageTypeDto = MessageTypeDto.TEXT;

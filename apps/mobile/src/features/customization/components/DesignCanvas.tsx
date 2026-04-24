@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";

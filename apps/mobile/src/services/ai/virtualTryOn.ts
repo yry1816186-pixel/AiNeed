@@ -11,7 +11,7 @@ interface TryOnOptions {
 /** Simple counting semaphore for concurrency control */
 class Semaphore {
   private current = 0;
-  private waitQueue: Array<() => void> = [];
+  private waitQueue: (() => void)[] = [];
 
   constructor(private readonly max: number) {}
 
@@ -56,9 +56,7 @@ class VirtualTryOnService {
 
   async tryOnMultiple(personPhotoId: string, clothingItemIds: string[]): Promise<TryOnResult[]> {
     const results = await Promise.all(
-      clothingItemIds.map((itemId) =>
-        this.tryOnWithConcurrency(personPhotoId, itemId)
-      )
+      clothingItemIds.map((itemId) => this.tryOnWithConcurrency(personPhotoId, itemId))
     );
     return results;
   }
@@ -107,8 +105,12 @@ class VirtualTryOnService {
       let settled = false;
 
       const unsubComplete = wsService.onTryOnComplete(tryOnId, (payload) => {
-        if (payload.tryOnId !== tryOnId) { return; }
-        if (settled) { return; }
+        if (payload.tryOnId !== tryOnId) {
+          return;
+        }
+        if (settled) {
+          return;
+        }
         settled = true;
         cleanup();
 

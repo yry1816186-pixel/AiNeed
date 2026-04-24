@@ -11,7 +11,7 @@ export function createSwaggerConfig() {
     .addBearerAuth()
     .addApiKey(
       { type: "apiKey", name: "x-api-key", in: "header", description: "ML服务API密钥" },
-      "x-api-key",
+      "x-api-key"
     )
     .addTag("auth", "认证相关接口 - 登录、注册、密码重置")
     .addTag("users", "用户管理 - 用户信息、设置")

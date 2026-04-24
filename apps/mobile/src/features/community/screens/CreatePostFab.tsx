@@ -1,18 +1,16 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-
-
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { Spacing, flatColors as staticColors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface CreatePostFabProps {
   onPress: () => void;
 }
 
 function CreatePostFabInner({ onPress }: CreatePostFabProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       style={s.fab}

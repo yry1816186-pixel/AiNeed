@@ -1,11 +1,11 @@
-import apiClient from '../../../services/api/client';
+import apiClient from "../../../services/api/client";
 import {
   ApiResponse,
   PaginatedResponse,
   SimilarItemResult,
   OutfitRecommendationResult,
-} from '../../../types';
-import { Outfit, OutfitInput, OutfitItem } from '../../../types/outfit';
+} from "../../../types";
+import { Outfit, OutfitInput, OutfitItem } from "../../../types/outfit";
 
 export const outfitApi = {
   async getAll(params?: {

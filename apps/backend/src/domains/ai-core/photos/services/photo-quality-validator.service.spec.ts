@@ -77,7 +77,7 @@ describe("PhotoQualityValidator", () => {
       const result = await service.validateQuality(imageBuffer);
 
       const expectedOverall = Math.round(
-        result.clarity * 0.4 + result.brightness * 0.3 + result.composition * 0.3,
+        result.clarity * 0.4 + result.brightness * 0.3 + result.composition * 0.3
       );
       expect(result.overall).toBe(Math.max(0, Math.min(100, expectedOverall)));
     });

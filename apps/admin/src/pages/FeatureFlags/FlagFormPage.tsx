@@ -147,7 +147,7 @@ export function FlagFormPage() {
 
   const handleTypeChange = (newType: FlagType) => {
     setType(newType);
-    const defaults = DEFAULT_VALUES[newType] as Record<string, any>;
+    const defaults = DEFAULT_VALUES[newType] as Record<string, unknown>;
     switch (newType) {
       case 'boolean':
         setBoolValue(defaults.enabled as boolean);

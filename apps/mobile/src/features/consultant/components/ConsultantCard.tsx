@@ -1,7 +1,7 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { RatingBadge } from "../../design-system/ui/Rating";
+import { RatingBadge } from "../../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -88,7 +88,7 @@ const useStyles = createStyles((colors) => ({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "colors.backgroundTertiary",
+    borderColor: colors.backgroundTertiary,
   },
   header: {
     flexDirection: "row",
@@ -105,7 +105,7 @@ const useStyles = createStyles((colors) => ({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -121,7 +121,7 @@ const useStyles = createStyles((colors) => ({
   studioName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   specialtyRow: {
@@ -130,16 +130,16 @@ const useStyles = createStyles((colors) => ({
     gap: 4,
   },
   specialtyBadge: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "colors.primaryLight",
+    borderColor: colors.primaryLight,
   },
   specialtyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: colors.primary,
   },
   footer: {
     marginBottom: 8,
@@ -161,7 +161,7 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: colors.primary,
     marginTop: 4,
   },
   cta: {
@@ -169,7 +169,7 @@ const useStyles = createStyles((colors) => ({
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "colors.primary",
+    color: colors.primary,
     fontWeight: "500",
   },
 }));

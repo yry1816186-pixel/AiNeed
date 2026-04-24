@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
 import React, { useState, useCallback, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../../../polyfills/expo-vector-icons";
@@ -102,7 +103,9 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({
 
   const handleSelect = useCallback(
     (optionId: string) => {
-      if (selectedId || isTransitioning.current) return;
+      if (selectedId || isTransitioning.current) {
+        return;
+      }
 
       setSelectedId(optionId);
       isTransitioning.current = true;

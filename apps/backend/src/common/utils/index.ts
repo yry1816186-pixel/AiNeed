@@ -1,2 +1,2 @@
-export * from './cursor';
-export * from './image-sizes';
+export * from "./cursor";
+export * from "./image-sizes";

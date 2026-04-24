@@ -5,10 +5,7 @@ import { NotificationService as WebSocketNotificationService } from "../../../..
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { NotificationTemplateService } from "./notification-template.service";
-import {
-  NotificationService,
-  CreateNotificationDto,
-} from "./notification.service";
+import { NotificationService, CreateNotificationDto } from "./notification.service";
 import { PushNotificationService } from "./push-notification.service";
 
 describe("NotificationService", () => {
@@ -134,9 +131,7 @@ describe("NotificationService", () => {
 
   describe("getUserNotifications", () => {
     it("应该获取用户通知列表", async () => {
-      mockPrismaService.notification.findMany.mockResolvedValue([
-        mockNotification,
-      ]);
+      mockPrismaService.notification.findMany.mockResolvedValue([mockNotification]);
       mockPrismaService.notification.count.mockResolvedValue(5);
 
       const result = await service.getUserNotifications("user-id");
@@ -147,9 +142,7 @@ describe("NotificationService", () => {
     });
 
     it("应该只获取未读通知", async () => {
-      mockPrismaService.notification.findMany.mockResolvedValue([
-        mockNotification,
-      ]);
+      mockPrismaService.notification.findMany.mockResolvedValue([mockNotification]);
       mockPrismaService.notification.count.mockResolvedValue(5);
 
       await service.getUserNotifications("user-id", { unreadOnly: true });
@@ -157,14 +150,12 @@ describe("NotificationService", () => {
       expect(mockPrismaService.notification.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { userId: "user-id", isRead: false },
-        }),
+        })
       );
     });
 
     it("应该支持分页", async () => {
-      mockPrismaService.notification.findMany.mockResolvedValue([
-        mockNotification,
-      ]);
+      mockPrismaService.notification.findMany.mockResolvedValue([mockNotification]);
       mockPrismaService.notification.count.mockResolvedValue(0);
 
       await service.getUserNotifications("user-id", { limit: 10, offset: 20 });
@@ -173,7 +164,7 @@ describe("NotificationService", () => {
         expect.objectContaining({
           take: 10,
           skip: 20,
-        }),
+        })
       );
     });
   });
@@ -223,14 +214,20 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: true, transactional: true },
-        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
+        push: {
+          order: true,
+          recommendation: true,
+          community: true,
+          system: true,
+          quietHoursEnabled: false,
+          quietHoursStart: "22:00",
+          quietHoursEnd: "08:00",
+        },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      mockPrismaService.userNotificationSetting.findUnique.mockResolvedValue(
-        mockSettings,
-      );
+      mockPrismaService.userNotificationSetting.findUnique.mockResolvedValue(mockSettings);
 
       const result = await service.getUserSettings("user-id");
 
@@ -238,9 +235,7 @@ describe("NotificationService", () => {
     });
 
     it("应该返回默认设置如果用户没有设置", async () => {
-      mockPrismaService.userNotificationSetting.findUnique.mockResolvedValue(
-        null,
-      );
+      mockPrismaService.userNotificationSetting.findUnique.mockResolvedValue(null);
 
       const result = await service.getUserSettings("user-id");
 
@@ -256,14 +251,20 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: false, transactional: true },
-        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
+        push: {
+          order: true,
+          recommendation: true,
+          community: true,
+          system: true,
+          quietHoursEnabled: false,
+          quietHoursStart: "22:00",
+          quietHoursEnd: "08:00",
+        },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      mockPrismaService.userNotificationSetting.upsert.mockResolvedValue(
-        mockSettings,
-      );
+      mockPrismaService.userNotificationSetting.upsert.mockResolvedValue(mockSettings);
 
       const result = await service.updateUserSettings("user-id", {
         email: { marketing: false, transactional: true },
@@ -335,7 +336,7 @@ describe("NotificationService", () => {
           type: "try_on_complete",
           title: "试衣完成",
           message: "您的虚拟试衣已完成",
-        }),
+        })
       );
     });
 
@@ -348,7 +349,7 @@ describe("NotificationService", () => {
       };
       mockPrismaService.notification.create.mockResolvedValue(mockNotification);
       mockWebSocketNotificationService.sendCustomNotification.mockRejectedValue(
-        new Error("WebSocket connection failed"),
+        new Error("WebSocket connection failed")
       );
 
       // 不应该抛出异常
@@ -392,7 +393,7 @@ describe("NotificationService", () => {
           "user-id",
           expect.objectContaining({
             type: mapping.ws,
-          }),
+          })
         );
       }
     });
@@ -423,7 +424,7 @@ describe("NotificationService", () => {
             targetType: "clothing",
             targetId: "clothing-123",
           }),
-        }),
+        })
       );
     });
   });
@@ -470,7 +471,7 @@ describe("NotificationService", () => {
         Array.from({ length: 20 }, (_, i) => ({
           ...mockNotification,
           id: `notification-${i}`,
-        })),
+        }))
       );
       mockPrismaService.notification.count.mockResolvedValue(50);
 
@@ -481,9 +482,7 @@ describe("NotificationService", () => {
 
     it("应该正确处理最后一页", async () => {
       // 返回少于 limit 的数量，表示没有更多
-      mockPrismaService.notification.findMany.mockResolvedValue([
-        mockNotification,
-      ]);
+      mockPrismaService.notification.findMany.mockResolvedValue([mockNotification]);
       mockPrismaService.notification.count.mockResolvedValue(1);
 
       const result = await service.getUserNotifications("user-id", { limit: 20 });
@@ -507,7 +506,15 @@ describe("NotificationService", () => {
         id: "new-settings-id",
         userId: "new-user",
         email: { marketing: true, transactional: true },
-        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
+        push: {
+          order: true,
+          recommendation: true,
+          community: true,
+          system: true,
+          quietHoursEnabled: false,
+          quietHoursStart: "22:00",
+          quietHoursEnd: "08:00",
+        },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -526,7 +533,15 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: false, transactional: true },
-        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
+        push: {
+          order: true,
+          recommendation: true,
+          community: true,
+          system: true,
+          quietHoursEnabled: false,
+          quietHoursStart: "22:00",
+          quietHoursEnd: "08:00",
+        },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -563,7 +578,7 @@ describe("NotificationService", () => {
           where: expect.objectContaining({
             isRead: true,
           }),
-        }),
+        })
       );
     });
   });

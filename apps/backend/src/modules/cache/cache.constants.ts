@@ -95,13 +95,13 @@ export const CACHE_TTL = {
   VERY_LONG: 24 * 60 * 60,
 
   // Phase 9: Performance-specific TTLs
-  PRODUCT_DETAIL: 5 * 60,       // 5 min
-  PRODUCT_LIST: 2 * 60,         // 2 min
-  RECOMMENDATION: 3 * 60,       // 3 min
-  CATEGORY: 10 * 60,            // 10 min
-  DASHBOARD_STATS: 5 * 60,      // 5 min
-  USER_PROFILE_CACHE: 10 * 60,  // 10 min
-  SEARCH_RESULTS: 60,           // 1 min
+  PRODUCT_DETAIL: 5 * 60, // 5 min
+  PRODUCT_LIST: 2 * 60, // 2 min
+  RECOMMENDATION: 3 * 60, // 3 min
+  CATEGORY: 10 * 60, // 10 min
+  DASHBOARD_STATS: 5 * 60, // 5 min
+  USER_PROFILE_CACHE: 10 * 60, // 10 min
+  SEARCH_RESULTS: 60, // 1 min
 } as const;
 
 /**

@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useCallback, useEffect } from "react";
-import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, RefreshControl, ActivityIndicator, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FlashList } from "../../polyfills/flash-list";
+import { FlashList } from "../../../polyfills/flash-list";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useRecommendationFeedStore } from "../stores/recommendationFeedStore";
-import { FeedTabs } from "../../../components/recommendations/FeedTabs";
-import { RecommendationCard } from "../../../components/recommendations/RecommendationFeedCard";
+import { FeedTabs } from "../components/FeedTabs";
+import { RecommendationCard } from "../components/RecommendationFeedCard";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import type { FeedItem, FeedCategory } from "../../../services/api/recommendation-feed.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -39,7 +40,7 @@ export function RecommendationFeedScreen() {
 
   const handleItemPress = useCallback(
     (item: FeedItem) => {
-      navigation.navigate("ClothingDetail", { id: item.id });
+      navigation.navigate("ClothingDetail", { clothingId: item.id });
     },
     [navigation]
   );
@@ -66,7 +67,6 @@ export function RecommendationFeedScreen() {
   const keyExtractor = useCallback((item: FeedItem) => item.id, []);
 
   const renderFooter = useCallback(() => {
-    const styles = useStyles(colors);
     if (isLoading && !isRefreshing && items.length > 0) {
       return (
         <View style={styles.footerLoader}>

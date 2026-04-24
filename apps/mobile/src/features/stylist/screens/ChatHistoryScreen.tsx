@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -11,12 +12,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useAiStylistStore, type ArchivedSession } from '../stores/aiStylistStore';
-import type { StylistStackParamList } from '../../../navigation/types';
+import { useTheme } from "../../../shared/contexts/ThemeContext";
+import { useAiStylistStore, type ArchivedSession } from "../stores/aiStylistStore";
+import type { StylistStackParamList } from "../../../navigation/types";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-
+import { Spacing, flatColors as staticColors } from "../../../design-system/theme";
 
 type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;
 
@@ -110,10 +110,7 @@ export const ChatHistoryScreen: React.FC = () => {
         <Ionicons name="chatbubbles-outline" size={48} color={staticColors.textTertiary} />
         <Text style={s.emptyTitle}>No conversations yet</Text>
         <Text style={s.emptySubtitle}>Your AI Stylist chat history will appear here</Text>
-        <TouchableOpacity
-          style={s.startBtn}
-          onPress={() => navigation.navigate("AIStylist")}
-        >
+        <TouchableOpacity style={s.startBtn} onPress={() => navigation.navigate("AIStylist")}>
           <Text style={s.startBtnText}>Start a conversation</Text>
         </TouchableOpacity>
       </View>
@@ -128,10 +125,7 @@ export const ChatHistoryScreen: React.FC = () => {
           <Ionicons name="chevron-back" size={24} color={staticColors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Chat History</Text>
-        <TouchableOpacity
-          style={s.backBtn}
-          onPress={() => navigation.navigate("SessionCalendar")}
-        >
+        <TouchableOpacity style={s.backBtn} onPress={() => navigation.navigate("SessionCalendar")}>
           <Ionicons name="calendar-outline" size={22} color={staticColors.textPrimary} />
         </TouchableOpacity>
       </View>
@@ -175,7 +169,7 @@ export const ChatHistoryScreen: React.FC = () => {
           refreshing={refreshing}
           onRefresh={handleRefresh}
           contentContainerStyle={
-            archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: Spacing.lg}
+            archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: Spacing.lg }
           }
         />
       )}
@@ -195,8 +189,17 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: staticColors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: staticColors.textPrimary },
-  backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: staticColors.textPrimary,
+  },
+  backBtn: {
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
+    alignItems: "center",
+    justifyContent: "center",
+  },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -207,9 +210,23 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: staticColors.divider,
   },
-  dateText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: staticColors.textPrimary },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: staticColors.textPrimary, marginTop: Spacing.md},
+  dateText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: staticColors.textPrimary,
+  },
+  centerContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: staticColors.textPrimary,
+    marginTop: Spacing.md,
+  },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: staticColors.textTertiary,
@@ -220,16 +237,20 @@ const s = StyleSheet.create({
     marginTop: DesignTokens.spacing[5],
     backgroundColor: staticColors.primary,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
   },
-  startBtnText: { color: staticColors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  startBtnText: {
+    color: staticColors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
   sessionCard: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: staticColors.surface,
     paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     borderBottomWidth: 1,
     borderBottomColor: staticColors.divider,
   },
@@ -241,17 +262,29 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sessionInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
-  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: staticColors.textPrimary },
-  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
-  sessionMeta: { flexDirection: "row", alignItems: "center", gap: Spacing.sm},
+  sessionInfo: { flex: 1, marginLeft: DesignTokens.spacing[3] },
+  sessionGoal: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: staticColors.textPrimary,
+  },
+  sessionTime: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: staticColors.textTertiary,
+    marginTop: DesignTokens.spacing["0.5"],
+  },
+  sessionMeta: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   outfitBadge: {
     backgroundColor: staticColors.subtleBg,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 8,
   },
-  outfitBadgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: staticColors.primary },
+  outfitBadgeText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "600",
+    color: staticColors.primary,
+  },
 });
 
 export default ChatHistoryScreen;

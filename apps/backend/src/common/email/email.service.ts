@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
@@ -63,21 +63,12 @@ export class EmailService implements OnModuleInit {
   private readonly maxLogSize = 1000;
 
   constructor(private readonly configService: ConfigService) {
-    this.fromEmail = this.configService.get<string>(
-      "SMTP_FROM_EMAIL",
-      "noreply@xuno.app",
-    );
+    this.fromEmail = this.configService.get<string>("SMTP_FROM_EMAIL", "noreply@xuno.app");
     this.fromName = this.configService.get<string>("SMTP_FROM_NAME", "寻裳");
-    this.frontendUrl = this.configService.get<string>(
-      "FRONTEND_URL",
-      "http://localhost:3000",
-    );
+    this.frontendUrl = this.configService.get<string>("FRONTEND_URL", "http://localhost:3000");
     this.retryConfig = {
       maxRetries: this.configService.get<number>("SMTP_MAX_RETRIES", 3),
-      baseDelayMs: this.configService.get<number>(
-        "SMTP_RETRY_BASE_DELAY",
-        1000,
-      ),
+      baseDelayMs: this.configService.get<number>("SMTP_RETRY_BASE_DELAY", 1000),
       maxDelayMs: this.configService.get<number>("SMTP_RETRY_MAX_DELAY", 10000),
     };
   }
@@ -100,7 +91,7 @@ export class EmailService implements OnModuleInit {
     if (!host || !user || !pass) {
       this.logger.warn(
         "SMTP configuration not found. Email service will run in simulation mode. " +
-          "Configure SMTP_HOST, SMTP_USER, and SMTP_PASS to enable real email sending.",
+          "Configure SMTP_HOST, SMTP_USER, and SMTP_PASS to enable real email sending."
       );
       return;
     }
@@ -123,23 +114,18 @@ export class EmailService implements OnModuleInit {
         socketTimeout: 10000,
         // TLS 配置
         tls: {
-          rejectUnauthorized: this.configService.get<boolean>(
-            "SMTP_REJECT_UNAUTHORIZED",
-            true,
-          ),
+          rejectUnauthorized: this.configService.get<boolean>("SMTP_REJECT_UNAUTHORIZED", true),
         },
       });
 
       // 验证连接
       await this.transporter.verify();
-      this.logger.log(
-        `Email transporter initialized successfully. Connected to ${host}:${port}`,
-      );
+      this.logger.log(`Email transporter initialized successfully. Connected to ${host}:${port}`);
     } catch (error) {
       this.logger.error(
         `Failed to initialize email transporter: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
       this.transporter = null;
     }
@@ -174,9 +160,7 @@ export class EmailService implements OnModuleInit {
         return { ...result, retryCount };
       } catch (error) {
         lastError = error instanceof Error ? error.message : "Unknown error";
-        this.logger.warn(
-          `Email send attempt ${attempt + 1} failed: ${lastError}`,
-        );
+        this.logger.warn(`Email send attempt ${attempt + 1} failed: ${lastError}`);
 
         // 如果还有重试机会，等待后重试
         if (attempt < this.retryConfig.maxRetries) {
@@ -252,7 +236,7 @@ export class EmailService implements OnModuleInit {
     const { to, subject } = options;
 
     this.logger.log(
-      `[SIMULATION] Sending email to ${Array.isArray(to) ? to.join(", ") : to}: ${subject}`,
+      `[SIMULATION] Sending email to ${Array.isArray(to) ? to.join(", ") : to}: ${subject}`
     );
 
     const messageId = `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -271,7 +255,7 @@ export class EmailService implements OnModuleInit {
   private calculateDelay(attempt: number): number {
     const delay = Math.min(
       this.retryConfig.baseDelayMs * Math.pow(2, attempt),
-      this.retryConfig.maxDelayMs,
+      this.retryConfig.maxDelayMs
     );
     // 添加随机抖动，避免同时重试
     return delay + Math.random() * 500;
@@ -326,10 +310,7 @@ export class EmailService implements OnModuleInit {
   /**
    * 发送欢迎邮件
    */
-  async sendWelcomeEmail(
-    email: string,
-    nickname?: string,
-  ): Promise<EmailResult> {
+  async sendWelcomeEmail(email: string, nickname?: string): Promise<EmailResult> {
     const html = this.renderTemplate("welcome", {
       nickname: nickname || "用户",
       loginUrl: `${this.frontendUrl}/login`,
@@ -346,10 +327,7 @@ export class EmailService implements OnModuleInit {
   /**
    * 发送密码重置邮件
    */
-  async sendPasswordResetEmail(
-    email: string,
-    resetToken: string,
-  ): Promise<EmailResult> {
+  async sendPasswordResetEmail(email: string, resetToken: string): Promise<EmailResult> {
     const resetUrl = `${this.frontendUrl}/reset-password?token=${resetToken}`;
 
     const html = this.renderTemplate("password-reset", {
@@ -368,10 +346,7 @@ export class EmailService implements OnModuleInit {
   /**
    * 发送邮件验证
    */
-  async sendEmailVerification(
-    email: string,
-    verificationToken: string,
-  ): Promise<EmailResult> {
+  async sendEmailVerification(email: string, verificationToken: string): Promise<EmailResult> {
     const verificationUrl = `${this.frontendUrl}/verify-email?token=${verificationToken}`;
 
     const html = this.renderTemplate("email-verification", {
@@ -390,11 +365,7 @@ export class EmailService implements OnModuleInit {
   /**
    * 发送通知邮件
    */
-  async sendNotificationEmail(
-    email: string,
-    title: string,
-    content: string,
-  ): Promise<EmailResult> {
+  async sendNotificationEmail(email: string, title: string, content: string): Promise<EmailResult> {
     const html = this.renderTemplate("notification", {
       title,
       content,
@@ -416,7 +387,7 @@ export class EmailService implements OnModuleInit {
     planName: string,
     amount: number,
     startDate: Date,
-    endDate: Date,
+    endDate: Date
   ): Promise<EmailResult> {
     const html = this.renderTemplate("subscription-confirmation", {
       planName,
@@ -441,7 +412,7 @@ export class EmailService implements OnModuleInit {
     email: string,
     orderNo: string,
     items: Array<{ name: string; quantity: number; price: number }>,
-    totalAmount: number,
+    totalAmount: number
   ): Promise<EmailResult> {
     const html = this.renderTemplate("order-confirmation", {
       orderNo,
@@ -465,7 +436,7 @@ export class EmailService implements OnModuleInit {
     email: string,
     requestId: string,
     status: string,
-    message: string,
+    message: string
   ): Promise<EmailResult> {
     const statusText: Record<string, string> = {
       pending: "待处理",
@@ -496,10 +467,7 @@ export class EmailService implements OnModuleInit {
   /**
    * 渲染邮件模板
    */
-  private renderTemplate(
-    templateName: string,
-    context: Record<string, unknown>,
-  ): string {
+  private renderTemplate(templateName: string, context: Record<string, unknown>): string {
     const templates: Record<string, (ctx: Record<string, unknown>) => string> = {
       welcome: this.welcomeTemplate,
       "password-reset": this.passwordResetTemplate,
@@ -729,11 +697,17 @@ export class EmailService implements OnModuleInit {
       .map(
         (item) => `
       <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #eee;">${(item as { name: string }).name}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${(item as { quantity: number }).quantity}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">¥${(item as { price: number }).price.toFixed(2)}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee;">${
+          (item as { name: string }).name
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${
+          (item as { quantity: number }).quantity
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">¥${(
+          item as { price: number }
+        ).price.toFixed(2)}</td>
       </tr>
-    `,
+    `
       )
       .join("");
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * EmptyState - UI layer re-export from primitives/EmptyState
  *
  * This file re-exports the canonical EmptyState from primitives/EmptyState

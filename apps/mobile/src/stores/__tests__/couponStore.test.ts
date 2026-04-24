@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { useCouponStore } from "../../features/commerce/stores/couponStore";
 import { couponApi, type UserCoupon, type Coupon } from "../../services/api/commerce.api";
 

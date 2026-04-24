@@ -11,13 +11,7 @@ import {
   Request,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 
 import { OptionalAuthGuard } from "../../identity/auth/guards/optional-auth.guard";
 
@@ -37,7 +31,7 @@ import { BloggerGuard } from "./guards/blogger.guard";
 export class BloggerController {
   constructor(
     private readonly bloggerProductService: BloggerProductService,
-    private readonly bloggerDashboardService: BloggerDashboardService,
+    private readonly bloggerDashboardService: BloggerDashboardService
   ) {}
 
   @Post("products")
@@ -49,7 +43,7 @@ export class BloggerController {
   @ApiResponse({ status: 403, description: "无博主权限" })
   async createProduct(
     @Request() req: { user: { id: string } },
-    @Body() dto: CreateBloggerProductDto,
+    @Body() dto: CreateBloggerProductDto
   ) {
     return this.bloggerProductService.createProduct(req.user.id, dto);
   }
@@ -66,7 +60,7 @@ export class BloggerController {
   async updateProduct(
     @Request() req: { user: { id: string } },
     @Param("id") productId: string,
-    @Body() dto: UpdateBloggerProductDto,
+    @Body() dto: UpdateBloggerProductDto
   ) {
     return this.bloggerProductService.updateProduct(req.user.id, productId, dto);
   }
@@ -79,10 +73,7 @@ export class BloggerController {
   @ApiResponse({ status: 403, description: "无博主权限" })
   @ApiResponse({ status: 404, description: "商品不存在" })
   @ApiParam({ name: "id", description: "商品ID" })
-  async deleteProduct(
-    @Request() req: { user: { id: string } },
-    @Param("id") productId: string,
-  ) {
+  async deleteProduct(@Request() req: { user: { id: string } }, @Param("id") productId: string) {
     return this.bloggerProductService.deleteProduct(req.user.id, productId);
   }
 
@@ -115,7 +106,7 @@ export class BloggerController {
   async purchaseProduct(
     @Request() req: { user: { id: string } },
     @Param("id") productId: string,
-    @Body() dto: PurchaseBloggerProductDto,
+    @Body() dto: PurchaseBloggerProductDto
   ) {
     return this.bloggerProductService.purchaseProduct(req.user.id, dto);
   }
@@ -126,10 +117,7 @@ export class BloggerController {
   @ApiOperation({ summary: "获取博主数据看板" })
   @ApiResponse({ status: 200, description: "成功返回看板数据" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getDashboard(
-    @Request() req: { user: { id: string } },
-    @Query() query: DashboardQueryDto,
-  ) {
+  async getDashboard(@Request() req: { user: { id: string } }, @Query() query: DashboardQueryDto) {
     return this.bloggerDashboardService.getDashboard(req.user.id, query.period);
   }
 
@@ -143,9 +131,13 @@ export class BloggerController {
   async getTrendData(
     @Request() req: { user: { id: string } },
     @Param("metric") metric: string,
-    @Query() query: DashboardQueryDto,
+    @Query() query: DashboardQueryDto
   ) {
-    return this.bloggerDashboardService.getTrendData(req.user.id, metric as "views" | "likes" | "bookmarks" | "followers" | "revenue", query.period);
+    return this.bloggerDashboardService.getTrendData(
+      req.user.id,
+      metric as "views" | "likes" | "bookmarks" | "followers" | "revenue",
+      query.period
+    );
   }
 
   @Get("users/:id/products")

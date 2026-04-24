@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { theme } from "../../design-system/theme";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../design-system/theme";

@@ -8,7 +8,7 @@ import {
   GestureResponderEvent,
   AccessibilityRole,
 } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+
 import { flatColors as colors } from "../../../design-system/theme";
 
 type TouchableType = "opacity" | "highlight" | "without-feedback" | "pressable";

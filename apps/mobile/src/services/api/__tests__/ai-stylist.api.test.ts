@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { aiStylistApi } from "../ai-stylist.api";
+
+import apiClient from "../client";
 
 jest.mock("../client", () => ({
   __esModule: true,
@@ -10,8 +13,6 @@ jest.mock("../client", () => ({
     upload: jest.fn(),
   },
 }));
-
-import apiClient from "../client";
 
 const mockedGet = apiClient.get as jest.Mock;
 const mockedPost = apiClient.post as jest.Mock;

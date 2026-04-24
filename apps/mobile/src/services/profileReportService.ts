@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import apiClient from "./api/client";
 import type { ApiResponse } from "../types/api";
 

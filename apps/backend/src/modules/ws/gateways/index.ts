@@ -1,2 +1,2 @@
-export { AppGateway } from './app.gateway';
-export { AIGateway } from './ai.gateway';
+export { AppGateway } from "./app.gateway";
+export { AIGateway } from "./ai.gateway";

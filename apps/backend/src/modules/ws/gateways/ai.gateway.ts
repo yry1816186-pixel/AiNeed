@@ -5,9 +5,9 @@ import {
   Inject,
   OnModuleInit,
   OnModuleDestroy,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -17,13 +17,13 @@ import {
   OnGatewayInit,
   ConnectedSocket,
   MessageBody,
-} from '@nestjs/websockets';
-import Redis from 'ioredis';
-import { Server, Socket } from 'socket.io';
+} from "@nestjs/websockets";
+import Redis from "ioredis";
+import { Server, Socket } from "socket.io";
 
-import { REDIS_CLIENT } from '../../../common/redis/redis.service';
-import { AI_EVENTS } from '../events';
-import { EventBusService } from '../services/event-bus.service';
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
+import { AI_EVENTS } from "../events";
+import { EventBusService } from "../services/event-bus.service";
 
 interface UserConnection {
   socketId: string;
@@ -34,11 +34,13 @@ interface UserConnection {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',').filter(Boolean) || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+    origin:
+      process.env.CORS_ORIGINS?.split(",").filter(Boolean) ||
+      (process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000"]),
     credentials: true,
   },
-  namespace: '/ws/ai',
-  transports: ['websocket', 'polling'],
+  namespace: "/ws/ai",
+  transports: ["websocket", "polling"],
 })
 @UsePipes(new ValidationPipe())
 export class AIGateway
@@ -61,39 +63,46 @@ export class AIGateway
     private configService: ConfigService,
     private jwtService: JwtService,
     @Inject(REDIS_CLIENT) private redis: Redis,
-    private eventBus: EventBusService,
+    private eventBus: EventBusService
   ) {}
 
   onModuleInit() {
     const taskStartedHandler = (envelope: { userId: string; payload: Record<string, unknown> }) => {
-      this.pushToUser(envelope.userId, 'ai_task_started', envelope.payload);
+      this.pushToUser(envelope.userId, "ai_task_started", envelope.payload);
     };
 
-    const taskProgressHandler = (envelope: { userId: string; payload: Record<string, unknown> }) => {
-      const progress = typeof envelope.payload.progress === 'number'
-        ? Math.max(0, Math.min(100, envelope.payload.progress))
-        : 0;
+    const taskProgressHandler = (envelope: {
+      userId: string;
+      payload: Record<string, unknown>;
+    }) => {
+      const progress =
+        typeof envelope.payload.progress === "number"
+          ? Math.max(0, Math.min(100, envelope.payload.progress))
+          : 0;
       const clampedPayload = { ...envelope.payload, progress };
 
-      this.pushToUser(envelope.userId, 'ai_task_progress', clampedPayload);
+      this.pushToUser(envelope.userId, "ai_task_progress", clampedPayload);
 
       const jobId = envelope.payload.jobId as string | undefined;
       if (jobId) {
-        this.server.to(`task:${jobId}`).emit('ai_task_progress', {
-          type: 'ai_task_progress',
+        this.server.to(`task:${jobId}`).emit("ai_task_progress", {
+          type: "ai_task_progress",
           payload: clampedPayload,
           timestamp: new Date().toISOString(),
         });
       }
     };
 
-    const taskCompletedHandler = (envelope: { userId: string; payload: Record<string, unknown> }) => {
-      this.pushToUser(envelope.userId, 'ai_task_completed', envelope.payload);
+    const taskCompletedHandler = (envelope: {
+      userId: string;
+      payload: Record<string, unknown>;
+    }) => {
+      this.pushToUser(envelope.userId, "ai_task_completed", envelope.payload);
 
       const jobId = envelope.payload.jobId as string | undefined;
       if (jobId) {
-        this.server.to(`task:${jobId}`).emit('ai_task_completed', {
-          type: 'ai_task_completed',
+        this.server.to(`task:${jobId}`).emit("ai_task_completed", {
+          type: "ai_task_completed",
           payload: envelope.payload,
           timestamp: new Date().toISOString(),
         });
@@ -107,12 +116,12 @@ export class AIGateway
     this.eventUnsubscribers.push(
       () => this.eventBus.off(AI_EVENTS.AI_TASK_STARTED, taskStartedHandler),
       () => this.eventBus.off(AI_EVENTS.AI_TASK_PROGRESS, taskProgressHandler),
-      () => this.eventBus.off(AI_EVENTS.AI_TASK_COMPLETED, taskCompletedHandler),
+      () => this.eventBus.off(AI_EVENTS.AI_TASK_COMPLETED, taskCompletedHandler)
     );
 
     this.startHeartbeatCheck();
 
-    this.logger.log('AI WebSocket gateway initialized');
+    this.logger.log("AI WebSocket gateway initialized");
   }
 
   onModuleDestroy() {
@@ -128,11 +137,11 @@ export class AIGateway
     this.connections.clear();
     this.userSocketMap.clear();
 
-    this.logger.log('AI WebSocket gateway destroyed');
+    this.logger.log("AI WebSocket gateway destroyed");
   }
 
   afterInit(server: Server) {
-    this.logger.log('AI WebSocket server initialized');
+    this.logger.log("AI WebSocket server initialized");
   }
 
   async handleConnection(client: Socket) {
@@ -140,7 +149,7 @@ export class AIGateway
       const userId = this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Client ${client.id} rejected: no valid token`);
-        client.emit('error', { message: 'Authentication required' });
+        client.emit("error", { message: "Authentication required" });
         client.disconnect();
         return;
       }
@@ -163,15 +172,15 @@ export class AIGateway
 
       this.logger.log(`Client ${client.id} connected for user ${userId}`);
 
-      client.emit('connected', {
-        message: 'Connected to AI task updates',
+      client.emit("connected", {
+        message: "Connected to AI task updates",
         userId,
         timestamp: new Date().toISOString(),
       });
 
       await this.sendPendingTaskUpdates(client, userId);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Connection error: ${message}`);
       client.disconnect();
     }
@@ -197,16 +206,16 @@ export class AIGateway
     }
   }
 
-  @SubscribeMessage('subscribe_task')
+  @SubscribeMessage("subscribe_task")
   async handleSubscribeTask(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { jobId: string },
+    @MessageBody() data: { jobId: string }
   ) {
     const { jobId } = data;
     const connection = this.connections.get(client.id);
 
     if (!connection) {
-      return { error: 'Not connected' };
+      return { error: "Not connected" };
     }
 
     await client.join(`task:${jobId}`);
@@ -215,28 +224,28 @@ export class AIGateway
 
     const taskStatus = await this.getTaskStatus(jobId);
     if (taskStatus) {
-      client.emit('task_status', taskStatus);
+      client.emit("task_status", taskStatus);
     }
 
     return { subscribed: true, jobId };
   }
 
-  @SubscribeMessage('unsubscribe_task')
+  @SubscribeMessage("unsubscribe_task")
   async handleUnsubscribeTask(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { jobId: string },
+    @MessageBody() data: { jobId: string }
   ) {
     await client.leave(`task:${data.jobId}`);
     this.logger.debug(`Client ${client.id} unsubscribed from task ${data.jobId}`);
     return { unsubscribed: true, jobId: data.jobId };
   }
 
-  @SubscribeMessage('heartbeat')
+  @SubscribeMessage("heartbeat")
   handleHeartbeat(@ConnectedSocket() client: Socket) {
     const connection = this.connections.get(client.id);
     if (connection) {
       connection.lastHeartbeat = new Date();
-      client.emit('heartbeat_ack', { timestamp: Date.now() });
+      client.emit("heartbeat_ack", { timestamp: Date.now() });
     }
   }
 
@@ -267,9 +276,9 @@ export class AIGateway
 
   private validateToken(token: string): string | null {
     try {
-      const jwtSecret = this.configService.get<string>('JWT_SECRET');
+      const jwtSecret = this.configService.get<string>("JWT_SECRET");
       if (!jwtSecret) {
-        this.logger.error('JWT_SECRET is not configured');
+        this.logger.error("JWT_SECRET is not configured");
         return null;
       }
 
@@ -280,7 +289,7 @@ export class AIGateway
       const userId = payload.sub || payload.userId;
       return userId || null;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.debug(`Token validation failed: ${message}`);
       return null;
     }
@@ -289,7 +298,9 @@ export class AIGateway
   private async getTaskStatus(jobId: string): Promise<Record<string, unknown> | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    if (!data) {return null;}
+    if (!data) {
+      return null;
+    }
     try {
       return JSON.parse(data) as Record<string, unknown>;
     } catch {
@@ -306,13 +317,13 @@ export class AIGateway
         const jobStatus = await this.getTaskStatus(jobId);
         if (jobStatus) {
           const status = jobStatus.status as string;
-          if (status === 'pending' || status === 'processing') {
-            client.emit('task_status', jobStatus);
+          if (status === "pending" || status === "processing") {
+            client.emit("task_status", jobStatus);
           }
         }
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Error sending pending updates: ${message}`);
     }
   }

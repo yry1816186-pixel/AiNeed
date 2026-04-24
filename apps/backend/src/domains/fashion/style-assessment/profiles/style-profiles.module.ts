@@ -5,7 +5,6 @@ import { AnalyticsModule } from "../../../../domains/platform/analytics/analytic
 import { StyleProfilesController } from "./style-profiles.controller";
 import { StyleProfilesService } from "./style-profiles.service";
 
-
 @Module({
   imports: [AnalyticsModule],
   controllers: [StyleProfilesController],

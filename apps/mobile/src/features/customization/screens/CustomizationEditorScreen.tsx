@@ -30,7 +30,6 @@ import { LayerPanel } from "../components/LayerPanel";
 import { DesignCanvas } from "../components/DesignCanvas";
 import { ColorPicker } from "../components/ColorPicker";
 import type { RootStackParamList } from "../../../types/navigation";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NavigationProp<RootStackParamList>;
 

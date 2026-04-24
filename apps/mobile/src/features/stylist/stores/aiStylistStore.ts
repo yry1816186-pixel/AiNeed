@@ -3,6 +3,7 @@ import {
   aiStylistApi,
   type AiStylistSessionResponse,
   type AiStylistOutfitItem,
+  type DialogChatResponse,
 } from "../../../services/api/ai-stylist.api";
 
 /**
@@ -77,6 +78,8 @@ interface AiStylistState {
   alternatives: AlternativeItem[];
   isAlternativesLoading: boolean;
 
+  dialogSessionId: string | null;
+
   createSession: (entry?: string, goal?: string) => Promise<string | null>;
   sendMessage: (
     message: string,
@@ -106,6 +109,10 @@ interface AiStylistState {
   clearError: () => void;
   setError: (error: string) => void;
   reset: () => void;
+
+  createDialogSession: () => Promise<string | null>;
+  sendDialogMessage: (message: string) => Promise<DialogChatResponse | null>;
+  endDialogSession: () => Promise<void>;
 }
 
 const initialState = {
@@ -120,6 +127,7 @@ const initialState = {
   archivedSessions: [],
   alternatives: [],
   isAlternativesLoading: false,
+  dialogSessionId: null,
 };
 
 export const useAiStylistStore = create<AiStylistState>((set, get) => ({
@@ -256,7 +264,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       }
     } catch (error) {
       // silent fail
-      console.error('AI Stylist operation failed:', error);
+      console.error("AI Stylist operation failed:", error);
     }
   },
 
@@ -286,4 +294,62 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
   clearError: () => set({ error: null }),
   setError: (error) => set({ error }),
   reset: () => set(initialState),
+
+  // --- Dialog State Machine ---
+
+  createDialogSession: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await aiStylistApi.createDialogSession();
+      if (response.success && response.data) {
+        const sessionId = response.data.sessionId;
+        set({ dialogSessionId: sessionId, isLoading: false });
+        return sessionId;
+      }
+      set({
+        error: response.error?.message || "Failed to create dialog session",
+        isLoading: false,
+      });
+      return null;
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to create dialog session";
+      set({ error: message, isLoading: false });
+      return null;
+    }
+  },
+
+  sendDialogMessage: async (message: string) => {
+    const { dialogSessionId } = get();
+    if (!dialogSessionId) {
+      set({ error: "No dialog session" });
+      return null;
+    }
+    set({ isGenerating: true, error: null });
+    try {
+      const response = await aiStylistApi.dialogChat(dialogSessionId, message);
+      if (response.success && response.data) {
+        set({ isGenerating: false });
+        return response.data;
+      }
+      set({ error: response.error?.message || "Failed to send message", isGenerating: false });
+      return null;
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to send message";
+      set({ error: message, isGenerating: false });
+      return null;
+    }
+  },
+
+  endDialogSession: async () => {
+    const { dialogSessionId } = get();
+    if (!dialogSessionId) {
+      return;
+    }
+    try {
+      await aiStylistApi.endDialogSession(dialogSessionId);
+    } catch {
+      // best effort
+    }
+    set({ dialogSessionId: null });
+  },
 }));

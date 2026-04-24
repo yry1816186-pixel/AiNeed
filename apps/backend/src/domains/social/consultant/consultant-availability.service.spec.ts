@@ -47,9 +47,9 @@ describe("ConsultantAvailabilityService", () => {
     it("should throw when consultant not found", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.setAvailability("c-1", "user-1", { items: [] }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.setAvailability("c-1", "user-1", { items: [] })).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should throw when user is not the consultant owner", async () => {
@@ -58,9 +58,9 @@ describe("ConsultantAvailabilityService", () => {
         userId: "user-2",
       });
 
-      await expect(
-        service.setAvailability("c-1", "user-1", { items: [] }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.setAvailability("c-1", "user-1", { items: [] })).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should delete old templates and create new ones", async () => {
@@ -107,7 +107,7 @@ describe("ConsultantAvailabilityService", () => {
   describe("getAvailableSlots", () => {
     it("should throw for invalid date format", async () => {
       await expect(
-        service.getAvailableSlots({ consultantId: "c-1", date: "not-a-date" }),
+        service.getAvailableSlots({ consultantId: "c-1", date: "not-a-date" })
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -151,11 +151,7 @@ describe("ConsultantAvailabilityService", () => {
     it("should return false when no conflicting booking exists", async () => {
       mockPrismaService.serviceBooking.findFirst.mockResolvedValue(null);
 
-      const result = await service.checkSlotConflict(
-        "c-1",
-        new Date("2026-04-13T10:00:00"),
-        60,
-      );
+      const result = await service.checkSlotConflict("c-1", new Date("2026-04-13T10:00:00"), 60);
 
       expect(result).toBe(false);
     });
@@ -168,11 +164,7 @@ describe("ConsultantAvailabilityService", () => {
         durationMinutes: 60,
       });
 
-      const result = await service.checkSlotConflict(
-        "c-1",
-        new Date("2026-04-13T10:30:00"),
-        60,
-      );
+      const result = await service.checkSlotConflict("c-1", new Date("2026-04-13T10:30:00"), 60);
 
       expect(result).toBe(true);
     });
@@ -186,11 +178,7 @@ describe("ConsultantAvailabilityService", () => {
       });
 
       // Booking ends at 10:00, new slot starts at 10:00 - no overlap
-      const result = await service.checkSlotConflict(
-        "c-1",
-        new Date("2026-04-13T10:00:00"),
-        60,
-      );
+      const result = await service.checkSlotConflict("c-1", new Date("2026-04-13T10:00:00"), 60);
 
       expect(result).toBe(false);
     });

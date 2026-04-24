@@ -17,10 +17,7 @@ export class CacheService {
   private readonly bloomFilterSize = 1000;
   private readonly bloomFilterName = "bloom_filter";
 
-  constructor(
-    private redisService: RedisService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private redisService: RedisService, private configService: ConfigService) {}
 
   /**
    * 获取缓存值
@@ -42,7 +39,10 @@ export class CacheService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `Failed to parse cached value for key '${key}': ${errorMessage}. Cached value may be corrupted or in unexpected format. Raw value (truncated): '${value.substring(0, 100)}...'`,
+        `Failed to parse cached value for key '${key}': ${errorMessage}. Cached value may be corrupted or in unexpected format. Raw value (truncated): '${value.substring(
+          0,
+          100
+        )}...'`
       );
       return null;
     }
@@ -55,8 +55,7 @@ export class CacheService {
    * @param ttl 过期时间（秒）
    */
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    const serialized =
-      typeof value === "string" ? value : JSON.stringify(value);
+    const serialized = typeof value === "string" ? value : JSON.stringify(value);
 
     if (ttl) {
       await this.redisService.setex(key, ttl, serialized);
@@ -112,7 +111,7 @@ export class CacheService {
     key: string,
     fetcher: () => Promise<T | null>,
     ttl: number = 3600,
-    nullTtl: number = 60,
+    nullTtl: number = 60
   ): Promise<T | null> {
     // 尝试从缓存获取
     const cached = await this.get<T>(key);
@@ -152,7 +151,7 @@ export class CacheService {
     key: string,
     fetcher: () => Promise<T | null>,
     ttl: number = 3600,
-    retries: number = CacheService.MAX_LOCK_RETRIES,
+    retries: number = CacheService.MAX_LOCK_RETRIES
   ): Promise<T | null> {
     const cached = await this.get<T>(key);
     if (cached !== null) {
@@ -196,11 +195,7 @@ export class CacheService {
    * 获取分布式锁
    */
   private async acquireLock(lockKey: string): Promise<string | null> {
-    return this.redisService.acquireLock(
-      lockKey,
-      this.defaultLockTtl * 1000,
-      1,
-    );
+    return this.redisService.acquireLock(lockKey, this.defaultLockTtl * 1000, 1);
   }
 
   /**

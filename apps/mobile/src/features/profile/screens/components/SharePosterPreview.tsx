@@ -18,11 +18,11 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
-import { colors } from "@/src/theme/tokens/colors";
+
 import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { shadows } from "@/src/design-system/theme/tokens/shadows";
-import { DesignTokens } from "../../../design-system/theme";
+
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface SharePosterPreviewProps {

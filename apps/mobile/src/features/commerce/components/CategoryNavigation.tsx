@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -46,18 +47,18 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
                 {cat.key === "tops"
                   ? "T"
                   : cat.key === "bottoms"
-                    ? "P"
-                    : cat.key === "dresses"
-                      ? "D"
-                      : cat.key === "outerwear"
-                        ? "C"
-                        : cat.key === "shoes"
-                          ? "S"
-                          : cat.key === "accessories"
-                            ? "A"
-                            : cat.key === "activewear"
-                              ? "R"
-                              : "W"}
+                  ? "P"
+                  : cat.key === "dresses"
+                  ? "D"
+                  : cat.key === "outerwear"
+                  ? "C"
+                  : cat.key === "shoes"
+                  ? "S"
+                  : cat.key === "accessories"
+                  ? "A"
+                  : cat.key === "activewear"
+                  ? "R"
+                  : "W"}
               </Text>
             </View>
             <Text style={[styles.label, isSelected && styles.labelSelected]}>{cat.label}</Text>

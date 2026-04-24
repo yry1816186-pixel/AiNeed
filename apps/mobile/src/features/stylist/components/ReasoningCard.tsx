@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";

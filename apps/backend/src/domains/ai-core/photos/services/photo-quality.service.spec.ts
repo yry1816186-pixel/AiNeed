@@ -9,7 +9,9 @@ describe("PhotoQualityService", () => {
 
   const mockConfigService = {
     get: jest.fn().mockImplementation((key: string, defaultValue?: string) => {
-      if (key === "AI_SERVICE_URL") {return "http://localhost:8001";}
+      if (key === "AI_SERVICE_URL") {
+        return "http://localhost:8001";
+      }
       return defaultValue || "";
     }),
   };
@@ -94,16 +96,34 @@ describe("PhotoQualityService", () => {
 
   describe("质量阈值", () => {
     it("清晰度阈值应为 40", () => {
-      expect((service as unknown as { QUALITY_THRESHOLDS: { sharpness: number } }).QUALITY_THRESHOLDS.sharpness).toBe(40);
+      expect(
+        (service as unknown as { QUALITY_THRESHOLDS: { sharpness: number } }).QUALITY_THRESHOLDS
+          .sharpness
+      ).toBe(40);
     });
 
     it("亮度范围应为 30-70", () => {
-      expect((service as unknown as { QUALITY_THRESHOLDS: { brightnessMin: number; brightnessMax: number } }).QUALITY_THRESHOLDS.brightnessMin).toBe(30);
-      expect((service as unknown as { QUALITY_THRESHOLDS: { brightnessMin: number; brightnessMax: number } }).QUALITY_THRESHOLDS.brightnessMax).toBe(70);
+      expect(
+        (
+          service as unknown as {
+            QUALITY_THRESHOLDS: { brightnessMin: number; brightnessMax: number };
+          }
+        ).QUALITY_THRESHOLDS.brightnessMin
+      ).toBe(30);
+      expect(
+        (
+          service as unknown as {
+            QUALITY_THRESHOLDS: { brightnessMin: number; brightnessMax: number };
+          }
+        ).QUALITY_THRESHOLDS.brightnessMax
+      ).toBe(70);
     });
 
     it("对比度阈值应为 30", () => {
-      expect((service as unknown as { QUALITY_THRESHOLDS: { contrast: number } }).QUALITY_THRESHOLDS.contrast).toBe(30);
+      expect(
+        (service as unknown as { QUALITY_THRESHOLDS: { contrast: number } }).QUALITY_THRESHOLDS
+          .contrast
+      ).toBe(30);
     });
   });
 });

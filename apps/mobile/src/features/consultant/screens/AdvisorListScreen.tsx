@@ -10,9 +10,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useConsultantStore } from "../../stores/consultantStore";
-import { ConsultantCard } from "../../../components/consultant/ConsultantCard";
-import { ServiceTypeChip } from "../../../components/consultant/ServiceTypeChip";
+import { useConsultantStore } from "../stores/consultantStore";
+import { ConsultantCard } from "../components/ConsultantCard";
+import { ServiceTypeChip } from "../components/ServiceTypeChip";
 import type { ServiceType } from "../../../types/consultant";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -89,7 +89,7 @@ export const AdvisorListScreen: React.FC = () => {
   if (isLoading && displayData.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="colors.primary" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>正在加载顾问列表...</Text>
       </View>
     );
@@ -120,7 +120,7 @@ export const AdvisorListScreen: React.FC = () => {
 
       {/* Consultant list */}
       <FlatList
-        data={displayData}
+        data={displayData as unknown as Record<string, unknown>[]}
         keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
         renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (
           <ConsultantCard
@@ -138,9 +138,12 @@ export const AdvisorListScreen: React.FC = () => {
             matchReasons={item.matchReasons as string[] | undefined}
             price={item.price as number | undefined}
             onPress={() =>
-              navigation.navigate("AdvisorProfile", {
-                id: String(item.consultantId || item.id),
-              })
+              (navigation.navigate as unknown as (name: string, params?: object) => void)(
+                "AdvisorProfile",
+                {
+                  id: String(item.consultantId || item.id),
+                }
+              )
             }
             index={index}
           />
@@ -191,7 +194,7 @@ export const AdvisorListScreen: React.FC = () => {
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { flex: 1, backgroundColor: "colors.backgroundSecondary" },
+  container: { flex: 1, backgroundColor: colors.backgroundSecondary },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -203,10 +206,10 @@ const useStyles = createStyles((colors) => ({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
   },
   matchButton: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -221,7 +224,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   matchResultsBar: {
     flexDirection: "row",
@@ -229,9 +232,9 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
   },
-  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
+  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary },
   clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
   emptyContainer: {
@@ -251,7 +254,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: 24,
   },
   matchCta: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 24,
@@ -286,7 +289,7 @@ const useStyles = createStyles((colors) => ({
   sheetTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
     marginBottom: 20,
   },
   sheetLabel: {
@@ -297,7 +300,7 @@ const useStyles = createStyles((colors) => ({
   },
   notesInput: {
     borderWidth: 1,
-    borderColor: "colors.border",
+    borderColor: colors.border,
     borderRadius: 12,
     padding: 12,
     fontSize: DesignTokens.typography.sizes.base,
@@ -310,7 +313,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "colors.border",
+    borderColor: colors.border,
     alignItems: "center",
   },
   sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary },
@@ -318,7 +321,7 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   sheetSubmitText: {

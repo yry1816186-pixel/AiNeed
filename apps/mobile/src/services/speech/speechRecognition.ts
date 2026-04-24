@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Platform, PermissionsAndroid } from "react-native";
 import * as FileSystem from "@/src/polyfills/expo-file-system";

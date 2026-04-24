@@ -208,7 +208,7 @@ const SceneCarousel = memo(({ cards, onCardPress, onSeeAll }: SceneCarouselProps
           <SceneCardItem
             key={card.id}
             card={card}
-            colorPair={PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length]!}
+            colorPair={PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length]}
             onPress={onCardPress}
           />
         ))}

@@ -1,11 +1,11 @@
-import { AsyncLocalStorage } from 'async_hooks';
-import { randomUUID } from 'crypto';
+import { AsyncLocalStorage } from "async_hooks";
+import { randomUUID } from "crypto";
 
-import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, NestMiddleware, Inject } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
 
-import { PINO_ASYNC_LOCAL_STORAGE } from './logger.module';
-import { PinoLoggerService } from './logger.service';
+import { PINO_ASYNC_LOCAL_STORAGE } from "./logger.module";
+import { PinoLoggerService } from "./logger.service";
 
 interface RequestContext {
   requestId: string;
@@ -18,7 +18,7 @@ export class TraceIdMiddleware implements NestMiddleware {
   constructor(
     @Inject(PINO_ASYNC_LOCAL_STORAGE)
     private readonly asyncLocalStorage: AsyncLocalStorage<RequestContext>,
-    private readonly logger: PinoLoggerService,
+    private readonly logger: PinoLoggerService
   ) {}
 
   use(req: Request, res: Response, next: NextFunction): void {
@@ -34,19 +34,19 @@ export class TraceIdMiddleware implements NestMiddleware {
       ip: req.ip,
     };
 
-    res.setHeader('X-Request-Id', traceId);
+    res.setHeader("X-Request-Id", traceId);
 
-    this.logger.log('Request started', 'TraceIdMiddleware', {
+    this.logger.log("Request started", "TraceIdMiddleware", {
       method: req.method,
       url: req.originalUrl,
       ip: req.ip,
-      userAgent: req.headers['user-agent']?.substring(0, 100),
+      userAgent: req.headers["user-agent"]?.substring(0, 100),
     });
 
-    res.on('finish', () => {
+    res.on("finish", () => {
       const duration = Date.now() - startTime;
 
-      this.logger.log('Request completed', 'TraceIdMiddleware', {
+      this.logger.log("Request completed", "TraceIdMiddleware", {
         method: req.method,
         url: req.originalUrl,
         statusCode: res.statusCode,
@@ -54,10 +54,10 @@ export class TraceIdMiddleware implements NestMiddleware {
       });
     });
 
-    res.on('error', (error: Error) => {
+    res.on("error", (error: Error) => {
       const duration = Date.now() - startTime;
 
-      this.logger.error('Request failed', error.stack, 'TraceIdMiddleware', {
+      this.logger.error("Request failed", error.stack, "TraceIdMiddleware", {
         method: req.method,
         url: req.originalUrl,
         statusCode: res.statusCode || 500,
@@ -72,26 +72,30 @@ export class TraceIdMiddleware implements NestMiddleware {
   }
 
   private getOrGenerateTraceId(req: Request): string {
-    const headerTraceId = req.headers['x-request-id'];
-    if (typeof headerTraceId === 'string' && headerTraceId.trim()) {
+    const headerTraceId = req.headers["x-request-id"];
+    if (typeof headerTraceId === "string" && headerTraceId.trim()) {
       return headerTraceId.trim();
     }
 
     const queryTraceId = req.query.requestId;
-    if (typeof queryTraceId === 'string' && queryTraceId.trim()) {
+    if (typeof queryTraceId === "string" && queryTraceId.trim()) {
       return queryTraceId.trim();
     }
 
-    return `req_${randomUUID().replace(/-/g, '')}`;
+    return `req_${randomUUID().replace(/-/g, "")}`;
   }
 
   private extractUserId(req: Request): string | undefined {
     const user = req.user as { id?: string; sub?: string } | undefined;
-    if (user?.id) {return user.id;}
-    if (user?.sub) {return user.sub;}
+    if (user?.id) {
+      return user.id;
+    }
+    if (user?.sub) {
+      return user.sub;
+    }
 
-    const userIdHeader = req.headers['x-user-id'];
-    if (typeof userIdHeader === 'string' && userIdHeader.trim()) {
+    const userIdHeader = req.headers["x-user-id"];
+    if (typeof userIdHeader === "string" && userIdHeader.trim()) {
       return userIdHeader.trim();
     }
 

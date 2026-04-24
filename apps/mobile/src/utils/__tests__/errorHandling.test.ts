@@ -1,4 +1,5 @@
-﻿/**
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/**
  * Tests for error handling utilities
  * These test pure functions with no React Native dependencies
  */

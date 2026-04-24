@@ -16,10 +16,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 import { communityApi } from "../../../services/api/community.api";
 import { bloggerApi, BloggerProduct } from "../../../services/api/blogger.api";
 import { FollowButton } from "../components/social/FollowButton";
@@ -352,7 +349,7 @@ export const BloggerProfileScreen: React.FC = () => {
               <View style={styles.levelInfo}>
                 <View style={styles.levelBadge}>
                   {blogger.bloggerLevel === "big_v" ? (
-                    <Ionicons name="shield-checkmark" size={16} color="colors.warning" /> // custom color
+                    <Ionicons name="shield-checkmark" size={16} color={colors.warning} />
                   ) : (
                     <Ionicons
                       name="checkmark-circle"
@@ -394,7 +391,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
@@ -439,13 +436,17 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "colors.warning", // custom color
+    backgroundColor: colors.warning,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
     borderColor: colors.surface,
   },
-  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  nickname: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   bio: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
@@ -460,7 +461,11 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   stat: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  statNumber: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   statLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textSecondary,
@@ -591,7 +596,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "colors.infoLight", // custom color
+    backgroundColor: colors.infoLight,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,

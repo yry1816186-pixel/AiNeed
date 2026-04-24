@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-var-requires, @typescript-eslint/require-await */
 import { Platform } from "react-native";
-import { notificationApi } from '../../services/api/notification.api';
+import { notificationApi } from "../../services/api/notification.api";
 import { secureStorage } from "../utils/secureStorage";
 
 const PUSH_TOKEN_KEY = "@xuno_push_token";

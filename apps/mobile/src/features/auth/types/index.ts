@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿import { create } from "zustand";
+import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "../../../services/api/client";
@@ -7,7 +7,14 @@ import type { User, UserPreferences, UserStats } from "../../../types/user";
 import type { ApiResponse } from "../../../types";
 
 // Re-export types for auth module consumers
-export type { User, UserPreferences, UserStats, AuthTokens, LoginCredentials, RegisterData } from "./user";
+export type {
+  User,
+  UserPreferences,
+  UserStats,
+  AuthTokens,
+  LoginCredentials,
+  RegisterData,
+} from "./user";
 export type { ApiResponse } from "../../../types";
 
 interface StyleProfile {

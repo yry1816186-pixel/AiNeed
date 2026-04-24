@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, ViewStyle, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../design-system/theme";
@@ -51,7 +51,7 @@ export const IconCard: React.FC<IconCardProps> = ({
 const useStyles = createStyles((colors) => ({
   iconCard: {
     flex: 1,
-    backgroundColor: colors.neutral[0],
+    backgroundColor: colors.neutral.white,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     alignItems: "center",

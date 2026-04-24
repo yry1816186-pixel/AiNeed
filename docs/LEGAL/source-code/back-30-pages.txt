@@ -1,0 +1,1507 @@
+﻿================================================================================
+瀵昏３AI鏅鸿兘绌挎惌鎺ㄨ崘绯荤粺 V1.0 - 婧愪唬鐮?杞欢钁椾綔鏉冪櫥璁扮敵璇锋潗鏂?- 杞欢閴村埆鏉愭枡
+================================================================================
+
+// ========== FILE: ml\services\stylist\full_outfit_engine.py ==========
+// Lines: 2029
+
+   1              num_plans: 生成方案数量
+   2  
+   3          Returns:
+   4              按评分降序排列的搭配方案列表
+   5          """
+   6          if not candidates:
+   7              logger.warning("No candidate items provided; returning empty plans")
+   8              return []
+   9  
+  10          season = context.season or _get_season_from_month(datetime.now().month)
+  11  
+  12          # 确定搭配槽位（根据场合和是否穿连衣裙）
+  13          slots = self._determine_slots(context, user_profile)
+  14  
+  15          # 确定目标风格
+  16          target_styles = self._resolve_target_styles(user_profile, context)
+  17  
+  18          # 确定目标色彩
+  19          target_colors = self._resolve_target_colors(user_profile, context)
+  20  
+  21          # 确定正式度
+  22          target_formality = self._resolve_formality(user_profile, context)
+  23  
+  24          plans: List[FullOutfitPlan] = []
+  25  
+  26          # 尝试多种锚点组合
+  27          anchor_candidates = self._pick_anchor_candidates(
+  28              candidates, user_profile, context, target_styles, target_formality
+  29          )
+  30  
+  31          for anchor in anchor_candidates[:num_plans * 2]:
+  32              remaining_budget = budget - anchor.price
+  33              if remaining_budget < 0 and budget > 0:
+  34                  continue
+  35  
+  36              # 基于锚点扩展搭配链
+  37              plan = self._expand_outfit_chain(
+  38                  anchor=anchor,
+  39                  slots=slots,
+  40                  user_profile=user_profile,
+  41                  context=context,
+  42                  candidates=candidates,
+  43                  budget=remaining_budget,
+  44                  target_styles=target_styles,
+  45                  target_colors=target_colors,
+  46                  target_formality=target_formality,
+  47              )
+  48  
+  49              if plan is None:
+  50                  continue
+  51  
+  52              # 填充元信息
+  53              plan.occasion = context.occasion
+  54              plan.season = season
+  55              plan.total_price = sum(item.price for item in plan.get_all_items())
+  56  
+  57              # 多维评分
+  58              plan.body_fit_score = self._check_body_fit(plan.get_all_items(), user_profile).score
+  59              color_harmony = self._check_color_harmony(plan.get_all_items())
+  60              plan.color_harmony_score = color_harmony.score
+  61              plan.color_scheme = self._build_color_scheme(plan.get_all_items(), color_harmony)
+  62  
+  63              style_consistency = self._check_style_consistency(plan.get_all_items())
+  64              plan.style_consistency_score = style_consistency.score
+  65              plan.style_tags = self._extract_dominant_styles(plan.get_all_items())
+  66  
+  67              if context.temperature_celsius is not None:
+  68                  weather = self._check_weather_suitability(
+  69                      plan.get_all_items(), context.temperature_celsius
+  70                  )
+  71                  plan.weather_score = weather.score
+  72              else:
+  73                  plan.weather_score = self._estimate_season_score(
+  74                      plan.get_all_items(), season
+  75                  )
+  76  
+  77              plan.overall_score = self._score_outfit(
+  78                  plan.get_all_items(), user_profile, context
+  79              )
+  80  
+  81              # 生成自然语言解释
+  82              plan.explanation = self._generate_explanation(
+  83                  plan, user_profile, context, color_harmony, style_consistency
+  84              )
+  85  
+  86              plans.append(plan)
+  87  
+  88          # 去重：基于单品组合的 hash
+  89          seen_hashes: Set[str] = set()
+  90          unique_plans: List[FullOutfitPlan] = []
+  91          for plan in plans:
+  92              h = self._plan_hash(plan)
+  93              if h not in seen_hashes:
+  94                  seen_hashes.add(h)
+  95                  unique_plans.append(plan)
+  96  
+  97          # 按综合评分降序
+  98          unique_plans.sort(key=lambda p: p.overall_score, reverse=True)
+  99  
+ 100          return unique_plans[:num_plans]
+ 101  
+ 102      def generate_single_plan(
+ 103          self,
+ 104          user_profile: UserProfile,
+ 105          context: OutfitContext,
+ 106          budget: float = 5000.0,
+ 107          candidates: Optional[List[ClothingItem]] = None,
+ 108      ) -> Optional[FullOutfitPlan]:
+ 109          """生成单个最优搭配方案
+ 110  
+ 111          Args:
+ 112              user_profile: 用户档案
+ 113              context: 搭配上下文
+ 114              budget: 总预算
+ 115              candidates: 候选单品池
+ 116  
+ 117          Returns:
+ 118              最优搭配方案，或 None
+ 119          """
+ 120          plans = self.generate_outfit_plan(
+ 121              user_profile=user_profile,
+ 122              context=context,
+ 123              budget=budget,
+ 124              candidates=candidates,
+ 125              num_plans=1,
+ 126          )
+ 127          return plans[0] if plans else None
+ 128  
+ 129      # ------------------------------------------------------------------
+ 130      # Anchor piece selection
+ 131      # ------------------------------------------------------------------
+ 132  
+ 133      def _pick_anchor_piece(
+ 134          self,
+ 135          candidates: List[ClothingItem],
+ 136          user_profile: UserProfile,
+ 137          context: OutfitContext,
+ 138      ) -> Optional[ClothingItem]:
+ 139          """选择核心单品（anchor piece）
+ 140  
+ 141          核心单品是整套搭配的锚点，通常是：
+ 142          - 正式场合：外套/上装
+ 143          - 日常休闲：上装或连衣裙
+ 144          - 冬季：外套
+ 145  
+ 146          Args:
+ 147              candidates: 候选单品列表
+ 148              user_profile: 用户档案
+ 149              context: 搭配上下文
+ 150  
+ 151          Returns:
+ 152              最适合的核心单品，或 None
+ 153          """
+ 154          scored = self._pick_anchor_candidates(
+ 155              candidates, user_profile, context, [], 0.5
+ 156          )
+ 157          return scored[0] if scored else None
+ 158  
+ 159      def _pick_anchor_candidates(
+ 160          self,
+ 161          candidates: List[ClothingItem],
+ 162          user_profile: UserProfile,
+ 163          context: OutfitContext,
+ 164          target_styles: List[str],
+ 165          target_formality: float,
+ 166      ) -> List[ClothingItem]:
+ 167          """选择多个候选核心单品
+ 168  
+ 169          策略：
+ 170          1. 根据场合确定锚点品类优先级
+ 171          2. 对每个候选打分：体型匹配 + 场合匹配 + 季节匹配 + 风格匹配
+ 172          3. 返回按分排序的候选列表
+ 173          """
+ 174          # 确定锚点品类优先级
+ 175          anchor_categories = self._get_anchor_categories(context)
+ 176  
+ 177          # 筛选合适品类的候选
+ 178          filtered = [
+ 179              c for c in candidates if c.category in anchor_categories
+ 180          ]
+ 181  
+ 182          if not filtered:
+ 183              # 回退：任意品类
+ 184              filtered = list(candidates)
+ 185  
+ 186          scored_list: List[Tuple[float, ClothingItem]] = []
+ 187          for item in filtered:
+ 188              score = 0.0
+ 189  
+ 190              # 体型匹配（权重 0.25）
+ 191              body_score = self._item_body_fit_score(item, user_profile)
+ 192              score += body_score * 0.25
+ 193  
+ 194              # 场合匹配（权重 0.25）
+ 195              occasion_score = self._item_occasion_score(item, context)
+ 196              score += occasion_score * 0.25
+ 197  
+ 198              # 正式度匹配（权重 0.15）
+ 199              formality_diff = abs(item.formality - target_formality)
+ 200              formality_score = max(0.0, 1.0 - formality_diff)
+ 201              score += formality_score * 0.15
+ 202  
+ 203              # 风格匹配（权重 0.20）
+ 204              style_score = self._item_style_score(item, target_styles)
+ 205              score += style_score * 0.20
+ 206  
+ 207              # 季节匹配（权重 0.10）
+ 208              season_score = self._item_season_score(item, context)
+ 209              score += season_score * 0.10
+ 210  
+ 211              # 价格合理性（权重 0.05）：不是最贵也不是最便宜
+ 212              if item.price > 0:
+ 213                  price_score = 0.5  # 中等价格加分
+ 214                  score += price_score * 0.05
+ 215  
+ 216              scored_list.append((score, item))
+ 217  
+ 218          scored_list.sort(key=lambda x: x[0], reverse=True)
+ 219          return [item for _, item in scored_list]
+ 220  
+ 221      def _get_anchor_categories(self, context: OutfitContext) -> List[str]:
+ 222          """根据场合确定锚点品类优先级"""
+ 223          occasion = context.occasion
+ 224          temp = context.temperature_celsius
+ 225          season = context.season or _get_season_from_month(datetime.now().month)
+ 226  
+ 227          # 冬季/低温：外套优先
+ 228          if (temp is not None and temp < 10) or season == "winter":
+ 229              if occasion in ("interview", "business", "work", "wedding", "ceremony"):
+ 230                  return ["outerwear", "tops", "dresses"]
+ 231              return ["outerwear", "tops", "dresses"]
+ 232  
+ 233          # 正式场合：上装/连衣裙优先
+ 234          if occasion in ("interview", "business", "wedding", "ceremony"):
+ 235              return ["tops", "outerwear", "dresses"]
+ 236  
+ 237          # 约会/社交：连衣裙或上装
+ 238          if occasion in ("date", "party"):
+ 239              return ["dresses", "tops", "outerwear"]
+ 240  
+ 241          # 日常/旅行
+ 242          return ["tops", "dresses", "outerwear"]
+ 243  
+ 244      # ------------------------------------------------------------------
+ 245      # Outfit chain expansion
+ 246      # ------------------------------------------------------------------
+ 247  
+ 248      def _expand_outfit_chain(
+ 249          self,
+ 250          anchor: ClothingItem,
+ 251          slots: List[ClothingSlot],
+ 252          user_profile: UserProfile,
+ 253          context: OutfitContext,
+ 254          candidates: List[ClothingItem],
+ 255          budget: float,
+ 256          target_styles: List[str],
+ 257          target_colors: List[str],
+ 258          target_formality: float,
+ 259      ) -> Optional[FullOutfitPlan]:
+ 260          """基于核心单品扩展完整搭配
+ 261  
+ 262          逐槽位填充，每个槽位选择与已选单品兼容度最高的候选。
+ 263          """
+ 264          plan = FullOutfitPlan(
+ 265              plan_id=f"plan_{uuid.uuid4().hex[:12]}",
+ 266              anchor_piece=anchor,
+ 267          )
+ 268  
+ 269          selected_items: List[ClothingItem] = [anchor]
+ 270          remaining_budget = budget
+ 271          used_ids: Set[str] = {anchor.item_id}
+ 272  
+ 273          # 确定锚点是什么品类，调整需要填充的槽位
+ 274          actual_slots = self._adjust_slots_for_anchor(slots, anchor)
+ 275  
+ 276          for slot in actual_slots:
+ 277              slot_category = self._slot_to_category(slot)
+ 278              if not slot_category:
+ 279                  continue
+ 280  
+ 281              # 从候选中筛选品类匹配
+ 282              slot_candidates = [
+ 283                  c for c in candidates
+ 284                  if c.category in slot_category
+ 285                  and c.item_id not in used_ids
+ 286              ]
+ 287  
+ 288              if not slot_candidates:
+ 289                  continue
+ 290  
+ 291              # 为每个候选计算与已选单品的兼容度
+ 292              best_item: Optional[ClothingItem] = None
+ 293              best_score = -1.0
+ 294  
+ 295              for candidate in slot_candidates:
+ 296                  # 预算检查
+ 297                  if remaining_budget > 0 and candidate.price > remaining_budget:
+ 298                      continue
+ 299  
+ 300                  compat = self._item_compatibility_score(
+ 301                      candidate, selected_items, user_profile, context,
+ 302                      target_styles, target_colors, target_formality,
+ 303                  )
+ 304                  if compat > best_score:
+ 305                      best_score = compat
+ 306                      best_item = candidate
+ 307  
+ 308              if best_item is not None:
+ 309                  self._assign_slot_to_plan(plan, slot, best_item)
+ 310                  selected_items.append(best_item)
+ 311                  remaining_budget -= best_item.price
+ 312                  used_ids.add(best_item.item_id)
+ 313  
+ 314          return plan
+ 315  
+ 316      def _determine_slots(
+ 317          self, context: OutfitContext, user_profile: UserProfile
+ 318      ) -> List[ClothingSlot]:
+ 319          """确定搭配槽位列表
+ 320  
+ 321          根据场合和温度决定需要的层次和配饰。
+ 322          """
+ 323          slots: List[ClothingSlot] = []
+ 324          temp = context.temperature_celsius
+ 325          season = context.season or _get_season_from_month(datetime.now().month)
+ 326  
+ 327          # 低温层搭
+ 328          if temp is not None and temp < 10:
+ 329              slots.extend([ClothingSlot.OUTER_TOP, ClothingSlot.INNER_TOP])
+ 330          elif temp is not None and temp < 20:
+ 331              slots.append(ClothingSlot.OUTER_TOP)
+ 332          else:
+ 333              slots.append(ClothingSlot.INNER_TOP)
+ 334  
+ 335          # 下装 + 鞋子（始终需要）
+ 336          slots.extend([ClothingSlot.BOTTOM, ClothingSlot.SHOES])
+ 337  
+ 338          # 配饰（根据场合添加）
+ 339          occasion = context.occasion
+ 340          if occasion in ("date", "party", "wedding"):
+ 341              slots.extend([
+ 342                  ClothingSlot.BAG,
+ 343                  ClothingSlot.NECKLACE,
+ 344                  ClothingSlot.EARRINGS,
+ 345              ])
+ 346          elif occasion in ("interview", "business", "work"):
+ 347              slots.extend([ClothingSlot.BAG, ClothingSlot.WATCH])
+ 348          elif occasion in ("travel", "daily", "campus"):
+ 349              slots.extend([ClothingSlot.BAG, ClothingSlot.SUNGLASSES])
+ 350          else:
+ 351              slots.extend([ClothingSlot.BAG])
+ 352  
+ 353          # 冬季额外配饰
+ 354          if season == "winter" or (temp is not None and temp < 5):
+ 355              slots.append(ClothingSlot.SCARF)
+ 356  
+ 357          return slots
+ 358  
+ 359      def _adjust_slots_for_anchor(
+ 360          self, slots: List[ClothingSlot], anchor: ClothingItem
+ 361      ) -> List[ClothingSlot]:
+ 362          """根据锚点品类调整槽位
+ 363  
+ 364          如果锚点是连衣裙，则不需要下装和内搭上装。
+ 365          如果锚点是外套，则不再需要外层。
+ 366          """
+ 367          adjusted: List[ClothingSlot] = []
+ 368          anchor_cat = anchor.category
+ 369  
+ 370          # 连衣裙特殊处理
+ 371          if anchor_cat == "dresses":
+ 372              for slot in slots:
+ 373                  if slot in (ClothingSlot.INNER_TOP, ClothingSlot.OUTER_TOP, ClothingSlot.BOTTOM):
+ 374                      continue
+ 375                  adjusted.append(slot)
+ 376              # 连衣裙场合需要外套
+ 377              adjusted.insert(0, ClothingSlot.OUTER_TOP)
+ 378              return adjusted
+ 379  
+ 380          # 外套作为锚点：不需要另一个外套，需要内搭
+ 381          if anchor_cat == "outerwear":
+ 382              for slot in slots:
+ 383                  if slot == ClothingSlot.OUTER_TOP:
+ 384                      continue
+ 385                  adjusted.append(slot)
+ 386              if ClothingSlot.INNER_TOP not in adjusted:
+ 387                  adjusted.insert(0, ClothingSlot.INNER_TOP)
+ 388              return adjusted
+ 389  
+ 390          # 上装作为锚点：不需要内搭上装
+ 391          if anchor_cat == "tops":
+ 392              for slot in slots:
+ 393                  if slot == ClothingSlot.INNER_TOP:
+ 394                      continue
+ 395                  adjusted.append(slot)
+ 396              return adjusted
+ 397  
+ 398          return list(slots)
+ 399  
+ 400      @staticmethod
+ 401      def _slot_to_category(slot: ClothingSlot) -> Optional[List[str]]:
+ 402          """将槽位映射到商品品类"""
+ 403          mapping: Dict[ClothingSlot, List[str]] = {
+ 404              ClothingSlot.OUTER_TOP: ["outerwear"],
+ 405              ClothingSlot.INNER_TOP: ["tops"],
+ 406              ClothingSlot.DRESS: ["dresses"],
+ 407              ClothingSlot.BOTTOM: ["bottoms"],
+ 408              ClothingSlot.SHOES: ["footwear"],
+ 409              ClothingSlot.BAG: ["accessories"],
+ 410              ClothingSlot.NECKLACE: ["accessories"],
+ 411              ClothingSlot.SCARF: ["accessories"],
+ 412              ClothingSlot.WATCH: ["accessories"],
+ 413              ClothingSlot.HAT: ["accessories"],
+ 414              ClothingSlot.BELT: ["accessories"],
+ 415              ClothingSlot.EARRINGS: ["accessories"],
+ 416              ClothingSlot.SUNGLASSES: ["accessories"],
+ 417          }
+ 418          return mapping.get(slot)
+ 419  
+ 420      @staticmethod
+ 421      def _assign_slot_to_plan(plan: FullOutfitPlan, slot: ClothingSlot, item: ClothingItem) -> None:
+ 422          """将单品分配到方案的对应槽位"""
+ 423          if slot == ClothingSlot.OUTER_TOP:
+ 424              plan.outer_top = item
+ 425          elif slot == ClothingSlot.INNER_TOP:
+ 426              plan.inner_top = item
+ 427          elif slot == ClothingSlot.BOTTOM:
+ 428              plan.bottom = item
+ 429          elif slot == ClothingSlot.SHOES:
+ 430              plan.shoes = item
+ 431          else:
+ 432              # 所有配饰归入 accessories 列表
+ 433              plan.accessories.append(item)
+ 434  
+ 435      # ------------------------------------------------------------------
+ 436      # Compatibility scoring (single item vs. already-selected items)
+ 437      # ------------------------------------------------------------------
+ 438  
+ 439      def _item_compatibility_score(
+ 440          self,
+ 441          candidate: ClothingItem,
+ 442          selected_items: List[ClothingItem],
+ 443          user_profile: UserProfile,
+ 444          context: OutfitContext,
+ 445          target_styles: List[str],
+ 446          target_colors: List[str],
+ 447          target_formality: float,
+ 448      ) -> float:
+ 449          """计算候选单品与已选单品的综合兼容度
+ 450  
+ 451          维度权重：
+ 452          - 色彩兼容 0.25
+ 453          - 风格兼容 0.25
+ 454          - 场合/正式度 0.15
+ 455          - 体型适配 0.15
+ 456          - 季节适配 0.10
+ 457          - 价格合理 0.10
+ 458          """
+ 459          score = 0.0
+ 460  
+ 461          # 1. 色彩兼容
+ 462          color_compat = self._color_compatibility_with_existing(
+ 463              candidate, selected_items, target_colors
+ 464          )
+ 465          score += color_compat * 0.25
+ 466  
+ 467          # 2. 风格兼容
+ 468          style_compat = self._style_compatibility_with_existing(
+ 469              candidate, selected_items, target_styles
+ 470          )
+ 471          score += style_compat * 0.25
+ 472  
+ 473          # 3. 场合/正式度
+ 474          occasion_score = self._item_occasion_score(candidate, context)
+ 475          formality_diff = abs(candidate.formality - target_formality)
+ 476          formality_score = max(0.0, 1.0 - formality_diff * 1.5)
+ 477          score += (occasion_score * 0.5 + formality_score * 0.5) * 0.15
+ 478  
+ 479          # 4. 体型适配
+ 480          body_score = self._item_body_fit_score(candidate, user_profile)
+ 481          score += body_score * 0.15
+ 482  
+ 483          # 5. 季节适配
+ 484          season_score = self._item_season_score(candidate, context)
+ 485          score += season_score * 0.10
+ 486  
+ 487          # 6. 价格合理（价格适中的加分）
+ 488          if candidate.price > 0:
+ 489              price_score = 0.5
+ 490              if len(selected_items) > 0:
+ 491                  avg_price = sum(i.price for i in selected_items) / len(selected_items)
+ 492                  # 与已选单品价格水平接近的加分
+ 493                  price_ratio = min(candidate.price, avg_price) / max(candidate.price, avg_price, 1)
+ 494                  price_score = 0.3 + price_ratio * 0.7
+ 495              score += price_score * 0.10
+ 496  
+ 497          return score
+ 498  
+ 499      # ------------------------------------------------------------------
+ 500      # Color harmony
+ 501      # ------------------------------------------------------------------
+ 502  
+ 503      def _check_color_harmony(self, items: List[ClothingItem]) -> ColorHarmonyResult:
+ 504          """检查整体色彩协调性
+ 505  
+ 506          规则：
+ 507          - 不超过 3 个主色调（中性色不算）
+ 508          - 主色(60%) + 辅助色(30%) + 点缀色(10%)
+ 509          - 使用色环理论判断色彩搭配类型
+ 510          - 每种色彩方案有对应的场合适用性
+ 511  
+ 512          Args:
+ 513              items: 所有单品列表
+ 514  
+ 515          Returns:
+ 516              色彩协调检查结果
+ 517          """
+ 518          if not items:
+ 519              return ColorHarmonyResult(
+ 520                  is_harmonious=False,
+ 521                  score=0.0,
+ 522                  issues=["没有单品"],
+ 523              )
+ 524  
+ 525          # 收集所有颜色
+ 526          color_families: Dict[str, int] = {}
+ 527          for item in items:
+ 528              primary = _resolve_color_family(item.color_primary)
+ 529              color_families[primary] = color_families.get(primary, 0) + 1
+ 530              if item.color_secondary:
+ 531                  secondary = _resolve_color_family(item.color_secondary)
+ 532                  color_families[secondary] = color_families.get(secondary, 0) + 1
+ 533  
+ 534          # 去掉中性色，统计非中性色族
+ 535          non_neutral = {k: v for k, v in color_families.items() if k != "neutral"}
+ 536          neutral_count = color_families.get("neutral", 0)
+ 537          total_colors = sum(color_families.values())
+ 538  
+ 539          # 1. 主色调数量检查
+ 540          issues: List[str] = []
+ 541          if len(non_neutral) > 3:
+ 542              issues.append(
+ 543                  f"色彩过多（{len(non_neutral)}个主色调），建议控制在3个以内"
+ 544              )
+ 545  
+ 546          # 2. 色彩比例检查（60-30-10 法则）
+ 547          primary_ratio_score = 0.0
+ 548          if non_neutral:
+ 549              sorted_families = sorted(non_neutral.items(), key=lambda x: x[1], reverse=True)
+ 550              dominant_count = sorted_families[0][1]
+ 551              dominant_ratio = dominant_count / max(total_colors, 1)
+ 552  
+ 553              # 主色应占约 50-70%
+ 554              if 0.4 <= dominant_ratio <= 0.7:
+ 555                  primary_ratio_score = 1.0
+ 556              elif 0.3 <= dominant_ratio <= 0.8:
+ 557                  primary_ratio_score = 0.7
+ 558              else:
+ 559                  primary_ratio_score = 0.4
+ 560                  issues.append("主色比例不够突出，建议调整为主要颜色占60%")
+ 561  
+ 562          # 3. 色环协调检查
+ 563          harmony_type = self._classify_color_scheme(non_neutral)
+ 564          harmony_score = self._score_color_scheme_type(harmony_type, non_neutral)
+ 565  
+ 566          # 4. 中性色搭配检查
+ 567          neutral_score = 0.5
+ 568          if neutral_count > 0 and len(non_neutral) > 0:
+ 569              # 有中性色做平衡是好的
+ 570              neutral_score = 0.7 + min(neutral_count / total_colors, 0.3)
+ 571          elif neutral_count > 0 and len(non_neutral) == 0:
+ 572              # 纯中性色搭配
+ 573              neutral_score = 0.8
+ 574              harmony_type = ColorSchemeType.ACHROMATIC
+ 575  
+ 576          # 综合评分
+ 577          final_score = (
+ 578              (primary_ratio_score * 0.35)
+ 579              + (harmony_score * 0.45)
+ 580              + (neutral_score * 0.20)
+ 581          )
+ 582  
+ 583          # 如果有超过3个非中性色，扣分
+ 584          if len(non_neutral) > 3:
+ 585              final_score *= max(0.5, 1.0 - (len(non_neutral) - 3) * 0.15)
+ 586  
+ 587          is_harmonious = final_score >= 0.6 and len(issues) == 0
+ 588  
+ 589          dominant_colors = list(non_neutral.keys())[:3]
+ 590          accent_colors = list(non_neutral.keys())[3:] if len(non_neutral) > 3 else []
+ 591  
+ 592          suggestion = self._color_harmony_suggestion(harmony_type, issues)
+ 593  
+ 594          return ColorHarmonyResult(
+ 595              is_harmonious=is_harmonious,
+ 596              scheme_type=harmony_type,
+ 597              dominant_colors=dominant_colors,
+ 598              accent_colors=accent_colors,
+ 599              score=round(final_score * 100, 2),
+ 600              issues=issues,
+ 601              suggestion=suggestion,
+ 602          )
+ 603  
+ 604      def _classify_color_scheme(self, non_neutral: Dict[str, int]) -> ColorSchemeType:
+ 605          """根据色环分类色彩方案类型"""
+ 606          families = list(non_neutral.keys())
+ 607          if len(families) == 0:
+ 608              return ColorSchemeType.ACHROMATIC
+ 609          if len(families) == 1:
+ 610              return ColorSchemeType.MONOCHROMATIC
+ 611  
+ 612          # 计算所有色族之间的色环距离
+ 613          hues = [_FAMILY_HUE.get(f, 0.0) for f in families if f != "neutral"]
+ 614  
+ 615          if len(hues) < 2:
+ 616              return ColorSchemeType.NEUTRAL
+ 617  
+ 618          # 检查各种配色类型
+ 619          distances = []
+ 620          for i in range(len(hues)):
+ 621              for j in range(i + 1, len(hues)):
+ 622                  dist = abs(hues[i] - hues[j])
+ 623                  dist = min(dist, 360.0 - dist)
+ 624                  distances.append(dist)
+ 625  
+ 626          avg_dist = sum(distances) / len(distances) if distances else 0
+ 627  
+ 628          # 互补色（约180度）
+ 629          if any(160 < d < 200 for d in distances):
+ 630              if len(families) == 2:
+ 631                  return ColorSchemeType.COMPLEMENTARY
+ 632              # 检查分裂互补
+ 633              if len(families) == 3:
+ 634                  small_dists = sorted(distances)[:2]
+ 635                  if all(d < 60 for d in small_dists):
+ 636                      return ColorSchemeType.SPLIT_COMPLEMENTARY
+ 637              return ColorSchemeType.COMPLEMENTARY
+ 638  
+ 639          # 三角配色（约120度间隔）
+ 640          if len(families) == 3 and all(100 < d < 140 for d in distances):
+ 641              return ColorSchemeType.TRIADIC
+ 642  
+ 643          # 类似色（相邻色环，<60度）
+ 644          if all(d < 60 for d in distances):
+ 645              return ColorSchemeType.ANALOGOUS
+ 646  
+ 647          # 默认归为类似色
+ 648          return ColorSchemeType.ANALOGOUS
+ 649  
+ 650      def _score_color_scheme_type(
+ 651          self, scheme_type: ColorSchemeType, non_neutral: Dict[str, int]
+ 652      ) -> float:
+ 653          """对色彩方案类型打分
+ 654  
+ 655          不同方案类型有不同的基础分和容错度。
+ 656          """
+ 657          scores: Dict[ColorSchemeType, float] = {
+ 658              ColorSchemeType.MONOCHROMATIC: 0.85,      # 同类色安全
+ 659              ColorSchemeType.ANALOGOUS: 0.90,           # 类似色最和谐
+ 660              ColorSchemeType.NEUTRAL: 0.80,             # 中性色百搭
+ 661              ColorSchemeType.ACHROMATIC: 0.75,          # 黑白灰经典
+ 662              ColorSchemeType.COMPLEMENTARY: 0.75,       # 互补色需要技巧
+ 663              ColorSchemeType.TRIADIC: 0.65,             # 三角配色较难
+ 664              ColorSchemeType.SPLIT_COMPLEMENTARY: 0.70, # 分裂互补
+ 665          }
+ 666          return scores.get(scheme_type, 0.5)
+ 667  
+ 668      def _color_harmony_suggestion(
+ 669          self, scheme_type: ColorSchemeType, issues: List[str]
+ 670      ) -> str:
+ 671          """生成色彩建议文本"""
+ 672          scheme_names: Dict[ColorSchemeType, str] = {
+ 673              ColorSchemeType.MONOCHROMATIC: "同类色搭配",
+ 674              ColorSchemeType.ANALOGOUS: "类似色搭配",
+ 675              ColorSchemeType.COMPLEMENTARY: "互补色搭配",
+ 676              ColorSchemeType.TRIADIC: "三角配色",
+ 677              ColorSchemeType.SPLIT_COMPLEMENTARY: "分裂互补搭配",
+ 678              ColorSchemeType.NEUTRAL: "中性色搭配",
+ 679              ColorSchemeType.ACHROMATIC: "无彩色搭配",
+ 680          }
+ 681          base = f"当前色彩方案为{scheme_names.get(scheme_type, '混合搭配')}。"
+ 682          if issues:
+ 683              base += "建议：" + "；".join(issues)
+ 684          return base
+ 685  
+ 686      def _color_compatibility_with_existing(
+ 687          self,
+ 688          candidate: ClothingItem,
+ 689          selected_items: List[ClothingItem],
+ 690          target_colors: List[str],
+ 691      ) -> float:
+ 692          """计算候选单品与已选单品的色彩兼容度"""
+ 693          cand_family = _resolve_color_family(candidate.color_primary)
+ 694          if cand_family == "neutral":
+ 695              return 0.9  # 中性色百搭
+ 696  
+ 697          score = 0.0
+ 698          for existing in selected_items:
+ 699              ex_family = _resolve_color_family(existing.color_primary)
+ 700              if ex_family == "neutral":
+ 701                  score += 0.85
+ 702                  continue
+ 703              dist = _hue_distance(cand_family, ex_family)
+ 704              # 距离越小越和谐，同类色最高分
+ 705              if dist < 30:
+ 706                  score += 0.9
+ 707              elif dist < 60:
+ 708                  score += 0.8
+ 709              elif dist < 120:
+ 710                  score += 0.6
+ 711              elif dist < 160:
+ 712                  score += 0.4
+ 713              else:
+ 714                  # 互补色需要技巧，给中等分
+ 715                  score += 0.5
+ 716  
+ 717          if selected_items:
+ 718              score /= len(selected_items)
+ 719  
+ 720          # 如果候选颜色在用户目标颜色中，加分
+ 721          if target_colors:
+ 722              target_families = [_resolve_color_family(c) for c in target_colors]
+ 723              if cand_family in target_families:
+ 724                  score = min(1.0, score + 0.1)
+ 725  
+ 726          return min(1.0, score)
+ 727  
+ 728      def _build_color_scheme(
+ 729          self, items: List[ClothingItem], harmony: ColorHarmonyResult
+ 730      ) -> ColorScheme:
+ 731          """根据单品和色彩协调结果构建 ColorScheme"""
+ 732          color_counts: Dict[str, int] = {}
+ 733          for item in items:
+ 734              fam = _resolve_color_family(item.color_primary)
+ 735              color_counts[fam] = color_counts.get(fam, 0) + 1
+ 736  
+ 737          sorted_colors = sorted(color_counts.items(), key=lambda x: x[1], reverse=True)
+ 738  
+ 739          primary = sorted_colors[0][0] if sorted_colors else "neutral"
+ 740          secondary = sorted_colors[1][0] if len(sorted_colors) > 1 else ""
+ 741          accent = sorted_colors[2][0] if len(sorted_colors) > 2 else ""
+ 742  
+ 743          scheme_names: Dict[ColorSchemeType, str] = {
+ 744              ColorSchemeType.MONOCHROMATIC: "同色系深浅搭配",
+ 745              ColorSchemeType.ANALOGOUS: "相近色和谐搭配",
+ 746              ColorSchemeType.COMPLEMENTARY: "对比色撞色搭配",
+ 747              ColorSchemeType.TRIADIC: "三角配色搭配",
+ 748              ColorSchemeType.SPLIT_COMPLEMENTARY: "分裂互补搭配",
+ 749              ColorSchemeType.NEUTRAL: "中性色百搭搭配",
+ 750              ColorSchemeType.ACHROMATIC: "黑白灰经典搭配",
+ 751          }
+ 752  
+ 753          return ColorScheme(
+ 754              scheme_type=harmony.scheme_type,
+ 755              primary_color=primary,
+ 756              secondary_color=secondary,
+ 757              accent_color=accent,
+ 758              description=scheme_names.get(harmony.scheme_type, "综合搭配"),
+ 759          )
+ 760  
+ 761      # ------------------------------------------------------------------
+ 762      # Style consistency
+ 763      # ------------------------------------------------------------------
+ 764  
+ 765      def _check_style_consistency(self, items: List[ClothingItem]) -> StyleConsistencyResult:
+ 766          """检查风格一致性
+ 767  
+ 768          规则：
+ 769          - 相邻风格可混搭
+ 770          - 对立风格不可（如 formal + sporty 不行）
+ 771          - 使用兼容矩阵量化风格冲突
+ 772  
+ 773          Args:
+ 774              items: 所有单品列表
+ 775  
+ 776          Returns:
+ 777              风格一致性检查结果
+ 778          """
+ 779          if not items:
+ 780              return StyleConsistencyResult(score=0.0)
+ 781  
+ 782          # 收集所有风格标签
+ 783          all_styles: Dict[str, int] = {}
+ 784          for item in items:
+ 785              for tag in item.style_tags:
+ 786                  tag_lower = tag.lower().replace(" ", "_").replace("-", "_")
+ 787                  all_styles[tag_lower] = all_styles.get(tag_lower, 0) + 1
+ 788  
+ 789          if not all_styles:
+ 790              # 无风格标签，默认中等一致性
+ 791              return StyleConsistencyResult(
+ 792                  is_consistent=True,
+ 793                  dominant_style="unknown",
+ 794                  score=60.0,
+ 795              )
+ 796  
+ 797          # 找主导风格
+ 798          sorted_styles = sorted(all_styles.items(), key=lambda x: x[1], reverse=True)
+ 799          dominant_style = sorted_styles[0][0]
+ 800  
+ 801          # 检查风格冲突
+ 802          conflicts: List[Tuple[str, str]] = []
+ 803          issues: List[str] = []
+ 804          total_compat = 0.0
+ 805          pair_count = 0
+ 806  
+ 807          style_list = list(all_styles.keys())
+ 808          for i in range(len(style_list)):
+ 809              for j in range(i + 1, len(style_list)):
+ 810                  s1 = style_list[i]
+ 811                  s2 = style_list[j]
+ 812                  compat = self._get_style_compatibility(s1, s2)
+ 813                  total_compat += compat
+ 814                  pair_count += 1
+ 815  
+ 816                  if compat < 0.2:
+ 817                      conflicts.append((s1, s2))
+ 818                      issues.append(f"风格冲突：{s1} 与 {s2} 不搭")
+ 819                  elif compat < 0.4:
+ 820                      issues.append(f"风格轻微不协调：{s1} 与 {s2}")
+ 821  
+ 822          avg_compat = total_compat / pair_count if pair_count > 0 else 0.5
+ 823  
+ 824          # 评分：兼容度转化为 0-100
+ 825          score = avg_compat * 100.0
+ 826  
+ 827          # 有严重冲突扣分
+ 828          if conflicts:
+ 829              score = max(0, score - len(conflicts) * 15)
+ 830  
+ 831          is_consistent = len(conflicts) == 0 and score >= 60
+ 832  
+ 833          return StyleConsistencyResult(
+ 834              is_consistent=is_consistent,
+ 835              dominant_style=dominant_style,
+ 836              style_conflict=conflicts,
+ 837              score=round(score, 2),
+ 838              issues=issues,
+ 839          )
+ 840  
+ 841      def _get_style_compatibility(self, style_a: str, style_b: str) -> float:
+ 842          """从兼容矩阵查询两个风格的兼容度"""
+ 843          if style_a == style_b:
+ 844              return 1.0
+ 845          compat = _STYLE_COMPATIBILITY.get(style_a, {}).get(style_b, 0.3)
+ 846          return compat
+ 847  
+ 848      def _style_compatibility_with_existing(
+ 849          self,
+ 850          candidate: ClothingItem,
+ 851          selected_items: List[ClothingItem],
+ 852          target_styles: List[str],
+ 853      ) -> float:
+ 854          """计算候选单品与已选单品的风格兼容度"""
+ 855          cand_styles = [s.lower().replace(" ", "_").replace("-", "_") for s in candidate.style_tags]
+ 856          if not cand_styles:
+ 857              return 0.5
+ 858  
+ 859          total_score = 0.0
+ 860          comparisons = 0
+ 861  
+ 862          for existing in selected_items:
+ 863              ex_styles = [s.lower().replace(" ", "_").replace("-", "_") for s in existing.style_tags]
+ 864              if not ex_styles:
+ 865                  continue
+ 866  
+ 867              # 计算候选风格与已有风格的最大兼容度
+ 868              best_compat = 0.0
+ 869              for cs in cand_styles:
+ 870                  for es in ex_styles:
+ 871                      compat = self._get_style_compatibility(cs, es)
+ 872                      best_compat = max(best_compat, compat)
+ 873  
+ 874              total_score += best_compat
+ 875              comparisons += 1
+ 876  
+ 877          avg = total_score / comparisons if comparisons > 0 else 0.5
+ 878  
+ 879          # 如果候选风格在目标风格中，加分
+ 880          if target_styles:
+ 881              target_lower = [s.lower() for s in target_styles]
+ 882              matching = [s for s in cand_styles if s in target_lower]
+ 883              if matching:
+ 884                  avg = min(1.0, avg + 0.15)
+ 885  
+ 886          return min(1.0, avg)
+ 887  
+ 888      # ------------------------------------------------------------------
+ 889      # Weather suitability
+ 890      # ------------------------------------------------------------------
+ 891  
+ 892      def _check_weather_suitability(
+ 893          self, items: List[ClothingItem], temperature_celsius: float
+ 894      ) -> WeatherResult:
+ 895          """检查天气适配性
+ 896  
+ 897          规则：
+ 898          - <10C: 需要3层（内搭+中间层+外套），优先保暖材质
+ 899          - 10-20C: 2层（内搭+外套），可调节
+ 900          - 20-25C: 1-2层，轻薄材质
+ 901          - >25C: 1层，透气材质
+ 902  
+ 903          Args:
+ 904              items: 所有单品列表
+ 905              temperature_celsius: 当前温度
+ 906  
+ 907          Returns:
+ 908              天气适配检查结果
+ 909          """
+ 910          if not items:
+ 911              return WeatherResult(is_suitable=False, score=0.0, issues=["没有单品"])
+ 912  
+ 913          issues: List[str] = []
+ 914          total_warmth = sum(item.warmth_level for item in items)
+ 915          layer_count = len([i for i in items if i.category in ("tops", "outerwear", "dresses")])
+ 916  
+ 917          # 确定期望的层次和保暖度
+ 918          if temperature_celsius < 0:
+ 919              expected_layers = 3
+ 920              expected_warmth_min = 7
+ 921              expected_warmth_max = 12
+ 922              temp_label = "极寒"
+ 923          elif temperature_celsius < 10:
+ 924              expected_layers = 3
+ 925              expected_warmth_min = 5
+ 926              expected_warmth_max = 10
+ 927              temp_label = "寒冷"
+ 928          elif temperature_celsius < 15:
+ 929              expected_layers = 2
+ 930              expected_warmth_min = 3
+ 931              expected_warmth_max = 7
+ 932              temp_label = "较冷"
+ 933          elif temperature_celsius < 20:
+ 934              expected_layers = 2
+ 935              expected_warmth_min = 2
+ 936              expected_warmth_max = 5
+ 937              temp_label = "凉爽"
+ 938          elif temperature_celsius < 25:
+ 939              expected_layers = 1
+ 940              expected_warmth_min = 1
+ 941              expected_warmth_max = 3
+ 942              temp_label = "温暖"
+ 943          elif temperature_celsius < 30:
+ 944              expected_layers = 1
+ 945              expected_warmth_min = 0
+ 946              expected_warmth_max = 2
+ 947              temp_label = "炎热"
+ 948          else:
+ 949              expected_layers = 1
+ 950              expected_warmth_min = 0
+ 951              expected_warmth_max = 1
+ 952              temp_label = "酷热"
+ 953  
+ 954          # 层次检查
+ 955          layer_score = 0.0
+ 956          if layer_count >= expected_layers:
+ 957              layer_score = 1.0
+ 958          elif layer_count == expected_layers - 1:
+ 959              layer_score = 0.7
+ 960              if expected_layers > 1:
+ 961                  issues.append(f"当前{temp_label}（{temperature_celsius:.0f}C），建议增加一层穿搭")
+ 962          else:
+ 963              layer_score = 0.3
+ 964              issues.append(f"当前{temp_label}（{temperature_celsius:.0f}C），穿衣层数不足")
+ 965  
+ 966          # 保暖度检查
+ 967          warmth_score = 0.0
+ 968          if expected_warmth_min <= total_warmth <= expected_warmth_max:
+ 969              warmth_score = 1.0
+ 970          elif total_warmth < expected_warmth_min:
+ 971              warmth_score = max(0.2, total_warmth / expected_warmth_min)
+ 972              issues.append(f"保暖度不足（当前{total_warmth}，建议{expected_warmth_min}+）")
+ 973          elif total_warmth > expected_warmth_max:
+ 974              excess_ratio = expected_warmth_max / total_warmth
+ 975              warmth_score = max(0.3, excess_ratio)
+ 976              issues.append(f"可能过热（保暖度{total_warmth}，建议{expected_warmth_max}以内）")
+ 977  
+ 978          final_score = layer_score * 0.5 + warmth_score * 0.5
+ 979          final_score *= 100
+ 980  
+ 981          is_suitable = len(issues) == 0 and final_score >= 60
+ 982  
+ 983          suggestion = ""
+ 984          if issues:
+ 985              suggestion = f"当前{temp_label}（{temperature_celsius:.0f}C），" + "；".join(issues)
+ 986  
+ 987          return WeatherResult(
+ 988              is_suitable=is_suitable,
+ 989              layer_count=layer_count,
+ 990              warmth_total=total_warmth,
+ 991              score=round(final_score, 2),
+ 992              issues=issues,
+ 993              suggestion=suggestion,
+ 994          )
+ 995  
+ 996      def _estimate_season_score(
+ 997          self, items: List[ClothingItem], season: str
+ 998      ) -> float:
+ 999          """当没有具体温度时，根据季节估算天气适配分"""
+1000          if not items:
+1001              return 0.0
+1002  
+1003          matching = 0
+1004          total = len(items)
+1005          for item in items:
+1006              if not item.seasons:
+1007                  matching += 0.5  # 无季节信息给一半分
+1008              elif season in item.seasons:
+1009                  matching += 1.0
+1010              else:
+1011                  matching += 0.0
+1012  
+1013          return round((matching / total) * 100, 2) if total > 0 else 0.0
+1014  
+1015      # ------------------------------------------------------------------
+1016      # Budget check
+1017      # ------------------------------------------------------------------
+1018  
+1019      def _check_budget(
+1020          self, items: List[ClothingItem], budget: float
+1021      ) -> BudgetResult:
+1022          """检查价格约束
+1023  
+1024          Args:
+1025              items: 所有单品列表
+1026              budget: 总预算上限
+1027  
+1028          Returns:
+1029              价格约束检查结果
+1030          """
+1031          total_price = sum(item.price for item in items)
+1032          remaining = budget - total_price
+1033          is_within = budget <= 0 or total_price <= budget
+1034  
+1035          # 评分逻辑
+1036          if budget <= 0:
+1037              score = 70.0  # 无预算约束
+1038          elif total_price == 0:
+1039              score = 80.0  # 无价格信息
+1040          else:
+1041              ratio = total_price / budget
+1042              if ratio <= 0.7:
+1043                  score = 95.0  # 预算充裕
+1044              elif ratio <= 0.9:
+1045                  score = 85.0
+1046              elif ratio <= 1.0:
+1047                  score = 70.0
+1048              elif ratio <= 1.1:
+1049                  score = 50.0
+1050              else:
+1051                  score = max(0, 50 - (ratio - 1.1) * 100)
+1052  
+1053          issues: List[str] = []
+1054          if not is_within:
+1055              issues.append(f"超出预算：总价{total_price:.0f}元，预算{budget:.0f}元")
+1056  
+1057          return BudgetResult(
+1058              is_within_budget=is_within,
+1059              total_price=total_price,
+1060              budget_limit=budget,
+1061              remaining_budget=max(0, remaining),
+1062              score=round(score, 2),
+1063              issues=issues,
+1064          )
+1065  
+1066      # ------------------------------------------------------------------
+1067      # Body fit check
+1068      # ------------------------------------------------------------------
+1069  
+1070      def _check_body_fit(
+1071          self, items: List[ClothingItem], user_profile: UserProfile
+1072      ) -> BodyFitResult:
+1073          """检查体型适配度
+1074  
+1075          Args:
+1076              items: 所有单品列表
+1077              user_profile: 用户档案
+1078  
+1079          Returns:
+1080              体型适配检查结果
+1081          """
+1082          body_type = user_profile.body_type
+1083          if not body_type:
+1084              return BodyFitResult(score=70.0)
+1085  
+1086          recommendations = _BODY_TYPE_RECOMMENDATIONS.get(body_type)
+1087          if not recommendations:
+1088              return BodyFitResult(score=60.0)
+1089  
+1090          best_fits = recommendations["best_fits"]
+1091          avoid_fits = recommendations["avoid_fits"]
+1092  
+1093          fitting_items: List[str] = []
+1094          issues: List[str] = []
+1095          total_score = 0.0
+1096  
+1097          for item in items:
+1098              item_text = f"{item.name} {item.description} {' '.join(item.style_tags)}".lower()
+1099  
+1100              # 检查是否有推荐版型
+1101              has_best = any(bf in item_text for bf in best_fits)
+1102              has_avoid = any(af in item_text for af in avoid_fits)
+1103  
+1104              # 检查 body_type_fit 字段
+1105              if item.body_type_fit:
+1106                  bt_match = body_type in item.body_type_fit or any(
+1107                      bt in body_type for bt in item.body_type_fit
+1108                  )
+1109                  if bt_match:
+1110                      has_best = True
+1111  
+1112              if has_avoid:
+1113                  issues.append(f"{item.name or item.item_id} 可能不适合{recommendations['name']}体型")
+1114                  total_score += 0.2
+1115              elif has_best:
+1116                  fitting_items.append(item.name or item.item_id)
+1117                  total_score += 1.0
+1118              else:
+1119                  total_score += 0.6  # 中等适配
+1120  
+1121          avg_score = (total_score / len(items) * 100) if items else 70.0
+1122          return BodyFitResult(
+1123              score=round(min(100, avg_score), 2),
+1124              fitting_items=fitting_items,
+1125              issues=issues,
+1126          )
+1127  
+1128      def _item_body_fit_score(
+1129          self, item: ClothingItem, user_profile: UserProfile
+1130      ) -> float:
+1131          """计算单品的体型适配分数"""
+1132          body_type = user_profile.body_type
+1133          if not body_type:
+1134              return 0.6
+1135  
+1136          recs = _BODY_TYPE_RECOMMENDATIONS.get(body_type)
+1137          if not recs:
+1138              return 0.5
+1139  
+1140          item_text = f"{item.name} {item.description} {' '.join(item.style_tags)}".lower()
+1141  
+1142          if any(af in item_text for af in recs["avoid_fits"]):
+1143              return 0.2
+1144          if any(bf in item_text for bf in recs["best_fits"]):
+1145              return 1.0
+1146          if item.body_type_fit and body_type in item.body_type_fit:
+1147              return 0.9
+1148          return 0.6
+1149  
+1150      # ------------------------------------------------------------------
+1151      # Overall scoring
+1152      # ------------------------------------------------------------------
+1153  
+1154      def _score_outfit(
+1155          self,
+1156          items: List[ClothingItem],
+1157          user_profile: UserProfile,
+1158          context: OutfitContext,
+1159      ) -> float:
+1160          """综合评分：0-100分
+1161  
+1162          评分维度及权重：
+1163          - 色彩协调 25%
+1164          - 风格一致 25%
+1165          - 体型适配 20%
+1166          - 天气适配 15%
+1167          - 场合适配 10%
+1168          - 价格合理 5%
+1169          """
+1170          if not items:
+1171              return 0.0
+1172  
+1173          # 色彩协调
+1174          color = self._check_color_harmony(items)
+1175  
+1176          # 风格一致
+1177          style = self._check_style_consistency(items)
+1178  
+1179          # 体型适配
+1180          body = self._check_body_fit(items, user_profile)
+1181  
+1182          # 天气
+1183          if context.temperature_celsius is not None:
+1184              weather = self._check_weather_suitability(items, context.temperature_celsius)
+1185              weather_score = weather.score
+1186          else:
+1187              weather_score = self._estimate_season_score(items, context.season or _get_season_from_month(datetime.now().month))
+1188  
+1189          # 场合
+1190          occasion_score = self._overall_occasion_score(items, context) * 100
+1191  
+1192          # 价格合理性（单品的场合匹配度而非预算检查）
+1193          price_score = 70.0  # 默认中等
+1194  
+1195          overall = (
+1196              color.score * 0.25
+1197              + style.score * 0.25
+1198              + body.score * 0.20
+1199              + weather_score * 0.15
+1200              + occasion_score * 0.10
+1201              + price_score * 0.05
+1202          )
+1203  
+1204          return round(min(100.0, overall), 2)
+1205  
+1206      # ------------------------------------------------------------------
+1207      # Occasion scoring helpers
+1208      # ------------------------------------------------------------------
+1209  
+1210      def _item_occasion_score(
+1211          self, item: ClothingItem, context: OutfitContext
+1212      ) -> float:
+1213          """计算单品与场合的匹配度"""
+1214          occasion = context.occasion
+1215          if not occasion:
+1216              return 0.6
+1217  
+1218          # 检查 item.occasions 字段
+1219          if item.occasions and occasion in item.occasions:
+1220              return 1.0
+1221          # 模糊匹配
+1222          if item.occasions:
+1223              for occ in item.occasions:
+1224                  if occ in occasion or occasion in occ:
+1225                      return 0.8
+1226  
+1227          # 基于正式度推断
+1228          target_formality = _OCCASION_FORMALITY.get(occasion, 0.5)
+1229          formality_diff = abs(item.formality - target_formality)
+1230          return max(0.2, 1.0 - formality_diff * 1.5)
+1231  
+1232      def _overall_occasion_score(
+1233          self, items: List[ClothingItem], context: OutfitContext
+1234      ) -> float:
+1235          """计算整套搭配与场合的整体匹配度"""
+1236          if not items:
+1237              return 0.0
+1238          total = sum(self._item_occasion_score(item, context) for item in items)
+1239          return total / len(items)
+1240  
+1241      def _item_season_score(
+1242          self, item: ClothingItem, context: OutfitContext
+1243      ) -> float:
+1244          """计算单品与季节的匹配度"""
+1245          season = context.season or _get_season_from_month(datetime.now().month)
+1246  
+1247          if item.seasons and season in item.seasons:
+1248              return 1.0
+1249          if item.seasons:
+1250              return 0.3
+1251          return 0.5
+1252  
+1253      def _item_style_score(
+1254          self, item: ClothingItem, target_styles: List[str]
+1255      ) -> float:
+1256          """计算单品风格与目标风格的匹配度"""
+1257          if not target_styles:
+1258              return 0.5
+1259  
+1260          item_lower = [s.lower().replace(" ", "_").replace("-", "_") for s in item.style_tags]
+1261          target_lower = [s.lower().replace(" ", "_").replace("-", "_") for s in target_styles]
+1262  
+1263          if not item_lower:
+1264              return 0.4
+1265  
+1266          matching = len(set(item_lower) & set(target_lower))
+1267          return min(1.0, matching / max(len(target_lower), 1) + 0.3)
+1268  
+1269      # ------------------------------------------------------------------
+1270      # Style / color resolution helpers
+1271      # ------------------------------------------------------------------
+1272  
+1273      def _resolve_target_styles(
+1274          self, user_profile: UserProfile, context: OutfitContext
+1275      ) -> List[str]:
+1276          """确定目标风格列表
+1277  
+1278          优先级：用户偏好 > 场合推荐 > 默认
+1279          """
+1280          styles: List[str] = []
+1281  
+1282          # 用户风格偏好
+1283          if user_profile.style_preferences:
+1284              styles.extend(user_profile.style_preferences)
+1285  
+1286          # 场合推荐风格
+1287          occasion_styles = _OCCASION_STYLES.get(context.occasion, [])
+1288          for s in occasion_styles:
+1289              if s not in styles:
+1290                  styles.append(s)
+1291  
+1292          if not styles:
+1293              styles = ["casual", "smart_casual"]
+1294  
+1295          return styles[:5]
+1296  
+1297      def _resolve_target_colors(
+1298          self, user_profile: UserProfile, context: OutfitContext
+1299      ) -> List[str]:
+1300          """确定目标色彩列表
+1301  
+1302          优先级：用户色彩偏好 > 色彩季型推荐 > 场合色彩
+1303          """
+1304          colors: List[str] = []
+1305  
+1306          if user_profile.color_preferences:
+1307              colors.extend(user_profile.color_preferences)
+1308  
+1309          # 色彩季型推荐色（复用 stylist 中的知识）
+1310          season_guide = {
+1311              "spring_warm": ["珊瑚粉", "暖黄", "草绿", "杏色"],
+1312              "spring_light": ["浅蓝绿", "奶油白", "桃红"],
+1313              "summer_cool": ["玫瑰粉", "薰衣草紫", "天蓝", "薄荷绿"],
+1314              "summer_light": ["灰粉", "银灰", "浅蓝"],
+1315              "autumn_warm": ["焦糖色", "酒红", "墨绿", "棕色"],
+1316              "autumn_deep": ["芥末黄", "深棕", "驼色"],
+1317              "winter_cool": ["正红", "宝蓝", "纯白", "黑色"],
+1318              "winter_deep": ["翠绿", "玫红", "深灰"],
+1319          }
+1320          if user_profile.color_season:
+1321              recommended = season_guide.get(user_profile.color_season, [])
+1322              for c in recommended:
+1323                  if c not in colors:
+1324                      colors.append(c)
+1325  
+1326          return colors[:8]
+1327  
+1328      def _resolve_formality(
+1329          self, user_profile: UserProfile, context: OutfitContext
+1330      ) -> float:
+1331          """确定目标正式度"""
+1332          if context.formality_hint is not None:
+1333              return context.formality_hint
+1334  
+1335          occasion_formality = _OCCASION_FORMALITY.get(context.occasion, 0.5)
+1336  
+1337          # 如果用户有风格偏好，取中间值
+1338          if user_profile.style_preferences:
+1339              user_formalities = [
+1340                  _STYLE_FORMALITY.get(s.lower(), 0.5)
+1341                  for s in user_profile.style_preferences
+1342              ]
+1343              user_avg = sum(user_formalities) / len(user_formalities)
+1344              return (occasion_formality + user_avg) / 2
+1345  
+1346          return occasion_formality
+1347  
+1348      # ------------------------------------------------------------------
+1349      # Explanation generation
+1350      # ------------------------------------------------------------------
+1351  
+1352      def _generate_explanation(
+1353          self,
+1354          plan: FullOutfitPlan,
+1355          user_profile: UserProfile,
+1356          context: OutfitContext,
+1357          color_harmony: ColorHarmonyResult,
+1358          style_consistency: StyleConsistencyResult,
+1359      ) -> str:
+1360          """生成自然语言搭配理由
+1361  
+1362          Args:
+1363              plan: 搭配方案
+1364              user_profile: 用户档案
+1365              context: 搭配上下文
+1366              color_harmony: 色彩协调结果
+1367              style_consistency: 风格一致性结果
+1368  
+1369          Returns:
+1370              搭配理由的自然语言描述
+1371          """
+1372          parts: List[str] = []
+1373  
+1374          # 1. 整体风格描述
+1375          occasion_name = {
+1376              "interview": "面试", "work": "通勤", "business": "商务",
+1377              "date": "约会", "daily": "日常", "travel": "出游",
+1378              "party": "聚会", "campus": "校园", "wedding": "婚礼",
+1379              "ceremony": "典礼",
+1380          }.get(context.occasion, context.occasion)
+1381  
+1382          style_str = ", ".join(plan.style_tags[:3]) if plan.style_tags else "百搭"
+1383          parts.append(f"这套{occasion_name}搭配以{style_str}风格为主")
+1384  
+1385          # 2. 核心单品说明
+1386          if plan.anchor_piece:
+1387              anchor = plan.anchor_piece
+1388              parts.append(f"以{anchor.name or '核心单品'}为搭配核心")
+1389              if anchor.color_primary:
+1390                  parts.append(f"主色调为{anchor.color_primary}")
+1391  
+1392          # 3. 色彩方案说明
+1393          scheme_desc = {
+1394              ColorSchemeType.MONOCHROMATIC: "同色系深浅渐变，高级感十足",
+1395              ColorSchemeType.ANALOGOUS: "相近色和谐搭配，自然舒适",
+1396              ColorSchemeType.COMPLEMENTARY: "对比色撞色搭配，个性鲜明",
+1397              ColorSchemeType.TRIADIC: "三角配色，时尚大胆",
+1398              ColorSchemeType.SPLIT_COMPLEMENTARY: "分裂互补搭配，层次丰富",
+1399              ColorSchemeType.NEUTRAL: "中性色为基调，百搭实用",
+1400              ColorSchemeType.ACHROMATIC: "黑白灰经典搭配，永不过时",
+1401          }
+1402          cs = plan.color_scheme
+1403          if cs and cs.scheme_type:
+1404              parts.append(scheme_desc.get(cs.scheme_type, "色彩搭配协调"))
+1405  
+1406          # 4. 体型适配说明
+1407          body_type = user_profile.body_type
+1408          if body_type and body_type in _BODY_TYPE_RECOMMENDATIONS:
+1409              rec = _BODY_TYPE_RECOMMENDATIONS[body_type]
+1410              parts.append(f"针对{rec['name']}体型优化，{rec['focus']}")
+1411  
+1412          # 5. 评分总结
+1413          parts.append(
+1414              f"综合评分{plan.overall_score:.0f}分"
+1415              f"（色彩{plan.color_harmony_score:.0f}/风格{plan.style_consistency_score:.0f}"
+1416              f"/体型{plan.body_fit_score:.0f}/天气{plan.weather_score:.0f}）"
+1417          )
+1418  
+1419          return "。".join(parts) + "。"
+1420  
+1421      # ------------------------------------------------------------------
+1422      # Utility methods
+1423      # ------------------------------------------------------------------
+1424  
+1425      def _extract_dominant_styles(self, items: List[ClothingItem]) -> List[str]:
+1426          """提取方案的主导风格标签"""
+1427          style_counts: Dict[str, int] = {}
+1428          for item in items:
+1429              for tag in item.style_tags:
+1430                  style_counts[tag] = style_counts.get(tag, 0) + 1
+1431          sorted_styles = sorted(style_counts.items(), key=lambda x: x[1], reverse=True)
+1432          return [s for s, _ in sorted_styles[:4]]
+1433  
+1434      @staticmethod
+1435      def _plan_hash(plan: FullOutfitPlan) -> str:
+1436          """计算方案的唯一标识 hash（用于去重）"""
+1437          item_ids = sorted(item.item_id for item in plan.get_all_items())
+1438          raw = "|".join(item_ids)
+1439          return hashlib.md5(raw.encode("utf-8")).hexdigest()
+1440  
+1441      def clear_cache(self) -> None:
+1442          """清空方案缓存"""
+1443          with self._cache_lock:
+1444              self._cache.clear()
+1445  
+1446      def get_stats(self) -> Dict[str, Any]:
+1447          """获取引擎统计信息"""
+1448          with self._cache_lock:
+1449              return {
+1450                  "cache_size": len(self._cache),
+1451                  "max_cache_size": self._max_cache_size,
+1452              }
+1453  
+1454  
+1455  # ---------------------------------------------------------------------------
+1456  # Module-level singleton & async helper
+1457  # ---------------------------------------------------------------------------
+1458  
+1459  _engine_instance: Optional[FullOutfitEngine] = None
+1460  _engine_lock = threading.Lock()
+1461  
+1462  
+1463  def get_outfit_engine() -> FullOutfitEngine:
+1464      """获取全局引擎实例（懒加载单例）"""
+1465      global _engine_instance
+1466      if _engine_instance is None:
+1467          with _engine_lock:
+1468              if _engine_instance is None:
+1469                  _engine_instance = FullOutfitEngine()
+1470                  logger.info("FullOutfitEngine initialized")
+1471      return _engine_instance
+1472  
+1473  
+1474  async def generate_full_outfit(
+1475      user_profile: UserProfile,
+1476      context: OutfitContext,
+1477      budget: float = 5000.0,
+1478      candidates: Optional[List[ClothingItem]] = None,
+1479      num_plans: int = 3,
+1480  ) -> List[Dict[str, Any]]:
+1481      """异步接口：生成全身搭配方案
+1482  
+1483      使用示例::
+1484  
+1485          plans = await generate_full_outfit(
+1486              user_profile=user_profile,
+1487              context=OutfitContext(occasion="date", temperature_celsius=18),
+1488              budget=3000,
+1489              candidates=item_pool,
+1490          )
+1491      """
+1492      engine = get_outfit_engine()
+1493      plans = engine.generate_outfit_plan(
+1494          user_profile=user_profile,
+1495          context=context,
+1496          budget=budget,
+1497          candidates=candidates,
+1498          num_plans=num_plans,
+1499      )
+1500      return [plan.to_dict() for plan in plans]

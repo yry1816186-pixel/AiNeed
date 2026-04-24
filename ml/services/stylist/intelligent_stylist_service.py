@@ -1016,6 +1016,10 @@ class IntelligentStylistService:
         self._max_fallback_cache = 50
         # P1-7: Default timeout for GLM API calls (30 seconds)
         self._api_timeout_seconds = 30
+        # Dialog state machine
+        self._dialog_contexts: Dict[str, Any] = {}
+        self._dialog_contexts_lock = threading.RLock()
+        self._init_dialog_engine()
     
     def get_cache_stats(self) -> Dict[str, Any]:
         """Get response cache statistics"""
@@ -1028,6 +1032,68 @@ class IntelligentStylistService:
     def clear_cache(self) -> None:
         """Clear the response cache"""
         self._response_cache.clear()
+    
+    def _init_dialog_engine(self) -> None:
+        from ml.services.stylist.slot_extractor import SlotExtractor
+        from ml.services.stylist.dialog_engine import DialogEngine
+        
+        slot_extractor = SlotExtractor(llm_call_fn=self._call_llm_with_resilience)
+        self.dialog_engine = DialogEngine(
+            slot_extractor=slot_extractor,
+            llm_call_fn=self._call_llm_with_resilience,
+            outfit_generator=self._generate_outfits_from_context,
+        )
+    
+    async def _generate_outfits_from_context(self, context) -> list:
+        from ml.services.stylist.full_outfit_engine import (
+            FullOutfitEngine,
+            OutfitContext,
+            generate_full_outfit,
+        )
+        from ml.services.stylist.intelligent_stylist_service import UserProfile
+        
+        user_profile = UserProfile(
+            style_preferences=context.slots.style_preference,
+            color_preferences=context.slots.color_preference,
+            budget_range=context.slots.budget,
+            body_type=context.slots.body_type,
+        )
+        outfit_context = OutfitContext(
+            occasion=context.slots.occasion or "daily",
+            temperature_celsius=context.slots.temperature,
+        )
+        budget = 5000.0
+        if context.slots.budget:
+            budget = context.slots.budget.get("max", 5000.0)
+        
+        try:
+            plans = await generate_full_outfit(
+                user_profile=user_profile,
+                context=outfit_context,
+                budget=budget,
+                candidates=None,
+                num_plans=3,
+            )
+            return plans
+        except Exception as e:
+            logger.warning(f"Outfit generation from context failed: {e}")
+            return []
+    
+    async def _get_or_create_dialog_context(self, session_id: str):
+        from ml.services.stylist.dialog_state import DialogContext
+        
+        with self._dialog_contexts_lock:
+            if session_id not in self._dialog_contexts:
+                self._dialog_contexts[session_id] = DialogContext()
+            return self._dialog_contexts[session_id]
+    
+    async def _save_dialog_context(self, session_id: str, context) -> None:
+        with self._dialog_contexts_lock:
+            self._dialog_contexts[session_id] = context
+    
+    async def clear_dialog_context(self, session_id: str) -> None:
+        with self._dialog_contexts_lock:
+            self._dialog_contexts.pop(session_id, None)
     
     async def get_conversation_history(self, session_id: str) -> List[Dict[str, str]]:
         """
@@ -1480,8 +1546,10 @@ class IntelligentStylistService:
         self,
         user_message: str,
         conversation_history: List[Dict[str, str]],
-        user_profile: Optional[UserProfile] = None
-    ) -> str:
+        user_profile: Optional[UserProfile] = None,
+        session_id: Optional[str] = None,
+        use_state_machine: bool = True,
+    ) -> Dict:
         """
         多轮对话交互接口
         
@@ -1489,10 +1557,17 @@ class IntelligentStylistService:
             user_message: 用户消息
             conversation_history: 对话历史
             user_profile: 用户档案（可选）
+            session_id: 会话ID，用于状态机上下文持久化
+            use_state_machine: 是否使用状态机（默认True）
             
         Returns:
-            AI 助手回复
+            Dict with keys: reply, quick_replies, state, slots, outfits?
         """
+        if use_state_machine and session_id:
+            return await self._chat_with_state_machine(
+                user_message, conversation_history, user_profile, session_id
+            )
+        
         context_parts = []
         
         if user_profile:
@@ -1504,14 +1579,49 @@ class IntelligentStylistService:
             {"role": "system", "content": f"{self.SYSTEM_PROMPT}\n\n【当前对话上下文】\n{context_str}"}
         ]
         
-        # 保留最近10轮对话（20条消息）
         for msg in conversation_history[-20:]:
             messages.append(msg)
         
         messages.append({"role": "user", "content": user_message})
         
-        # 使用带重试和熔断的调用
-        return await self._call_llm_with_resilience(messages, max_tokens=2000)
+        reply = await self._call_llm_with_resilience(messages, max_tokens=2000)
+        return {
+            "reply": reply,
+            "quick_replies": [],
+            "state": "LEGACY",
+            "slots": {},
+        }
+    
+    async def _chat_with_state_machine(
+        self,
+        user_message: str,
+        conversation_history: List[Dict[str, str]],
+        user_profile: Optional[UserProfile],
+        session_id: str,
+    ) -> Dict:
+        from ml.services.stylist.dialog_state import DialogSlot
+        
+        dialog_ctx = await self._get_or_create_dialog_context(session_id)
+        
+        if user_profile and dialog_ctx.turn_count == 0:
+            dialog_ctx.slots = DialogSlot(
+                occasion=None,
+                body_type=user_profile.body_type,
+                style_preference=list(user_profile.style_preferences) if user_profile.style_preferences else [],
+                budget=user_profile.budget_range,
+                color_preference=list(user_profile.color_preferences) if user_profile.color_preferences else [],
+                avoid_items=list(user_profile.style_avoidances) if user_profile.style_avoidances else [],
+                temperature=None,
+            )
+        
+        result = await self.dialog_engine.process_message(user_message, dialog_ctx)
+        
+        await self._save_dialog_context(session_id, dialog_ctx)
+        
+        await self._conversation_memory.add_message(session_id, "user", user_message)
+        await self._conversation_memory.add_message(session_id, "assistant", result.get("reply", ""))
+        
+        return result
     
     @with_retry_and_circuit_breaker(max_retries=3, base_delay=1.0)
     async def _call_llm_with_resilience(

@@ -10,6 +10,7 @@ interface BloggerBadgeProps {
 }
 
 function BloggerBadgeInner({ level }: BloggerBadgeProps) {
+  const s = useS(colors);
   if (level === "big_v") {
     return (
       <View style={s.bigVBadge}>
@@ -47,7 +48,7 @@ const useS = createStyles((colors) => ({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: "colors.warning",
+    backgroundColor: colors.warning,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,

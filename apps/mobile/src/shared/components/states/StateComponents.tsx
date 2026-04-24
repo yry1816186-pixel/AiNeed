@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unused-vars */
 import React, { useRef, useEffect, useState } from "react";
 import {
   View,
@@ -28,7 +29,7 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from "../../../design-system/theme";
+
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -36,7 +37,6 @@ import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 
 const springConfig = {
   damping: 15,

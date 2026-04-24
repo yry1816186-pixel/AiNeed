@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, memo, useMemo } from "react";
+import React, { useEffect, useCallback, memo, useMemo } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -20,10 +20,10 @@ import {
   Shadows,
 } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { SpringConfigs } from "../../../design-system/theme/tokens/animations";
-import { useReducedMotion } from "../../../hooks/useReducedMotion";
-import { AnimatedHeartButton } from "../../design-system/ui/AnimatedHeartButton";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { SpringConfigs } from "../../../../design-system/theme/tokens/animations";
+import { useReducedMotion } from "../../../../hooks/useReducedMotion";
+import { AnimatedHeartButton } from "../../../../design-system/ui/AnimatedHeartButton";
 import { ActionButtons } from "./ActionButtons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -390,14 +390,14 @@ export const SwipeCard = memo(function SwipeCard({
                   {/* Color harmony arc */}
                   {item.score !== null && item.score !== undefined && (
                     <View style={styles.harmonyArcContainer}>
-                      <ColorHarmonyArc score={item.score!} />
+                      <ColorHarmonyArc score={item.score} />
                     </View>
                   )}
 
                   {/* CIEDE2000 distance arc */}
                   {item.score !== null && item.score !== undefined && item.colors.length > 0 && (
                     <View style={styles.ciedeArcContainer}>
-                      <CIEDE2000Arc score={item.score!} colors={item.colors} />
+                      <CIEDE2000Arc score={item.score} colors={item.colors} />
                     </View>
                   )}
                 </View>

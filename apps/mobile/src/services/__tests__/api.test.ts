@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
 /**
  * Tests for the API client error handling module
  * Tests pure functions from error.ts that have no React Native dependencies
@@ -92,7 +92,6 @@ describe("classifyAxiosError", () => {
     expect(result.code).toBe(AppErrorCode.UNAUTHORIZED);
     expect(result.statusCode).toBe(401);
   });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   it("should classify 403 as FORBIDDEN", () => {
     const axiosError = new AxiosError("Forbidden", "ERR_BAD_REQUEST", undefined, undefined, {
@@ -103,7 +102,6 @@ describe("classifyAxiosError", () => {
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.FORBIDDEN);
   });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   it("should classify 404 as NOT_FOUND", () => {
     const axiosError = new AxiosError("Not Found", "ERR_BAD_REQUEST", undefined, undefined, {
@@ -113,7 +111,7 @@ describe("classifyAxiosError", () => {
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.NOT_FOUND);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   });
 
   it("should classify 422 as VALIDATION_ERROR", () => {
@@ -139,7 +137,6 @@ describe("classifyAxiosError", () => {
         data: {},
       } as any
     );
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.RATE_LIMITED);
@@ -155,7 +152,7 @@ describe("classifyAxiosError", () => {
         status: 500,
         data: {},
       } as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     );
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
@@ -166,7 +163,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Conflict", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 409,
       data: { message: "Resource conflict" },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);

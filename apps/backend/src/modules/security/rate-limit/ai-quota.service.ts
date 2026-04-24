@@ -1,10 +1,10 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { Injectable, Inject, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import Redis from "ioredis";
 
-import { REDIS_CLIENT } from '../../../common/redis/redis.service';
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 
-export type QuotaType = 'ai-stylist' | 'try-on';
+export type QuotaType = "ai-stylist" | "try-on";
 
 export interface QuotaCheckResult {
   allowed: boolean;
@@ -25,13 +25,13 @@ export interface QuotaStatus {
 }
 
 const DEFAULT_LIMITS: Record<QuotaType, number> = {
-  'ai-stylist': 10,
-  'try-on': 3,
+  "ai-stylist": 10,
+  "try-on": 3,
 };
 
 const ENV_LIMIT_KEYS: Record<QuotaType, string> = {
-  'ai-stylist': 'AI_STYLIST_DAILY_LIMIT',
-  'try-on': 'TRY_ON_DAILY_LIMIT',
+  "ai-stylist": "AI_STYLIST_DAILY_LIMIT",
+  "try-on": "TRY_ON_DAILY_LIMIT",
 };
 
 @Injectable()
@@ -69,24 +69,18 @@ export class AiQuotaService {
 
   constructor(
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     this.limits = {
-      'ai-stylist': this.configService.get<number>(
-        ENV_LIMIT_KEYS['ai-stylist'],
-        DEFAULT_LIMITS['ai-stylist'],
+      "ai-stylist": this.configService.get<number>(
+        ENV_LIMIT_KEYS["ai-stylist"],
+        DEFAULT_LIMITS["ai-stylist"]
       ),
-      'try-on': this.configService.get<number>(
-        ENV_LIMIT_KEYS['try-on'],
-        DEFAULT_LIMITS['try-on'],
-      ),
+      "try-on": this.configService.get<number>(ENV_LIMIT_KEYS["try-on"], DEFAULT_LIMITS["try-on"]),
     };
   }
 
-  async checkQuota(
-    userId: string,
-    quotaType: QuotaType,
-  ): Promise<QuotaCheckResult> {
+  async checkQuota(userId: string, quotaType: QuotaType): Promise<QuotaCheckResult> {
     const key = this.buildKey(userId, quotaType);
     const limit = this.limits[quotaType];
     const ttl = await this.redis.ttl(key);
@@ -103,22 +97,19 @@ export class AiQuotaService {
     };
   }
 
-  async consumeQuota(
-    userId: string,
-    quotaType: QuotaType,
-  ): Promise<QuotaConsumeResult> {
+  async consumeQuota(userId: string, quotaType: QuotaType): Promise<QuotaConsumeResult> {
     const key = this.buildKey(userId, quotaType);
     const limit = this.limits[quotaType];
     const ttlSeconds = this.getSecondsUntilMidnight();
 
     // Use Lua script for atomic check-and-increment to prevent race conditions
-    const result = await this.redis.eval(
+    const result = (await this.redis.eval(
       AiQuotaService.CHECK_AND_INCREMENT_SCRIPT,
       1,
       key,
       limit,
-      ttlSeconds,
-    ) as [number, number];
+      ttlSeconds
+    )) as [number, number];
 
     const [newCount, ttl] = result;
 
@@ -137,9 +128,7 @@ export class AiQuotaService {
     };
   }
 
-  async getQuotaStatus(
-    userId: string,
-  ): Promise<Record<string, QuotaStatus>> {
+  async getQuotaStatus(userId: string): Promise<Record<string, QuotaStatus>> {
     const result: Record<string, QuotaStatus> = {};
 
     for (const quotaType of Object.keys(this.limits) as QuotaType[]) {

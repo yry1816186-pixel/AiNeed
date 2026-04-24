@@ -90,7 +90,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       // ignore storage errors
-      console.error('Feature flag storage error:', error);
+      console.error("Feature flag storage error:", error);
     }
   }, []);
 
@@ -99,7 +99,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
     } catch (error) {
       // ignore storage errors
-      console.error('Feature flag storage error:', error);
+      console.error("Feature flag storage error:", error);
     }
   }, []);
 
@@ -133,7 +133,14 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       void refreshFlags();
     };
 
-    const socket = (wsService as unknown as { socket?: { on: (event: string, handler: () => void) => void; off: (event: string, handler: () => void) => void } }).socket;
+    const socket = (
+      wsService as unknown as {
+        socket?: {
+          on: (event: string, handler: () => void) => void;
+          off: (event: string, handler: () => void) => void;
+        };
+      }
+    ).socket;
     if (socket) {
       socket.on("feature_flag_updated", handleFlagUpdate);
       return () => {

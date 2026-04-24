@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
@@ -28,7 +28,7 @@ export const Tag: React.FC<TagProps> = ({
 
   const color = variantColors[variant];
   const bgColor = selected ? color : colors.neutral[50];
-  const textColor = selected ? colors.neutral[0] : colors.neutral[600];
+  const textColor = selected ? colors.neutral.white : colors.neutral[600];
   const borderColor = selected ? color : colors.neutral[200];
 
   return (

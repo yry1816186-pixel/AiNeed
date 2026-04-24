@@ -24,8 +24,8 @@ export const TimeSlotItem: React.FC<TimeSlotItemProps> = ({
   const variantStyle = !isAvailable
     ? styles.booked
     : isSelected
-      ? styles.selected
-      : styles.available;
+    ? styles.selected
+    : styles.available;
 
   return (
     <TouchableOpacity

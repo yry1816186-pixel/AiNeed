@@ -82,13 +82,13 @@ describe("ConsultantService", () => {
     scheduledAt: new Date("2026-05-01T14:00:00.000Z"),
     durationMinutes: 60,
     notes: "希望了解职场穿搭建议",
-    price: new (require("@prisma/client").Prisma).Decimal(299),
+    price: new (require("@prisma/client").Prisma.Decimal)(299),
     currency: "CNY",
     status: "pending",
-    depositAmount: new (require("@prisma/client").Prisma).Decimal(89.7),
-    finalPaymentAmount: new (require("@prisma/client").Prisma).Decimal(209.3),
-    platformFee: new (require("@prisma/client").Prisma).Decimal(0),
-    consultantPayout: new (require("@prisma/client").Prisma).Decimal(0),
+    depositAmount: new (require("@prisma/client").Prisma.Decimal)(89.7),
+    finalPaymentAmount: new (require("@prisma/client").Prisma.Decimal)(209.3),
+    platformFee: new (require("@prisma/client").Prisma.Decimal)(0),
+    consultantPayout: new (require("@prisma/client").Prisma.Decimal)(0),
     depositPaidAt: null,
     finalPaidAt: null,
     cancelReason: null,
@@ -151,38 +151,30 @@ describe("ConsultantService", () => {
             studioName: dto.studioName,
             status: "pending",
           }),
-        }),
+        })
       );
     });
 
     it("当用户已有顾问档案时应该抛出 BadRequestException", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(service.createProfile(userId, dto)).rejects.toThrow(
-        "该用户已创建顾问档案",
-      );
+      await expect(service.createProfile(userId, dto)).rejects.toThrow("该用户已创建顾问档案");
     });
   });
 
   describe("getProfiles", () => {
     it("默认应该只返回 active 状态的顾问", async () => {
-      mockPrismaService.consultantProfile.findMany.mockResolvedValue([
-        mockConsultantProfile,
-      ]);
+      mockPrismaService.consultantProfile.findMany.mockResolvedValue([mockConsultantProfile]);
       mockPrismaService.consultantProfile.count.mockResolvedValue(1);
 
       const result = await service.getProfiles({});
 
       expect(result.data).toHaveLength(1);
       expect(result.meta.total).toBe(1);
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ status: "active" }),
-        }),
+        })
       );
     });
 
@@ -192,12 +184,10 @@ describe("ConsultantService", () => {
 
       await service.getProfiles({ status: ConsultantStatusDto.PENDING });
 
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ status: "pending" }),
-        }),
+        })
       );
     });
 
@@ -207,12 +197,10 @@ describe("ConsultantService", () => {
 
       await service.getProfiles({ sortBy: "rating" });
 
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { rating: "desc" },
-        }),
+        })
       );
     });
 
@@ -222,12 +210,10 @@ describe("ConsultantService", () => {
 
       await service.getProfiles({ sortBy: "experience" });
 
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { yearsOfExperience: "desc" },
-        }),
+        })
       );
     });
 
@@ -237,12 +223,10 @@ describe("ConsultantService", () => {
 
       await service.getProfiles({ sortBy: "reviews" });
 
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { reviewCount: "desc" },
-        }),
+        })
       );
     });
 
@@ -252,14 +236,12 @@ describe("ConsultantService", () => {
 
       await service.getProfiles({ specialty: "色彩搭配" });
 
-      expect(
-        mockPrismaService.consultantProfile.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.consultantProfile.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             specialties: expect.anything(),
           }),
-        }),
+        })
       );
     });
 
@@ -277,9 +259,7 @@ describe("ConsultantService", () => {
 
   describe("getProfileByUserId", () => {
     it("应该返回顾问档案", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       const result = await service.getProfileByUserId("user_consultant");
 
@@ -289,17 +269,13 @@ describe("ConsultantService", () => {
     it("当档案不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getProfileByUserId("nonexistent"),
-      ).rejects.toThrow("顾问档案不存在");
+      await expect(service.getProfileByUserId("nonexistent")).rejects.toThrow("顾问档案不存在");
     });
   });
 
   describe("getProfileById", () => {
     it("应该返回顾问档案", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       const result = await service.getProfileById("consultant_1");
 
@@ -309,9 +285,7 @@ describe("ConsultantService", () => {
     it("当档案不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getProfileById("nonexistent"),
-      ).rejects.toThrow("顾问档案不存在");
+      await expect(service.getProfileById("nonexistent")).rejects.toThrow("顾问档案不存在");
     });
   });
 
@@ -320,9 +294,7 @@ describe("ConsultantService", () => {
     const profileId = "consultant_1";
 
     it("应该成功更新顾问档案", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantProfile.update.mockResolvedValue({
         ...mockConsultantProfile,
         studioName: "新名称",
@@ -341,26 +313,22 @@ describe("ConsultantService", () => {
       await expect(
         service.updateProfile(userId, "nonexistent", {
           studioName: "新名称",
-        } as UpdateConsultantProfileDto),
+        } as UpdateConsultantProfileDto)
       ).rejects.toThrow("顾问档案不存在");
     });
 
     it("当非本人修改时应该抛出 ForbiddenException", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       await expect(
         service.updateProfile("other_user", profileId, {
           studioName: "新名称",
-        } as UpdateConsultantProfileDto),
+        } as UpdateConsultantProfileDto)
       ).rejects.toThrow("无权修改此顾问档案");
     });
 
     it("应该允许顾问自行设置为 inactive 状态", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantProfile.update.mockResolvedValue({
         ...mockConsultantProfile,
         status: "inactive",
@@ -384,9 +352,7 @@ describe("ConsultantService", () => {
     };
 
     it("应该成功创建预约", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.create.mockResolvedValue(mockBooking);
 
       const result = await service.createBooking(userId, dto);
@@ -400,16 +366,14 @@ describe("ConsultantService", () => {
             depositAmount: expect.anything(),
             finalPaymentAmount: expect.anything(),
           }),
-        }),
+        })
       );
     });
 
     it("当顾问不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(service.createBooking(userId, dto)).rejects.toThrow(
-        "顾问不存在",
-      );
+      await expect(service.createBooking(userId, dto)).rejects.toThrow("顾问不存在");
     });
 
     it("当顾问状态非 active 时应该抛出 BadRequestException", async () => {
@@ -418,9 +382,7 @@ describe("ConsultantService", () => {
         status: "suspended",
       });
 
-      await expect(service.createBooking(userId, dto)).rejects.toThrow(
-        "该顾问暂不可预约",
-      );
+      await expect(service.createBooking(userId, dto)).rejects.toThrow("该顾问暂不可预约");
     });
 
     it("不允许预约自己", async () => {
@@ -430,15 +392,11 @@ describe("ConsultantService", () => {
         userId: "user_client",
       });
 
-      await expect(
-        service.createBooking("user_client", selfDto),
-      ).rejects.toThrow("不能预约自己");
+      await expect(service.createBooking("user_client", selfDto)).rejects.toThrow("不能预约自己");
     });
 
     it("应该正确计算定金和尾款", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.create.mockResolvedValue(mockBooking);
 
       await service.createBooking(userId, { ...dto, price: 1000 });
@@ -449,7 +407,7 @@ describe("ConsultantService", () => {
             depositAmount: expect.anything(),
             finalPaymentAmount: expect.anything(),
           }),
-        }),
+        })
       );
     });
   });
@@ -473,14 +431,12 @@ describe("ConsultantService", () => {
         status: BookingStatusDto.PENDING,
       });
 
-      expect(
-        mockPrismaService.serviceBooking.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.serviceBooking.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             status: "pending",
           }),
-        }),
+        })
       );
     });
 
@@ -492,14 +448,12 @@ describe("ConsultantService", () => {
         serviceType: ServiceTypeDto.STYLING_CONSULTATION,
       });
 
-      expect(
-        mockPrismaService.serviceBooking.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.serviceBooking.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             serviceType: "styling_consultation",
           }),
-        }),
+        })
       );
     });
   });
@@ -507,9 +461,7 @@ describe("ConsultantService", () => {
   describe("getBookingById", () => {
     it("预约用户应该能查看预约详情", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       const result = await service.getBookingById("user_client", "booking_1");
 
@@ -518,14 +470,9 @@ describe("ConsultantService", () => {
 
     it("顾问本人应该能查看预约详情", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      const result = await service.getBookingById(
-        "user_consultant",
-        "booking_1",
-      );
+      const result = await service.getBookingById("user_consultant", "booking_1");
 
       expect(result.id).toBe("booking_1");
     });
@@ -533,20 +480,18 @@ describe("ConsultantService", () => {
     it("当预约不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getBookingById("user_client", "nonexistent"),
-      ).rejects.toThrow("预约不存在");
+      await expect(service.getBookingById("user_client", "nonexistent")).rejects.toThrow(
+        "预约不存在"
+      );
     });
 
     it("非预约用户和非顾问本人应该抛出 ForbiddenException", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.getBookingById("other_user", "booking_1"),
-      ).rejects.toThrow("无权查看此预约");
+      await expect(service.getBookingById("other_user", "booking_1")).rejects.toThrow(
+        "无权查看此预约"
+      );
     });
   });
 
@@ -556,9 +501,7 @@ describe("ConsultantService", () => {
 
     it("预约用户应该能取消预约", async () => {
       const pendingBooking = { ...mockBooking, status: "confirmed" };
-      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(
-        pendingBooking,
-      );
+      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(pendingBooking);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
         ...pendingBooking,
         status: "cancelled",
@@ -578,7 +521,7 @@ describe("ConsultantService", () => {
       await expect(
         service.updateBooking("other_user", bookingId, {
           status: BookingStatusDto.CANCELLED,
-        }),
+        })
       ).rejects.toThrow("仅预约用户可取消预约");
     });
 
@@ -591,7 +534,7 @@ describe("ConsultantService", () => {
       await expect(
         service.updateBooking(userId, bookingId, {
           status: BookingStatusDto.CANCELLED,
-        }),
+        })
       ).rejects.toThrow("已完成的预约无法取消");
     });
 
@@ -601,11 +544,9 @@ describe("ConsultantService", () => {
         status: "confirmed",
         depositPaidAt: new Date(),
         scheduledAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
-        depositAmount: new (require("@prisma/client").Prisma).Decimal(89.7),
+        depositAmount: new (require("@prisma/client").Prisma.Decimal)(89.7),
       };
-      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(
-        futureBooking,
-      );
+      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(futureBooking);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
         ...futureBooking,
         status: "cancelled",
@@ -620,7 +561,7 @@ describe("ConsultantService", () => {
         userId,
         expect.objectContaining({
           amount: 89.7,
-        }),
+        })
       );
     });
 
@@ -630,7 +571,7 @@ describe("ConsultantService", () => {
         status: "confirmed",
         depositPaidAt: new Date(),
         scheduledAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
-        depositAmount: new (require("@prisma/client").Prisma).Decimal(100),
+        depositAmount: new (require("@prisma/client").Prisma.Decimal)(100),
       };
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(nearBooking);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
@@ -647,7 +588,7 @@ describe("ConsultantService", () => {
         userId,
         expect.objectContaining({
           amount: 80,
-        }),
+        })
       );
     });
 
@@ -657,7 +598,7 @@ describe("ConsultantService", () => {
         status: "confirmed",
         depositPaidAt: new Date(),
         scheduledAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
-        depositAmount: new (require("@prisma/client").Prisma).Decimal(89.7),
+        depositAmount: new (require("@prisma/client").Prisma.Decimal)(89.7),
       };
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(nearBooking);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
@@ -679,9 +620,7 @@ describe("ConsultantService", () => {
         status: "pending",
         depositPaidAt: null,
       };
-      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(
-        noDepositBooking,
-      );
+      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(noDepositBooking);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
         ...noDepositBooking,
         status: "cancelled",
@@ -701,9 +640,7 @@ describe("ConsultantService", () => {
 
     it("顾问应该能确认预约", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
         ...mockBooking,
         status: "confirmed",
@@ -718,9 +655,7 @@ describe("ConsultantService", () => {
 
     it("顾问应该能完成预约", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.update.mockResolvedValue({
         ...mockBooking,
         status: "completed",
@@ -736,31 +671,23 @@ describe("ConsultantService", () => {
 
     it("非顾问不能更新预约状态", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       await expect(
         service.updateBooking("other_user", bookingId, {
           status: BookingStatusDto.CONFIRMED,
-        }),
+        })
       ).rejects.toThrow("仅顾问可更新此预约状态");
     });
   });
 
   describe("getBookingsByConsultant", () => {
     it("应该返回顾问的预约列表", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.findMany.mockResolvedValue([mockBooking]);
       mockPrismaService.serviceBooking.count.mockResolvedValue(1);
 
-      const result = await service.getBookingsByConsultant(
-        "user_consultant",
-        "consultant_1",
-        {},
-      );
+      const result = await service.getBookingsByConsultant("user_consultant", "consultant_1", {});
 
       expect(result.data).toHaveLength(1);
     });
@@ -769,17 +696,15 @@ describe("ConsultantService", () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.getBookingsByConsultant("user_consultant", "nonexistent", {}),
+        service.getBookingsByConsultant("user_consultant", "nonexistent", {})
       ).rejects.toThrow("顾问不存在");
     });
 
     it("非顾问本人不能查看预约列表", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       await expect(
-        service.getBookingsByConsultant("other_user", "consultant_1", {}),
+        service.getBookingsByConsultant("other_user", "consultant_1", {})
       ).rejects.toThrow("无权查看此顾问的预约");
     });
   });
@@ -787,9 +712,7 @@ describe("ConsultantService", () => {
   describe("payDeposit", () => {
     it("应该返回定金支付信息", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       const result = await service.payDeposit("user_client", "booking_1");
 
@@ -802,13 +725,11 @@ describe("ConsultantService", () => {
         ...mockBooking,
         status: "confirmed",
       });
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.payDeposit("user_client", "booking_1"),
-      ).rejects.toThrow("预约状态不允许支付定金");
+      await expect(service.payDeposit("user_client", "booking_1")).rejects.toThrow(
+        "预约状态不允许支付定金"
+      );
     });
 
     it("定金已支付时应该抛出 BadRequestException", async () => {
@@ -816,13 +737,9 @@ describe("ConsultantService", () => {
         ...mockBooking,
         depositPaidAt: new Date(),
       });
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.payDeposit("user_client", "booking_1"),
-      ).rejects.toThrow("定金已支付");
+      await expect(service.payDeposit("user_client", "booking_1")).rejects.toThrow("定金已支付");
     });
   });
 
@@ -833,9 +750,7 @@ describe("ConsultantService", () => {
         status: "completed",
         depositPaidAt: new Date(),
       });
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
       const result = await service.payFinalPayment("user_client", "booking_1");
 
@@ -844,13 +759,11 @@ describe("ConsultantService", () => {
 
     it("服务未完成时不能支付尾款", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.payFinalPayment("user_client", "booking_1"),
-      ).rejects.toThrow("服务未完成，无法支付尾款");
+      await expect(service.payFinalPayment("user_client", "booking_1")).rejects.toThrow(
+        "服务未完成，无法支付尾款"
+      );
     });
 
     it("定金未支付时不能支付尾款", async () => {
@@ -859,13 +772,11 @@ describe("ConsultantService", () => {
         status: "completed",
         depositPaidAt: null,
       });
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.payFinalPayment("user_client", "booking_1"),
-      ).rejects.toThrow("请先支付定金");
+      await expect(service.payFinalPayment("user_client", "booking_1")).rejects.toThrow(
+        "请先支付定金"
+      );
     });
 
     it("尾款已支付时应该抛出 BadRequestException", async () => {
@@ -875,13 +786,11 @@ describe("ConsultantService", () => {
         depositPaidAt: new Date(),
         finalPaidAt: new Date(),
       });
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.payFinalPayment("user_client", "booking_1"),
-      ).rejects.toThrow("尾款已支付");
+      await expect(service.payFinalPayment("user_client", "booking_1")).rejects.toThrow(
+        "尾款已支付"
+      );
     });
   });
 
@@ -902,9 +811,7 @@ describe("ConsultantService", () => {
     it("当预约不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.confirmDepositPayment("nonexistent"),
-      ).rejects.toThrow("预约不存在");
+      await expect(service.confirmDepositPayment("nonexistent")).rejects.toThrow("预约不存在");
     });
 
     it("定金已确认时应该跳过重复操作", async () => {
@@ -940,16 +847,14 @@ describe("ConsultantService", () => {
             platformFee: expect.anything(),
             netAmount: expect.anything(),
           }),
-        }),
+        })
       );
     });
 
     it("当预约不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.serviceBooking.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.confirmFinalPayment("nonexistent"),
-      ).rejects.toThrow("预约不存在");
+      await expect(service.confirmFinalPayment("nonexistent")).rejects.toThrow("预约不存在");
     });
 
     it("尾款已确认时应该跳过重复操作", async () => {
@@ -966,18 +871,13 @@ describe("ConsultantService", () => {
 
   describe("getEarnings", () => {
     it("应该返回顾问收入列表和汇总", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantEarning.findMany.mockResolvedValue([]);
       mockPrismaService.consultantEarning.aggregate.mockResolvedValue({
         _sum: { netAmount: 1000 },
       });
 
-      const result = await service.getEarnings(
-        "consultant_1",
-        "user_consultant",
-      );
+      const result = await service.getEarnings("consultant_1", "user_consultant");
 
       expect(result).toHaveProperty("earnings");
       expect(result).toHaveProperty("summary");
@@ -986,19 +886,17 @@ describe("ConsultantService", () => {
     it("当顾问不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getEarnings("nonexistent", "user_consultant"),
-      ).rejects.toThrow("顾问不存在");
+      await expect(service.getEarnings("nonexistent", "user_consultant")).rejects.toThrow(
+        "顾问不存在"
+      );
     });
 
     it("非顾问本人不能查看收入", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
 
-      await expect(
-        service.getEarnings("consultant_1", "other_user"),
-      ).rejects.toThrow("无权查看此顾问收入");
+      await expect(service.getEarnings("consultant_1", "other_user")).rejects.toThrow(
+        "无权查看此顾问收入"
+      );
     });
   });
 
@@ -1010,9 +908,7 @@ describe("ConsultantService", () => {
     };
 
     it("应该成功申请提现", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantEarning.aggregate.mockResolvedValue({
         _sum: { netAmount: 5000 },
       });
@@ -1027,45 +923,31 @@ describe("ConsultantService", () => {
         "consultant_1",
         "user_consultant",
         1000,
-        bankInfo,
+        bankInfo
       );
 
       expect(result.status).toBe("pending");
     });
 
     it("可提现金额不足时应该抛出 BadRequestException", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantEarning.aggregate.mockResolvedValue({
         _sum: { netAmount: 500 },
       });
 
       await expect(
-        service.requestWithdrawal(
-          "consultant_1",
-          "user_consultant",
-          1000,
-          bankInfo,
-        ),
+        service.requestWithdrawal("consultant_1", "user_consultant", 1000, bankInfo)
       ).rejects.toThrow("可提现金额不足");
     });
 
     it("提现金额必须大于0", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.consultantEarning.aggregate.mockResolvedValue({
         _sum: { netAmount: 5000 },
       });
 
       await expect(
-        service.requestWithdrawal(
-          "consultant_1",
-          "user_consultant",
-          0,
-          bankInfo,
-        ),
+        service.requestWithdrawal("consultant_1", "user_consultant", 0, bankInfo)
       ).rejects.toThrow("提现金额必须大于0");
     });
   });
@@ -1125,7 +1007,7 @@ describe("ConsultantService", () => {
       });
 
       await expect(
-        service.reviewProfile("user_1", "consultant_1", { status: "active" }),
+        service.reviewProfile("user_1", "consultant_1", { status: "active" })
       ).rejects.toThrow("仅管理员可审核顾问档案");
     });
 
@@ -1136,16 +1018,14 @@ describe("ConsultantService", () => {
       });
 
       await expect(
-        service.reviewProfile("admin_1", "consultant_1", { status: "active" }),
+        service.reviewProfile("admin_1", "consultant_1", { status: "active" })
       ).rejects.toThrow("仅待审核档案可审核");
     });
   });
 
   describe("getConsultantCases", () => {
     it("应该返回顾问案例列表", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.findMany.mockResolvedValue([
         {
           id: "booking_1",
@@ -1172,9 +1052,7 @@ describe("ConsultantService", () => {
     });
 
     it("匿名用户应该显示为匿名用户", async () => {
-      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(
-        mockConsultantProfile,
-      );
+      mockPrismaService.consultantProfile.findUnique.mockResolvedValue(mockConsultantProfile);
       mockPrismaService.serviceBooking.findMany.mockResolvedValue([
         {
           id: "booking_1",
@@ -1201,9 +1079,7 @@ describe("ConsultantService", () => {
     it("当顾问不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.consultantProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getConsultantCases("nonexistent"),
-      ).rejects.toThrow("顾问不存在");
+      await expect(service.getConsultantCases("nonexistent")).rejects.toThrow("顾问不存在");
     });
   });
 });

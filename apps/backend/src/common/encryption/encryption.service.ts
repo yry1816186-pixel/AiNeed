@@ -30,18 +30,14 @@ export class EncryptionService {
     // 原因：1) 加密空字符串会产生无意义的密文开销；2) decrypt 方法依赖 "enc:" 前缀判断，
     // 对空字符串加密后 decrypt("") 会跳过解密逻辑，导致数据不一致；
     // 3) 数据库中空字符串通常表示"未填写"，与 null 语义一致，无需加密保护。
-    if (!plaintext) {return plaintext;}
+    if (!plaintext) {
+      return plaintext;
+    }
 
     const iv = crypto.randomBytes(IV_LENGTH);
     const salt = crypto.randomBytes(SALT_LENGTH);
 
-    const key = crypto.pbkdf2Sync(
-      this.encryptionKey,
-      salt,
-      ITERATIONS,
-      32,
-      "sha256"
-    );
+    const key = crypto.pbkdf2Sync(this.encryptionKey, salt, ITERATIONS, 32, "sha256");
 
     const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
@@ -50,12 +46,7 @@ export class EncryptionService {
 
     const authTag = cipher.getAuthTag();
 
-    const result = Buffer.concat([
-      salt,
-      iv,
-      authTag,
-      Buffer.from(encrypted, "hex"),
-    ]);
+    const result = Buffer.concat([salt, iv, authTag, Buffer.from(encrypted, "hex")]);
 
     return `enc:${result.toString("base64")}`;
   }
@@ -76,13 +67,7 @@ export class EncryptionService {
       );
       const encrypted = data.subarray(SALT_LENGTH + IV_LENGTH + AUTH_TAG_LENGTH);
 
-      const key = crypto.pbkdf2Sync(
-        this.encryptionKey,
-        salt,
-        ITERATIONS,
-        32,
-        "sha256"
-      );
+      const key = crypto.pbkdf2Sync(this.encryptionKey, salt, ITERATIONS, 32, "sha256");
 
       const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
       decipher.setAuthTag(authTag);
@@ -92,7 +77,9 @@ export class EncryptionService {
 
       return decrypted;
     } catch (error: unknown) {
-      this.logger.error(`Decryption failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Decryption failed: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw new Error("Failed to decrypt value");
     }
   }

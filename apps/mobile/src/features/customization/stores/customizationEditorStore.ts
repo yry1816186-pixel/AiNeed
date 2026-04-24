@@ -95,7 +95,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     try {
       const response = await customizationApi.getTemplates(type);
       if (response.success && response.data) {
-        set({ templates: response.data as Template[] });
+        set({ templates: response.data });
       }
     } catch {
       set({ error: "获取模板失败", isLoadingTemplates: false });
@@ -234,7 +234,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       } else {
         const response = await customizationApi.createDesign(state.selectedTemplate.id, canvasData);
         if (response.success && response.data) {
-          const design = response.data as CustomizationDesign;
+          const design = response.data;
           set({ designId: design.id });
         }
       }
@@ -255,7 +255,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     try {
       const response = await customizationApi.calculateQuote(state.designId, printSide);
       if (response.success && response.data) {
-        const data = response.data as QuoteCalculationResponse;
+        const data = response.data;
         set({
           quote: {
             basePrice: data.pricing?.basePrice ?? 0,
@@ -306,7 +306,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     try {
       const response = await customizationApi.createFromDesign(state.designId, quoteId);
       if (response.success && response.data) {
-        const result = response.data as CreateFromDesignResponse;
+        const result = response.data;
         return result.id;
       }
       return null;

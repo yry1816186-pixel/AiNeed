@@ -59,7 +59,9 @@ describe("SharePosterService", () => {
 
     storageService = {
       uploadBuffer: jest.fn().mockResolvedValue(undefined),
-      getFileUrl: jest.fn().mockResolvedValue("https://storage.example.com/share-posters/user-1/test.png"),
+      getFileUrl: jest
+        .fn()
+        .mockResolvedValue("https://storage.example.com/share-posters/user-1/test.png"),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -97,10 +99,10 @@ describe("SharePosterService", () => {
       expect(storageService.uploadBuffer).toHaveBeenCalledWith(
         expect.stringMatching(/^share-posters\/user-1\/.+\.png$/),
         expect.any(Buffer),
-        "image/png",
+        "image/png"
       );
       expect(storageService.getFileUrl).toHaveBeenCalledWith(
-        expect.stringMatching(/^share-posters\/user-1\/.+\.png$/),
+        expect.stringMatching(/^share-posters\/user-1\/.+\.png$/)
       );
     });
 
@@ -108,7 +110,7 @@ describe("SharePosterService", () => {
       prismaService.shareTemplate.findFirst.mockResolvedValue(null);
 
       await expect(service.generatePoster("user-1", profileData)).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
 

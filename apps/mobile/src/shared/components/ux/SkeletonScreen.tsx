@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, ViewStyle } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
 
 const SkeletonBlock: React.FC<{
   width?: number | string;
@@ -23,7 +23,13 @@ const SkeletonBlock: React.FC<{
   return (
     <Animated.View
       style={[
-        { width: width as number, height, borderRadius, backgroundColor: Colors.neutral[200], opacity },
+        {
+          width: width as number,
+          height,
+          borderRadius,
+          backgroundColor: Colors.neutral[200],
+          opacity,
+        },
         style,
       ]}
     />

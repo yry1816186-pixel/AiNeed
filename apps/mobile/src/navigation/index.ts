@@ -1,10 +1,9 @@
 export { RootNavigator, MainTabNavigator } from "./RootNavigator";
 export { AuthNavigator } from "./AuthNavigator";
 export {
-  HomeStackNavigator,
+  TodayStackNavigator,
+  DiscoverStackNavigator,
   StylistStackNavigator,
-  TryOnStackNavigator,
-  CommunityStackNavigator,
   ProfileStackNavigator,
 } from "./MainStackNavigator";
 
@@ -37,18 +36,16 @@ export { useRouteGuard, GuardedScreen } from "./RouteGuards";
 
 export type {
   AuthStackParamList,
-  HomeStackParamList,
+  TodayStackParamList,
+  DiscoverStackParamList,
   StylistStackParamList,
-  TryOnStackParamList,
-  CommunityStackParamList,
   ProfileStackParamList,
   MainTabParamList,
   RootStackParamList,
   AuthStackScreenProps,
-  HomeStackScreenProps,
+  TodayStackScreenProps,
+  DiscoverStackScreenProps,
   StylistStackScreenProps,
-  TryOnStackScreenProps,
-  CommunityStackScreenProps,
   ProfileStackScreenProps,
   RootStackScreenProps,
   MainTabScreenProps,

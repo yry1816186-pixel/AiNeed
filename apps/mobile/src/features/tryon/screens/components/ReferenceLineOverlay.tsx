@@ -6,8 +6,8 @@ import type {
   AlignmentStatus,
   AlignmentLevel,
   OverallAlignment,
-} from "../../../hooks/useReferenceLines";
-import { DesignTokens, flatColors as colors } from "../../../../design-system/theme";
+} from "../../../../hooks/useReferenceLines";
+import { flatColors as colors } from "../../../../design-system/theme";
 import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface ReferenceLineOverlayProps {

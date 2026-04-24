@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -32,15 +33,14 @@ import {
   GlowText,
   FloatingElement,
   ParticleEffect,
-} from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
+} from "../../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 
 export interface ProfileSetupScreenProps {
   onComplete: (data: ProfileData) => void;
@@ -320,7 +320,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
           >
             <FloatingElement amplitude={selected ? 5 : 0} duration={3000}>
               <Ionicons
-                name={option.icon as keyof typeof Ionicons.glyphMap}
+                name={option.icon}
                 size={32}
                 color={selected ? Colors.white : option.color}
               />
@@ -516,7 +516,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
             style={styles.styleOptionGradient}
           >
             <Ionicons
-              name={option.icon as keyof typeof Ionicons.glyphMap}
+              name={option.icon}
               size={24}
               color={selected ? option.color : colors.neutral[400]}
             />

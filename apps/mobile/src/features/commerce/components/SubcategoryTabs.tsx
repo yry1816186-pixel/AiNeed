@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Text, ScrollView, TouchableOpacity } from "react-native";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";

@@ -8,7 +8,7 @@
 
 ## ⚡ 快速开始
 
-### 方案A：EAS 云端编译（推荐新手）
+### 方案 A：EAS 云端编译（推荐新手）
 
 **优点：** 无需配置环境，稳定可靠
 
@@ -30,23 +30,26 @@ eas build --platform android --profile preview
 
 ---
 
-### 方案B：本地编译（推荐开发者）
+### 方案 B：本地编译（推荐开发者）
 
 **优点：** 编译快速，适合频繁调试
 
-#### 步骤1：安装依赖
+#### 步骤 1：安装依赖
+
 ```bash
 cd apps/mobile
 npm install
 ```
 
-#### 步骤2：使用 Android Studio 编译
+#### 步骤 2：使用 Android Studio 编译
+
 1. 打开 Android Studio
 2. 打开项目：`File → Open → C:/xuno/apps/mobile/android`
 3. 等待 Gradle Sync
 4. 编译：`Build → Build Bundle(s) / APK(s) → Build APK(s)`
 
-#### 步骤3：或使用命令行
+#### 步骤 3：或使用命令行
+
 ```bash
 cd apps/mobile/android
 gradlew.bat assembleRelease
@@ -58,7 +61,7 @@ gradlew.bat assembleRelease
 
 ---
 
-### 方案C：使用编译脚本
+### 方案 C：使用编译脚本
 
 ```bash
 # 运行编译脚本
@@ -70,12 +73,14 @@ compile-apk.bat
 ## 📱 安装与测试
 
 ### 自动安装测试
+
 ```bash
 # 运行自动化测试脚本
 test-apk.bat
 ```
 
 ### 手动安装
+
 ```bash
 # 安装到设备
 adb install apps/mobile/android/app/build/outputs/apk/release/app-release.apk
@@ -90,29 +95,34 @@ adb shell am start -n com.xuno.app/.MainActivity
 
 ### 快速测试清单
 
-#### ✅ 基础功能（5分钟）
+#### ✅ 基础功能（5 分钟）
+
 - [ ] 应用启动
 - [ ] 底部导航切换
 - [ ] 页面浏览
 
-#### ✅ 用户功能（10分钟）
+#### ✅ 用户功能（10 分钟）
+
 - [ ] 用户注册
 - [ ] 用户登录
 - [ ] 自动登录
 
-#### ✅ AI功能（30分钟）
+#### ✅ AI 功能（30 分钟）
+
 - [ ] 相机扫描
 - [ ] 身体分析
 - [ ] 色彩指南
-- [ ] AI造型师对话
+- [ ] AI 造型师对话
 - [ ] 虚拟试衣
 
-#### ✅ 购物功能（15分钟）
+#### ✅ 购物功能（15 分钟）
+
 - [ ] 商品浏览
 - [ ] 购物车
 - [ ] 订单管理
 
-#### ✅ 社交功能（10分钟）
+#### ✅ 社交功能（10 分钟）
+
 - [ ] 收藏管理
 - [ ] 个人中心
 
@@ -124,8 +134,10 @@ adb shell am start -n com.xuno.app/.MainActivity
 
 ### 编译问题
 
-#### 问题1：Gradle Sync 失败
+#### 问题 1：Gradle Sync 失败
+
 **解决方案：**
+
 ```bash
 # 清理缓存
 cd apps/mobile/android
@@ -133,38 +145,50 @@ gradlew.bat clean
 gradlew.bat assembleRelease
 ```
 
-#### 问题2：SDK 版本不匹配
+#### 问题 2：SDK 版本不匹配
+
 **解决方案：**
+
 - 打开 Android Studio → SDK Manager
 - 安装 Android SDK Platform 35
 - 安装 Build-Tools 35.0.1
 - 安装 NDK 27.1.12297006
 
-#### 问题3：内存不足
+#### 问题 3：内存不足
+
 **解决方案：**
 编辑 `apps/mobile/android/gradle.properties`：
+
 ```properties
 org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
 ```
 
 ### 测试问题
 
-#### 问题1：API 连接失败
+#### 问题 1：API 连接失败
+
 **解决方案：**
+
 1. 确认后端服务正在运行
+
 ```bash
 cd apps/backend
 npm run dev
 ```
+
 2. 检查 API 地址配置（默认：http://10.0.2.2:3001）
 
-#### 问题2：相机权限被拒绝
+#### 问题 2：相机权限被拒绝
+
 **解决方案：**
+
 - 卸载应用重新安装
 - 或在系统设置中手动授予权限
 
-#### 问题3：应用崩溃
+#### 问题 3：应用崩溃
+
 **解决方案：**
+
 ```bash
 # 查看日志
 adb logcat | findstr /i "xuno"
@@ -177,13 +201,13 @@ adb shell pm clear com.xuno.app
 
 ## 📊 性能指标
 
-| 指标 | 目标值 | 说明 |
-|------|--------|------|
-| APK 大小 | < 50MB | Release 版本 |
-| 启动时间 | < 3秒 | 冷启动 |
-| 内存占用 | < 200MB | 运行时 |
-| API 响应 | < 2秒 | 正常网络 |
-| AI 分析 | < 10秒 | 图片分析 |
+| 指标     | 目标值  | 说明         |
+| -------- | ------- | ------------ |
+| APK 大小 | < 50MB  | Release 版本 |
+| 启动时间 | < 3 秒  | 冷启动       |
+| 内存占用 | < 200MB | 运行时       |
+| API 响应 | < 2 秒  | 正常网络     |
+| AI 分析  | < 10 秒 | 图片分析     |
 
 ---
 
@@ -226,6 +250,7 @@ C:/xuno/
 ## 📞 获取帮助
 
 如果遇到问题：
+
 1. 查看详细文档
 2. 检查错误日志
 3. 搜索错误信息

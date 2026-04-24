@@ -1,4 +1,4 @@
-﻿import { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EmailService, EmailOptions, EmailResult } from "./email.service";
@@ -126,10 +126,7 @@ describe("EmailService", () => {
   describe("便捷方法", () => {
     describe("sendWelcomeEmail", () => {
       it("应该发送欢迎邮件", async () => {
-        const result = await service.sendWelcomeEmail(
-          "newuser@example.com",
-          "新用户",
-        );
+        const result = await service.sendWelcomeEmail("newuser@example.com", "新用户");
 
         expect(result.success).toBe(true);
         expect(result.messageId).toBeDefined();
@@ -144,10 +141,7 @@ describe("EmailService", () => {
 
     describe("sendPasswordResetEmail", () => {
       it("应该发送密码重置邮件", async () => {
-        const result = await service.sendPasswordResetEmail(
-          "user@example.com",
-          "reset-token-123",
-        );
+        const result = await service.sendPasswordResetEmail("user@example.com", "reset-token-123");
 
         expect(result.success).toBe(true);
       });
@@ -157,7 +151,7 @@ describe("EmailService", () => {
       it("应该发送邮箱验证邮件", async () => {
         const result = await service.sendEmailVerification(
           "user@example.com",
-          "verification-token-456",
+          "verification-token-456"
         );
 
         expect(result.success).toBe(true);
@@ -169,7 +163,7 @@ describe("EmailService", () => {
         const result = await service.sendNotificationEmail(
           "user@example.com",
           "系统通知",
-          "<p>这是一条通知</p>",
+          "<p>这是一条通知</p>"
         );
 
         expect(result.success).toBe(true);
@@ -183,7 +177,7 @@ describe("EmailService", () => {
           "专业版",
           99.0,
           new Date("2024-01-01"),
-          new Date("2024-12-31"),
+          new Date("2024-12-31")
         );
 
         expect(result.success).toBe(true);
@@ -201,7 +195,7 @@ describe("EmailService", () => {
           "buyer@example.com",
           "ORD-2024-001",
           items,
-          397.0,
+          397.0
         );
 
         expect(result.success).toBe(true);
@@ -214,7 +208,7 @@ describe("EmailService", () => {
           "customer@example.com",
           "CUST-001",
           "processing",
-          "您的定制订单正在处理中",
+          "您的定制订单正在处理中"
         );
 
         expect(result.success).toBe(true);
@@ -296,19 +290,13 @@ describe("EmailService", () => {
   describe("模板渲染", () => {
     it("应该正确渲染欢迎邮件模板", async () => {
       // 通过发送欢迎邮件间接测试模板
-      const result = await service.sendWelcomeEmail(
-        "test@example.com",
-        "测试用户",
-      );
+      const result = await service.sendWelcomeEmail("test@example.com", "测试用户");
 
       expect(result.success).toBe(true);
     });
 
     it("应该正确渲染密码重置模板", async () => {
-      const result = await service.sendPasswordResetEmail(
-        "test@example.com",
-        "token123",
-      );
+      const result = await service.sendPasswordResetEmail("test@example.com", "token123");
 
       expect(result.success).toBe(true);
     });
@@ -319,7 +307,7 @@ describe("EmailService", () => {
         "高级版",
         199,
         new Date(),
-        new Date(),
+        new Date()
       );
 
       expect(result.success).toBe(true);

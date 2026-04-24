@@ -32,7 +32,7 @@ export class VaultService implements IVaultClient, OnModuleInit {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   onModuleInit() {
@@ -44,7 +44,9 @@ export class VaultService implements IVaultClient, OnModuleInit {
       this.logger.log(`Vault client initialized - connected to ${this.vaultAddr}`);
     } else {
       this.isMockMode = true;
-      this.logger.warn("Vault not configured (VAULT_ADDR/VAULT_TOKEN missing) - using mock implementation with env vars");
+      this.logger.warn(
+        "Vault not configured (VAULT_ADDR/VAULT_TOKEN missing) - using mock implementation with env vars"
+      );
     }
   }
 
@@ -62,14 +64,20 @@ export class VaultService implements IVaultClient, OnModuleInit {
       });
 
       if (!response.ok) {
-        this.logger.error(`Vault read failed for path ${path}: ${response.status} ${response.statusText}`);
+        this.logger.error(
+          `Vault read failed for path ${path}: ${response.status} ${response.statusText}`
+        );
         return this.getSecretFromEnv(path);
       }
 
-      const body = await response.json() as { data?: { data?: Record<string, unknown> } };
+      const body = (await response.json()) as { data?: { data?: Record<string, unknown> } };
       return body.data?.data ?? {};
     } catch (error) {
-      this.logger.error(`Vault connection error for path ${path}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Vault connection error for path ${path}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
       return this.getSecretFromEnv(path);
     }
   }
@@ -98,7 +106,11 @@ export class VaultService implements IVaultClient, OnModuleInit {
       this.emitRotationEvent(keyName, keyInfo);
       this.logger.log(`Rotated Vault key: ${keyName} to version ${keyInfo}`);
     } catch (error) {
-      this.logger.error(`Key rotation failed for ${keyName}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Key rotation failed for ${keyName}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
       throw error;
     }
   }
@@ -155,7 +167,7 @@ export class VaultService implements IVaultClient, OnModuleInit {
         return 1;
       }
 
-      const body = await response.json() as { data?: { latest_version?: number } };
+      const body = (await response.json()) as { data?: { latest_version?: number } };
       return body.data?.latest_version ?? 1;
     } catch {
       return 1;

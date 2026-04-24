@@ -18,10 +18,10 @@ import {
   REDIS_CLIENT,
 } from "../../src/common/redis/redis.service";
 import { StorageService } from "../../src/common/storage/storage.service";
-import { LlmProviderService } from "../../src/modules/ai-stylist/llm-provider.service";
-import { QUEUE_NAMES } from "../../src/modules/queue/queue.constants";
-import { DoubaoSeedreamProvider } from "../../src/modules/try-on/services/doubao-seedream.provider";
-import { GlmTryOnProvider } from "../../src/modules/try-on/services/glm-tryon.provider";
+import { LlmProviderService } from "../../src/domains/ai-core/ai-stylist/llm-provider.service";
+import { QUEUE_NAMES } from "../../src/domains/platform/queue/queue.constants";
+import { DoubaoSeedreamProvider } from "../../src/domains/ai-core/try-on/services/doubao-seedream.provider";
+import { GlmTryOnProvider } from "../../src/domains/ai-core/try-on/services/glm-tryon.provider";
 
 import { createMockRedisClient, createMockRedisService as buildMockRedisService } from "./redis-test-utils";
 

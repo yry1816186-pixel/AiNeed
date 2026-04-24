@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import { Button } from "../Button";
@@ -89,7 +93,7 @@ describe("Button", () => {
   });
 
   it("shows loading state with ActivityIndicator", () => {
-    const { queryByText, UNSAFE_root } = render(<Button loading>Loading</Button>);
+    const { queryByText } = render(<Button loading>Loading</Button>);
     expect(queryByText("Loading")).toBeNull();
   });
 
@@ -102,7 +106,8 @@ describe("Button", () => {
     );
     // When loading, the button content is ActivityIndicator, not the text
     // Press the Pressable wrapper (first child of root)
-    fireEvent.press(UNSAFE_root.findByType(require("react-native").Pressable));
+    const { Pressable } = require("react-native");
+    fireEvent.press(UNSAFE_root.findByType(Pressable));
     expect(onPress).not.toHaveBeenCalled();
   });
 

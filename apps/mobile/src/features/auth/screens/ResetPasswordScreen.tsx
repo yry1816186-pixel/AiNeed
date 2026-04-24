@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState, useCallback, useEffect } from "react";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import {
@@ -34,15 +35,31 @@ type ResetPasswordRouteProp = RouteProp<AuthStackParamList, "ResetPassword">;
 type StrengthLevel = "weak" | "medium" | "strong";
 
 function getPasswordStrength(password: string): StrengthLevel {
-  if (!password) return "weak";
+  if (!password) {
+    return "weak";
+  }
   let score = 0;
-  if (password.length >= 8) score++;
-  if (password.length >= 12) score++;
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
-  if (/\d/.test(password)) score++;
-  if (/[^a-zA-Z0-9]/.test(password)) score++;
-  if (score <= 2) return "weak";
-  if (score <= 3) return "medium";
+  if (password.length >= 8) {
+    score++;
+  }
+  if (password.length >= 12) {
+    score++;
+  }
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+    score++;
+  }
+  if (/\d/.test(password)) {
+    score++;
+  }
+  if (/[^a-zA-Z0-9]/.test(password)) {
+    score++;
+  }
+  if (score <= 2) {
+    return "weak";
+  }
+  if (score <= 3) {
+    return "medium";
+  }
   return "strong";
 }
 

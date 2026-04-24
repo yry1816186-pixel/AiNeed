@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react";
+import { View, Text, ViewStyle, TextStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

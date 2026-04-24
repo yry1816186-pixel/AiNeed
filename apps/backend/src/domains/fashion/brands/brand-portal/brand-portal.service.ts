@@ -73,7 +73,7 @@ export class BrandPortalService {
   async updateProductData(
     brandId: string,
     productId: string,
-    data: { materialNotes?: string; stylingTips?: string },
+    data: { materialNotes?: string; stylingTips?: string }
   ) {
     const product = await this.prisma.clothingItem.findFirst({
       where: { id: productId, brandId },
@@ -89,7 +89,9 @@ export class BrandPortalService {
           product.description || "",
           data.materialNotes ? `\n材质说明: ${data.materialNotes}` : "",
           data.stylingTips ? `\n搭配建议: ${data.stylingTips}` : "",
-        ].join("").trim(),
+        ]
+          .join("")
+          .trim(),
       },
     });
   }
@@ -169,8 +171,11 @@ export class BrandPortalService {
     return {
       totalScannedUsers: userIds.length,
       genderDistribution: genderDist.reduce(
-        (acc: Record<string, number>, g: { gender: string | null; _count: number }) => ({ ...acc, [g.gender || "unknown"]: g._count }),
-        {} as Record<string, number>,
+        (acc: Record<string, number>, g: { gender: string | null; _count: number }) => ({
+          ...acc,
+          [g.gender || "unknown"]: g._count,
+        }),
+        {} as Record<string, number>
       ),
       stylePreferences: [],
       colorPreferences: [],

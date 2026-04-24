@@ -33,10 +33,7 @@ import { Module, Global, Provider, DynamicModule, InjectionToken } from "@nestjs
 import { ConfigService } from "@nestjs/config";
 
 import { RequestIdInterceptor } from "./request-id.interceptor";
-import {
-  StructuredLoggerService,
-  RequestContext,
-} from "./structured-logger.service";
+import { StructuredLoggerService, RequestContext } from "./structured-logger.service";
 
 /**
  * AsyncLocalStorage Provider Token
@@ -72,7 +69,7 @@ export class LoggingModule {
         provide: StructuredLoggerService,
         useFactory: (
           configService: ConfigService,
-          asyncLocalStorage: AsyncLocalStorage<RequestContext>,
+          asyncLocalStorage: AsyncLocalStorage<RequestContext>
         ) => {
           return new StructuredLoggerService(configService, asyncLocalStorage);
         },

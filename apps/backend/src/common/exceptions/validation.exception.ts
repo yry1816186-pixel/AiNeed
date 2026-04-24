@@ -13,7 +13,7 @@
  * ```
  */
 
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 /**
  * 单个验证错误项
@@ -66,22 +66,16 @@ export class ValidationException extends HttpException {
    * @param errors 验证错误列表
    * @param options 选项
    */
-  constructor(
-    errors: ValidationErrorItem[],
-    options: ValidationExceptionOptions = {},
-  ) {
-    const {
-      message = 'Validation failed',
-      code = 42200,
-      hideValueInProduction = true,
-    } = options;
+  constructor(errors: ValidationErrorItem[], options: ValidationExceptionOptions = {}) {
+    const { message = "Validation failed", code = 42200, hideValueInProduction = true } = options;
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.NODE_ENV === "production";
 
     // 生产环境隐藏错误值
-    const sanitizedErrors = isProduction && hideValueInProduction
-      ? errors.map((e) => ({ ...e, value: undefined }))
-      : errors;
+    const sanitizedErrors =
+      isProduction && hideValueInProduction
+        ? errors.map((e) => ({ ...e, value: undefined }))
+        : errors;
 
     super(
       {
@@ -89,7 +83,7 @@ export class ValidationException extends HttpException {
         code,
         errors: sanitizedErrors,
       },
-      HttpStatus.UNPROCESSABLE_ENTITY,
+      HttpStatus.UNPROCESSABLE_ENTITY
     );
 
     this.errors = sanitizedErrors;
@@ -110,17 +104,15 @@ export class ValidationException extends HttpException {
       constraints?: Record<string, string>;
       children?: unknown[];
       value?: unknown;
-    }>,
+    }>
   ): ValidationException {
     const errors: ValidationErrorItem[] = validationErrors.map((error) => ({
       field: error.property,
       message: error.constraints
-        ? Object.values(error.constraints).join('; ')
-        : 'Validation failed',
+        ? Object.values(error.constraints).join("; ")
+        : "Validation failed",
       value: error.value,
-      constraint: error.constraints
-        ? Object.keys(error.constraints).join(', ')
-        : undefined,
+      constraint: error.constraints ? Object.keys(error.constraints).join(", ") : undefined,
     }));
 
     return new ValidationException(errors);
@@ -133,23 +125,16 @@ export class ValidationException extends HttpException {
     field: string,
     message: string,
     value?: unknown,
-    constraint?: string,
+    constraint?: string
   ): ValidationException {
-    return new ValidationException([
-      { field, message, value, constraint },
-    ]);
+    return new ValidationException([{ field, message, value, constraint }]);
   }
 
   /**
    * 创建必填字段缺失错误
    */
   static required(field: string): ValidationException {
-    return ValidationException.singleField(
-      field,
-      `${field} 是必填字段`,
-      undefined,
-      'isRequired',
-    );
+    return ValidationException.singleField(field, `${field} 是必填字段`, undefined, "isRequired");
   }
 
   /**
@@ -158,13 +143,13 @@ export class ValidationException extends HttpException {
   static invalidFormat(
     field: string,
     expectedFormat: string,
-    value?: unknown,
+    value?: unknown
   ): ValidationException {
     return ValidationException.singleField(
       field,
       `${field} 格式不正确，期望格式: ${expectedFormat}`,
       value,
-      'format',
+      "format"
     );
   }
 
@@ -175,13 +160,13 @@ export class ValidationException extends HttpException {
     field: string,
     min: number | string,
     max: number | string,
-    value?: unknown,
+    value?: unknown
   ): ValidationException {
     return ValidationException.singleField(
       field,
       `${field} 必须在 ${min} 到 ${max} 之间`,
       value,
-      'range',
+      "range"
     );
   }
 
@@ -189,11 +174,6 @@ export class ValidationException extends HttpException {
    * 创建唯一性冲突错误
    */
   static duplicate(field: string, value?: unknown): ValidationException {
-    return ValidationException.singleField(
-      field,
-      `${field} 已被使用`,
-      value,
-      'unique',
-    );
+    return ValidationException.singleField(field, `${field} 已被使用`, value, "unique");
   }
 }

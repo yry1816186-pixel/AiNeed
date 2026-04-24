@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import apiClient from "../client";
 import { profileApi } from "../profile.api";
 

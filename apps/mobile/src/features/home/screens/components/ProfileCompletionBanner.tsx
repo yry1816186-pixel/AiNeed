@@ -1,10 +1,10 @@
 import { useState, useCallback, memo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
+import { View, Text, TouchableOpacity, LayoutAnimation } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { DesignTokens } from "../../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface ProfileCompletionBannerProps {
   completionPercent: number;

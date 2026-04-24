@@ -2,7 +2,6 @@ import apiClient from "./client";
 import { ApiResponse } from "../../types";
 import { buildPhotoAssetUrl } from "./asset-url";
 
-
 export type PhotoType = "front" | "side" | "full_body" | "half_body" | "face";
 
 /**

@@ -144,8 +144,8 @@ export class ErrorInterceptor implements NestInterceptor {
       const { status, title, detail } = this.mapPrismaError(exception);
       const meta: Record<string, unknown> = { ...baseMeta };
       if (!this.isProduction) {
-        meta.prismaCode = (exception as PrismaClientKnownRequestError).code;
-        meta.meta = (exception as PrismaClientKnownRequestError).meta;
+        meta.prismaCode = exception.code;
+        meta.meta = exception.meta;
         const prismaEx = exception as ExceptionWithStack;
         if (prismaEx.stack) {
           meta.stack = prismaEx.stack;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 /**
  * 离线缓存服务 - 用于比赛演示的离线模式支持
  *
@@ -9,7 +10,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from '../shared/utils/logger';
+import { logger } from "../shared/utils/logger";
 import type { ClothingItem } from "../types/clothing";
 import type { User } from "../types/user";
 import type { PostCardData } from "../types/social";

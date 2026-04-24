@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
@@ -47,8 +47,12 @@ export const Rating: React.FC<RatingProps> = ({
   const getStarIcon = (index: number): keyof typeof Ionicons.glyphMap => {
     const filled = index < Math.floor(value);
     const halfFilled = !filled && index < value;
-    if (filled) return "star";
-    if (halfFilled) return "star-half";
+    if (filled) {
+      return "star";
+    }
+    if (halfFilled) {
+      return "star-half";
+    }
     return "star-outline";
   };
 
@@ -92,13 +96,16 @@ export interface RatingBadgeProps {
   style?: ViewStyle;
 }
 
-export const RatingBadge: React.FC<RatingBadgeProps> = ({ value, reviewCount, style }) => (
-  <View style={[styles.badgeContainer, style]}>
-    <Ionicons name="star" size={14} color={Colors.amber[500]} />
-    <Text style={styles.badgeValue}>{value.toFixed(1)}</Text>
-    {reviewCount !== undefined && <Text style={styles.badgeCount}> ({reviewCount})</Text>}
-  </View>
-);
+export const RatingBadge: React.FC<RatingBadgeProps> = ({ value, reviewCount, style }) => {
+  const styles = useStyles(colors);
+  return (
+    <View style={[styles.badgeContainer, style]}>
+      <Ionicons name="star" size={14} color={Colors.amber[500]} />
+      <Text style={styles.badgeValue}>{value.toFixed(1)}</Text>
+      {reviewCount !== undefined && <Text style={styles.badgeCount}> ({reviewCount})</Text>}
+    </View>
+  );
+};
 
 const useStyles = createStyles((colors) => ({
   container: { flexDirection: "row", alignItems: "center", gap: Spacing[1] },

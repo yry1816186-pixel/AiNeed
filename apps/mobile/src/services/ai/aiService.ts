@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
 import { OutfitRecommendationResult, SimilarItemResult } from "../../types/api";
 import type { FormDataValue } from "../../types";

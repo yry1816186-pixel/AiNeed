@@ -8,8 +8,8 @@
 import React, { useMemo } from "react";
 import { PaperProvider, MD3LightTheme, MD3DarkTheme, configureFonts } from "react-native-paper";
 
-import { DesignTokens, darkTokens } from '../theme';
-import { useTheme } from '../../shared/contexts/ThemeContext';
+import { DesignTokens, darkTokens } from "../theme";
+import { useTheme } from "../../shared/contexts/ThemeContext";
 
 /** 从 DesignTokens 生成 React Paper MD3 Light 主题 */
 function createLightPaperTheme() {
@@ -19,13 +19,13 @@ function createLightPaperTheme() {
     ...MD3LightTheme,
     colors: {
       ...MD3LightTheme.colors,
-      primary: c.brand.terracotta,           // #C67B5C
+      primary: c.brand.terracotta, // #C67B5C
       primaryContainer: c.brand.terracottaLight,
       secondary: c.brand.sage,
       secondaryContainer: c.brand.sageLight,
       tertiary: c.brand.camel,
       tertiaryContainer: c.brand.camelLight,
-      surface: c.backgrounds.primary,         // #FFFFFF
+      surface: c.backgrounds.primary, // #FFFFFF
       surfaceVariant: c.backgrounds.secondary,
       surfaceDisabled: c.backgrounds.tertiary,
       background: c.backgrounds.secondary,
@@ -69,13 +69,13 @@ function createDarkPaperTheme() {
     ...MD3DarkTheme,
     colors: {
       ...MD3DarkTheme.colors,
-      primary: c.brand.terracotta,            // #D68B6C
+      primary: c.brand.terracotta, // #D68B6C
       primaryContainer: c.brand.terracottaDark,
       secondary: c.brand.sage,
       secondaryContainer: c.brand.sageDark,
       tertiary: c.brand.camel,
       tertiaryContainer: c.brand.camelDark,
-      surface: c.backgrounds.primary,          // #161412 (暖黑)
+      surface: c.backgrounds.primary, // #161412 (暖黑)
       surfaceVariant: c.backgrounds.secondary,
       surfaceDisabled: c.backgrounds.tertiary,
       background: c.backgrounds.primary,

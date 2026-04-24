@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -77,14 +78,14 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
       const city =
         initialValue?.city && cities.includes(initialValue.city)
           ? initialValue.city
-          : (cities[0] ?? "");
+          : cities[0] ?? "";
       setSelectedCity(city);
       if (city) {
         const districts = REGION_DATA[province]?.[city] ?? [];
         const district =
           initialValue?.district && districts.includes(initialValue.district)
             ? initialValue.district
-            : (districts[0] ?? "");
+            : districts[0] ?? "";
         setSelectedDistrict(district);
       } else {
         setSelectedDistrict("");

@@ -16,10 +16,7 @@ describe("QuizProgressService", () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        QuizProgressService,
-        { provide: RedisService, useValue: redisService },
-      ],
+      providers: [QuizProgressService, { provide: RedisService, useValue: redisService }],
     }).compile();
 
     service = module.get<QuizProgressService>(QuizProgressService);

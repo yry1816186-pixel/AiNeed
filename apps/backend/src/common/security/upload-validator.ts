@@ -13,7 +13,7 @@ export interface ValidatedFile {
 }
 
 export function validateImageFile(file: ValidatedFile): void {
-  if (!ALLOWED_MIME_TYPES.includes(file.mimetype as typeof ALLOWED_MIME_TYPES[number])) {
+  if (!ALLOWED_MIME_TYPES.includes(file.mimetype as (typeof ALLOWED_MIME_TYPES)[number])) {
     throw new BadRequestException("仅支持 JPEG、PNG 和 WebP 格式的图片");
   }
 
@@ -53,5 +53,8 @@ export function validateMagicBytes(buffer: Buffer): boolean {
 
 export function detectSvgPayload(buffer: Buffer): boolean {
   const content = buffer.toString("utf-8", 0, Math.min(buffer.length, 1024)).toLowerCase();
-  return content.includes("<svg") && (content.includes("<script") || content.includes("onerror") || content.includes("onclick"));
+  return (
+    content.includes("<svg") &&
+    (content.includes("<script") || content.includes("onerror") || content.includes("onclick"))
+  );
 }

@@ -18,7 +18,7 @@ export interface SecurityEvent {
   details?: Record<string, unknown>;
 }
 
-const _IOS_JAILBREAK_PATHS = [
+export const IOS_JAILBREAK_PATHS = [
   "/Applications/Cydia.app",
   "/Library/MobileSubstrate/MobileSubstrate.dylib",
   "/bin/bash",
@@ -36,9 +36,9 @@ const _IOS_JAILBREAK_PATHS = [
   "/usr/libexec/sftp-server",
 ] as const;
 
-const _IOS_JAILBREAK_URL_SCHEMES = ["cydia://", "undecimus://"] as const;
+export const IOS_JAILBREAK_URL_SCHEMES = ["cydia://", "undecimus://"] as const;
 
-const _ANDROID_ROOT_PATHS = [
+export const ANDROID_ROOT_PATHS = [
   "/system/app/Superuser.apk",
   "/sbin/su",
   "/system/bin/su",
@@ -54,7 +54,7 @@ const _ANDROID_ROOT_PATHS = [
   "/data/adb/magisk",
 ] as const;
 
-const _ANDROID_ROOT_PACKAGES = [
+export const ANDROID_ROOT_PACKAGES = [
   "com.noshufou.android.su",
   "com.noshufou.android.su.elite",
   "eu.chainfire.supersu",
@@ -89,7 +89,10 @@ async function checkIOSJailbreak(): Promise<{ detected: boolean; checks: string[
   // The following are mock implementations that demonstrate the interface.
 
   try {
-    const JailbreakDetection = require("react-native-jailbreak-detection").default;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+    const JailbreakDetection = require("react-native-jailbreak-detection").default as {
+      isJailbroken: () => Promise<boolean>;
+    };
     const isJailbroken = await JailbreakDetection.isJailbroken();
     checks.push("native_jailbreak_module");
     if (isJailbroken) {
@@ -102,7 +105,7 @@ async function checkIOSJailbreak(): Promise<{ detected: boolean; checks: string[
       });
     }
   } catch (error) {
-    console.error('Device integrity check failed:', error);
+    console.error("Device integrity check failed:", error);
     checks.push("filesystem_check_mock");
 
     // Mock: In production, a native module would use NSFileManager.fileExistsAtPath
@@ -128,7 +131,10 @@ async function checkAndroidRoot(): Promise<{ detected: boolean; checks: string[]
   let detected = false;
 
   try {
-    const RootDetection = require("react-native-root-detection").default;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+    const RootDetection = require("react-native-root-detection").default as {
+      isRooted: () => Promise<boolean>;
+    };
     const isRooted = await RootDetection.isRooted();
     checks.push("native_root_module");
     if (isRooted) {
@@ -141,7 +147,7 @@ async function checkAndroidRoot(): Promise<{ detected: boolean; checks: string[]
       });
     }
   } catch (error) {
-    console.error('Device integrity check failed:', error);
+    console.error("Device integrity check failed:", error);
     checks.push("su_binary_check_mock");
 
     // Mock: In production, a native module would check for su binary existence
@@ -177,7 +183,10 @@ async function checkAppTampered(): Promise<{ detected: boolean; checks: string[]
   let detected = false;
 
   try {
-    const TamperDetection = require("react-native-tamper-detection").default;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+    const TamperDetection = require("react-native-tamper-detection").default as {
+      isTampered: () => Promise<boolean>;
+    };
     const isTampered = await TamperDetection.isTampered();
     checks.push("native_tamper_module");
     if (isTampered) {
@@ -190,7 +199,7 @@ async function checkAppTampered(): Promise<{ detected: boolean; checks: string[]
       });
     }
   } catch (error) {
-    console.error('Device integrity check failed:', error);
+    console.error("Device integrity check failed:", error);
     checks.push("signature_check_mock");
 
     // Mock: In production, a native module would verify the APK/IPA signature

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";

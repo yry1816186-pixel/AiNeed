@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
-import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
+import { Animated, Text, View } from "react-native";
+import type { AlignmentStatus } from "../../../../hooks/useReferenceLines";
 import { DesignTokens, flatColors as colors } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -49,7 +49,6 @@ function getStatusMessage(status: AlignmentStatus): { message: string; color: st
 }
 
 const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
-  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const opacityAnim = useRef(new Animated.Value(0)).current;

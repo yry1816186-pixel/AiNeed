@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";

@@ -1,8 +1,17 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { profileApi, type UserProfile } from "../../../services/api/profile.api";
 import { weatherService } from "../../../services/weatherService";
+
+// ==================== Recommendation Feed Store ====================
+
+import {
+  recommendationFeedApi,
+  type FeedItem,
+  type FeedCategory,
+} from "../../../services/api/recommendation-feed.api";
+import { recommendationsApi } from "../../../services/api/tryon.api";
 
 export interface WeatherData {
   temperature: number;
@@ -34,14 +43,14 @@ function calculateProfileCompletion(profile: UserProfile): number {
   let completion = 0;
 
   if (profile.gender) {
-    completion += 10;
-  }
-
-  if (profile.height && profile.weight) {
-    completion += 15;
+    completion += 5;
   }
 
   if (profile.bodyType) {
+    completion += 5;
+  }
+
+  if (profile.height && profile.weight) {
     completion += 15;
   }
 
@@ -162,15 +171,6 @@ export const useBannerState = () =>
     dismissBanner: state.dismissBanner,
     resetBannerOnAppStart: state.resetBannerOnAppStart,
   }));
-
-// ==================== Recommendation Feed Store ====================
-
-import {
-  recommendationFeedApi,
-  type FeedItem,
-  type FeedCategory,
-} from "../../../services/api/recommendation-feed.api";
-import { recommendationsApi } from "../../../services/api/tryon.api";
 
 interface FeedState {
   items: FeedItem[];

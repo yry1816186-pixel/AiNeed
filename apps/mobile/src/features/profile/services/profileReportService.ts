@@ -1,5 +1,6 @@
-import apiClient from '../../../services/api/client';
-import type { ApiResponse } from '../../../types/api';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import apiClient from "../../../services/api/client";
+import type { ApiResponse } from "../../../types/api";
 
 export interface ProfileReportData {
   profile: {

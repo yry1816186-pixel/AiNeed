@@ -13,6 +13,13 @@ import React from "react";
 
 type NavigationParams = Record<string, unknown>;
 
+interface NavigationRef {
+  navigate: (name: string, params?: object) => void;
+  dispatch: (action: unknown) => void;
+  goBack: () => void;
+  isReady?: () => boolean;
+}
+
 export function useRouter() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -64,7 +71,7 @@ export function useRouter() {
     navigate: useCallback(
       (href: string, params?: NavigationParams) => {
         const path = href.replace(/^\//, "");
-        (navigation.navigate as (name: string, params?: object) => void)(path, params);
+        (navigation.navigate as unknown as (name: string, params?: object) => void)(path, params);
       },
       [navigation]
     ),
@@ -126,7 +133,8 @@ export function Link({
 
   const _handlePress = useCallback(() => {
     const path = href.replace(/^\//, "");
-    (navigation.navigate as (name: string, params?: object) => void)(path);
+    void _handlePress;
+    (navigation.navigate as unknown as (name: string, params?: object) => void)(path);
   }, [navigation, href]);
 
   return children;
@@ -143,14 +151,14 @@ export function Redirect({ href }: { href: string }) {
   return null;
 }
 
-let _navigationRef: any = null;
+let _navigationRef: NavigationRef | null = null;
 
-export function setNavigationRef(ref: any) {
+export function setNavigationRef(ref: NavigationRef) {
   _navigationRef = ref;
 }
 
-function getNav() {
-  const ref = _navigationRef || navigationRef;
+function getNav(): NavigationRef | null {
+  const ref = _navigationRef || (navigationRef as unknown as NavigationRef | null);
   if (!ref) {
     console.warn("expo-router.router: Navigation not ready yet.");
     return null;
@@ -167,7 +175,7 @@ export const router = {
     const nav = getNav();
     if (nav) {
       const path = href.replace(/^\//, "");
-      (nav.navigate as (name: string, params?: object) => void)(path, params);
+      (nav.navigate as unknown as (name: string, params?: object) => void)(path, params);
     }
   },
   replace: (href: string, params?: NavigationParams) => {

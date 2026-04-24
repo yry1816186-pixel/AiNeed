@@ -47,6 +47,15 @@ export {
   type BloggerProductInput,
   type PurchaseInput,
 } from "./blogger.api";
+export {
+  goldenRecommendationApi,
+  type GoldenProfile,
+  type GoldenProfileEntry,
+  type GoldenOutfit,
+  type GoldenOutfitItem,
+  type GoldenMatchScores,
+  type GoldenRecommendation,
+} from "./golden-recommendation.api";
 export { AppError, AppErrorCode, classifyAxiosError, toAppError, getErrorMessage } from "./error";
 export {
   notificationApi,

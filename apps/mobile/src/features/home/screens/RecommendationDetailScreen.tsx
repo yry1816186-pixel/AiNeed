@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,12 +20,9 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { clothingApi } from "../../../services/api/clothing.api";
 import { cartApi } from "../../../services/api/commerce.api";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
-import type { HomeStackParamList } from "../../../navigation/types";
+
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
+import type { TodayStackParamList } from "../../../navigation/types";
 import { navigateProfile } from "../../../navigation/navigationService";
 import type { ClothingItem } from "../../../types/clothing";
 import {
@@ -54,7 +52,7 @@ interface RecommendationDetail {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-type RecommendationDetailRouteProp = RouteProp<HomeStackParamList, "RecommendationDetail">;
+type RecommendationDetailRouteProp = RouteProp<TodayStackParamList, "RecommendationDetail">;
 
 interface RecommendationPreview {
   id: string;
@@ -149,7 +147,7 @@ function mergeRecommendationDetail(
 }
 
 export const RecommendationDetailScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
+  const navigation = useNavigation<NavigationProp<TodayStackParamList>>();
   const route = useRoute<RecommendationDetailRouteProp>();
   const { recommendationId } = route.params;
 

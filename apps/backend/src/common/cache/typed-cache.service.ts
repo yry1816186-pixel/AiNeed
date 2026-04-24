@@ -1,16 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
-import { RedisService } from '../redis/redis.service';
+import { RedisService } from "../redis/redis.service";
 
-import { CacheKey, CacheKeyBuilder } from './cache-key-builder';
-import { CACHE_STRATEGIES, CacheInvalidationEvent, getJitteredTtl } from './cache-strategies';
+import { CacheKey, CacheKeyBuilder } from "./cache-key-builder";
+import { CACHE_STRATEGIES, CacheInvalidationEvent, getJitteredTtl } from "./cache-strategies";
 
 @Injectable()
 export class TypedCacheService {
   private readonly logger = new Logger(TypedCacheService.name);
-  private readonly nullPlaceholder = '__NULL__';
+  private readonly nullPlaceholder = "__NULL__";
   private readonly defaultNullTtl = 60;
-  private readonly lockPrefix = 'lock:';
+  private readonly lockPrefix = "lock:";
 
   constructor(private readonly redisService: RedisService) {}
 
@@ -50,10 +50,10 @@ export class TypedCacheService {
   async invalidate(pattern: string): Promise<number> {
     const client = this.redisService.getClient();
     let deletedCount = 0;
-    let cursor = '0';
+    let cursor = "0";
 
     do {
-      const result = await client.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+      const result = await client.scan(cursor, "MATCH", pattern, "COUNT", 100);
       cursor = result[0];
       const keys = result[1];
 
@@ -61,19 +61,19 @@ export class TypedCacheService {
         await client.del(...keys);
         deletedCount += keys.length;
       }
-    } while (cursor !== '0');
+    } while (cursor !== "0");
 
     this.logger.log(`Invalidated ${deletedCount} keys matching pattern: ${pattern}`);
     return deletedCount;
   }
 
   async invalidateByEvent(event: CacheInvalidationEvent): Promise<void> {
-    const strategies = Object.values(CACHE_STRATEGIES).filter(
-      (s) => s.invalidationEvents.includes(event),
+    const strategies = Object.values(CACHE_STRATEGIES).filter((s) =>
+      s.invalidationEvents.includes(event)
     );
 
     for (const strategy of strategies) {
-      const pattern = CacheKeyBuilder.pattern(strategy.name, '*');
+      const pattern = CacheKeyBuilder.pattern(strategy.name, "*");
       await this.invalidate(pattern);
     }
   }
@@ -83,19 +83,21 @@ export class TypedCacheService {
       keys.map(async (key) => {
         const data = await fetcher(key);
         await this.set(key, data);
-      }),
+      })
     );
 
-    const failures = results.filter((r) => r.status === 'rejected');
+    const failures = results.filter((r) => r.status === "rejected");
     if (failures.length > 0) {
-      this.logger.warn(`Cache warmup completed with ${failures.length} failures out of ${keys.length} keys`);
+      this.logger.warn(
+        `Cache warmup completed with ${failures.length} failures out of ${keys.length} keys`
+      );
     }
   }
 
   async getWithLock<T>(
     key: CacheKey | string,
     fetcher: () => Promise<T | null>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T | null> {
     const resolvedKey = this.resolveKey(key);
 
@@ -163,14 +165,14 @@ export class TypedCacheService {
   }
 
   private resolveKey(key: CacheKey | string): string {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return key;
     }
     return CacheKeyBuilder.build(key);
   }
 
   private resolveTtl(key: CacheKey | string): number {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return getJitteredTtl(3600);
     }
 

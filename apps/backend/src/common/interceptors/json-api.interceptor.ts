@@ -4,15 +4,15 @@ import {
   ExecutionContext,
   CallHandler,
   SetMetadata,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
-import { SKIP_RESPONSE_TRANSFORM } from './transform.interceptor';
+import { SKIP_RESPONSE_TRANSFORM } from "./transform.interceptor";
 
-export const JSON_API_TYPE = 'json_api_type';
-export const SKIP_JSON_API = 'skip_json_api';
+export const JSON_API_TYPE = "json_api_type";
+export const SKIP_JSON_API = "skip_json_api";
 
 export interface JsonApiResource {
   type: string;
@@ -91,7 +91,7 @@ export class JsonApiInterceptor implements NestInterceptor {
     }>();
 
     const resourceType = this.getResourceType(context);
-    const requestId = request.headers['x-request-id'] as string | undefined;
+    const requestId = request.headers["x-request-id"] as string | undefined;
     const selfLink = request.url;
 
     return next.handle().pipe(
@@ -117,8 +117,14 @@ export class JsonApiInterceptor implements NestInterceptor {
           return this.transformArray(data, resourceType, requestId, timestamp, selfLink);
         }
 
-        if (typeof data === 'object') {
-          return this.transformSingle(data as Record<string, unknown>, resourceType, requestId, timestamp, selfLink);
+        if (typeof data === "object") {
+          return this.transformSingle(
+            data as Record<string, unknown>,
+            resourceType,
+            requestId,
+            timestamp,
+            selfLink
+          );
         }
 
         return {
@@ -126,7 +132,7 @@ export class JsonApiInterceptor implements NestInterceptor {
           meta: { requestId, timestamp },
           links: { self: selfLink },
         } as JsonApiResponse;
-      }),
+      })
     );
   }
 
@@ -141,15 +147,13 @@ export class JsonApiInterceptor implements NestInterceptor {
     }
 
     const className = context.getClass().name;
-    const withoutSuffix = className
-      .replace(/Controller$/, '')
-      .replace(/Service$/, '');
+    const withoutSuffix = className.replace(/Controller$/, "").replace(/Service$/, "");
 
     return withoutSuffix
       .replace(/([A-Z])/g, (match, offset: number) =>
-        offset > 0 ? '-' + match.toLowerCase() : match.toLowerCase(),
+        offset > 0 ? "-" + match.toLowerCase() : match.toLowerCase()
       )
-      .replace(/-+$/, '')
+      .replace(/-+$/, "")
       .toLowerCase();
   }
 
@@ -157,16 +161,12 @@ export class JsonApiInterceptor implements NestInterceptor {
     items: unknown[];
     meta: { nextCursor?: string; hasMore?: boolean; total?: number };
   } {
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== "object") {
       return false;
     }
 
     const obj = data as Record<string, unknown>;
-    return (
-      Array.isArray(obj.items) &&
-      typeof obj.meta === 'object' &&
-      obj.meta !== null
-    );
+    return Array.isArray(obj.items) && typeof obj.meta === "object" && obj.meta !== null;
   }
 
   private transformPaginated(
@@ -174,16 +174,16 @@ export class JsonApiInterceptor implements NestInterceptor {
     resourceType: string,
     requestId: string | undefined,
     timestamp: string,
-    selfLink: string,
+    selfLink: string
   ): JsonApiResponse {
     const included: JsonApiResource[] = [];
     const resources: JsonApiResource[] = [];
 
     for (const item of data.items) {
-      if (item && typeof item === 'object') {
+      if (item && typeof item === "object") {
         const { resource, included: itemIncluded } = this.serializeResource(
           item as Record<string, unknown>,
-          resourceType,
+          resourceType
         );
         resources.push(resource);
         included.push(...itemIncluded);
@@ -202,7 +202,13 @@ export class JsonApiInterceptor implements NestInterceptor {
       },
       links: {
         self: selfLink,
-        ...(data.meta.nextCursor ? { next: `${selfLink}${selfLink.includes('?') ? '&' : '?'}cursor=${data.meta.nextCursor}` } : {}),
+        ...(data.meta.nextCursor
+          ? {
+              next: `${selfLink}${selfLink.includes("?") ? "&" : "?"}cursor=${
+                data.meta.nextCursor
+              }`,
+            }
+          : {}),
       },
     };
 
@@ -214,16 +220,16 @@ export class JsonApiInterceptor implements NestInterceptor {
     resourceType: string,
     requestId: string | undefined,
     timestamp: string,
-    selfLink: string,
+    selfLink: string
   ): JsonApiResponse {
     const included: JsonApiResource[] = [];
     const resources: JsonApiResource[] = [];
 
     for (const item of data) {
-      if (item && typeof item === 'object') {
+      if (item && typeof item === "object") {
         const { resource, included: itemIncluded } = this.serializeResource(
           item as Record<string, unknown>,
-          resourceType,
+          resourceType
         );
         resources.push(resource);
         included.push(...itemIncluded);
@@ -247,7 +253,7 @@ export class JsonApiInterceptor implements NestInterceptor {
     resourceType: string,
     requestId: string | undefined,
     timestamp: string,
-    selfLink: string,
+    selfLink: string
   ): JsonApiResponse {
     const { resource, included } = this.serializeResource(data, resourceType);
 
@@ -264,7 +270,7 @@ export class JsonApiInterceptor implements NestInterceptor {
 
   private serializeResource(
     data: Record<string, unknown>,
-    defaultType: string,
+    defaultType: string
   ): { resource: JsonApiResource; included: JsonApiResource[] } {
     const included: JsonApiResource[] = [];
     const id = this.extractId(data);
@@ -273,8 +279,8 @@ export class JsonApiInterceptor implements NestInterceptor {
     const attributes: Record<string, unknown> = {};
     const relationships: Record<string, JsonApiRelationships> = {};
 
-    const idKeys = new Set(['id', '_id', 'uuid']);
-    const skipKeys = new Set(['id', '_id', 'uuid', 'type']);
+    const idKeys = new Set(["id", "_id", "uuid"]);
+    const skipKeys = new Set(["id", "_id", "uuid", "type"]);
 
     for (const [key, value] of Object.entries(data)) {
       if (skipKeys.has(key)) {
@@ -282,7 +288,8 @@ export class JsonApiInterceptor implements NestInterceptor {
       }
 
       if (this.isRelationshipObject(value)) {
-        const relType = (value as Record<string, unknown>).type as string || this.inferTypeFromKey(key);
+        const relType =
+          ((value as Record<string, unknown>).type as string) || this.inferTypeFromKey(key);
         const relId = String(this.extractId(value as Record<string, unknown>));
 
         relationships[key] = {
@@ -291,14 +298,15 @@ export class JsonApiInterceptor implements NestInterceptor {
 
         const { resource: includedResource, included: nestedIncluded } = this.serializeResource(
           value as Record<string, unknown>,
-          relType,
+          relType
         );
         included.push(includedResource, ...nestedIncluded);
         continue;
       }
 
       if (Array.isArray(value) && value.length > 0 && this.isRelationshipObject(value[0])) {
-        const relType = (value[0] as Record<string, unknown>).type as string || this.inferTypeFromKey(key);
+        const relType =
+          ((value[0] as Record<string, unknown>).type as string) || this.inferTypeFromKey(key);
         const relData: Array<{ type: string; id: string }> = [];
 
         for (const item of value) {
@@ -308,7 +316,7 @@ export class JsonApiInterceptor implements NestInterceptor {
 
             const { resource: includedResource, included: nestedIncluded } = this.serializeResource(
               item as Record<string, unknown>,
-              relType,
+              relType
             );
             included.push(includedResource, ...nestedIncluded);
           }
@@ -343,11 +351,11 @@ export class JsonApiInterceptor implements NestInterceptor {
     if (data.uuid !== undefined && data.uuid !== null) {
       return String(data.uuid);
     }
-    return '';
+    return "";
   }
 
   private isRelationshipObject(value: unknown): boolean {
-    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
       return false;
     }
 
@@ -361,35 +369,42 @@ export class JsonApiInterceptor implements NestInterceptor {
 
   private inferTypeFromKey(key: string): string {
     const singularMap: Record<string, string> = {
-      items: 'item',
-      users: 'user',
-      products: 'product',
-      clothing: 'clothing',
-      categories: 'category',
-      orders: 'order',
-      messages: 'message',
-      photos: 'photo',
-      recommendations: 'recommendation',
-      favorites: 'favorite',
-      outfits: 'outfit',
-      tags: 'tag',
-      brands: 'brand',
-      notifications: 'notification',
-      sessions: 'session',
-      addresses: 'address',
-      cartItems: 'cart-item',
-      wardrobeItems: 'wardrobe-item',
+      items: "item",
+      users: "user",
+      products: "product",
+      clothing: "clothing",
+      categories: "category",
+      orders: "order",
+      messages: "message",
+      photos: "photo",
+      recommendations: "recommendation",
+      favorites: "favorite",
+      outfits: "outfit",
+      tags: "tag",
+      brands: "brand",
+      notifications: "notification",
+      sessions: "session",
+      addresses: "address",
+      cartItems: "cart-item",
+      wardrobeItems: "wardrobe-item",
     };
 
     if (singularMap[key]) {
       return singularMap[key];
     }
 
-    if (key.endsWith('s') && key.length > 1) {
-      return key.slice(0, -1).replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
+    if (key.endsWith("s") && key.length > 1) {
+      return key
+        .slice(0, -1)
+        .replace(/([A-Z])/g, "-$1")
+        .toLowerCase()
+        .replace(/^-/, "");
     }
 
-    return key.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
+    return key
+      .replace(/([A-Z])/g, "-$1")
+      .toLowerCase()
+      .replace(/^-/, "");
   }
 
   private deduplicateIncluded(included: JsonApiResource[]): JsonApiResource[] {

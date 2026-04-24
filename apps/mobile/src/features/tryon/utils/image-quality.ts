@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { manipulateAsync, SaveFormat } from "@/src/polyfills/expo-image-manipulator";
 import type { PhotoQualityIssue } from "../stores/photoStore";
 
@@ -121,9 +122,15 @@ export async function analyzeImageQuality(
         for (let i = dataStart; i < dataStart + sampleSize && i < byteLength; i += sampleStep) {
           const byte = rawBytes.charCodeAt(i);
           byteValues.push(byte);
-          if (byte === 0x00) zeroCount++;
-          if (byte >= 0xe0) highCount++;
-          if (byte <= 0x0f && byte !== 0x00) lowCount++;
+          if (byte === 0x00) {
+            zeroCount++;
+          }
+          if (byte >= 0xe0) {
+            highCount++;
+          }
+          if (byte <= 0x0f && byte !== 0x00) {
+            lowCount++;
+          }
           totalSampled++;
         }
 
@@ -155,8 +162,8 @@ export async function analyzeImageQuality(
 
           if (byteValues.length > 10) {
             const sorted = [...byteValues].sort((a, b) => a - b);
-            const p10 = sorted[Math.floor(sorted.length * 0.1)]!;
-            const p90 = sorted[Math.floor(sorted.length * 0.9)]!;
+            const p10 = sorted[Math.floor(sorted.length * 0.1)];
+            const p90 = sorted[Math.floor(sorted.length * 0.9)];
             contrast = Math.round(((p90 - p10) / 255) * 100);
             contrast = Math.max(5, Math.min(95, contrast));
           }

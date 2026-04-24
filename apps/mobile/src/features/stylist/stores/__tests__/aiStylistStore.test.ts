@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { useAiStylistStore } from "../aiStylistStore";
 import type { OutfitPlanDetail } from "../aiStylistStore";
+
+import { aiStylistApi } from "../../../../services/api/ai-stylist.api";
 
 jest.mock("../../../../services/api/ai-stylist.api", () => ({
   aiStylistApi: {
@@ -21,8 +24,6 @@ jest.mock("../../../../services/api/ai-stylist.api", () => ({
     sendMessageWithProgress: jest.fn(),
   },
 }));
-
-import { aiStylistApi } from "../../../../services/api/ai-stylist.api";
 
 const mockAiStylistApi = aiStylistApi as jest.Mocked<typeof aiStylistApi>;
 

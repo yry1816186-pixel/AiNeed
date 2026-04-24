@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
+import { View, Text, Animated } from "react-native";
+import { Spacing, BorderRadius } from "../../../../design-system/theme";
 import { DesignTokens } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -28,7 +28,6 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSt
       <View style={styles.header}>
         <View style={styles.dotsContainer}>
           {Array.from({ length: totalSteps }).map((_, index) => {
-            const styles = useStyles(colors);
             const isCompleted = index < currentStep;
             const isCurrent = index === currentStep;
             return (
@@ -108,6 +107,6 @@ const useStyles = createStyles((colors) => ({
   barFill: {
     height: "100%",
     borderRadius: BorderRadius.full,
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
   },
 }));

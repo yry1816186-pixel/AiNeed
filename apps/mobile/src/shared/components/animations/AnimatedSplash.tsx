@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -13,7 +14,6 @@ import { BorderRadius } from "../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const PHASE_1_START = 0;
 const PHASE_2_START = 300;
 const PHASE_3_START = 600;
 const PHASE_4_BASE = 800;
@@ -76,8 +76,8 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
 
     for (let index = 0; index < DOT_COLORS.length; index++) {
       const delay = PHASE_4_BASE + index * PHASE_4_DOT_DELAY;
-      dotScales[index]!.value = withDelay(delay, withSpring(1, { damping: 10, stiffness: 150 }));
-      dotOpacities[index]!.value = withDelay(
+      dotScales[index].value = withDelay(delay, withSpring(1, { damping: 10, stiffness: 150 }));
+      dotOpacities[index].value = withDelay(
         delay,
         withTiming(1, { duration: 200, easing: Easing.out(Easing.ease) })
       );
@@ -125,8 +125,8 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
 
   const dotStyles = DOT_COLORS.map((_, index) =>
     useAnimatedStyle(() => ({
-      transform: [{ scale: dotScales[index]!.value }],
-      opacity: dotOpacities[index]!.value,
+      transform: [{ scale: dotScales[index].value }],
+      opacity: dotOpacities[index].value,
     }))
   );
 

@@ -102,7 +102,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       await chatApi.markAsRead(roomId, lastMessageId);
     } catch (error) {
       // Silently fail read receipts
-      console.error('Chat operation failed:', error);
+      console.error("Chat operation failed:", error);
     }
   },
 

@@ -123,7 +123,7 @@ export const GradientPresets = {
   shimmer: ["rgba(255,255,255,0)", "rgba(255,255,255,0.3)", "rgba(255,255,255,0)"] as [
     string,
     string,
-    ...string[],
+    ...string[]
   ],
 
   // Auxiliary warm gradients - for decorative/categorical use only, NOT brand identity

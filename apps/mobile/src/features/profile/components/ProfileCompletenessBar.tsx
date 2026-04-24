@@ -1,6 +1,6 @@
-﻿import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing } from "../../../design-system/theme";
+import React from "react";
+import { View, Text, Pressable } from "react-native";
+import { Spacing } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 

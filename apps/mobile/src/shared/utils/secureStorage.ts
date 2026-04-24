@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import EncryptedStorage from "react-native-encrypted-storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";

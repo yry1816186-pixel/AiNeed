@@ -53,9 +53,7 @@ describe("ConsultantMatchingService", () => {
     },
   ];
 
-  const mockUserStyleProfiles = [
-    { keywords: ["职场穿搭", "日常穿搭"], occasion: "work" },
-  ];
+  const mockUserStyleProfiles = [{ keywords: ["职场穿搭", "日常穿搭"], occasion: "work" }];
 
   const mockUserProfileData = {
     userId: "test-user",
@@ -70,10 +68,7 @@ describe("ConsultantMatchingService", () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ConsultantMatchingService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [ConsultantMatchingService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<ConsultantMatchingService>(ConsultantMatchingService);
@@ -97,9 +92,7 @@ describe("ConsultantMatchingService", () => {
       for (let i = 1; i < results.length; i++) {
         const prev = results[i - 1]!;
         const curr = results[i]!;
-        expect(prev.matchPercentage).toBeGreaterThanOrEqual(
-          curr.matchPercentage,
-        );
+        expect(prev.matchPercentage).toBeGreaterThanOrEqual(curr.matchPercentage);
       }
     });
 
@@ -200,7 +193,7 @@ describe("ConsultantMatchingService", () => {
 
       // User is in Beijing, consultant-1 and consultant-3 are also in Beijing
       const beijingConsultants = results.filter(
-        (r) => r.consultantId === "consultant-1" || r.consultantId === "consultant-3",
+        (r) => r.consultantId === "consultant-1" || r.consultantId === "consultant-3"
       );
       expect(beijingConsultants.length).toBeGreaterThan(0);
     });

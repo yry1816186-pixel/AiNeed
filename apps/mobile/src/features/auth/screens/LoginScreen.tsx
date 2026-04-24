@@ -1,5 +1,6 @@
-// @ts-nocheck
-import React, { useState, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/require-await */
+
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -19,9 +20,87 @@ import { useTranslation } from "../../../i18n";
 
 import { wechatAuth } from "../../../services/auth/wechat";
 import { useAuthStore } from "../stores/index";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens, flatColors as colors, Spacing, theme } from "../../../design-system/theme";
+
+import { DesignTokens, flatColors as colors, theme } from "../../../design-system/theme";
 import type { AuthStackParamList } from "../../../navigation/types";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDelay,
+  withRepeat,
+  withSequence,
+  interpolate,
+  Easing,
+} from "react-native-reanimated";
+import AnimatedReanimated from "react-native-reanimated";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+
+const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
+const AnimatedTouchableOpacity = AnimatedReanimated.createAnimatedComponent(TouchableOpacity);
+
+// ── Staggered entrance animation wrapper ──────────────────────────
+const FadeIn: React.FC<{
+  delay: number;
+  children: React.ReactNode;
+  style?: any;
+  distance?: number;
+}> = ({ delay, children, style, distance = 22 }) => {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(distance);
+
+  useEffect(() => {
+    opacity.value = withDelay(
+      delay,
+      withTiming(1, { duration: 500, easing: Easing.bezier(0.25, 0.1, 0.25, 1) })
+    );
+    translateY.value = withDelay(delay, withSpring(0, { damping: 20, stiffness: 100 }));
+  }, [delay]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return <AnimatedView style={[animatedStyle, style]}>{children}</AnimatedView>;
+};
+
+// ── Scale-on-press button wrapper ──────────────────────────────────
+const ScaleButton: React.FC<{
+  onPress: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+  style?: any;
+  accessibilityLabel?: string;
+}> = ({ onPress, disabled, children, style, accessibilityLabel }) => {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <AnimatedTouchableOpacity
+      style={[animatedStyle, style]}
+      onPress={disabled ? undefined : onPress}
+      onPressIn={() => {
+        if (!disabled) {
+          scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
+        }
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      }}
+      activeOpacity={0.7}
+      disabled={disabled}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+    >
+      {children}
+    </AnimatedTouchableOpacity>
+  );
+};
 
 type LoginNavigationProp = NavigationProp<AuthStackParamList>;
 
@@ -35,6 +114,83 @@ export const LoginScreen: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [wechatLoading, setWechatLoading] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
+  // ── Logo animations ──
+  const logoScale = useSharedValue(0);
+  const logoOpacity = useSharedValue(0);
+  const logoGlow = useSharedValue(0);
+
+  // ── Login button animations ──
+  const loginBtnScale = useSharedValue(1);
+  const loginBtnGlow = useSharedValue(0);
+
+  // ── Input focus animations ──
+  const emailFocusProgress = useSharedValue(0);
+  const passwordFocusProgress = useSharedValue(0);
+
+  useEffect(() => {
+    logoScale.value = withSpring(1, { damping: 8, stiffness: 80 });
+    logoOpacity.value = withTiming(1, { duration: 400 });
+    logoGlow.value = withRepeat(
+      withSequence(withTiming(1, { duration: 2000 }), withTiming(0, { duration: 2000 })),
+      -1,
+      true
+    );
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      loginBtnGlow.value = withRepeat(
+        withSequence(withTiming(1, { duration: 800 }), withTiming(0.3, { duration: 800 })),
+        -1,
+        true
+      );
+      loginBtnScale.value = withSpring(1, { damping: 15, stiffness: 200 });
+    } else {
+      loginBtnGlow.value = withTiming(0, { duration: 300 });
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    emailFocusProgress.value = withTiming(emailFocused ? 1 : 0, { duration: 200 });
+  }, [emailFocused]);
+
+  useEffect(() => {
+    passwordFocusProgress.value = withTiming(passwordFocused ? 1 : 0, { duration: 200 });
+  }, [passwordFocused]);
+
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: logoScale.value }],
+    opacity: logoOpacity.value,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: interpolate(logoGlow.value, [0, 1], [0.15, 0.45]),
+    shadowRadius: interpolate(logoGlow.value, [0, 1], [8, 25]),
+    elevation: interpolate(logoGlow.value, [0, 1], [4, 12]),
+  }));
+
+  const emailInputStyle = useAnimatedStyle(() => ({
+    borderWidth: interpolate(emailFocusProgress.value, [0, 1], [0, 1.5]),
+    shadowOpacity: interpolate(emailFocusProgress.value, [0, 1], [0, 0.1]),
+    elevation: interpolate(emailFocusProgress.value, [0, 1], [0, 3]),
+  }));
+
+  const passwordInputStyle = useAnimatedStyle(() => ({
+    borderWidth: interpolate(passwordFocusProgress.value, [0, 1], [0, 1.5]),
+    shadowOpacity: interpolate(passwordFocusProgress.value, [0, 1], [0, 0.1]),
+    elevation: interpolate(passwordFocusProgress.value, [0, 1], [0, 3]),
+  }));
+
+  const loginBtnAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: loginBtnScale.value }],
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: interpolate(loginBtnGlow.value, [0, 1], [0.1, 0.4]),
+    shadowRadius: interpolate(loginBtnGlow.value, [0, 1], [8, 20]),
+    elevation: interpolate(loginBtnGlow.value, [0, 1], [4, 12]),
+  }));
 
   const validateInputs = useCallback((): string | null => {
     const trimmedEmail = email.trim();
@@ -91,20 +247,8 @@ export const LoginScreen: React.FC = () => {
         createdAt: user.createdAt || new Date().toISOString(),
         updatedAt: user.updatedAt || new Date().toISOString(),
       });
-
-      if (onboardingCompleted) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Onboarding" }],
-        });
-      }
     },
-    [setToken, setUser, navigation]
+    [setToken, setUser, onboardingCompleted]
   );
 
   const handleLogin = useCallback(async () => {
@@ -207,152 +351,195 @@ export const LoginScreen: React.FC = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-            disabled={isLoading || wechatLoading}
-            accessibilityLabel={t.common.back}
-          >
-            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-          </TouchableOpacity>
-        </View>
+        <LinearGradient
+          colors={[colors.primary + "0A", colors.primary + "03", colors.surface]}
+          locations={[0, 0.4, 1]}
+          style={styles.bgGradient}
+          pointerEvents="none"
+        />
+
         <View style={styles.content}>
           <View style={styles.brandSection}>
-            <View style={styles.logoContainer}>
-              <Ionicons name="shirt-outline" size={36} color={colors.surface} />
-            </View>
-            <Text style={styles.brandName}>寻裳</Text>
-          </View>
-          <Text style={styles.title}>{t.auth.login}</Text>
-          <Text style={styles.subtitle}>{t.auth.login}</Text>
-          <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
-              <TextInput
-                style={styles.input}
-                placeholder={t.auth.email}
-                placeholderTextColor={colors.textTertiary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!isLoading && !wechatLoading}
-                returnKeyType="next"
-                accessibilityLabel={t.auth.email}
-                onSubmitEditing={() => {
-                  if (password === "") {
-                    return;
-                  }
-                  void handleLogin();
-                }}
-              />
-            </View>
-            <View style={styles.inputGroup}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
-              <TextInput
-                style={styles.input}
-                placeholder={t.auth.password}
-                placeholderTextColor={colors.textTertiary}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!isLoading && !wechatLoading}
-                returnKeyType="go"
-                accessibilityLabel={t.auth.password}
-                onSubmitEditing={handleLogin}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword((prev) => !prev)}
-                style={styles.eyeButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                disabled={isLoading || wechatLoading}
-                accessibilityLabel={showPassword ? t.common.cancel : t.auth.password}
+            <AnimatedView style={[styles.logoContainer, logoAnimatedStyle]}>
+              <LinearGradient
+                colors={[colors.primary, DesignTokens.colors.brand.camel]}
+                style={styles.logoGradient}
               >
-                <Ionicons
-                  name={showPassword ? "eye-outline" : "eye-off-outline"}
-                  size={20}
-                  color={colors.textTertiary}
+                <Ionicons name="shirt-outline" size={36} color={colors.surface} />
+              </LinearGradient>
+            </AnimatedView>
+            <FadeIn delay={200}>
+              <Text style={styles.brandName}>寻裳</Text>
+            </FadeIn>
+          </View>
+
+          <FadeIn delay={350}>
+            <Text style={styles.title}>{t.auth.login}</Text>
+            <Text style={styles.subtitle}>{t.auth.login}</Text>
+          </FadeIn>
+
+          <View style={styles.form}>
+            <FadeIn delay={450}>
+              <AnimatedView
+                style={[styles.inputGroup, { borderColor: colors.primary }, emailInputStyle]}
+              >
+                <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
+                <TextInput
+                  style={styles.input}
+                  placeholder={t.auth.email}
+                  placeholderTextColor={colors.textTertiary}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!isLoading && !wechatLoading}
+                  returnKeyType="next"
+                  onFocus={() => setEmailFocused(true)}
+                  onBlur={() => setEmailFocused(false)}
+                  accessibilityLabel={t.auth.email}
+                  onSubmitEditing={() => {
+                    if (password === "") {
+                      return;
+                    }
+                    void handleLogin();
+                  }}
                 />
-              </TouchableOpacity>
-            </View>
+              </AnimatedView>
+            </FadeIn>
 
-            <TouchableOpacity
-              style={styles.forgotPasswordLink}
-              onPress={handleForgotPassword}
-              disabled={isLoading || wechatLoading}
-              accessibilityLabel={t.auth.forgotPassword}
-            >
-              <Text style={styles.forgotPasswordText}>{t.auth.forgotPassword}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-              onPress={handleLogin}
-              disabled={isLoading || wechatLoading}
-              activeOpacity={0.7}
-              accessibilityLabel={t.auth.login}
-              accessibilityRole="button"
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color={colors.surface} />
-              ) : (
-                <Text style={styles.loginButtonText}>{t.auth.login}</Text>
-              )}
-            </TouchableOpacity>
-
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>或</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <TouchableOpacity
-              style={styles.wechatButton}
-              onPress={handleWechatLogin}
-              disabled={isLoading || wechatLoading}
-              activeOpacity={0.7}
-              accessibilityLabel="微信登录"
-              accessibilityRole="button"
-            >
-              {wechatLoading ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
-              ) : (
-                <>
+            <FadeIn delay={550}>
+              <AnimatedView
+                style={[styles.inputGroup, { borderColor: colors.primary }, passwordInputStyle]}
+              >
+                <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
+                <TextInput
+                  style={styles.input}
+                  placeholder={t.auth.password}
+                  placeholderTextColor={colors.textTertiary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!isLoading && !wechatLoading}
+                  returnKeyType="go"
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                  accessibilityLabel={t.auth.password}
+                  onSubmitEditing={handleLogin}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword((prev) => !prev)}
+                  style={styles.eyeButton}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  disabled={isLoading || wechatLoading}
+                  accessibilityLabel={showPassword ? t.common.cancel : t.auth.password}
+                >
                   <Ionicons
-                    name="logo-wechat"
-                    size={22}
-                    color={DesignTokens.colors.neutral.white}
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color={colors.textTertiary}
                   />
-                  <Text style={styles.wechatButtonText}>微信一键登录</Text>
-                </>
-              )}
-            </TouchableOpacity>
+                </TouchableOpacity>
+              </AnimatedView>
+            </FadeIn>
 
-            <TouchableOpacity
-              style={styles.phoneLoginButton}
-              onPress={handlePhoneLogin}
-              disabled={isLoading || wechatLoading}
-              activeOpacity={0.7}
-              accessibilityLabel="手机号登录"
-              accessibilityRole="button"
-            >
-              <Ionicons name="phone-portrait-outline" size={20} color={colors.primary} />
-              <Text style={styles.phoneLoginText}>手机号登录</Text>
-            </TouchableOpacity>
+            <FadeIn delay={650}>
+              <TouchableOpacity
+                style={styles.forgotPasswordLink}
+                onPress={handleForgotPassword}
+                disabled={isLoading || wechatLoading}
+                accessibilityLabel={t.auth.forgotPassword}
+              >
+                <Text style={styles.forgotPasswordText}>{t.auth.forgotPassword}</Text>
+              </TouchableOpacity>
+            </FadeIn>
 
-            <TouchableOpacity
-              style={styles.registerLink}
-              onPress={() => navigation.navigate("Register")}
-              disabled={isLoading || wechatLoading}
-              accessibilityLabel={t.auth.register}
-              accessibilityRole="button"
-            >
-              <Text style={styles.registerText}>{t.auth.register}</Text>
-            </TouchableOpacity>
+            <FadeIn delay={750}>
+              <AnimatedTouchableOpacity
+                style={[
+                  styles.loginButton,
+                  isLoading && styles.loginButtonDisabled,
+                  loginBtnAnimatedStyle,
+                ]}
+                onPress={handleLogin}
+                disabled={isLoading || wechatLoading}
+                activeOpacity={0.7}
+                accessibilityLabel={t.auth.login}
+                accessibilityRole="button"
+                onPressIn={() => {
+                  if (!isLoading && !wechatLoading) {
+                    loginBtnScale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
+                  }
+                }}
+                onPressOut={() => {
+                  loginBtnScale.value = withSpring(1, { damping: 15, stiffness: 300 });
+                }}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color={colors.surface} />
+                ) : (
+                  <Text style={styles.loginButtonText}>{t.auth.login}</Text>
+                )}
+              </AnimatedTouchableOpacity>
+            </FadeIn>
+
+            <FadeIn delay={850}>
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>或</Text>
+                <View style={styles.dividerLine} />
+              </View>
+            </FadeIn>
+
+            <FadeIn delay={950}>
+              <ScaleButton
+                onPress={handleWechatLogin}
+                disabled={isLoading || wechatLoading}
+                accessibilityLabel="微信登录"
+              >
+                <View style={styles.wechatButton}>
+                  {wechatLoading ? (
+                    <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                  ) : (
+                    <>
+                      <Ionicons
+                        name="logo-wechat"
+                        size={22}
+                        color={DesignTokens.colors.neutral.white}
+                      />
+                      <Text style={styles.wechatButtonText}>微信一键登录</Text>
+                    </>
+                  )}
+                </View>
+              </ScaleButton>
+            </FadeIn>
+
+            <FadeIn delay={1050}>
+              <ScaleButton
+                onPress={handlePhoneLogin}
+                disabled={isLoading || wechatLoading}
+                accessibilityLabel="手机号登录"
+              >
+                <View style={styles.phoneLoginButton}>
+                  <Ionicons name="phone-portrait-outline" size={20} color={colors.primary} />
+                  <Text style={styles.phoneLoginText}>手机号登录</Text>
+                </View>
+              </ScaleButton>
+            </FadeIn>
+
+            <FadeIn delay={1150}>
+              <TouchableOpacity
+                style={styles.registerLink}
+                onPress={() => navigation.navigate("Register")}
+                disabled={isLoading || wechatLoading}
+                accessibilityLabel={t.auth.register}
+                accessibilityRole="button"
+              >
+                <Text style={styles.registerText}>{t.auth.register}</Text>
+              </TouchableOpacity>
+            </FadeIn>
           </View>
         </View>
       </SafeAreaView>
@@ -362,14 +549,12 @@ export const LoginScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: 20 },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: DesignTokens.colors.neutral[100],
-    alignItems: "center",
-    justifyContent: "center",
+  bgGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   content: { flex: 1, padding: 20 },
   brandSection: {
@@ -380,10 +565,13 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: theme.BorderRadius.xl,
-    backgroundColor: colors.primary,
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+  logoGradient: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.xl,

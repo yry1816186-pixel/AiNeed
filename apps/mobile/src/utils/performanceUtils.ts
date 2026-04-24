@@ -19,7 +19,8 @@ import FastImage from "react-native-fast-image";
  */
 export function preloadImages(urls: string[]): void {
   const sources = urls.map((uri) => ({ uri }));
-  // @ts-expect-error - FastImage.preload 可能不存在于某些版本
+  // @ts-expect-error - FastImage.preload may not exist in some versions
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   FastImage.preload(sources);
 }
 
@@ -103,6 +104,7 @@ export class PerformanceTimer {
   end(): number {
     const duration = Date.now() - this.startTime;
     if (__DEV__) {
+      // eslint-disable-next-line no-console
       console.log(`[Performance] ${this.name}: ${duration}ms`);
     }
     return duration;

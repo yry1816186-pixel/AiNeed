@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -11,7 +10,7 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
-  Dimensions,
+  type ImageStyle,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,13 +19,10 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { pickImageSecurely, ImageValidationError } from "../../../utils/imagePicker";
 import { clothingApi } from "../../../services/api/clothing.api";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../../types/clothing";
-import { CATEGORY_LABELS } from "../../types/clothing";
+import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../../../types/clothing";
+import { CATEGORY_LABELS } from "../../../types/clothing";
 import { flatColors as colors } from "../../../design-system/theme";
-
-const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 const CATEGORY_OPTIONS: { value: ClothingCategory; label: string }[] = [
   { value: "tops", label: CATEGORY_LABELS.tops },
@@ -100,7 +96,9 @@ export const AddClothingScreen: React.FC = () => {
   const [isPickingImage, setIsPickingImage] = useState(false);
 
   const handlePickImage = useCallback(async () => {
-    if (isPickingImage) return;
+    if (isPickingImage) {
+      return;
+    }
     setIsPickingImage(true);
     try {
       const result = await pickImageSecurely();
@@ -126,7 +124,7 @@ export const AddClothingScreen: React.FC = () => {
   }, []);
 
   const selectCategory = useCallback((value: string) => {
-    setFormData((prev) => ({ ...prev, category: value as ClothingCategory }));
+    setFormData((prev) => ({ ...prev, category: value as ClothingCategory | null }));
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -138,7 +136,7 @@ export const AddClothingScreen: React.FC = () => {
     try {
       const response = await clothingApi.create({
         imageUri: formData.imageUri || "",
-        category: formData.category!,
+        category: formData.category,
         name: formData.name || undefined,
         brand: formData.brand || undefined,
         color: formData.color || undefined,
@@ -163,7 +161,7 @@ export const AddClothingScreen: React.FC = () => {
             : response.error?.message || "请稍后重试";
         Alert.alert("保存失败", errorMsg);
       }
-    } catch (err: unknown) {
+    } catch {
       Alert.alert("保存失败", "网络错误，请重试");
     } finally {
       setIsSubmitting(false);
@@ -184,7 +182,9 @@ export const AddClothingScreen: React.FC = () => {
         <Text style={styles.headerTitle}>添加服装</Text>
         <TouchableOpacity
           style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]}
-          onPress={handleSubmit}
+          onPress={() => {
+            void handleSubmit();
+          }}
           disabled={isSubmitting}
           accessibilityLabel="保存服装"
           accessibilityRole="button"
@@ -200,7 +200,7 @@ export const AddClothingScreen: React.FC = () => {
             <View style={styles.imagePreviewContainer}>
               <Image
                 source={{ uri: formData.imageUri }}
-                style={styles.imagePreview}
+                style={styles.imagePreview as ImageStyle}
                 resizeMode="cover"
               />
               <TouchableOpacity
@@ -215,7 +215,9 @@ export const AddClothingScreen: React.FC = () => {
           ) : (
             <TouchableOpacity
               style={styles.imagePlaceholder}
-              onPress={handlePickImage}
+              onPress={() => {
+                void handlePickImage();
+              }}
               disabled={isPickingImage}
               activeOpacity={0.7}
               accessibilityLabel="选择图片"
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   saveButton: {
     paddingHorizontal: 16,

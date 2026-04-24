@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState, useCallback, useRef } from "react";
 import {
   View,
@@ -18,7 +19,7 @@ import { authApi } from "../../../services/api/auth.api";
 import { useTranslation } from "../../../i18n";
 import { useAuthStore } from "../stores/index";
 import { apiClient } from "../../../services/api/client";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+
 import { DesignTokens, flatColors as colors, Spacing } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
 

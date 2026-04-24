@@ -2,22 +2,33 @@ import fs from "fs";
 import path from "path";
 
 const SRC_DIR = path.join(__dirname, "..", "src");
-const EXCLUDE_DIRS = ["node_modules", ".expo", "dist", "coverage", "theme/tokens", "design-system/theme/tokens"];
+const EXCLUDE_DIRS = [
+  "node_modules",
+  ".expo",
+  "dist",
+  "coverage",
+  "theme/tokens",
+  "design-system/theme/tokens",
+];
 
 function shouldExclude(filePath: string): boolean {
-  return EXCLUDE_DIRS.some(dir => filePath.includes(dir));
+  return EXCLUDE_DIRS.some((dir) => filePath.includes(dir));
 }
 
 function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
   const results: string[] = [];
-  if (!fs.existsSync(dir)) return results;
+  if (!fs.existsSync(dir)) {
+    return results;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (shouldExclude(fullPath)) continue;
+    if (shouldExclude(fullPath)) {
+      continue;
+    }
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
-    } else if (ext.some(e => entry.name.endsWith(e))) {
+    } else if (ext.some((e) => entry.name.endsWith(e))) {
       results.push(fullPath);
     }
   }
@@ -26,18 +37,23 @@ function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
 
 function auditTypography() {
   const files = getAllFiles(SRC_DIR);
-  const byFile: Record<string, { count: number; values: Array<{ line: number; property: string; value: string }> }> = {};
+  const byFile: Record<
+    string,
+    { count: number; values: { line: number; property: string; value: string }[] }
+  > = {};
   const byValue: Record<string, { count: number; files: string[] }> = {};
   let total = 0;
 
   for (const file of files) {
     const content = fs.readFileSync(file, "utf-8");
     const lines = content.split("\n");
-    const fileMatches: Array<{ line: number; property: string; value: string }> = [];
+    const fileMatches: { line: number; property: string; value: string }[] = [];
 
     lines.forEach((rawLine, idx) => {
       const trimmed = rawLine.trim();
-      if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) return;
+      if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) {
+        return;
+      }
 
       const fontSizeMatch = trimmed.match(/fontSize\s*:\s*(\d+)/);
       if (fontSizeMatch) {

@@ -3,6 +3,7 @@
 ## 📋 编译前准备
 
 ### 必需环境
+
 - ✅ Node.js >= 20.0.0
 - ✅ Android Studio（用于本地编译）
 - ✅ Java JDK 17+
@@ -10,37 +11,44 @@
 - ✅ NDK 27.1.12297006
 
 ### 可选环境（云端编译）
-- Expo账号（免费）
+
+- Expo 账号（免费）
 
 ---
 
-## 🚀 方法1：EAS云端编译（推荐）
+## 🚀 方法 1：EAS 云端编译（推荐）
 
 ### 优点
+
 - ✅ 不需要配置本地环境
 - ✅ 编译稳定，成功率高
 - ✅ 自动处理签名
 
 ### 步骤
 
-#### 1. 安装EAS CLI
+#### 1. 安装 EAS CLI
+
 ```bash
 npm install -g eas-cli
 ```
 
-#### 2. 登录Expo账号
+#### 2. 登录 Expo 账号
+
 ```bash
 eas login
 ```
+
 如果没有账号，会提示创建（免费）
 
 #### 3. 配置项目
+
 ```bash
 cd C:/xuno/apps/mobile
 eas build:configure
 ```
 
 #### 4. 开始编译
+
 ```bash
 # 编译预览版APK（快速）
 eas build --platform android --profile preview
@@ -49,29 +57,33 @@ eas build --platform android --profile preview
 eas build --platform android --profile production
 ```
 
-#### 5. 下载APK
-编译完成后（约10-15分钟），会提供下载链接
+#### 5. 下载 APK
+
+编译完成后（约 10-15 分钟），会提供下载链接
 
 ---
 
-## 🔧 方法2：本地Gradle编译
+## 🔧 方法 2：本地 Gradle 编译
 
 ### 步骤
 
 #### 1. 安装依赖
+
 ```bash
 cd C:/xuno/apps/mobile
 npm install
 ```
 
-#### 2. 使用Android Studio编译（推荐）
+#### 2. 使用 Android Studio 编译（推荐）
+
 1. 打开 Android Studio
 2. 选择 `File → Open`
 3. 选择路径：`C:/xuno/apps/mobile/android`
-4. 等待Gradle Sync完成
+4. 等待 Gradle Sync 完成
 5. 菜单：`Build → Build Bundle(s) / APK(s) → Build APK(s)`
 
 #### 3. 使用命令行编译
+
 ```bash
 cd C:/xuno/apps/mobile/android
 
@@ -82,14 +94,15 @@ gradlew.bat assembleRelease
 ./gradlew assembleRelease
 ```
 
-#### 4. APK位置
+#### 4. APK 位置
+
 ```
 C:/xuno/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 
 ---
 
-## 📱 方法3：使用项目编译脚本
+## 📱 方法 3：使用项目编译脚本
 
 ```bash
 cd C:/xuno
@@ -98,9 +111,10 @@ compile-apk.bat
 
 ---
 
-## 🧪 测试APK
+## 🧪 测试 APK
 
 ### 安装到模拟器
+
 ```bash
 # 确保模拟器正在运行
 adb devices
@@ -110,8 +124,9 @@ adb install C:/xuno/apps/mobile/android/app/build/outputs/apk/release/app-releas
 ```
 
 ### 安装到真机
-1. 传输APK到手机
-2. 在手机上打开APK文件
+
+1. 传输 APK 到手机
+2. 在手机上打开 APK 文件
 3. 允许安装未知来源应用
 4. 完成安装
 
@@ -119,7 +134,8 @@ adb install C:/xuno/apps/mobile/android/app/build/outputs/apk/release/app-releas
 
 ## 🐛 常见问题解决
 
-### 问题1：Gradle编译失败
+### 问题 1：Gradle 编译失败
+
 ```bash
 # 清理构建缓存
 cd C:/xuno/apps/mobile/android
@@ -129,7 +145,8 @@ gradlew.bat clean
 gradlew.bat assembleRelease
 ```
 
-### 问题2：SDK版本不匹配
+### 问题 2：SDK 版本不匹配
+
 ```bash
 # 打开Android Studio → SDK Manager
 # 安装以下组件：
@@ -138,13 +155,16 @@ gradlew.bat assembleRelease
 - NDK 27.1.12297006
 ```
 
-### 问题3：内存不足
+### 问题 3：内存不足
+
 编辑 `C:/xuno/apps/mobile/android/gradle.properties`：
+
 ```properties
 org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
 ```
 
-### 问题4：EAS编译失败
+### 问题 4：EAS 编译失败
+
 ```bash
 # 更新EAS CLI
 npm update -g eas-cli
@@ -157,17 +177,18 @@ eas build:configure
 
 ## 📊 编译时间参考
 
-| 方法 | 首次编译 | 后续编译 |
-|------|---------|---------|
-| EAS云端 | 10-15分钟 | 5-10分钟 |
-| 本地Gradle | 5-10分钟 | 1-3分钟 |
+| 方法        | 首次编译   | 后续编译  |
+| ----------- | ---------- | --------- |
+| EAS 云端    | 10-15 分钟 | 5-10 分钟 |
+| 本地 Gradle | 5-10 分钟  | 1-3 分钟  |
 
 ---
 
 ## ✅ 编译成功检查
 
 编译完成后，检查：
-- [ ] APK文件已生成
+
+- [ ] APK 文件已生成
 - [ ] 文件大小约 30-50 MB
 - [ ] 可以安装到模拟器
 - [ ] 应用可以启动
@@ -186,6 +207,7 @@ eas build:configure
 ## 📞 获取帮助
 
 如果遇到问题：
+
 1. 查看 Android Studio 的 Build Output
 2. 检查 Gradle 错误日志
 3. 搜索错误信息

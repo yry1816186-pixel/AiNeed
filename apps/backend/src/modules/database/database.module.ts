@@ -1,4 +1,4 @@
-﻿import { Module, Global } from "@nestjs/common";
+import { Module, Global } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Pool } from "pg";
 
@@ -18,19 +18,13 @@ export interface DatabasePoolConfig {
       useFactory: (configService: ConfigService) => {
         const databaseUrl = configService.get<string>(
           "DATABASE_URL",
-          "postgresql://localhost:5432/xuno",
+          "postgresql://localhost:5432/xuno"
         );
 
         const poolConfig: DatabasePoolConfig = {
           max: configService.get<number>("DB_POOL_SIZE", 20),
-          idleTimeoutMillis: configService.get<number>(
-            "DB_IDLE_TIMEOUT",
-            30000,
-          ),
-          connectionTimeoutMillis: configService.get<number>(
-            "DB_CONNECTION_TIMEOUT",
-            2000,
-          ),
+          idleTimeoutMillis: configService.get<number>("DB_IDLE_TIMEOUT", 30000),
+          connectionTimeoutMillis: configService.get<number>("DB_CONNECTION_TIMEOUT", 2000),
         };
 
         return new Pool({

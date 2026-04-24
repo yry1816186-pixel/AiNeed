@@ -14,10 +14,12 @@ describe("AiQuotaGuard", () => {
     consumeQuota: jest.fn(),
   };
 
-  const createMockExecutionContext = (overrides: {
-    user?: { id: string; email?: string };
-    quotaType?: QuotaTypeEnum;
-  } = {}) => {
+  const createMockExecutionContext = (
+    overrides: {
+      user?: { id: string; email?: string };
+      quotaType?: QuotaTypeEnum;
+    } = {}
+  ) => {
     const mockRequest: Record<string, unknown> = {
       user: overrides.user,
     };
@@ -32,7 +34,7 @@ describe("AiQuotaGuard", () => {
       }),
       getHandler: () => jest.fn(),
       getClass: () => jest.fn(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   };
 

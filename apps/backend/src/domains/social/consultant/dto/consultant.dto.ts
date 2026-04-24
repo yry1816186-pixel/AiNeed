@@ -58,11 +58,17 @@ export class CreateConsultantProfileDto {
   @Min(0)
   yearsOfExperience!: number;
 
-  @ApiProperty({ description: "资质认证列表", example: [{ name: "高级形象设计师", issuer: "中国形象设计协会" }] })
+  @ApiProperty({
+    description: "资质认证列表",
+    example: [{ name: "高级形象设计师", issuer: "中国形象设计协会" }],
+  })
   @IsArray()
   certifications!: Record<string, unknown>[];
 
-  @ApiPropertyOptional({ description: "案例作品列表", example: [{ title: "春季穿搭指南", images: [] }] })
+  @ApiPropertyOptional({
+    description: "案例作品列表",
+    example: [{ title: "春季穿搭指南", images: [] }],
+  })
   @IsOptional()
   @IsArray()
   portfolioCases?: Record<string, unknown>[];
@@ -137,7 +143,11 @@ export class ConsultantQueryDto {
   @Max(100)
   pageSize?: number = 20;
 
-  @ApiPropertyOptional({ description: "顾问状态筛选", example: "active", enum: ConsultantStatusDto })
+  @ApiPropertyOptional({
+    description: "顾问状态筛选",
+    example: "active",
+    enum: ConsultantStatusDto,
+  })
   @IsOptional()
   @IsEnum(ConsultantStatusDto)
   status?: ConsultantStatusDto;
@@ -179,7 +189,7 @@ export class CreateServiceBookingDto {
   @IsString()
   notes?: string;
 
-  @ApiProperty({ description: "价格（元）", example: 299.00 })
+  @ApiProperty({ description: "价格（元）", example: 299.0 })
   @IsNumber()
   @Min(0)
   price!: number;
@@ -227,12 +237,20 @@ export class BookingQueryDto {
   @Max(100)
   pageSize?: number = 20;
 
-  @ApiPropertyOptional({ description: "预约状态筛选", example: "confirmed", enum: BookingStatusDto })
+  @ApiPropertyOptional({
+    description: "预约状态筛选",
+    example: "confirmed",
+    enum: BookingStatusDto,
+  })
   @IsOptional()
   @IsEnum(BookingStatusDto)
   status?: BookingStatusDto;
 
-  @ApiPropertyOptional({ description: "服务类型筛选", example: "styling_consultation", enum: ServiceTypeDto })
+  @ApiPropertyOptional({
+    description: "服务类型筛选",
+    example: "styling_consultation",
+    enum: ServiceTypeDto,
+  })
   @IsOptional()
   @IsEnum(ServiceTypeDto)
   serviceType?: ServiceTypeDto;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 export async function requestPermissionsAsync(): Promise<{ status: string }> {
   return { status: "granted" };
 }

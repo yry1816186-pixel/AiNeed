@@ -374,7 +374,7 @@ export function ShareBottomSheet({ visible, onClose, onShare }: ShareBottomSheet
 
 const useStyles = createStyles((colors) => ({
   background: {
-    backgroundColor: colors.neutral[0],
+    backgroundColor: colors.neutral.white,
     borderTopLeftRadius: BorderRadius["3xl"],
     borderTopRightRadius: BorderRadius["3xl"],
   },
@@ -523,7 +523,7 @@ const useStyles = createStyles((colors) => ({
   },
   buyNowText: {
     ...Typography.body.md,
-    color: colors.neutral[0],
+    color: colors.neutral.white,
     fontWeight: "700",
   },
   filterContent: {
@@ -581,7 +581,7 @@ const useStyles = createStyles((colors) => ({
   },
   applyText: {
     ...Typography.body.md,
-    color: colors.neutral[0],
+    color: colors.neutral.white,
     fontWeight: "600",
   },
   shareContent: {

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";

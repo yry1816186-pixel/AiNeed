@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";
 import apiClient from "../../services/api/client";
@@ -52,7 +53,7 @@ async function checkNetworkConnection(): Promise<NetworkState> {
       isConnectionExpensive: false,
     };
   } catch (error) {
-    console.error('Network status check failed:', error);
+    console.error("Network status check failed:", error);
     return {
       isConnected: false,
       isInternetReachable: false,

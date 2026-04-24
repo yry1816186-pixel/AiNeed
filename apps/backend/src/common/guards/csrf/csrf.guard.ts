@@ -8,24 +8,21 @@ import {
   ExecutionContext,
   BadRequestException,
   Logger,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Response } from 'express';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { Response } from "express";
 
-import { RequestWithUser } from '../../types/common.types';
+import { RequestWithUser } from "../../types/common.types";
 
-import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME, CSRF_ERROR_MESSAGES } from './csrf.constants';
-import { CsrfService } from './csrf.service';
-import { EXCLUDE_CSRF_KEY } from './decorators/exclude-csrf.decorator';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME, CSRF_ERROR_MESSAGES } from "./csrf.constants";
+import { CsrfService } from "./csrf.service";
+import { EXCLUDE_CSRF_KEY } from "./decorators/exclude-csrf.decorator";
 
 @Injectable()
 export class CsrfGuard implements CanActivate {
   private readonly logger = new Logger(CsrfGuard.name);
 
-  constructor(
-    private readonly csrfService: CsrfService,
-    private readonly reflector: Reflector,
-  ) {}
+  constructor(private readonly csrfService: CsrfService, private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     // Check if route is excluded from CSRF protection
@@ -43,7 +40,7 @@ export class CsrfGuard implements CanActivate {
 
     // Skip CSRF validation for GET, HEAD, OPTIONS requests
     const method = request.method.toUpperCase();
-    if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    if (["GET", "HEAD", "OPTIONS"].includes(method)) {
       return this.handleSafeRequest(request, response);
     }
 
@@ -66,14 +63,14 @@ export class CsrfGuard implements CanActivate {
         // Set CSRF cookie
         response.cookie(CSRF_COOKIE_NAME, csrfToken, {
           httpOnly: false,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
           maxAge: 86400, // 24 hours
         });
 
         // Expose CSRF token in header
         response.setHeader(CSRF_HEADER_NAME, csrfToken);
-        response.setHeader('Access-Control-Expose-Headers', CSRF_HEADER_NAME);
+        response.setHeader("Access-Control-Expose-Headers", CSRF_HEADER_NAME);
 
         // Attach token to request for easy access
         request.csrfToken = csrfToken;
@@ -84,7 +81,7 @@ export class CsrfGuard implements CanActivate {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Error generating CSRF token: ${errorMessage}`);
       // In production, fail closed: reject request when token generation fails
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === "production") {
         return false;
       }
       return true; // Allow in non-production for development convenience
@@ -101,7 +98,7 @@ export class CsrfGuard implements CanActivate {
 
       if (!sessionId) {
         // In production, reject requests without session for state-changing operations
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_ENV === "production") {
           return false;
         }
         // Allow in non-production (public endpoints should use @ExcludeCsrf)
@@ -151,8 +148,8 @@ export class CsrfGuard implements CanActivate {
     }
 
     // Try to get from authorization header (for API usage)
-    const authHeader = request.headers['authorization'];
-    if (authHeader?.startsWith('Bearer ')) {
+    const authHeader = request.headers["authorization"];
+    if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.substring(7);
       return token.substring(0, 32); // Use first 32 chars as session identifier
     }

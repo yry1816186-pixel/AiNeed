@@ -34,14 +34,14 @@ function calculateProfileCompletion(profile: UserProfile): number {
   let completion = 0;
 
   if (profile.gender) {
-    completion += 10;
-  }
-
-  if (profile.height && profile.weight) {
-    completion += 15;
+    completion += 5;
   }
 
   if (profile.bodyType) {
+    completion += 5;
+  }
+
+  if (profile.height && profile.weight) {
     completion += 15;
   }
 

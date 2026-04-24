@@ -16,10 +16,7 @@ export type {
   PaginatedResponse,
 } from "@xuno/types";
 
-export type {
-  ClothingItem,
-  Brand,
-} from "@xuno/types";
+export type { ClothingItem, Brand } from "@xuno/types";
 
 export {
   Gender,

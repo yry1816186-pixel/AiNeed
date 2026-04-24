@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export const COLD_START_DIALOGS = {
   greetings: {
     firstTime: [

@@ -1,4 +1,4 @@
-﻿import { createWithEqualityFn } from "zustand/traditional";
+import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import {
   profileApi,
@@ -8,7 +8,7 @@ import {
   type ColorAnalysisReport,
 } from "../../../services/api/profile.api";
 import apiClient from "../../../services/api/client";
-import type { ApiResponse } from '../../../types';
+import type { ApiResponse } from "../../../types";
 
 interface Completeness {
   percentage: number;

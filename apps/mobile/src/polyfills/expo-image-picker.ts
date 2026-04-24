@@ -166,8 +166,8 @@ export async function requestMediaLibraryPermissionsAsync(): Promise<PermissionR
     return { status: "granted", granted: true, canAskAgain: true };
   }
 
-  const readMediaImages = PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES as Permission;
-  const readExternalStorage = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE as Permission;
+  const readMediaImages = PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES;
+  const readExternalStorage = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
   const permissions = androidApiLevel >= 33 ? [readMediaImages] : [readExternalStorage];
 
   return requestAndroidPermissions(permissions);
@@ -178,7 +178,7 @@ export async function requestCameraPermissionsAsync(): Promise<PermissionResult>
     return { status: "granted", granted: true, canAskAgain: true };
   }
 
-  return requestAndroidPermissions([PermissionsAndroid.PERMISSIONS.CAMERA as Permission]);
+  return requestAndroidPermissions([PermissionsAndroid.PERMISSIONS.CAMERA]);
 }
 
 export const MediaTypeOptions = {

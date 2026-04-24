@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -86,7 +87,7 @@ export const useCartStore = create<CartState>()(
                 price: item.price,
                 imageUri: item.imageUri,
                 originalPrice: item.originalPrice,
-                category: 'other',
+                category: "other",
                 colors: [],
                 images: [],
                 sizes: [],
@@ -105,10 +106,10 @@ export const useCartStore = create<CartState>()(
             );
             set({ items: cartItems, totalItems, totalPrice, isLoading: false });
           } else {
-            set({ error: '获取购物车失败，请稍后重试', isLoading: false });
+            set({ error: "获取购物车失败，请稍后重试", isLoading: false });
           }
         } catch {
-          set({ error: '获取购物车失败，请稍后重试', isLoading: false });
+          set({ error: "获取购物车失败，请稍后重试", isLoading: false });
         }
       },
 
@@ -116,9 +117,9 @@ export const useCartStore = create<CartState>()(
         set({ isLoading: true, error: null });
         try {
           // TODO: 连接后端 POST /cart/sync API 后替换
-          set({ error: '功能开发中，敬请期待', isLoading: false });
+          set({ error: "功能开发中，敬请期待", isLoading: false });
         } catch {
-          set({ error: '同步购物车失败，请稍后重试', isLoading: false });
+          set({ error: "同步购物车失败，请稍后重试", isLoading: false });
         }
       },
     }),

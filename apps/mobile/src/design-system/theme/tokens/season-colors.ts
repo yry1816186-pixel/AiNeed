@@ -81,11 +81,21 @@ export const seasonDescriptions: Record<ColorSeason, string> = {
  * 支持子类型如 "spring_warm" -> "spring"
  */
 export function normalizeColorSeason(raw: string | null | undefined): ColorSeason | null {
-  if (!raw) return null;
+  if (!raw) {
+    return null;
+  }
   const lower = raw.toLowerCase();
-  if (lower.startsWith("spring")) return "spring";
-  if (lower.startsWith("summer")) return "summer";
-  if (lower.startsWith("autumn") || lower.startsWith("fall")) return "autumn";
-  if (lower.startsWith("winter")) return "winter";
+  if (lower.startsWith("spring")) {
+    return "spring";
+  }
+  if (lower.startsWith("summer")) {
+    return "summer";
+  }
+  if (lower.startsWith("autumn") || lower.startsWith("fall")) {
+    return "autumn";
+  }
+  if (lower.startsWith("winter")) {
+    return "winter";
+  }
   return null;
 }

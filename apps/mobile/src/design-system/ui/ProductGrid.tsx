@@ -213,7 +213,7 @@ const useStyles = createStyles((colors) => ({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: colors.neutral[0],
+    backgroundColor: colors.neutral.white,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     marginBottom: Spacing[3],
@@ -252,7 +252,7 @@ const useStyles = createStyles((colors) => ({
   },
   discountText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: colors.neutral[0],
+    color: colors.neutral.white,
     fontWeight: "700",
   },
   content: {

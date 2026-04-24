@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, {
@@ -15,7 +16,7 @@ import Animated, {
 import { type RecommendedItem } from "../../../services/api/tryon.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -163,6 +164,7 @@ export const RecommendationCarouselCard: React.FC<{
   item: RecommendedItem & { occasion: string };
   onPress: () => void;
 }> = React.memo(({ item, onPress }) => {
+  const partStyles = usePartStyles(colors);
   const gradient = OCCASION_GRADIENTS[item.occasion] ?? OCCASION_GRADIENTS["休闲"];
 
   return (
@@ -227,29 +229,32 @@ export const RecommendationCarouselCard: React.FC<{
 export const CategoryCell: React.FC<{
   category: (typeof CATEGORIES)[number];
   onPress: () => void;
-}> = React.memo(({ category, onPress }) => (
-  <TouchableOpacity
-    activeOpacity={0.7}
-    onPress={onPress}
-    accessibilityLabel={category.label}
-    accessibilityRole="button"
-    style={partStyles.categoryCell}
-  >
-    <LinearGradient
-      colors={category.gradient}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={partStyles.categoryIconCircle}
+}> = React.memo(({ category, onPress }) => {
+  const partStyles = usePartStyles(colors);
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={onPress}
+      accessibilityLabel={category.label}
+      accessibilityRole="button"
+      style={partStyles.categoryCell}
     >
-      <Ionicons
-        name={category.icon as React.ComponentProps<typeof Ionicons>["name"]}
-        size={20}
-        color={colors.textInverse}
-      />
-    </LinearGradient>
-    <Text style={partStyles.categoryLabel}>{category.label}</Text>
-  </TouchableOpacity>
-));
+      <LinearGradient
+        colors={category.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={partStyles.categoryIconCircle}
+      >
+        <Ionicons
+          name={category.icon as React.ComponentProps<typeof Ionicons>["name"]}
+          size={20}
+          color={colors.textInverse}
+        />
+      </LinearGradient>
+      <Text style={partStyles.categoryLabel}>{category.label}</Text>
+    </TouchableOpacity>
+  );
+});
 
 /**
  * Empty state placeholder for community section when no posts are available.

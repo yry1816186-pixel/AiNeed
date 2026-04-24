@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -192,10 +193,10 @@ export const useClothingStore = create<ClothingState>()(
               isLoading: false,
             });
           } else {
-            set({ error: '获取服装列表失败，请稍后重试', isLoading: false });
+            set({ error: "获取服装列表失败，请稍后重试", isLoading: false });
           }
         } catch {
-          set({ error: '获取服装列表失败，请稍后重试', isLoading: false });
+          set({ error: "获取服装列表失败，请稍后重试", isLoading: false });
         }
       },
 
@@ -204,12 +205,15 @@ export const useClothingStore = create<ClothingState>()(
         try {
           const response = await clothingApi.getAll({ page: 1, limit });
           if (response.success && response.data) {
-            set({ featuredItems: response.data.items as unknown as ClothingItem[], isLoading: false });
+            set({
+              featuredItems: response.data.items as unknown as ClothingItem[],
+              isLoading: false,
+            });
           } else {
-            set({ error: '获取精选商品失败，请稍后重试', isLoading: false });
+            set({ error: "获取精选商品失败，请稍后重试", isLoading: false });
           }
         } catch {
-          set({ error: '获取精选商品失败，请稍后重试', isLoading: false });
+          set({ error: "获取精选商品失败，请稍后重试", isLoading: false });
         }
       },
 
@@ -217,9 +221,9 @@ export const useClothingStore = create<ClothingState>()(
         set({ isLoading: true, error: null });
         try {
           // TODO: 连接后端 GET /clothing?filter=trending API 后替换
-          set({ error: '功能开发中，敬请期待', isLoading: false });
+          set({ error: "功能开发中，敬请期待", isLoading: false });
         } catch {
-          set({ error: '获取趋势商品失败，请稍后重试', isLoading: false });
+          set({ error: "获取趋势商品失败，请稍后重试", isLoading: false });
         }
       },
 
@@ -227,9 +231,9 @@ export const useClothingStore = create<ClothingState>()(
         set({ isLoading: true, error: null });
         try {
           // TODO: 连接后端 GET /clothing?filter=new API 后替换
-          set({ error: '功能开发中，敬请期待', isLoading: false });
+          set({ error: "功能开发中，敬请期待", isLoading: false });
         } catch {
-          set({ error: '获取新品失败，请稍后重试', isLoading: false });
+          set({ error: "获取新品失败，请稍后重试", isLoading: false });
         }
       },
     }),

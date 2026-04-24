@@ -62,6 +62,7 @@ model User {
   rankingFeedback   RankingFeedback[]
   styleRecommendations StyleRecommendation[]
   recommendationImpressions RecommendationImpression[]
+  recommendationBatches RecommendationBatch[]
   notifications     Notification[]
   paymentOrders     PaymentOrder[]
   paymentRecords    PaymentRecord[]
@@ -158,6 +159,14 @@ enum Gender {
   other
 }
 
+enum DataSource {
+  MANUAL
+  TAOBAO
+  JD
+  API
+  AI_GENERATED
+}
+
 enum AuthProvider {
   email
   phone
@@ -184,6 +193,7 @@ model UserProfile {
 
   stylePreferences Json?
   colorPreferences  Json?
+  preferences      Json?
 
   priceRangeMin  Float?
   priceRangeMax  Float?
@@ -201,6 +211,7 @@ model UserProfile {
   @@index([colorSeason])
 }
 
+/// @deprecated Use UserBehaviorEvent instead. Kept for backwards compat. Do not add new writes.
 model UserBehavior {
   id          String   @id @default(uuid())
   userId      String
@@ -426,7 +437,7 @@ model ClothingItem {
   material    String?  // 面料: 纯棉/羊绒/真丝/涤纶等
   season      String?  // 季节: spring/summer/autumn/winter/all_season
   gender      Gender?  // 性别适配: male/female/unisex
-  source      String?  @default("manual") // 数据来源: taobao/jd/manual
+  source      DataSource @default(MANUAL) // 数据来源: taobao/jd/manual
 
   price       Decimal  @db.Decimal(10, 2) /// D-P2-13: 非负约束 — 应用层必须校验 price >= 0，数据库层通过 CHECK 约束或触发器保证
   originalPrice Decimal? @db.Decimal(10, 2) /// 非负约束 — 应用层必须校验 originalPrice >= 0
@@ -481,7 +492,7 @@ model ClothingItem {
   @@index([stock])                                        // 业务：低库存预警
   @@index([isDeleted, isActive])                          // 合规：软删除过滤（覆盖单列isDeleted）
   @@index([season, isActive])                             // 推荐：季节筛选
-  @@index([gender, isActive])                             // 推荐：性别适配筛选
+  // @@index([gender, isActive]) removed — gender demoted (GND)
   @@index([source])                                       // 运营：数据来源追踪
   @@index([category, season, isActive])                   // 推荐：分类+季节组合筛选
 }
@@ -495,6 +506,8 @@ model RecommendationImpression {
   createdAt       DateTime @default(now())
 
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batchId         String?
+  batch           RecommendationBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([recommendationId])
@@ -503,6 +516,23 @@ model RecommendationImpression {
   @@index([createdAt(sort: Desc)])
   @@index([userId, createdAt(sort: Desc)])
   @@map("recommendation_impressions")
+}
+
+model RecommendationBatch {
+  id          String   @id @default(uuid())
+  userId      String
+  algorithm   String
+  context     Json?
+  itemCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impressions RecommendationImpression[]
+
+  @@index([userId])
+  @@index([algorithm])
+  @@index([createdAt(sort: Desc)])
+  @@map("recommendation_batches")
 }
 
 enum ClothingCategory {

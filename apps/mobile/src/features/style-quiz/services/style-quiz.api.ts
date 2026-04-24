@@ -1,5 +1,5 @@
-import apiClient from '../../../services/api/client';
-import type { ApiResponse } from '../../../types';
+import apiClient from "../../../services/api/client";
+import type { ApiResponse } from "../../../types";
 
 export interface QuizOption {
   id: string;

@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -544,9 +544,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   }));
 
   return (
-    <View
-      style={[styles.skeleton, { width: width as DimensionValue, height, borderRadius }, style]}
-    >
+    <View style={[styles.skeleton, { width: width, height, borderRadius }, style]}>
       <AnimatedView style={[styles.skeletonShimmer, shimmerStyle]} />
     </View>
   );

@@ -15,10 +15,11 @@ export class SentryService implements OnModuleDestroy {
 
     if (this.enabled) {
       const environment =
-        this.configService.get<string>("NODE_ENV") === "production"
-          ? "production"
-          : "development";
-      const release = `xuno-backend@${this.configService.get<string>("npm_package_version", "1.0.0")}`;
+        this.configService.get<string>("NODE_ENV") === "production" ? "production" : "development";
+      const release = `xuno-backend@${this.configService.get<string>(
+        "npm_package_version",
+        "1.0.0"
+      )}`;
 
       Sentry.init({
         dsn: this.dsn,
@@ -32,16 +33,16 @@ export class SentryService implements OnModuleDestroy {
         serverName: this.configService.get<string>("SERVICE_NAME", "xuno-backend"),
       });
 
-      this.logger.log(
-        `Sentry initialized: env=${environment}, release=${release}`,
-      );
+      this.logger.log(`Sentry initialized: env=${environment}, release=${release}`);
     } else {
       this.logger.debug("Sentry disabled: SENTRY_DSN not configured");
     }
   }
 
   captureException(exception: unknown, context?: Record<string, unknown>): string | undefined {
-    if (!this.enabled) {return undefined;}
+    if (!this.enabled) {
+      return undefined;
+    }
 
     const eventId = Sentry.captureException(exception, {
       extra: context,
@@ -53,9 +54,11 @@ export class SentryService implements OnModuleDestroy {
   captureMessage(
     message: string,
     level: Sentry.SeverityLevel = "info",
-    context?: Record<string, unknown>,
+    context?: Record<string, unknown>
   ): string | undefined {
-    if (!this.enabled) {return undefined;}
+    if (!this.enabled) {
+      return undefined;
+    }
 
     const eventId = Sentry.captureMessage(message, {
       level,
@@ -66,27 +69,41 @@ export class SentryService implements OnModuleDestroy {
   }
 
   setUser(user: { id: string; email?: string; username?: string }): void {
-    if (!this.enabled) {return;}
+    if (!this.enabled) {
+      return;
+    }
     Sentry.setUser(user);
   }
 
   setTag(key: string, value: string): void {
-    if (!this.enabled) {return;}
+    if (!this.enabled) {
+      return;
+    }
     Sentry.setTag(key, value);
   }
 
   setContext(name: string, context: Record<string, unknown>): void {
-    if (!this.enabled) {return;}
+    if (!this.enabled) {
+      return;
+    }
     Sentry.setContext(name, context);
   }
 
   addBreadcrumb(breadcrumb: Sentry.Breadcrumb): void {
-    if (!this.enabled) {return;}
+    if (!this.enabled) {
+      return;
+    }
     Sentry.addBreadcrumb(breadcrumb);
   }
 
-  startSpan(options: { name: string; op: string; tags?: Record<string, string> }): Sentry.Span | undefined {
-    if (!this.enabled) {return undefined;}
+  startSpan(options: {
+    name: string;
+    op: string;
+    tags?: Record<string, string>;
+  }): Sentry.Span | undefined {
+    if (!this.enabled) {
+      return undefined;
+    }
     return Sentry.startInactiveSpan(options);
   }
 

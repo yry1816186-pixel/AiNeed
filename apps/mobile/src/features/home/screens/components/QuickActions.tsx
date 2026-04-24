@@ -1,10 +1,10 @@
 import { memo, type ComponentProps } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { DesignTokens } from "../../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface QuickActionsProps {
   onAiStylist: () => void;

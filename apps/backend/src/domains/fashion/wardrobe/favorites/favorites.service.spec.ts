@@ -5,7 +5,6 @@ import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { FavoritesService } from "./favorites.service";
 
-
 describe("FavoritesService", () => {
   let service: FavoritesService;
   let prisma: PrismaService;
@@ -65,9 +64,7 @@ describe("FavoritesService", () => {
 
   describe("addFavorite", () => {
     it("应该成功添加收藏", async () => {
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.favorite.findUnique.mockResolvedValue(null);
       mockPrismaService.favorite.create.mockResolvedValue(mockFavorite);
 
@@ -80,9 +77,7 @@ describe("FavoritesService", () => {
     });
 
     it("应该返回已存在的收藏", async () => {
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.favorite.findUnique.mockResolvedValue(mockFavorite);
 
       const result = await service.addFavorite("test-user-id", "item-id");
@@ -94,9 +89,9 @@ describe("FavoritesService", () => {
     it("应该抛出 NotFoundException 当商品不存在", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.addFavorite("test-user-id", "non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.addFavorite("test-user-id", "non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 

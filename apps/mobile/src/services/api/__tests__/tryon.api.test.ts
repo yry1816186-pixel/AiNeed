@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import apiClient from "../client";
 import { tryOnApi, recommendationsApi } from "../tryon.api";
 
@@ -23,7 +24,6 @@ jest.mock("../asset-url", () => ({
 const mockGet = apiClient.get as jest.Mock;
 const mockPost = apiClient.post as jest.Mock;
 const mockDelete = apiClient.delete as jest.Mock;
-const _mockPatch = apiClient.patch as jest.Mock;
 
 // ---- Test Data ----
 const tryOnResult = {

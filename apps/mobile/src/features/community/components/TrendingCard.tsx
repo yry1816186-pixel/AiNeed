@@ -1,16 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { communityApi } from "../../services/api/community.api";
-import { DesignTokens } from "../../../design-system/theme";
-import { flatColors as colors } from "../../../design-system/theme";
+import { communityApi } from "../../../services/api/community.api";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface TrendingTag {
@@ -24,9 +16,9 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: "arrow-up", color: "#27AE60" },
-  down: { icon: "arrow-down", color: "#E74C3C" },
-  stable: { icon: "arrow-forward", color: colors.textTertiary },
+  up: { icon: "arrow-up" as const, color: DesignTokens.colors.semantic.success },
+  down: { icon: "arrow-down" as const, color: DesignTokens.colors.semantic.error },
+  stable: { icon: "arrow-forward" as const, color: colors.textTertiary },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
@@ -39,22 +31,17 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
       setLoading(true);
       const response = await communityApi.getTrending({ type: "tags" });
       if (response.success && response.data) {
-        const trendingTags: TrendingTag[] = (
-          response.data as { name?: string; direction?: string; count?: number }[]
-        ).map((item) => ({
+        const rawData = response.data as { name?: string; direction?: string; count?: number }[];
+        const trendingTags: TrendingTag[] = rawData.map((item) => ({
           name: item.name ?? "",
-          direction: (item.direction === "up"
-            ? "up"
-            : item.direction === "down"
-            ? "down"
-            : "stable") as TrendingTag["direction"],
+          direction: item.direction === "up" ? "up" : item.direction === "down" ? "down" : "stable",
           count: item.count,
         }));
         setTags(trendingTags);
       }
-    } catch (error) {
+    } catch (err) {
       // Trending is supplementary content
-      console.error("Failed to load trending:", error);
+      console.error("Failed to load trending:", err);
     } finally {
       setLoading(false);
     }
@@ -84,7 +71,6 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
         contentContainerStyle={styles.scrollContent}
       >
         {tags.map((tag) => {
-          const styles = useStyles(colors);
           const dirConfig = DIRECTION_CONFIG[tag.direction] ?? DIRECTION_CONFIG.stable;
           return (
             <TouchableOpacity
@@ -96,7 +82,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
               accessibilityRole="button"
             >
               <Text style={styles.tagText}>#{tag.name}</Text>
-              <Ionicons name={dirConfig.icon as "arrow-up"} size={12} color={dirConfig.color} />
+              <Ionicons name={dirConfig.icon} size={12} color={dirConfig.color} />
             </TouchableOpacity>
           );
         })}
@@ -107,7 +93,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
 
 const useStyles = createStyles((colors) => ({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     paddingVertical: 8,
   },
   scrollContent: {

@@ -5,10 +5,7 @@ import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
 import { TrackEventDto } from "../dto/track-event.dto";
 
-import {
-  BehaviorTrackerService,
-  BehaviorProfile,
-} from "./behavior-tracker.service";
+import { BehaviorTrackerService, BehaviorProfile } from "./behavior-tracker.service";
 
 describe("BehaviorTrackerService", () => {
   let service: BehaviorTrackerService;
@@ -156,11 +153,7 @@ describe("BehaviorTrackerService", () => {
 
       await service.track(event);
 
-      expect(mockRedisClient.zincrby).toHaveBeenCalledWith(
-        "trending:items",
-        1,
-        "item-123",
-      );
+      expect(mockRedisClient.zincrby).toHaveBeenCalledWith("trending:items", 1, "item-123");
     });
 
     it("应该更新热门搜索统计", async () => {
@@ -176,11 +169,7 @@ describe("BehaviorTrackerService", () => {
 
       await service.track(event);
 
-      expect(mockRedisClient.zincrby).toHaveBeenCalledWith(
-        "trending:searches",
-        1,
-        "连衣裙",
-      );
+      expect(mockRedisClient.zincrby).toHaveBeenCalledWith("trending:searches", 1, "连衣裙");
     });
   });
 
@@ -221,12 +210,7 @@ describe("BehaviorTrackerService", () => {
 
   describe("getTrending", () => {
     it("应该返回热门商品", async () => {
-      mockRedisClient.zrevrange.mockResolvedValue([
-        "item-1",
-        "10",
-        "item-2",
-        "5",
-      ]);
+      mockRedisClient.zrevrange.mockResolvedValue(["item-1", "10", "item-2", "5"]);
 
       const result = await service.getTrending("items", 10);
 
@@ -236,12 +220,7 @@ describe("BehaviorTrackerService", () => {
     });
 
     it("应该返回热门搜索", async () => {
-      mockRedisClient.zrevrange.mockResolvedValue([
-        "连衣裙",
-        "100",
-        "T恤",
-        "50",
-      ]);
+      mockRedisClient.zrevrange.mockResolvedValue(["连衣裙", "100", "T恤", "50"]);
 
       const result = await service.getTrending("searches", 10);
 

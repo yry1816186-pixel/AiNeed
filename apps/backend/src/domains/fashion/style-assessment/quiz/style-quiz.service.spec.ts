@@ -9,7 +9,6 @@ import { ColorDeriverService } from "./services/color-deriver";
 import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
 import { StyleQuizService } from "./style-quiz.service";
 
-
 jest.mock("./services/question-selector", () => ({
   QuestionSelectorService: class QuestionSelectorService {
     selectQuestions = jest.fn();
@@ -26,13 +25,20 @@ describe("StyleQuizService", () => {
 
   const mockColorDeriverService = {
     deriveColorPreferences: jest.fn().mockReturnValue({
-      primaryColors: [
-        { hueSegment: "red", weight: 2.5, medianHSL: { h: 0, s: 80, l: 50 } },
-      ],
+      primaryColors: [{ hueSegment: "red", weight: 2.5, medianHSL: { h: 0, s: 80, l: 50 } }],
       secondaryColors: [],
       colorSeason: "spring",
       palette: ["#e6194D"],
-      hueDistribution: { red: 2.5, orange: 0, yellow: 0, "yellow-green": 0, green: 0, "cyan-blue": 0, blue: 0, purple: 0 },
+      hueDistribution: {
+        red: 2.5,
+        orange: 0,
+        yellow: 0,
+        "yellow-green": 0,
+        green: 0,
+        "cyan-blue": 0,
+        blue: 0,
+        purple: 0,
+      },
     }),
   };
 
@@ -87,7 +93,9 @@ describe("StyleQuizService", () => {
     userProfile: {
       upsert: jest.fn(),
     },
-    $transaction: jest.fn((fn: (prisma: typeof mockPrismaService) => Promise<unknown>) => fn(mockPrismaService)),
+    $transaction: jest.fn((fn: (prisma: typeof mockPrismaService) => Promise<unknown>) =>
+      fn(mockPrismaService)
+    ),
   };
 
   beforeEach(async () => {
@@ -244,9 +252,9 @@ describe("StyleQuizService", () => {
     it("should throw NotFoundException when question does not exist", async () => {
       mockPrismaService.quizQuestion.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.saveAnswer(userId, "nonexistent-q", selectedImageIndex),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.saveAnswer(userId, "nonexistent-q", selectedImageIndex)).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should update existing answer instead of creating new one", async () => {
@@ -292,10 +300,38 @@ describe("StyleQuizService", () => {
     ];
 
     const mockAnswers = [
-      { id: "a-1", userId, questionId: "q-occasion-01", selectedImageIndex: 0, selectedOption: null, responseTimeMs: 2500 },
-      { id: "a-2", userId, questionId: "q-color-01", selectedImageIndex: 1, selectedOption: null, responseTimeMs: 3000 },
-      { id: "a-3", userId, questionId: "q-style-01", selectedImageIndex: 2, selectedOption: null, responseTimeMs: 1800 },
-      { id: "a-4", userId, questionId: "q-price-01", selectedImageIndex: 0, selectedOption: null, responseTimeMs: 4000 },
+      {
+        id: "a-1",
+        userId,
+        questionId: "q-occasion-01",
+        selectedImageIndex: 0,
+        selectedOption: null,
+        responseTimeMs: 2500,
+      },
+      {
+        id: "a-2",
+        userId,
+        questionId: "q-color-01",
+        selectedImageIndex: 1,
+        selectedOption: null,
+        responseTimeMs: 3000,
+      },
+      {
+        id: "a-3",
+        userId,
+        questionId: "q-style-01",
+        selectedImageIndex: 2,
+        selectedOption: null,
+        responseTimeMs: 1800,
+      },
+      {
+        id: "a-4",
+        userId,
+        questionId: "q-price-01",
+        selectedImageIndex: 0,
+        selectedOption: null,
+        responseTimeMs: 4000,
+      },
     ];
 
     const mockQuiz = {
@@ -334,7 +370,7 @@ describe("StyleQuizService", () => {
             priceRange: "mid_range",
             isLatest: true,
           }),
-        }),
+        })
       );
     });
 
@@ -368,17 +404,15 @@ describe("StyleQuizService", () => {
       mockPrismaService.styleQuiz.findUnique.mockResolvedValue(mockQuiz);
       mockPrismaService.quizAnswer.findMany.mockResolvedValue([]);
 
-      await expect(
-        service.calculateResult(userId, quizId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.calculateResult(userId, quizId)).rejects.toThrow(BadRequestException);
     });
 
     it("should throw NotFoundException when quiz does not exist", async () => {
       mockPrismaService.styleQuiz.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.calculateResult(userId, "nonexistent-quiz"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.calculateResult(userId, "nonexistent-quiz")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should calculate confidenceScore from answer completeness when no image meta", async () => {
@@ -394,7 +428,7 @@ describe("StyleQuizService", () => {
           data: expect.objectContaining({
             confidenceScore: expect.any(Number),
           }),
-        }),
+        })
       );
     });
   });
@@ -463,9 +497,9 @@ describe("StyleQuizService", () => {
     it("should throw NotFoundException when quiz does not exist", async () => {
       mockPrismaService.styleQuiz.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getQuizProgress(userId, "nonexistent-quiz"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getQuizProgress(userId, "nonexistent-quiz")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should return 100% progress when all questions answered", async () => {

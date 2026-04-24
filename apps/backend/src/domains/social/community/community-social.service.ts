@@ -73,7 +73,9 @@ export class CommunitySocialService {
         })
         .catch((err: unknown) => {
           this.logger.warn(
-            `Failed to create follow notification: ${err instanceof Error ? err.message : String(err)}`
+            `Failed to create follow notification: ${
+              err instanceof Error ? err.message : String(err)
+            }`
           );
         });
 

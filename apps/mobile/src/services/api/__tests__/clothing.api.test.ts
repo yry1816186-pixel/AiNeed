@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/unbound-method */
 import apiClient from "../client";
 import { clothingApi } from "../clothing.api";
 
@@ -328,7 +329,10 @@ describe("clothingApi", () => {
 
   describe("search", () => {
     it("should POST to /clothing/search with query and filter", async () => {
-      mockPost.mockResolvedValue({ success: true, data: { items: [backendItem], total: 1, page: 1, pageSize: 20, hasMore: false } });
+      mockPost.mockResolvedValue({
+        success: true,
+        data: { items: [backendItem], total: 1, page: 1, pageSize: 20, hasMore: false },
+      });
 
       const result = await clothingApi.search(
         "white shirt",
@@ -356,7 +360,10 @@ describe("clothingApi", () => {
     });
 
     it("should return paginated response with empty items when no results", async () => {
-      mockPost.mockResolvedValue({ success: true, data: { items: [], total: 0, page: 1, pageSize: 20, hasMore: false } });
+      mockPost.mockResolvedValue({
+        success: true,
+        data: { items: [], total: 0, page: 1, pageSize: 20, hasMore: false },
+      });
 
       const result = await clothingApi.search("nonexistent");
 

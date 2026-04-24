@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { sizeRecommendationApi, type SizeRecommendation } from "../../../services/api/commerce.api";
-import { BorderRadius, Spacing } from "../../../design-system/theme";
+import { BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -132,7 +132,7 @@ export const AiSizeRecommendation: React.FC<AiSizeRecommendationProps> = ({
   const displaySize = recommendation?.recommendedSize ?? localResult?.size ?? "M";
   const displayConfidence = recommendation
     ? Math.round(recommendation.confidence * 100)
-    : (localResult?.confidence ?? 80);
+    : localResult?.confidence ?? 80;
   const displayReason = recommendation?.reasons?.[0] ?? localResult?.reason ?? "";
 
   return (

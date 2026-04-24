@@ -38,14 +38,10 @@ describe("ColorDerivationEngine", () => {
     it("should aggregate weights for same hex code across options", () => {
       const options = [
         {
-          colorTags: [
-            { hex: "#2D2D2D", category: "neutral", weight: 2 },
-          ],
+          colorTags: [{ hex: "#2D2D2D", category: "neutral", weight: 2 }],
         },
         {
-          colorTags: [
-            { hex: "#2D2D2D", category: "dark", weight: 3 },
-          ],
+          colorTags: [{ hex: "#2D2D2D", category: "dark", weight: 3 }],
         },
       ];
 
@@ -58,14 +54,10 @@ describe("ColorDerivationEngine", () => {
     it("should keep highest-weight category for aggregated colors", () => {
       const options = [
         {
-          colorTags: [
-            { hex: "#FF0000", category: "warm", weight: 1 },
-          ],
+          colorTags: [{ hex: "#FF0000", category: "warm", weight: 1 }],
         },
         {
-          colorTags: [
-            { hex: "#FF0000", category: "accent", weight: 5 },
-          ],
+          colorTags: [{ hex: "#FF0000", category: "accent", weight: 5 }],
         },
       ];
 
@@ -93,9 +85,7 @@ describe("ColorDerivationEngine", () => {
     it("should return Chinese color names for known hex codes", () => {
       const options = [
         {
-          colorTags: [
-            { hex: "#2D2D2D", category: "neutral", weight: 1 },
-          ],
+          colorTags: [{ hex: "#2D2D2D", category: "neutral", weight: 1 }],
         },
       ];
 
@@ -107,9 +97,7 @@ describe("ColorDerivationEngine", () => {
     it("should return fallback name for unknown hex codes", () => {
       const options = [
         {
-          colorTags: [
-            { hex: "#AB1234", category: "unknown", weight: 1 },
-          ],
+          colorTags: [{ hex: "#AB1234", category: "unknown", weight: 1 }],
         },
       ];
 

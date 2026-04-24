@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import type { SizeRecommendation } from '../../../services/api/commerce.api';
-import { useTheme } from '../../../shared/contexts/ThemeContext';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import type { SizeRecommendation } from "../../../services/api/commerce.api";
+import { useTheme } from "../../../shared/contexts/ThemeContext";
 
 interface AISizeBadgeProps {
   recommendation: SizeRecommendation;
@@ -11,7 +11,7 @@ export const AISizeBadge: React.FC<AISizeBadgeProps> = ({ recommendation }) => {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.badge, { backgroundColor: colors.primary + '15' }]}>
+    <View style={[styles.badge, { backgroundColor: colors.primary + "15" }]}>
       <Text style={[styles.text, { color: colors.primary }]}>
         AI推荐: {recommendation.recommendedSize}
       </Text>
@@ -26,8 +26,8 @@ export const AISizeBadge: React.FC<AISizeBadgeProps> = ({ recommendation }) => {
 
 const styles = StyleSheet.create({
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   confidence: {
     fontSize: 10,

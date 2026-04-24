@@ -1,4 +1,4 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
@@ -13,34 +13,29 @@ import {
   Alert,
   PanResponder,
   type ViewStyle,
+  type ImageStyle,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { cartApi, cartEnhancementApi } from "../../../services/api/commerce.api";
-import { useCartStore } from "../stores/index";
+import { useCartStore } from "../stores/cart.store";
 import { useCouponStore } from "../stores/couponStore";
 
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { haptics } from "../../../utils/haptics";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { EmptyCartView } from "../components/EmptyCartView";
 import { FreeShippingProgress } from "../components/FreeShippingProgress";
 import { CouponSelector } from "../components/CouponSelector";
-import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+import type { ProfileStackParamList } from "../../../navigation/types";
 import { navigateHome } from "../../../navigation/navigationService";
-import type { ClothingItem } from "../../../types/clothing";
 
-type Navigation = CompositeScreenProps<
-  NativeStackNavigationProp<ProfileStackParamList>,
-  NativeStackNavigationProp<RootStackParamList>
->["navigation"];
+type Navigation = NativeStackNavigationProp<ProfileStackParamList>;
 
 const SWIPE_THRESHOLD = -80;
 
@@ -73,12 +68,18 @@ export const CartScreenComponent: React.FC = () => {
         setItems(
           response.data.map((item) => ({
             id: item.id,
-            item: item as unknown as ClothingItem,
+            item: {
+              id: item.productId,
+              name: item.name,
+              mainImage: item.imageUri,
+              price: item.price,
+              originalPrice: item.originalPrice,
+            },
             color: item.color,
             size: item.size,
             quantity: item.quantity,
             selected: item.selected ?? false,
-          }))
+          })) as any
         );
         setSelectedIds(selected);
       }
@@ -202,24 +203,26 @@ export const CartScreenComponent: React.FC = () => {
   );
 
   const handleDelete = useCallback(
-    async (id: string) => {
+    (id: string) => {
       Alert.alert("确认删除", "确定要从购物车中移除该商品吗？", [
         { text: "取消", style: "cancel" },
         {
           text: "删除",
           style: "destructive",
-          onPress: async () => {
-            removeItem(id);
-            setSelectedIds((prev) => {
-              const next = new Set(prev);
-              next.delete(id);
-              return next;
-            });
-            try {
-              await cartApi.remove(id);
-            } catch {
-              // Item removed from local store; server sync failure is non-critical
-            }
+          onPress: () => {
+            void (async () => {
+              removeItem(id);
+              setSelectedIds((prev) => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+              });
+              try {
+                await cartApi.remove(id);
+              } catch {
+                // Item removed from local store; server sync failure is non-critical
+              }
+            })();
           },
         },
       ]);
@@ -276,16 +279,24 @@ export const CartScreenComponent: React.FC = () => {
             item={cartItem}
             isSelected={selectedIds.has(cartItem.id)}
             isUpdating={updatingIds.has(cartItem.id)}
-            onToggleSelect={() => toggleSelect(cartItem.id)}
-            onQuantityChange={(qty) => handleQuantityChange(cartItem.id, qty)}
-            onDelete={() => handleDelete(cartItem.id)}
+            onToggleSelect={() => {
+              void toggleSelect(cartItem.id);
+            }}
+            onQuantityChange={(qty) => {
+              void handleQuantityChange(cartItem.id, qty);
+            }}
+            onDelete={() => {
+              void handleDelete(cartItem.id);
+            }}
           />
         )}
         ListHeaderComponent={
           <View style={styles.selectAllRow}>
             <TouchableOpacity
               style={styles.checkboxTouchable}
-              onPress={toggleSelectAll}
+              onPress={() => {
+                void toggleSelectAll();
+              }}
               activeOpacity={0.7}
               accessibilityLabel={allSelected ? "取消全选" : t.cart.selectAll}
             >
@@ -315,7 +326,7 @@ export const CartScreenComponent: React.FC = () => {
               </TouchableOpacity>
             </View>
           ) : (
-            <EmptyCartView onGoShopping={() => navigateHome("HomeFeed")} />
+            <EmptyCartView onGoShopping={() => navigateHome("TodayMain")} />
           )
         }
         refreshControl={
@@ -355,7 +366,9 @@ export const CartScreenComponent: React.FC = () => {
           <View style={styles.batchRow}>
             <TouchableOpacity
               style={styles.selectAllFooter}
-              onPress={toggleSelectAll}
+              onPress={() => {
+                void toggleSelectAll();
+              }}
               activeOpacity={0.7}
             >
               <View style={[styles.checkbox, allSelected && styles.checkboxChecked]}>
@@ -375,10 +388,11 @@ export const CartScreenComponent: React.FC = () => {
                   {
                     text: "删除",
                     style: "destructive",
-                    onPress: async () => {
-                      await cartEnhancementApi.batchDeleteCartItems(ids);
-                      ids.forEach((id) => removeItem(id));
-                      setSelectedIds(new Set());
+                    onPress: () => {
+                      void cartEnhancementApi.batchDeleteCartItems(ids).then(() => {
+                        ids.forEach((id) => removeItem(id));
+                        setSelectedIds(new Set());
+                      });
                     },
                   },
                 ]);
@@ -388,14 +402,15 @@ export const CartScreenComponent: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.batchButton}
-              onPress={async () => {
+              onPress={() => {
                 const ids = Array.from(selectedIds);
                 if (ids.length === 0) {
                   return;
                 }
-                await cartEnhancementApi.moveCartToFavorites(ids);
-                ids.forEach((id) => removeItem(id));
-                setSelectedIds(new Set());
+                void cartEnhancementApi.moveCartToFavorites(ids).then(() => {
+                  ids.forEach((id) => removeItem(id));
+                  setSelectedIds(new Set());
+                });
               }}
             >
               <Text style={styles.batchButtonText}>移入收藏</Text>
@@ -405,7 +420,9 @@ export const CartScreenComponent: React.FC = () => {
           <View style={styles.footerRow}>
             <TouchableOpacity
               style={styles.selectAllFooter}
-              onPress={toggleSelectAll}
+              onPress={() => {
+                void toggleSelectAll();
+              }}
               activeOpacity={0.7}
               accessibilityLabel={allSelected ? "取消全选" : t.cart.selectAll}
             >
@@ -504,6 +521,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   onQuantityChange,
   onDelete,
 }) => {
+  const t = useTranslation();
   const translateX = useRef(new Animated.Value(0)).current;
   const itemPrice = item.item?.price ?? 0;
   const lineTotal = itemPrice * item.quantity;
@@ -563,7 +581,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
           {item.item?.imageUri ? (
             <Image
               source={{ uri: item.item.imageUri }}
-              style={styles.cardImage}
+              style={styles.cardImage as ImageStyle}
               resizeMode="cover"
             />
           ) : (
@@ -659,7 +677,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   badge: {
     marginLeft: 10,
@@ -869,7 +887,7 @@ const styles = StyleSheet.create({
   quantityText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: colors.text,
+    color: colors.textPrimary,
   },
 
   footer: {

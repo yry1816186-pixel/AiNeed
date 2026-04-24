@@ -51,6 +51,13 @@
     "dist",
     "coverage",
     "*.config.js",
-    "src/types/navigation.d.ts"
+    "src/types/navigation.d.ts",
+    "e2e",
+    "src/features/community",
+    "src/features/consultant",
+    "src/features/customization",
+    "src/features/home/components/heartrecommend",
+    "src/design-system/ui",
+    "src/0"
   ]
 }

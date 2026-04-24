@@ -32,17 +32,17 @@ The project has consolidated on **BullMQ** as the single task queue technology a
 
 ### Why BullMQ (not Celery)?
 
-| Feature | BullMQ | Celery |
-|---------|--------|--------|
-| Node.js Native | Yes | No (Python only) |
-| TypeScript Support | First-class | Via additional tools |
-| UI Dashboard | Bull Board | Flower |
-| Redis Dependency | Yes | Yes |
-| Job Priorities | Yes | Yes |
-| Delayed Jobs | Yes | Yes |
-| Rate Limiting | Built-in | Requires extensions |
-| Concurrency | Easy configuration | Configuration required |
-| Python Interop | Via Redis directly | Native |
+| Feature            | BullMQ             | Celery                 |
+| ------------------ | ------------------ | ---------------------- |
+| Node.js Native     | Yes                | No (Python only)       |
+| TypeScript Support | First-class        | Via additional tools   |
+| UI Dashboard       | Bull Board         | Flower                 |
+| Redis Dependency   | Yes                | Yes                    |
+| Job Priorities     | Yes                | Yes                    |
+| Delayed Jobs       | Yes                | Yes                    |
+| Rate Limiting      | Built-in           | Requires extensions    |
+| Concurrency        | Easy configuration | Configuration required |
+| Python Interop     | Via Redis directly | Native                 |
 
 ### Python Integration Strategy
 
@@ -65,10 +65,10 @@ queue_names = ["ai_tasks", "style_analysis", "virtual_tryon", "wardrobe_match"]
 
 ```typescript
 export const QUEUE_NAMES = {
-  AI_TASKS: 'ai_tasks',           // General AI tasks, recommendations
-  STYLE_ANALYSIS: 'style_analysis', // Style understanding and analysis
-  VIRTUAL_TRYON: 'virtual_tryon',   // Virtual try-on processing
-  WARDROBE_MATCH: 'wardrobe_match', // Wardrobe matching tasks
+  AI_TASKS: "ai_tasks", // General AI tasks, recommendations
+  STYLE_ANALYSIS: "style_analysis", // Style understanding and analysis
+  VIRTUAL_TRYON: "virtual_tryon", // Virtual try-on processing
+  WARDROBE_MATCH: "wardrobe_match", // Wardrobe matching tasks
 } as const;
 ```
 
@@ -76,12 +76,12 @@ export const QUEUE_NAMES = {
 
 ```typescript
 export const JOB_TYPES = {
-  STYLE_ANALYSIS: 'style_analysis',
-  VIRTUAL_TRYON: 'virtual_tryon',
-  WARDROBE_MATCH: 'wardrobe_match',
-  IMAGE_ANALYSIS: 'image_analysis',
-  BODY_ANALYSIS: 'body_analysis',
-  RECOMMENDATION: 'recommendation',
+  STYLE_ANALYSIS: "style_analysis",
+  VIRTUAL_TRYON: "virtual_tryon",
+  WARDROBE_MATCH: "wardrobe_match",
+  IMAGE_ANALYSIS: "image_analysis",
+  BODY_ANALYSIS: "body_analysis",
+  RECOMMENDATION: "recommendation",
 } as const;
 ```
 
@@ -90,24 +90,24 @@ export const JOB_TYPES = {
 ```typescript
 export const QUEUE_CONFIG = {
   DEFAULT_JOB_OPTIONS: {
-    attempts: 3,                    // Retry failed jobs up to 3 times
+    attempts: 3, // Retry failed jobs up to 3 times
     backoff: {
-      type: 'exponential',          // Exponential backoff for retries
-      delay: 1000,                  // Initial delay: 1 second
+      type: "exponential", // Exponential backoff for retries
+      delay: 1000, // Initial delay: 1 second
     },
     removeOnComplete: {
-      count: 100,                   // Keep last 100 completed jobs
-      age: 24 * 3600,               // Or 24 hours
+      count: 100, // Keep last 100 completed jobs
+      age: 24 * 3600, // Or 24 hours
     },
     removeOnFail: {
-      count: 50,                    // Keep last 50 failed jobs
-      age: 7 * 24 * 3600,           // Or 7 days
+      count: 50, // Keep last 50 failed jobs
+      age: 7 * 24 * 3600, // Or 7 days
     },
-    timeout: 300000,                // 5 minutes default timeout
+    timeout: 300000, // 5 minutes default timeout
   },
-  STYLE_ANALYSIS_TIMEOUT: 60000,    // 1 minute
-  VIRTUAL_TRYON_TIMEOUT: 180000,    // 3 minutes
-  WARDROBE_MATCH_TIMEOUT: 30000,    // 30 seconds
+  STYLE_ANALYSIS_TIMEOUT: 60000, // 1 minute
+  VIRTUAL_TRYON_TIMEOUT: 180000, // 3 minutes
+  WARDROBE_MATCH_TIMEOUT: 30000, // 30 seconds
 } as const;
 ```
 
@@ -143,7 +143,7 @@ async addStyleAnalysisTask(userId: string, input: string) {
 export class StyleAnalysisProcessor {
   constructor(private styleService: StyleUnderstandingService) {}
 
-  @Process('style-analysis')
+  @Process("style-analysis")
   async processStyleAnalysis(job: Job) {
     const { userId, userInput } = job.data;
 
@@ -194,21 +194,18 @@ npm install @bull-board/express @bull-board/api
 ```
 
 ```typescript
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { ExpressAdapter } from "@bull-board/express";
 
 const serverAdapter = new ExpressAdapter();
 createBullBoard({
-  queues: [
-    new BullMQAdapter(aiTasksQueue),
-    new BullMQAdapter(styleAnalysisQueue),
-  ],
+  queues: [new BullMQAdapter(aiTasksQueue), new BullMQAdapter(styleAnalysisQueue)],
   serverAdapter,
 });
 
-serverAdapter.setBasePath('/admin/queues');
-app.use('/admin/queues', serverAdapter.getRouter());
+serverAdapter.setBasePath("/admin/queues");
+app.use("/admin/queues", serverAdapter.getRouter());
 ```
 
 ### Programmatic Monitoring
@@ -245,10 +242,10 @@ Keep job data small - avoid including large payloads directly:
 
 ```typescript
 // Bad
-await queue.add('process', { imageData: largeBase64String });
+await queue.add("process", { imageData: largeBase64String });
 
 // Good
-await queue.add('process', { imageId: 'img_123', storagePath: '/uploads/img_123.jpg' });
+await queue.add("process", { imageId: "img_123", storagePath: "/uploads/img_123.jpg" });
 ```
 
 ### 2. Idempotency

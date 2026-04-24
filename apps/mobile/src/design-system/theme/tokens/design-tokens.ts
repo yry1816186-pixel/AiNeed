@@ -92,6 +92,13 @@ export const DesignTokens = {
         bg: "#F5F5FA",
       },
     },
+    xuno: {
+      warmCamel: "#C4956A",
+      warmCamelLight: "#D4A882",
+      warmCamelDark: "#A87B52",
+      charcoal: "#2D3436",
+      warmOrange: "#E17055",
+    },
   },
 
   gradients: {
@@ -367,6 +374,7 @@ export const darkTokens = {
       brand: "#D68B6C",
     },
     colorSeasons: DesignTokens.colors.colorSeasons,
+    xuno: DesignTokens.colors.xuno,
   },
   gradients: {
     brand: ["#D68B6C", "#C9B8A6"],

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-member-access */
 import { renderHook, act } from "@testing-library/react-native";
 import { useApi } from "../useApi";
 import type { ApiResponse } from "../../types";

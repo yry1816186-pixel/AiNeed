@@ -19,18 +19,21 @@
 ## 本地验证结果
 
 ### 工具链检查
+
 - `which java`：无
 - `which javac`：无
 - `which adb`：无
 - 结论：当前 Linux 审计环境无法执行 Gradle Android 构建与安装验证
 
 ### 应执行但当前未能完成的命令
+
 - `cd apps/mobile/android && ./gradlew assembleDebug`
 - `cd apps/mobile/android && ./gradlew assembleRelease`
 - `adb install -r ...apk`
 - 启动后执行登录 / 首页 / 搜索 / 推荐 / 试衣冒烟
 
 ### 当前已完成的相关修复
+
 - release 签名不再复用 debug keystore
 - 生产构建必须显式提供：
   - `xuno_UPLOAD_STORE_FILE`

@@ -1,4 +1,5 @@
-﻿import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+import React, { useState } from "react";
 import {
   View,
   Text,

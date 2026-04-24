@@ -1,16 +1,8 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-import {
-  BatchCreateAvailabilityDto,
-  AvailableSlotsQueryDto,
-} from "./dto";
+import { BatchCreateAvailabilityDto, AvailableSlotsQueryDto } from "./dto";
 
 export interface TimeSlot {
   startTime: string;
@@ -28,17 +20,16 @@ export class ConsultantAvailabilityService {
   /**
    * 设置顾问排期模板（覆盖式：先删除旧模板，再创建新模板）
    */
-  async setAvailability(
-    consultantId: string,
-    userId: string,
-    dto: BatchCreateAvailabilityDto,
-  ) {
+  async setAvailability(consultantId: string, userId: string, dto: BatchCreateAvailabilityDto) {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) {throw new NotFoundException("顾问不存在");}
-    if (consultant.userId !== userId)
-      {throw new BadRequestException("无权修改此顾问排期");}
+    if (!consultant) {
+      throw new NotFoundException("顾问不存在");
+    }
+    if (consultant.userId !== userId) {
+      throw new BadRequestException("无权修改此顾问排期");
+    }
 
     // 删除旧时段模板
     await this.prisma.consultantAvailability.deleteMany({
@@ -89,16 +80,14 @@ export class ConsultantAvailabilityService {
       where: { consultantId, dayOfWeek, isAvailable: true },
     });
 
-    if (templates.length === 0) {return [];}
+    if (templates.length === 0) {
+      return [];
+    }
 
     // 生成所有时段
     const allSlots: TimeSlot[] = [];
     for (const template of templates) {
-      const slots = this.generateSlots(
-        template.startTime,
-        template.endTime,
-        template.slotDuration,
-      );
+      const slots = this.generateSlots(template.startTime, template.endTime, template.slotDuration);
       allSlots.push(...slots);
     }
 
@@ -123,9 +112,7 @@ export class ConsultantAvailabilityService {
       const slotEnd = this.parseTimeToMinutes(slot.endTime);
 
       for (const booking of bookings) {
-        const bookingStart =
-          booking.scheduledAt.getHours() * 60 +
-          booking.scheduledAt.getMinutes();
+        const bookingStart = booking.scheduledAt.getHours() * 60 + booking.scheduledAt.getMinutes();
         const bookingEnd = bookingStart + booking.durationMinutes;
 
         if (slotStart < bookingEnd && slotEnd > bookingStart) {
@@ -145,7 +132,7 @@ export class ConsultantAvailabilityService {
   async checkSlotConflict(
     consultantId: string,
     scheduledAt: Date,
-    durationMinutes: number,
+    durationMinutes: number
   ): Promise<boolean> {
     const endTime = new Date(scheduledAt.getTime() + durationMinutes * 60000);
 
@@ -158,22 +145,18 @@ export class ConsultantAvailabilityService {
       },
     });
 
-    if (!conflict) {return false;}
+    if (!conflict) {
+      return false;
+    }
 
     // 精确检查：已有预约的结束时间是否与目标时段重叠
-    const conflictEnd = new Date(
-      conflict.scheduledAt.getTime() + conflict.durationMinutes * 60000,
-    );
+    const conflictEnd = new Date(conflict.scheduledAt.getTime() + conflict.durationMinutes * 60000);
     return conflictEnd > scheduledAt;
   }
 
   // ==================== 私有方法 ====================
 
-  private generateSlots(
-    startTime: string,
-    endTime: string,
-    duration: number,
-  ): TimeSlot[] {
+  private generateSlots(startTime: string, endTime: string, duration: number): TimeSlot[] {
     const slots: TimeSlot[] = [];
     let current = this.parseTimeToMinutes(startTime);
     const end = this.parseTimeToMinutes(endTime);

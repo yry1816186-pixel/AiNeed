@@ -4,7 +4,7 @@
  * @deprecated Use `useRefresh` instead. This hook is kept for backward compatibility
  * and re-exports useRefresh with the same interface.
  */
+import { useRefresh } from "./useRefresh";
+
 export { useRefresh as usePullToRefresh } from "./useRefresh";
 export default useRefresh;
-
-import { useRefresh } from "./useRefresh";

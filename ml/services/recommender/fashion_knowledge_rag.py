@@ -509,7 +509,7 @@ class FashionKnowledgeRAG:
                 host=self.config.qdrant_host,
                 port=self.config.qdrant_port,
                 collection_name=self.config.collection_name,
-                vector_size=512  # FashionCLIP dimension
+                embedding_dim=512
             ))
         return self._vector_store
 

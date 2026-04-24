@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 export interface WeatherInfo {
   temperature: number;
   description: string;

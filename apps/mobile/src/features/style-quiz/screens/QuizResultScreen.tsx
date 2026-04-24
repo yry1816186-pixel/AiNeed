@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useQuizStore } from "../stores/quizStore";
 import { Colors, Spacing, BorderRadius, flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { navigateProfile } from "../../../navigation/navigationService";
 
@@ -83,7 +84,6 @@ export const QuizResultScreen: React.FC = () => {
   const getTagColor = (index: number) => TAG_COLORS[index % TAG_COLORS.length];
 
   const confidencePercent = Math.round(confidence * 100);
-  const _confidenceStrokeDashoffset = 188.5 - 188.5 * confidence;
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>

@@ -392,11 +392,7 @@ describe("GNNCompatibilityService", () => {
         attributes: {},
       });
 
-      const hyperedge = await service.buildOutfitHyperedge(
-        ["out1", "out2"],
-        "casual",
-        0.8,
-      );
+      const hyperedge = await service.buildOutfitHyperedge(["out1", "out2"], "casual", 0.8);
 
       expect(hyperedge.outfitType).toBe("casual");
       expect(hyperedge.weight).toBe(0.8);

@@ -37,15 +37,15 @@ export interface NotificationPayload {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(",").filter(Boolean) || (process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000"]),
+    origin:
+      process.env.CORS_ORIGINS?.split(",").filter(Boolean) ||
+      (process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000"]),
     credentials: true,
   },
   namespace: "/ws",
 })
 @UsePipes(new ValidationPipe())
-export class NotificationGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -55,7 +55,7 @@ export class NotificationGateway
   constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {}
 
   async handleConnection(client: Socket) {
@@ -105,20 +105,14 @@ export class NotificationGateway
   }
 
   @SubscribeMessage("joinRoom")
-  handleJoinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: JoinRoomData,
-  ) {
+  handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() data: JoinRoomData) {
     client.join(data.room);
     this.logger.log(`Client ${client.id} joined room: ${data.room}`);
     client.emit("joinedRoom", { room: data.room });
   }
 
   @SubscribeMessage("leaveRoom")
-  handleLeaveRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: JoinRoomData,
-  ) {
+  handleLeaveRoom(@ConnectedSocket() client: Socket, @MessageBody() data: JoinRoomData) {
     client.leave(data.room);
     this.logger.log(`Client ${client.id} left room: ${data.room}`);
   }
@@ -143,10 +137,7 @@ export class NotificationGateway
     return true;
   }
 
-  async sendNotification(
-    userId: string,
-    notification: NotificationPayload,
-  ): Promise<boolean> {
+  async sendNotification(userId: string, notification: NotificationPayload): Promise<boolean> {
     return this.sendToUser(userId, "notification", {
       ...notification,
       timestamp: new Date().toISOString(),
@@ -207,38 +198,29 @@ export class NotificationGateway
     }
   }
 
-  private async getPendingNotifications(
-    userId: string,
-  ): Promise<NotificationPayload[]> {
+  private async getPendingNotifications(userId: string): Promise<NotificationPayload[]> {
     try {
       const key = `pending_notifications:${userId}`;
       const data = await this.redisService.get(key);
       return data ? JSON.parse(data) : [];
     } catch (error) {
       this.logger.error(
-        `Failed to get pending notifications for user ${userId}: ${this.getErrorMessage(error)}. User may miss pending notifications.`,
+        `Failed to get pending notifications for user ${userId}: ${this.getErrorMessage(
+          error
+        )}. User may miss pending notifications.`
       );
       return [];
     }
   }
 
-  private async storePendingNotification(
-    userId: string,
-    notification: NotificationPayload,
-  ) {
+  private async storePendingNotification(userId: string, notification: NotificationPayload) {
     try {
       const key = `pending_notifications:${userId}`;
       const existing = await this.getPendingNotifications(userId);
       existing.push(notification);
-      await this.redisService.setex(
-        key,
-        86400,
-        JSON.stringify(existing.slice(-50)),
-      );
+      await this.redisService.setex(key, 86400, JSON.stringify(existing.slice(-50)));
     } catch (error) {
-      this.logger.error(
-        `Failed to store pending notification: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to store pending notification: ${this.getErrorMessage(error)}`);
     }
   }
 
@@ -247,9 +229,7 @@ export class NotificationGateway
       const key = `pending_notifications:${userId}`;
       await this.redisService.del(key);
     } catch (error) {
-      this.logger.error(
-        `Failed to clear pending notifications: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to clear pending notifications: ${this.getErrorMessage(error)}`);
     }
   }
 

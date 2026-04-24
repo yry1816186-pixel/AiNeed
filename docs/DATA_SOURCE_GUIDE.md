@@ -4,12 +4,12 @@
 
 ## 一、支持的数据源
 
-| 平台 | 类型 | 优先级 | 数据量 | 申请难度 |
-|------|------|--------|--------|----------|
-| 淘宝联盟 | 综合电商 | 1 | 最大 | 中等 |
-| 京东联盟 | 综合电商 | 2 | 大 | 中等 |
-| 得物开放平台 | 潮流服饰 | 3 | 中等 | 较高 |
-| api4.ai | 服装检测 | 4 | N/A | 简单 |
+| 平台         | 类型     | 优先级 | 数据量 | 申请难度 |
+| ------------ | -------- | ------ | ------ | -------- |
+| 淘宝联盟     | 综合电商 | 1      | 最大   | 中等     |
+| 京东联盟     | 综合电商 | 2      | 大     | 中等     |
+| 得物开放平台 | 潮流服饰 | 3      | 中等   | 较高     |
+| api4.ai      | 服装检测 | 4      | N/A    | 简单     |
 
 ## 二、淘宝联盟 API
 
@@ -53,15 +53,15 @@ TAOBAO_APP_SECRET=your_app_secret_here
 
 ### 2.4 接口说明
 
-| 接口 | 功能 | 限流 |
-|------|------|------|
-| taobao.tbk.item.search | 商品搜索 | 30次/分钟/IP |
-| taobao.tbk.item.info.get | 商品详情 | 30次/分钟/IP |
-| taobao.tbk.item.recommend.get | 商品推荐 | 30次/分钟/IP |
+| 接口                          | 功能     | 限流          |
+| ----------------------------- | -------- | ------------- |
+| taobao.tbk.item.search        | 商品搜索 | 30 次/分钟/IP |
+| taobao.tbk.item.info.get      | 商品详情 | 30 次/分钟/IP |
+| taobao.tbk.item.recommend.get | 商品推荐 | 30 次/分钟/IP |
 
 ### 2.5 返回数据字段
 
-- 商品ID (num_iid)
+- 商品 ID (num_iid)
 - 商品名称 (title)
 - 商品主图 (pict_url)
 - 商品价格 (reserve_price, zk_final_price)
@@ -189,13 +189,15 @@ API4AI_KEY=your_api_key_here
 ### 6.1 公开数据集
 
 1. **DeepFashion** - 香港中文大学开源数据集
-   - 80万+服装图像
+
+   - 80 万+服装图像
    - 50+类别标注
    - 下载: http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion.html
 
-2. **Fashion-MNIST** - Zalando开源数据集
-   - 70,000张服装图像
-   - 10个类别
+2. **Fashion-MNIST** - Zalando 开源数据集
+
+   - 70,000 张服装图像
+   - 10 个类别
    - 下载: https://github.com/zalandoresearch/fashion-mnist
 
 3. **Myntra Fashion Dataset** - Kaggle
@@ -229,13 +231,13 @@ df.to_json('clothing_data.json', orient='records', force_ascii=False)
 @Cron('0 2 * * *')
 async syncClothingData() {
   const sources = this.dataSourceService.getAvailableSources();
-  
+
   for (const source of sources) {
     const result = await this.dataSourceService.searchClothing('', {
       source: [source],
       pageSize: 100,
     });
-    
+
     // 保存到数据库
     await this.saveClothingItems(result.items);
   }
@@ -252,7 +254,7 @@ async syncPopularItems() {
     pageSize: 50,
     sortBy: 'sales',
   });
-  
+
   await this.updateClothingItems(popularItems.items);
 }
 ```

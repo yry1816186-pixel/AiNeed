@@ -14,8 +14,6 @@ export interface SSLError {
   timestamp: Date;
 }
 
-type _StorageBackend = "expo-secure-store" | "encrypted-storage" | "async-storage";
-
 const PRODUCTION_DOMAINS = ["api.xuno.app", "cdn.xuno.app"] as const;
 const PRODUCTION_PUBLIC_KEYS = [
   "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",

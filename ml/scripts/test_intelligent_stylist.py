@@ -121,11 +121,19 @@ async def test_chat_interaction():
     response = await service.chat_interaction(
         user_message=user_message,
         conversation_history=conversation_history,
-        user_profile=user_profile
+        user_profile=user_profile,
+        session_id="test-session-001",
+        use_state_machine=True,
     )
     
     print(f"\n✅ AI 回复:")
-    print(response)
+    if isinstance(response, dict):
+        print(f"  回复: {response.get('reply', '')}")
+        print(f"  状态: {response.get('state', '')}")
+        print(f"  快速回复: {response.get('quick_replies', [])}")
+        print(f"  Slots: {response.get('slots', {})}")
+    else:
+        print(response)
     
     return response
 

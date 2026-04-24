@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires */
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import { Text } from "react-native";
 import { Card } from "../Card";
-import { DesignTokens } from '../../../theme';
-
+import { DesignTokens } from "../../../theme";
 
 jest.mock("@/src/polyfills/expo-linear-gradient", () => {
   const { View } = require("react-native");
@@ -47,7 +47,7 @@ describe("Card", () => {
 
   it("applies custom styles", () => {
     const { getByText } = render(
-      <Card style={{ marginTop: DesignTokens.spacing['2.5']}}>
+      <Card style={{ marginTop: DesignTokens.spacing["2.5"] }}>
         <T>Styled Card</T>
       </Card>
     );

@@ -72,7 +72,7 @@ describe("WechatAuthStrategy", () => {
       });
 
       await expect(strategy.exchangeCodeForToken("invalid-code")).rejects.toThrow(
-        UnauthorizedException,
+        UnauthorizedException
       );
     });
 
@@ -84,11 +84,11 @@ describe("WechatAuthStrategy", () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         wechatService as any,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        emptyConfig as any,
+        emptyConfig as any
       );
 
       await expect(emptyStrategy.exchangeCodeForToken("test-code")).rejects.toThrow(
-        UnauthorizedException,
+        UnauthorizedException
       );
     });
   });

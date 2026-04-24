@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -13,25 +12,17 @@ import {
 } from "react-native";
 import { Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi } from "../../../services/api/commerce.api";
 import { useOrderStore } from "../stores/orderStore";
 import type { Order, OrderStatus } from "../../../types";
-import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+import type { ProfileStackParamList } from "../../../navigation/types";
 import { navigateHome } from "../../../navigation/navigationService";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 
-type OrdersNavigation = CompositeScreenProps<
-  NativeStackNavigationProp<ProfileStackParamList>,
-  NativeStackNavigationProp<RootStackParamList>
->["navigation"];
+type OrdersNavigation = NativeStackNavigationProp<ProfileStackParamList>;
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
 
 interface TabConfig {
@@ -54,8 +45,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
-  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
+  processing: { label: "处理中", color: colors.info },
+  shipped: { label: "配送中", color: colors.info },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -129,7 +120,7 @@ export const OrdersScreen: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [activeStatus]
+    [activeStatus, activeTab]
   );
 
   useEffect(() => {
@@ -242,9 +233,10 @@ export const OrdersScreen: React.FC = () => {
             {item.status === "shipped" ? (
               <TouchableOpacity
                 style={styles.primaryButton}
-                onPress={async () => {
-                  await orderEnhancementApi.confirmReceipt(item.id);
-                  await loadOrders(1, "refresh");
+                onPress={() => {
+                  void orderEnhancementApi.confirmReceipt(item.id).then(() => {
+                    void loadOrders(1, "refresh");
+                  });
                 }}
               >
                 <Text style={styles.primaryButtonText}>确认收货</Text>
@@ -254,7 +246,7 @@ export const OrdersScreen: React.FC = () => {
             {item.status === "delivered" ? (
               <TouchableOpacity
                 style={styles.secondaryButton}
-                onPress={() => navigateHome("HomeFeed")}
+                onPress={() => navigateHome("TodayMain")}
               >
                 <Text style={styles.secondaryButtonText}>再次购买</Text>
               </TouchableOpacity>
@@ -263,15 +255,16 @@ export const OrdersScreen: React.FC = () => {
             {item.status === "delivered" || item.status === "cancelled" ? (
               <TouchableOpacity
                 style={styles.dangerTextButton}
-                onPress={async () => {
+                onPress={() => {
                   Alert.alert("删除订单", "确定删除此订单？", [
                     { text: "取消", style: "cancel" },
                     {
                       text: "删除",
                       style: "destructive",
-                      onPress: async () => {
-                        await orderEnhancementApi.softDeleteOrder(item.id);
-                        await loadOrders(1, "refresh");
+                      onPress: () => {
+                        void orderEnhancementApi.softDeleteOrder(item.id).then(() => {
+                          void loadOrders(1, "refresh");
+                        });
                       },
                     },
                   ]);
@@ -292,7 +285,7 @@ export const OrdersScreen: React.FC = () => {
         </View>
       );
     },
-    [handleCancelOrder, navigation]
+    [handleCancelOrder, loadOrders, navigation]
   );
 
   return (
@@ -411,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -437,7 +430,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   tabItemActive: {
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     borderWidth: 1,
     borderColor: colors.primary,
   },
@@ -518,7 +511,7 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 14,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   itemThumbnailFallback: {
     width: 54,
@@ -526,7 +519,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   moreItemsBadge: {
     width: 54,
@@ -548,7 +541,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderTopColor: DesignTokens.colors.backgrounds.tertiary,
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -612,7 +605,7 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.semantic.error",
+    color: colors.error,
   },
 });
 

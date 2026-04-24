@@ -11,11 +11,11 @@
  * - AI_CIRCUIT_BREAKER_VOLUME_THRESHOLD: Minimum requests before calculating threshold (default: 10)
  */
 
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import CircuitBreaker, { Options as CircuitBreakerOptions } from 'opossum';
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import CircuitBreaker, { Options as CircuitBreakerOptions } from "opossum";
 
-export type CircuitBreakerState = 'closed' | 'open' | 'halfOpen';
+export type CircuitBreakerState = "closed" | "open" | "halfOpen";
 
 export interface CircuitBreakerStats {
   name: string;
@@ -28,10 +28,10 @@ export interface CircuitBreakerStats {
   timeouts: number;
   latencyMean: number;
   latencyPercentiles: {
-    '0.5': number;
-    '0.9': number;
-    '0.95': number;
-    '0.99': number;
+    "0.5": number;
+    "0.9": number;
+    "0.95": number;
+    "0.99": number;
   };
 }
 
@@ -62,30 +62,30 @@ export class CircuitBreakerService implements OnModuleInit {
   constructor(private configService: ConfigService) {
     this.config = {
       failureThreshold:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_FAILURE_THRESHOLD') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_FAILURE_THRESHOLD") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.failureThreshold,
       successThreshold:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_SUCCESS_THRESHOLD') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_SUCCESS_THRESHOLD") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.successThreshold,
       timeout:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_TIMEOUT') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_TIMEOUT") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.timeout,
       volumeThreshold:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_VOLUME_THRESHOLD') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_VOLUME_THRESHOLD") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.volumeThreshold,
       errorThresholdPercentage:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.errorThresholdPercentage,
       resetTimeout:
-        this.configService.get<number>('AI_CIRCUIT_BREAKER_RESET_TIMEOUT') ??
+        this.configService.get<number>("AI_CIRCUIT_BREAKER_RESET_TIMEOUT") ??
         DEFAULT_CIRCUIT_BREAKER_CONFIG.resetTimeout,
     };
 
-    this.logger.log('Circuit Breaker Service initialized with config:', this.config);
+    this.logger.log("Circuit Breaker Service initialized with config:", this.config);
   }
 
   onModuleInit() {
-    this.logger.log('Circuit Breaker Service ready');
+    this.logger.log("Circuit Breaker Service ready");
   }
 
   /**
@@ -97,7 +97,7 @@ export class CircuitBreakerService implements OnModuleInit {
   getOrCreate<T, Args extends unknown[]>(
     name: string,
     fn: (...args: Args) => Promise<T>,
-    options?: Partial<CircuitBreakerOptions>,
+    options?: Partial<CircuitBreakerOptions>
   ): CircuitBreaker<Args, T> {
     if (this.breakers.has(name)) {
       return this.breakers.get(name) as CircuitBreaker<Args, T>;
@@ -105,7 +105,8 @@ export class CircuitBreakerService implements OnModuleInit {
 
     const breakerOptions: CircuitBreakerOptions = {
       timeout: options?.timeout ?? this.config.timeout,
-      errorThresholdPercentage: options?.errorThresholdPercentage ?? this.config.errorThresholdPercentage,
+      errorThresholdPercentage:
+        options?.errorThresholdPercentage ?? this.config.errorThresholdPercentage,
       resetTimeout: options?.resetTimeout ?? this.config.resetTimeout,
       volumeThreshold: options?.volumeThreshold ?? this.config.volumeThreshold,
       rollingCountTimeout: 10000,
@@ -115,35 +116,35 @@ export class CircuitBreakerService implements OnModuleInit {
     const breaker = new CircuitBreaker(fn, breakerOptions);
 
     // Event listeners for monitoring
-    breaker.on('open', () => {
+    breaker.on("open", () => {
       this.logger.warn(`Circuit breaker [${name}] opened - service unavailable`);
     });
 
-    breaker.on('halfOpen', () => {
+    breaker.on("halfOpen", () => {
       this.logger.log(`Circuit breaker [${name}] half-open - testing service`);
     });
 
-    breaker.on('close', () => {
+    breaker.on("close", () => {
       this.logger.log(`Circuit breaker [${name}] closed - service restored`);
     });
 
-    breaker.on('fallback', () => {
+    breaker.on("fallback", () => {
       this.logger.debug(`Circuit breaker [${name}] fallback executed`);
     });
 
-    breaker.on('timeout', () => {
+    breaker.on("timeout", () => {
       this.logger.warn(`Circuit breaker [${name}] request timed out`);
     });
 
-    breaker.on('reject', () => {
+    breaker.on("reject", () => {
       this.logger.warn(`Circuit breaker [${name}] request rejected (circuit open)`);
     });
 
-    breaker.on('failure', (error: Error) => {
+    breaker.on("failure", (error: Error) => {
       this.logger.warn(`Circuit breaker [${name}] failure: ${error.message}`);
     });
 
-    breaker.on('success', () => {
+    breaker.on("success", () => {
       this.logger.debug(`Circuit breaker [${name}] success`);
     });
 
@@ -186,7 +187,7 @@ export class CircuitBreakerService implements OnModuleInit {
     const stats = breaker.stats;
     return {
       name,
-      state: this.mapState(breaker.opened ? 'open' : breaker.halfOpen ? 'halfOpen' : 'closed'),
+      state: this.mapState(breaker.opened ? "open" : breaker.halfOpen ? "halfOpen" : "closed"),
       failures: stats.failures,
       successes: stats.successes,
       fallbacks: stats.fallbacks,
@@ -195,10 +196,10 @@ export class CircuitBreakerService implements OnModuleInit {
       timeouts: stats.timeouts,
       latencyMean: stats.latencyMean ?? 0,
       latencyPercentiles: {
-        '0.5': stats.latencyTimes?.['0.5'] ?? 0,
-        '0.9': stats.latencyTimes?.['0.9'] ?? 0,
-        '0.95': stats.latencyTimes?.['0.95'] ?? 0,
-        '0.99': stats.latencyTimes?.['0.99'] ?? 0,
+        "0.5": stats.latencyTimes?.["0.5"] ?? 0,
+        "0.9": stats.latencyTimes?.["0.9"] ?? 0,
+        "0.95": stats.latencyTimes?.["0.95"] ?? 0,
+        "0.99": stats.latencyTimes?.["0.99"] ?? 0,
       },
     };
   }
@@ -281,7 +282,7 @@ export class CircuitBreakerService implements OnModuleInit {
     this.breakers.clear();
   }
 
-  private mapState(state: 'closed' | 'open' | 'halfOpen'): CircuitBreakerState {
+  private mapState(state: "closed" | "open" | "halfOpen"): CircuitBreakerState {
     return state;
   }
 }

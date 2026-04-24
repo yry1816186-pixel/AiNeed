@@ -1,4 +1,5 @@
-﻿import { createWithEqualityFn } from "zustand/traditional";
+/* eslint-disable @typescript-eslint/require-await */
+import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import {
   profileApi,
@@ -57,8 +58,9 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadCompleteness: async () => {
       try {
-        const response: ApiResponse<Completeness> =
-          await apiClient.get<Completeness>("/profile/completeness");
+        const response: ApiResponse<Completeness> = await apiClient.get<Completeness>(
+          "/profile/completeness"
+        );
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
@@ -114,10 +116,10 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         ]);
 
         set({
-          profile: profileRes.success ? (profileRes.data ?? null) : null,
-          completeness: completenessRes.success ? (completenessRes.data ?? null) : null,
-          bodyAnalysis: bodyRes.success ? (bodyRes.data ?? null) : null,
-          colorAnalysis: colorRes.success ? (colorRes.data ?? null) : null,
+          profile: profileRes.success ? profileRes.data ?? null : null,
+          completeness: completenessRes.success ? completenessRes.data ?? null : null,
+          bodyAnalysis: bodyRes.success ? bodyRes.data ?? null : null,
+          colorAnalysis: colorRes.success ? colorRes.data ?? null : null,
           isLoading: false,
         });
       } catch (err) {
@@ -155,7 +157,7 @@ export interface QuizImage {
 interface StyleQuizQuestion {
   id: string;
   text: string;
-  options: Array<{ id: string; text: string; image?: QuizImage }>;
+  options: { id: string; text: string; image?: QuizImage }[];
 }
 
 interface StyleQuizResult {

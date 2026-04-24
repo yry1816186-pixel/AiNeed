@@ -1,15 +1,9 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, NestMiddleware } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
 
-export const SUPPORTED_API_VERSIONS = ['1'];
+export const SUPPORTED_API_VERSIONS = ["1"];
 
-const SKIP_PATHS = [
-  '/api/docs',
-  '/api/docs-json',
-  '/api/docs-yaml',
-  '/health',
-  '/metrics',
-];
+const SKIP_PATHS = ["/api/docs", "/api/docs-json", "/api/docs-yaml", "/health", "/metrics"];
 
 const VERSION_PATTERN = /^\/api\/v(\d+)\//;
 const API_PREFIX_PATTERN = /^\/api\//;
@@ -62,15 +56,15 @@ export class ApiVersionMiddleware implements NestMiddleware {
       const requestedVersion = versionMatch[1]!;
 
       if (!this.supportedVersions.includes(requestedVersion)) {
-        const supportedList = this.supportedVersions.map((v) => `v${v}`).join(', ');
+        const supportedList = this.supportedVersions.map((v) => `v${v}`).join(", ");
         const errorResponse: JsonApiErrorResponse = {
           errors: [
             {
-              status: '400',
-              code: 'UNSUPPORTED_API_VERSION',
-              title: 'Unsupported API Version',
+              status: "400",
+              code: "UNSUPPORTED_API_VERSION",
+              title: "Unsupported API Version",
               detail: `API version 'v${requestedVersion}' is not supported. Supported versions: ${supportedList}`,
-              source: { parameter: 'version' },
+              source: { parameter: "version" },
             },
           ],
         };
@@ -79,7 +73,7 @@ export class ApiVersionMiddleware implements NestMiddleware {
       }
 
       req.apiVersion = requestedVersion;
-      res.setHeader('X-API-Version', `v${requestedVersion}`);
+      res.setHeader("X-API-Version", `v${requestedVersion}`);
       next();
       return;
     }
@@ -87,12 +81,12 @@ export class ApiVersionMiddleware implements NestMiddleware {
     const rewrittenPath = path.replace(/^\/api\//, `/api/v${this.supportedVersions[0]}/`);
     req.url = rewrittenPath;
 
-    const queryStringIndex = req.originalUrl.indexOf('?');
-    const queryString = queryStringIndex !== -1 ? req.originalUrl.substring(queryStringIndex) : '';
+    const queryStringIndex = req.originalUrl.indexOf("?");
+    const queryString = queryStringIndex !== -1 ? req.originalUrl.substring(queryStringIndex) : "";
     req.originalUrl = rewrittenPath + queryString;
 
     req.apiVersion = this.supportedVersions[0];
-    res.setHeader('X-API-Version', `v${this.supportedVersions[0]}`);
+    res.setHeader("X-API-Version", `v${this.supportedVersions[0]}`);
     next();
   }
 }

@@ -2,19 +2,19 @@
 
 ## Backup Schedule
 
-| Schedule | Type | Retention | Target |
-|----------|------|-----------|--------|
-| Daily 02:00 | Full | 30 days | Local + S3 (optional) |
-| Weekly Sunday | Full + Verify | 90 days | S3 |
+| Schedule      | Type          | Retention | Target                |
+| ------------- | ------------- | --------- | --------------------- |
+| Daily 02:00   | Full          | 30 days   | Local + S3 (optional) |
+| Weekly Sunday | Full + Verify | 90 days   | S3                    |
 
 ## Backup Contents
 
-| Data Store | Method | Format | Typical Size |
-|------------|--------|--------|-------------|
-| PostgreSQL 16 | pg_dump + gzip | .sql.gz | ~50-200 MB |
-| Redis 7 | BGSAVE + docker cp | .rdb | ~10-50 MB |
-| MinIO | docker cp + tar.gz | .tar.gz | ~500 MB - 5 GB |
-| Qdrant | docker cp + tar.gz | .tar.gz | ~100-500 MB |
+| Data Store    | Method             | Format  | Typical Size   |
+| ------------- | ------------------ | ------- | -------------- |
+| PostgreSQL 16 | pg_dump + gzip     | .sql.gz | ~50-200 MB     |
+| Redis 7       | BGSAVE + docker cp | .rdb    | ~10-50 MB      |
+| MinIO         | docker cp + tar.gz | .tar.gz | ~500 MB - 5 GB |
+| Qdrant        | docker cp + tar.gz | .tar.gz | ~100-500 MB    |
 
 ---
 
@@ -23,11 +23,13 @@
 ### Full Backup (All Data Stores)
 
 **Windows:**
+
 ```cmd
 scripts\backup\backup.bat --full
 ```
 
 **Linux:**
+
 ```bash
 ./scripts/backup/backup.sh --full
 ```
@@ -47,6 +49,7 @@ scripts\backup\backup.bat --full --upload
 ### Verify Backup Integrity
 
 After backup completes, check:
+
 1. Backup directory exists: `C:\backups\xuno_backup_YYYYMMDD\`
 2. All expected files present: `postgres_*.sql.gz`, `redis_*.rdb`, `minio_*.tar.gz`, `qdrant_*.tar.gz`
 3. File sizes are non-zero
@@ -59,11 +62,13 @@ After backup completes, check:
 ### Full Restore (All Data Stores)
 
 **Linux:**
+
 ```bash
 ./scripts/backup/restore.sh /backups/xuno_backup_YYYYMMDD
 ```
 
 **With Verification:**
+
 ```bash
 ./scripts/backup/restore.sh --verify /backups/xuno_backup_YYYYMMDD
 ```
@@ -136,10 +141,10 @@ After restoring, verify:
 
 ## Disaster Recovery Targets
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| RPO (Recovery Point Objective) | 24 hours | Based on daily backup schedule |
-| RTO (Recovery Time Objective) | 60 minutes | Full restore + verification |
+| Metric                         | Target     | Notes                          |
+| ------------------------------ | ---------- | ------------------------------ |
+| RPO (Recovery Point Objective) | 24 hours   | Based on daily backup schedule |
+| RTO (Recovery Time Objective)  | 60 minutes | Full restore + verification    |
 
 ## Known Limitations
 

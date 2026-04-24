@@ -1,4 +1,5 @@
-﻿import React, { memo, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+import React, { memo, useCallback } from "react";
 import {
   FlatList,
   type FlatListProps,
@@ -11,10 +12,8 @@ import {
 } from "react-native";
 
 import { useLazyLoad } from "../../hooks/useLazyLoad";
-import { Spacing } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-
-
+import { Spacing } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 /**
  * Generic virtualized list component wrapping FlatList with

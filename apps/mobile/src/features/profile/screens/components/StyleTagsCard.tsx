@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { colors } from "@/src/theme/tokens/colors";
 import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { shadows } from "@/src/design-system/theme/tokens/shadows";
-import { TagCloud } from "../../../components/charts/TagCloud";
-import { PercentageBar } from "../../../components/charts/PercentageBar";
+import { TagCloud } from "../../../../shared/components/charts/TagCloud";
+import { PercentageBar } from "../../../../shared/components/charts/PercentageBar";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface StylePreferences {

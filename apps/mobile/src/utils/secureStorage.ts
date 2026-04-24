@@ -10,8 +10,9 @@ export let isInsecureFallback = false;
 const initSecureStore = (): void => {
   if (Platform.OS !== "web") {
     try {
-      SecureStore = require("react-native-encrypted-storage").default;
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+      SecureStore = require("react-native-encrypted-storage").default as typeof EncryptedStorage;
+    } catch {
       isInsecureFallback = true;
       console.error(
         "[SECURITY] react-native-encrypted-storage not available. " +
@@ -96,7 +97,7 @@ export const offlineStorage = {
   async getQueue(): Promise<OfflineRequest[]> {
     try {
       const data = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-      return data ? JSON.parse(data) : [];
+      return data ? (JSON.parse(data) as OfflineRequest[]) : [];
     } catch {
       return [];
     }
@@ -139,12 +140,12 @@ export const offlineStorage = {
         return null;
       }
 
-      const entry = JSON.parse(data);
+      const entry = JSON.parse(data) as { data: T; timestamp: number; ttl: number };
       if (Date.now() - entry.timestamp > entry.ttl) {
         await AsyncStorage.removeItem(`${OFFLINE_DATA_PREFIX}${key}`);
         return null;
       }
-      return entry.data as T;
+      return entry.data;
     } catch {
       return null;
     }

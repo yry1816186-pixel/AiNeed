@@ -1,6 +1,7 @@
-import apiClient from '../../../services/api/client';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import apiClient from "../../../services/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { compressImage } from '../../../utils/imageCompressor';
+import { compressImage } from "../../../utils/imageCompressor";
 import {
   type ApiResponse,
   type PaginatedResponse,
@@ -9,9 +10,9 @@ import {
   type OrderStatus,
   type Address,
   type SearchFilters,
-} from '../../../types/api';
-import type { ClothingItem } from '../../../types/clothing';
-import type { FormDataValue } from '../../../types';
+} from "../../../types/api";
+import type { ClothingItem } from "../../../types/clothing";
+import type { FormDataValue } from "../../../types";
 
 interface BackendBrand {
   id?: string;
@@ -304,7 +305,7 @@ async function loadLocalSearchHistory(): Promise<string[]> {
       ? parsed.filter((entry): entry is string => typeof entry === "string")
       : [];
   } catch (error) {
-    console.error('Commerce API request failed:', error);
+    console.error("Commerce API request failed:", error);
     return [];
   }
 }

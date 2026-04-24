@@ -3,18 +3,16 @@ import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 import type {
   AuthStackParamList,
-  HomeStackParamList,
+  TodayStackParamList,
+  DiscoverStackParamList,
   StylistStackParamList,
-  TryOnStackParamList,
-  CommunityStackParamList,
   ProfileStackParamList,
   MainTabParamList as ActualMainTabParamList,
   RootStackParamList as ActualRootStackParamList,
   AuthStackScreenProps as ActualAuthStackScreenProps,
-  HomeStackScreenProps as ActualHomeStackScreenProps,
+  TodayStackScreenProps as ActualTodayStackScreenProps,
+  DiscoverStackScreenProps as ActualDiscoverStackScreenProps,
   StylistStackScreenProps as ActualStylistStackScreenProps,
-  TryOnStackScreenProps as ActualTryOnStackScreenProps,
-  CommunityStackScreenProps as ActualCommunityStackScreenProps,
   ProfileStackScreenProps as ActualProfileStackScreenProps,
   CompositeScreenProps as ActualCompositeScreenProps,
 } from "../navigation/types";
@@ -40,17 +38,15 @@ export type MainTabScreenProps<T extends keyof MainTabParamList> = BottomTabScre
 
 export type AuthStackScreenProps<T extends keyof AuthStackParamList = keyof AuthStackParamList> =
   ActualAuthStackScreenProps<T>;
-export type HomeStackScreenProps<T extends keyof HomeStackParamList = keyof HomeStackParamList> =
-  ActualHomeStackScreenProps<T>;
+export type TodayStackScreenProps<T extends keyof TodayStackParamList = keyof TodayStackParamList> =
+  ActualTodayStackScreenProps<T>;
+export type DiscoverStackScreenProps<
+  T extends keyof DiscoverStackParamList = keyof DiscoverStackParamList
+> = ActualDiscoverStackScreenProps<T>;
 export type StylistStackScreenProps<
-  T extends keyof StylistStackParamList = keyof StylistStackParamList,
+  T extends keyof StylistStackParamList = keyof StylistStackParamList
 > = ActualStylistStackScreenProps<T>;
-export type TryOnStackScreenProps<T extends keyof TryOnStackParamList = keyof TryOnStackParamList> =
-  ActualTryOnStackScreenProps<T>;
-export type CommunityStackScreenProps<
-  T extends keyof CommunityStackParamList = keyof CommunityStackParamList,
-> = ActualCommunityStackScreenProps<T>;
 export type ProfileStackScreenProps<
-  T extends keyof ProfileStackParamList = keyof ProfileStackParamList,
+  T extends keyof ProfileStackParamList = keyof ProfileStackParamList
 > = ActualProfileStackScreenProps<T>;
 export type CompositeScreenProps = ActualCompositeScreenProps;

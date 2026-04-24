@@ -1,14 +1,10 @@
-﻿import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Image,
   ImageProps,
-  ImageStyle,
   View,
   ViewStyle,
-  StyleSheet,
   ActivityIndicator,
-  Dimensions,
-  Platform,
   StyleProp,
   NativeSyntheticEvent,
   ImageErrorEventData,
@@ -17,10 +13,7 @@ import {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { flatColors as colors } from "../design-system/theme";
 import { useTheme, createStyles } from "../shared/contexts/ThemeContext";
-
-const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 interface CacheEntry {
   uri: string;
@@ -68,7 +61,7 @@ class ImageCacheManager {
       const info = await FileSystem.getInfoAsync(indexFile);
       if (info.exists) {
         const content = await FileSystem.readAsStringAsync(indexFile);
-        const data = JSON.parse(content);
+        const data: Record<string, CacheEntry> = JSON.parse(content) as Record<string, CacheEntry>;
         this.cache = new Map(Object.entries(data));
       }
     } catch (error) {
@@ -86,7 +79,7 @@ class ImageCacheManager {
     }
   }
 
-  private async getCacheKey(uri: string): Promise<string> {
+  private getCacheKey(uri: string): string {
     let hash = 0;
     for (let i = 0; i < uri.length; i++) {
       const char = uri.charCodeAt(i);
@@ -97,7 +90,6 @@ class ImageCacheManager {
   }
 
   private async cleanOldCache() {
-    const _now = Date.now();
     const entries = Array.from(this.cache.entries());
     let totalSize = 0;
 
@@ -127,7 +119,7 @@ class ImageCacheManager {
   }
 
   async getCachedImage(uri: string): Promise<string | null> {
-    const key = await this.getCacheKey(uri);
+    const key = this.getCacheKey(uri);
     const entry = this.cache.get(key);
 
     if (entry) {
@@ -135,7 +127,7 @@ class ImageCacheManager {
         this.cache.delete(key);
         try {
           await FileSystem.deleteAsync(entry.localPath, { idempotent: true });
-        } catch (error) {
+        } catch {
           // ignore
         }
         return null;
@@ -154,7 +146,7 @@ class ImageCacheManager {
   }
 
   async downloadAndCache(uri: string): Promise<string> {
-    const key = await this.getCacheKey(uri);
+    const key = this.getCacheKey(uri);
 
     const pending = this.pendingDownloads.get(key);
     if (pending) {
@@ -170,7 +162,7 @@ class ImageCacheManager {
 
         const localPath = `${this.CACHE_DIR}${key}.jpg`;
 
-        const _downloadResult = await FileSystem.downloadAsync(uri, localPath);
+        await FileSystem.downloadAsync(uri, localPath);
 
         const info = (await FileSystem.getInfoAsync(localPath)) as unknown as {
           size: number;
@@ -252,7 +244,7 @@ export const CachedImage = ({
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [_progress, setProgress] = useState(0);
+  const [, setProgress] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const isMounted = useRef(true);
 
@@ -319,6 +311,7 @@ export const CachedImage = ({
     };
 
     void loadImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source?.uri, cachePolicy]);
 
   const handleLoad = useCallback(

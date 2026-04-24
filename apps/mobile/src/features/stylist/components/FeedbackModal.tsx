@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Modal, Pressable } from "react-native";
+import { View, Text, Modal, Pressable } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";

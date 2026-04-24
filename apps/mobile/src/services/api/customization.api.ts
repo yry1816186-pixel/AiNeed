@@ -1,4 +1,5 @@
-﻿import apiClient from "./client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import apiClient from "./client";
 import type { ApiResponse, PaginatedResponse } from "../../types/api";
 import type { FormDataValue } from "../../types";
 import type {

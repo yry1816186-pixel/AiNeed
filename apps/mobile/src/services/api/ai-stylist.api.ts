@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import apiClient from "./client";
 import type { ApiResponse } from "../../types/api";
 import { compressImage } from "../../utils/imageCompressor";
@@ -113,7 +114,36 @@ export interface AiStylistSuggestionResponse {
   suggestions: { text: string; icon: string }[];
 }
 
+export interface DialogChatResponse {
+  reply: string;
+  outfits?: unknown[];
+  quickReplies: string[];
+  state: string;
+  slots: {
+    occasion?: string;
+    bodyType?: string;
+    stylePreference?: string[];
+    budget?: { min: number; max: number };
+  };
+}
+
 export const aiStylistApi = {
+  // --- Dialog State Machine API ---
+
+  createDialogSession: (): Promise<ApiResponse<{ sessionId: string }>> =>
+    apiClient.post<{ sessionId: string }>("/ai-stylist/dialog/session", {}),
+
+  dialogChat: (sessionId: string, message: string): Promise<ApiResponse<DialogChatResponse>> =>
+    apiClient.post<DialogChatResponse>("/ai-stylist/dialog/chat", {
+      sessionId,
+      message,
+    }),
+
+  endDialogSession: (sessionId: string): Promise<ApiResponse<void>> =>
+    apiClient.delete(`/ai-stylist/dialog/session/${sessionId}`),
+
+  // --- Session-Based API (legacy, still used for outfit plan) ---
+
   createSession: (payload?: {
     entry?: string;
     goal?: string;

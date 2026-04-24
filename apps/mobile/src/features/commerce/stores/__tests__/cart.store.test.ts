@@ -1,5 +1,7 @@
 import { useCartStore } from "../cart.store";
 
+import { cartApi } from "../../../../services/api/commerce.api";
+
 jest.mock("../../../../services/api/commerce.api", () => ({
   cartApi: {
     get: jest.fn(),
@@ -11,8 +13,6 @@ jest.mock("../../../../services/api/commerce.api", () => ({
     getTotal: jest.fn(),
   },
 }));
-
-import { cartApi } from "../../../../services/api/commerce.api";
 
 const mockCartApi = cartApi as jest.Mocked<typeof cartApi>;
 

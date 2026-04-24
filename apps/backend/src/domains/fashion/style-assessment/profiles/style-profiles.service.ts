@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  ForbiddenException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, ForbiddenException } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { BehaviorTrackerService } from "../../../../domains/platform/analytics/services/behavior-tracker.service";
@@ -14,10 +9,7 @@ import { CreateStyleProfileDto, UpdateStyleProfileDto } from "./dto";
 export class StyleProfilesService {
   private readonly logger = new Logger(StyleProfilesService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private behaviorTracker: BehaviorTrackerService,
-  ) {}
+  constructor(private prisma: PrismaService, private behaviorTracker: BehaviorTrackerService) {}
 
   async findAll(userId: string) {
     return this.prisma.styleProfile.findMany({
@@ -77,11 +69,7 @@ export class StyleProfilesService {
     // Enrich with behavior-derived insights when keywords or palette are being updated
     let updateData = { ...dto };
     if (dto.keywords || dto.palette) {
-      const enriched = await this.enrichFromBehavior(
-        userId,
-        dto.keywords,
-        dto.palette,
-      );
+      const enriched = await this.enrichFromBehavior(userId, dto.keywords, dto.palette);
       updateData = {
         ...dto,
         keywords: enriched.keywords,
@@ -135,7 +123,7 @@ export class StyleProfilesService {
   private async enrichFromBehavior(
     userId: string,
     userKeywords?: string[],
-    userPalette?: string[],
+    userPalette?: string[]
   ): Promise<{ keywords: string[]; palette: string[]; confidence?: number }> {
     try {
       const behaviorProfile = await this.behaviorTracker.getUserBehaviorProfile(userId);
@@ -153,15 +141,13 @@ export class StyleProfilesService {
         .map((c) => c.key);
 
       // Merge user-provided with behavior-derived, deduplicate
-      const mergedKeywords = [
-        ...(userKeywords || []),
-        ...behaviorStyleKeywords,
-      ].filter((value, index, array) => array.indexOf(value) === index).slice(0, 10);
+      const mergedKeywords = [...(userKeywords || []), ...behaviorStyleKeywords]
+        .filter((value, index, array) => array.indexOf(value) === index)
+        .slice(0, 10);
 
-      const mergedPalette = [
-        ...(userPalette || []),
-        ...behaviorColorKeywords,
-      ].filter((value, index, array) => array.indexOf(value) === index).slice(0, 8);
+      const mergedPalette = [...(userPalette || []), ...behaviorColorKeywords]
+        .filter((value, index, array) => array.indexOf(value) === index)
+        .slice(0, 8);
 
       // Boost confidence when behavior data provides strong signals
       const hasBehaviorSignals =
@@ -171,13 +157,15 @@ export class StyleProfilesService {
         : undefined;
 
       return {
-        keywords: mergedKeywords.length > 0 ? mergedKeywords : (userKeywords || []),
-        palette: mergedPalette.length > 0 ? mergedPalette : (userPalette || []),
+        keywords: mergedKeywords.length > 0 ? mergedKeywords : userKeywords || [],
+        palette: mergedPalette.length > 0 ? mergedPalette : userPalette || [],
         confidence: behaviorConfidence,
       };
     } catch (error) {
       this.logger.warn(
-        `Behavior enrichment failed, using original values: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Behavior enrichment failed, using original values: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
       );
       return {
         keywords: userKeywords || [],

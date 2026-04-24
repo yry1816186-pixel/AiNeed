@@ -4,11 +4,11 @@
 
 ## 快速配置清单
 
-| 服务 | 环境变量 | 用途 | 必需性 | 获取地址 |
-|------|----------|------|--------|----------|
-| GLM API | `GLM_API_KEY` | AI 造型师、风格分析 | **必需** | https://open.bigmodel.cn/ |
-| Kolors API | `KOLORS_API_KEY` | 虚拟试衣 | 推荐 | https://kolors.kuaishou.com/ |
-| OpenAI API | `OPENAI_API_KEY` | 备选 LLM | 可选 | https://platform.openai.com/ |
+| 服务       | 环境变量         | 用途                | 必需性   | 获取地址                     |
+| ---------- | ---------------- | ------------------- | -------- | ---------------------------- |
+| GLM API    | `GLM_API_KEY`    | AI 造型师、风格分析 | **必需** | https://open.bigmodel.cn/    |
+| Kolors API | `KOLORS_API_KEY` | 虚拟试衣            | 推荐     | https://kolors.kuaishou.com/ |
+| OpenAI API | `OPENAI_API_KEY` | 备选 LLM            | 可选     | https://platform.openai.com/ |
 
 ---
 
@@ -60,11 +60,11 @@ source ~/.bashrc
 
 ### 模型选择
 
-| 模型 | 特点 | 价格 | 推荐场景 |
-|------|------|------|----------|
-| `glm-5` | 快速响应 | 最低 | 日常对话、风格分析 |
-| `glm-4` | 综合能力 | 中等 | 复杂推理 |
-| `glm-4-plus` | 最强能力 | 最高 | 专业场景 |
+| 模型         | 特点     | 价格 | 推荐场景           |
+| ------------ | -------- | ---- | ------------------ |
+| `glm-5`      | 快速响应 | 最低 | 日常对话、风格分析 |
+| `glm-4`      | 综合能力 | 中等 | 复杂推理           |
+| `glm-4-plus` | 最强能力 | 最高 | 专业场景           |
 
 ### 验证配置
 
@@ -88,6 +88,7 @@ curl -X POST http://localhost:3001/api/v1/style/analyze \
 快手 Kolors 是国内领先的虚拟试衣服务。
 
 **获取 API Key：**
+
 1. 访问 [Kolors 开放平台](https://kolors.kuaishou.com/)
 2. 申请 API 接入权限
 3. 获取 API Key
@@ -106,6 +107,7 @@ KOLORS_TIMEOUT=60000
 Replicate 提供多种虚拟试衣模型。
 
 **获取 API Key：**
+
 1. 访问 [Replicate](https://replicate.com/)
 2. 注册账号
 3. 获取 API Token
@@ -122,6 +124,7 @@ REPLICATE_API_TOKEN=your-replicate-token
 专业的虚拟试衣 API 服务。
 
 **获取 API Key：**
+
 1. 访问 [Fashn](https://fashn.ai/)
 2. 注册并获取 API Key
 
@@ -201,6 +204,7 @@ optional.forEach(k => console.log(k + ': ' + (process.env[k] ? '✅ 已配置' :
 **原因：** API Key 无效或已过期
 
 **解决：**
+
 1. 检查 API Key 是否正确配置
 2. 登录智谱开放平台确认 Key 状态
 3. 如有必要，重新生成 API Key
@@ -210,6 +214,7 @@ optional.forEach(k => console.log(k + ': ' + (process.env[k] ? '✅ 已配置' :
 **原因：** 云端 API 响应较慢
 
 **解决：**
+
 1. 增加 `KOLORS_TIMEOUT` 值（默认 60 秒）
 2. 检查网络连接
 3. 确认图片 URL 可公开访问
@@ -225,23 +230,23 @@ optional.forEach(k => console.log(k + ': ' + (process.env[k] ? '✅ 已配置' :
 
 ### GLM API 定价（参考）
 
-| 模型 | 输入价格 | 输出价格 |
-|------|----------|----------|
-| glm-5 | ¥0.001/千tokens | ¥0.001/千tokens |
-| glm-4 | ¥0.01/千tokens | ¥0.01/千tokens |
+| 模型  | 输入价格         | 输出价格         |
+| ----- | ---------------- | ---------------- |
+| glm-5 | ¥0.001/千 tokens | ¥0.001/千 tokens |
+| glm-4 | ¥0.01/千 tokens  | ¥0.01/千 tokens  |
 
 **预估：** 每日 1000 次对话约 ¥2-5
 
 ### 虚拟试衣 API 定价（参考）
 
-| 服务商 | 单次价格 | 备注 |
-|--------|----------|------|
-| Kolors | ¥0.1-0.5/次 | 按图片复杂度 |
-| Replicate | $0.01-0.05/次 | 按模型选择 |
-| Fashn | $0.02-0.1/次 | 按分辨率 |
+| 服务商    | 单次价格      | 备注         |
+| --------- | ------------- | ------------ |
+| Kolors    | ¥0.1-0.5/次   | 按图片复杂度 |
+| Replicate | $0.01-0.05/次 | 按模型选择   |
+| Fashn     | $0.02-0.1/次  | 按分辨率     |
 
 **预估：** 每日 100 次试衣约 ¥10-50
 
 ---
 
-*最后更新：2026-03-20*
+_最后更新：2026-03-20_

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,

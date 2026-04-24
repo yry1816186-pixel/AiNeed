@@ -5,9 +5,9 @@ import {
   Inject,
   OnModuleInit,
   OnModuleDestroy,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -17,14 +17,19 @@ import {
   OnGatewayInit,
   ConnectedSocket,
   MessageBody,
-} from '@nestjs/websockets';
-import Redis from 'ioredis';
-import { Server, Socket } from 'socket.io';
+} from "@nestjs/websockets";
+import Redis from "ioredis";
+import { Server, Socket } from "socket.io";
 
-import { REDIS_CLIENT } from '../../common/redis/redis.service';
-import { TokenBlacklistService } from '../../domains/identity/auth/services/token-blacklist.service';
+import { REDIS_CLIENT } from "../../common/redis/redis.service";
+import { TokenBlacklistService } from "../../domains/identity/auth/services/token-blacklist.service";
 
-export type AITaskEventType = 'task_created' | 'task_progress' | 'task_completed' | 'task_failed' | 'task_cancelled';
+export type AITaskEventType =
+  | "task_created"
+  | "task_progress"
+  | "task_completed"
+  | "task_failed"
+  | "task_cancelled";
 
 export interface AITaskData {
   jobId: string;
@@ -71,7 +76,7 @@ export interface TaskFailedPayload {
 
 export interface TaskStatus {
   jobId: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   progress: number;
   stage: string;
   message?: string;
@@ -116,11 +121,13 @@ interface TaskFailedRedisPayload {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',').filter(Boolean) || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+    origin:
+      process.env.CORS_ORIGINS?.split(",").filter(Boolean) ||
+      (process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000"]),
     credentials: true,
   },
-  namespace: '/ws/ai',
-  transports: ['websocket', 'polling'],
+  namespace: "/ws/ai",
+  transports: ["websocket", "polling"],
 })
 @UsePipes(new ValidationPipe())
 export class AIWebSocketGateway
@@ -143,23 +150,23 @@ export class AIWebSocketGateway
     private configService: ConfigService,
     private jwtService: JwtService,
     @Inject(REDIS_CLIENT) private redis: Redis,
-    private tokenBlacklistService: TokenBlacklistService,
+    private tokenBlacklistService: TokenBlacklistService
   ) {
     this.subscriber = new Redis(
-      this.configService.get<string>('REDIS_URL', 'redis://localhost:6379'),
+      this.configService.get<string>("REDIS_URL", "redis://localhost:6379")
     );
   }
 
   async onModuleInit() {
-    await this.subscriber.subscribe('ws:notify', 'task:progress', 'task:completed', 'task:failed');
+    await this.subscriber.subscribe("ws:notify", "task:progress", "task:completed", "task:failed");
 
-    this.subscriber.on('message', (channel, message) => {
+    this.subscriber.on("message", (channel, message) => {
       this.handleRedisMessage(channel, message);
     });
 
     this.startHeartbeatCheck();
 
-    this.logger.log('AI WebSocket gateway initialized');
+    this.logger.log("AI WebSocket gateway initialized");
   }
 
   async onModuleDestroy() {
@@ -168,11 +175,11 @@ export class AIWebSocketGateway
     }
     await this.subscriber.quit();
     this.connections.clear();
-    this.logger.log('AI WebSocket gateway destroyed');
+    this.logger.log("AI WebSocket gateway destroyed");
   }
 
   afterInit(server: Server) {
-    this.logger.log('AI WebSocket server initialized');
+    this.logger.log("AI WebSocket server initialized");
   }
 
   async handleConnection(client: Socket) {
@@ -180,7 +187,7 @@ export class AIWebSocketGateway
       const userId = await this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Client ${client.id} rejected: no valid token`);
-        client.emit('error', { message: 'Authentication required' });
+        client.emit("error", { message: "Authentication required" });
         client.disconnect();
         return;
       }
@@ -203,15 +210,15 @@ export class AIWebSocketGateway
 
       this.logger.log(`Client ${client.id} connected for user ${userId}`);
 
-      client.emit('connected', {
-        message: 'Connected to AI task updates',
+      client.emit("connected", {
+        message: "Connected to AI task updates",
         userId,
         timestamp: new Date().toISOString(),
       });
 
       await this.sendPendingTaskUpdates(client, userId);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Connection error: ${message}`);
       client.disconnect();
     }
@@ -237,25 +244,25 @@ export class AIWebSocketGateway
     }
   }
 
-  @SubscribeMessage('heartbeat')
+  @SubscribeMessage("heartbeat")
   handleHeartbeat(@ConnectedSocket() client: Socket) {
     const connection = this.connections.get(client.id);
     if (connection) {
       connection.lastHeartbeat = new Date();
-      client.emit('heartbeat_ack', { timestamp: Date.now() });
+      client.emit("heartbeat_ack", { timestamp: Date.now() });
     }
   }
 
-  @SubscribeMessage('subscribe_task')
+  @SubscribeMessage("subscribe_task")
   async handleSubscribeTask(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { jobId: string },
+    @MessageBody() data: { jobId: string }
   ) {
     const { jobId } = data;
     const connection = this.connections.get(client.id);
 
     if (!connection) {
-      return { error: 'Not connected' };
+      return { error: "Not connected" };
     }
 
     await client.join(`task:${jobId}`);
@@ -264,22 +271,22 @@ export class AIWebSocketGateway
 
     const taskStatus = await this.getTaskStatus(jobId);
     if (taskStatus) {
-      client.emit('task_status', taskStatus);
+      client.emit("task_status", taskStatus);
     }
 
     return { subscribed: true, jobId };
   }
 
-  @SubscribeMessage('unsubscribe_task')
+  @SubscribeMessage("unsubscribe_task")
   async handleUnsubscribeTask(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { jobId: string },
+    @MessageBody() data: { jobId: string }
   ) {
     await client.leave(`task:${data.jobId}`);
     return { unsubscribed: true, jobId: data.jobId };
   }
 
-  @SubscribeMessage('get_online_count')
+  @SubscribeMessage("get_online_count")
   handleGetOnlineCount(@ConnectedSocket() client: Socket) {
     return {
       onlineUsers: this.userSockets.size,
@@ -290,9 +297,9 @@ export class AIWebSocketGateway
   async sendTaskUpdate(userId: string, event: AITaskEvent): Promise<boolean> {
     const room = `user:${userId}`;
 
-    this.server.to(room).emit('task_update', event);
+    this.server.to(room).emit("task_update", event);
 
-    this.server.to(`task:${event.jobId}`).emit('task_update', event);
+    this.server.to(`task:${event.jobId}`).emit("task_update", event);
 
     this.logger.debug(`Task update sent to user ${userId}: ${event.type} - ${event.jobId}`);
 
@@ -302,12 +309,12 @@ export class AIWebSocketGateway
   async sendProgressUpdate(userId: string, payload: TaskProgressPayload): Promise<void> {
     const room = `user:${userId}`;
 
-    this.server.to(room).emit('task_progress', {
+    this.server.to(room).emit("task_progress", {
       ...payload,
       timestamp: new Date().toISOString(),
     });
 
-    this.server.to(`task:${payload.jobId}`).emit('task_progress', {
+    this.server.to(`task:${payload.jobId}`).emit("task_progress", {
       ...payload,
       timestamp: new Date().toISOString(),
     });
@@ -317,15 +324,15 @@ export class AIWebSocketGateway
     const room = `user:${userId}`;
 
     const event: AITaskEvent = {
-      type: 'task_completed',
+      type: "task_completed",
       jobId: payload.jobId,
       userId,
       data: payload,
       timestamp: new Date().toISOString(),
     };
 
-    this.server.to(room).emit('task_completed', event);
-    this.server.to(`task:${payload.jobId}`).emit('task_completed', event);
+    this.server.to(room).emit("task_completed", event);
+    this.server.to(`task:${payload.jobId}`).emit("task_completed", event);
 
     this.logger.log(`Task completed notification sent: ${payload.jobId}`);
   }
@@ -334,15 +341,15 @@ export class AIWebSocketGateway
     const room = `user:${userId}`;
 
     const event: AITaskEvent = {
-      type: 'task_failed',
+      type: "task_failed",
       jobId: payload.jobId,
       userId,
       data: payload,
       timestamp: new Date().toISOString(),
     };
 
-    this.server.to(room).emit('task_failed', event);
-    this.server.to(`task:${payload.jobId}`).emit('task_failed', event);
+    this.server.to(room).emit("task_failed", event);
+    this.server.to(`task:${payload.jobId}`).emit("task_failed", event);
 
     this.logger.warn(`Task failed notification sent: ${payload.jobId} - ${payload.error}`);
   }
@@ -360,7 +367,9 @@ export class AIWebSocketGateway
 
     const token = auth?.token;
     if (!token) {
-      this.logger.warn(`Client ${client.id} rejected: token must be provided in auth object, not query parameters`);
+      this.logger.warn(
+        `Client ${client.id} rejected: token must be provided in auth object, not query parameters`
+      );
       return null;
     }
 
@@ -369,9 +378,9 @@ export class AIWebSocketGateway
 
   private async validateToken(token: string): Promise<string | null> {
     try {
-      const jwtSecret = this.configService.get<string>('JWT_SECRET');
+      const jwtSecret = this.configService.get<string>("JWT_SECRET");
       if (!jwtSecret) {
-        this.logger.error('JWT_SECRET is not configured');
+        this.logger.error("JWT_SECRET is not configured");
         return null;
       }
 
@@ -392,7 +401,7 @@ export class AIWebSocketGateway
 
       return userId || null;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.debug(`Token validation failed: ${message}`);
       return null;
     }
@@ -403,21 +412,21 @@ export class AIWebSocketGateway
       const data = JSON.parse(message);
 
       switch (channel) {
-        case 'ws:notify':
+        case "ws:notify":
           this.handleWSNotify(data as WSNotifyPayload);
           break;
-        case 'task:progress':
+        case "task:progress":
           this.handleTaskProgress(data as TaskProgressRedisPayload);
           break;
-        case 'task:completed':
+        case "task:completed":
           this.handleTaskCompleted(data as TaskCompletedRedisPayload);
           break;
-        case 'task:failed':
+        case "task:failed":
           this.handleTaskFailed(data as TaskFailedRedisPayload);
           break;
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Error handling Redis message: ${errorMessage}`);
     }
   }
@@ -464,7 +473,9 @@ export class AIWebSocketGateway
   private async getTaskStatus(jobId: string): Promise<TaskStatus | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    if (!data) {return null;}
+    if (!data) {
+      return null;
+    }
     try {
       return JSON.parse(data) as TaskStatus;
     } catch {
@@ -479,12 +490,12 @@ export class AIWebSocketGateway
 
       for (const jobId of jobIds) {
         const jobStatus = await this.getTaskStatus(jobId);
-        if (jobStatus && (jobStatus.status === 'pending' || jobStatus.status === 'processing')) {
-          client.emit('task_status', jobStatus);
+        if (jobStatus && (jobStatus.status === "pending" || jobStatus.status === "processing")) {
+          client.emit("task_status", jobStatus);
         }
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Error sending pending updates: ${message}`);
     }
   }

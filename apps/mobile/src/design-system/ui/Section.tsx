@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, ViewStyle } from "react-native";
 import { Colors, Spacing, Typography } from "../../design-system/theme";
 import { flatColors as colors } from "../theme";

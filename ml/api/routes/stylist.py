@@ -84,15 +84,17 @@ def _to_scene_context(ctx: StylistSceneContext) -> SceneContext:
     )
 
 
-async def _run_chat_task(task_id: str, service, message: str, history: List[Dict], user_profile):
+async def _run_chat_task(task_id: str, service, message: str, history: List[Dict], user_profile, session_id: str):
     try:
         update_task(task_id, "processing")
-        reply = await service.chat_interaction(
+        result = await service.chat_interaction(
             user_message=message,
             conversation_history=history,
             user_profile=user_profile,
+            session_id=session_id,
+            use_state_machine=True,
         )
-        update_task(task_id, "completed", result=reply)
+        update_task(task_id, "completed", result=result)
         logger.info("stylist chat completed", extra={"service": "stylist", "task_id": task_id})
     except Exception as e:
         update_task(task_id, "failed", error=str(e))
@@ -135,7 +137,7 @@ async def stylist_chat(request: StylistChatRequest) -> Dict[str, Any]:
         create_task(task_id)
 
         asyncio.create_task(
-            _run_chat_task(task_id, service, request.message, history, user_profile)
+            _run_chat_task(task_id, service, request.message, history, user_profile, request.session_id)
         )
 
         logger.info("stylist chat started", extra={"service": "stylist", "endpoint": "chat", "task_id": task_id})
@@ -242,6 +244,7 @@ async def clear_conversation(session_id: str) -> Dict[str, Any]:
     service = await _get_stylist_service()
     try:
         await service.clear_conversation(session_id)
+        await service.clear_dialog_context(session_id)
         return {
             "session_id": session_id,
             "cleared": True,

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -11,18 +10,16 @@ import {
   RefreshControl,
   FlatList,
   Dimensions,
+  type ImageStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 import { communityApi, type CommunityPost } from "../../../services/api/community.api";
-import type { CommunityStackParamList } from "../../../navigation/types";
+import type { CommunityStackParamList, DiscoverStackParamList } from "../../../navigation/types";
 
 type InfluencerProfileRoute = RouteProp<CommunityStackParamList, "InfluencerProfile">;
 
@@ -32,7 +29,7 @@ const CARD_GAP = 10;
 const CARD_WIDTH = (SCREEN_WIDTH - 32 - CARD_GAP) / NUM_COLUMNS;
 
 export const InfluencerProfileScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<DiscoverStackParamList>>();
   const route = useRoute<InfluencerProfileRoute>();
   const influencerId = route.params?.influencerId;
 
@@ -132,7 +129,11 @@ export const InfluencerProfileScreen: React.FC = () => {
         activeOpacity={0.85}
       >
         {item.images[0] ? (
-          <Image source={{ uri: item.images[0] }} style={s.postImage} resizeMode="cover" />
+          <Image
+            source={{ uri: item.images[0] }}
+            style={s.postImage as ImageStyle}
+            resizeMode="cover"
+          />
         ) : (
           <View style={s.postImagePlaceholder}>
             <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
@@ -182,7 +183,12 @@ export const InfluencerProfileScreen: React.FC = () => {
         <View style={s.centerContent}>
           <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
-          <TouchableOpacity style={s.retryBtn} onPress={fetchData}>
+          <TouchableOpacity
+            style={s.retryBtn}
+            onPress={() => {
+              void fetchData();
+            }}
+          >
             <Text style={s.retryBtnText}>Retry</Text>
           </TouchableOpacity>
         </View>
@@ -207,7 +213,9 @@ export const InfluencerProfileScreen: React.FC = () => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={() => {
+              void handleRefresh();
+            }}
             tintColor={colors.primary}
           />
         }
@@ -216,7 +224,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         <View style={s.profileSection}>
           <View style={s.avatarRow}>
             {profile?.avatar ? (
-              <Image source={{ uri: profile.avatar }} style={s.avatar} />
+              <Image source={{ uri: profile.avatar }} style={s.avatar as ImageStyle} />
             ) : (
               <View style={s.avatarPlaceholder}>
                 <Ionicons name="person" size={28} color={colors.surface} />
@@ -251,13 +259,15 @@ export const InfluencerProfileScreen: React.FC = () => {
 
           <TouchableOpacity
             style={[s.followBtn, profile?.isFollowing && s.followingBtn]}
-            onPress={handleFollowToggle}
+            onPress={() => {
+              void handleFollowToggle();
+            }}
             disabled={followLoading}
           >
             {followLoading ? (
               <ActivityIndicator
                 size="small"
-                color={profile?.isFollowing ? colors.text : colors.surface}
+                color={profile?.isFollowing ? colors.textPrimary : colors.surface}
               />
             ) : (
               <Text style={[s.followBtnText, profile?.isFollowing && s.followingBtnText]}>
@@ -327,7 +337,7 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -363,7 +373,11 @@ const s = StyleSheet.create({
   },
   statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
   statItem: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  statNumber: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   statLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
@@ -410,7 +424,7 @@ const s = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-  followingBtnText: { color: colors.text },
+  followingBtnText: { color: colors.textPrimary },
   tabBar: {
     flexDirection: "row",
     backgroundColor: colors.surface,

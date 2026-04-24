@@ -1,5 +1,5 @@
-import apiClient from '../../../services/api/client';
-import type { ApiResponse, PaginatedResponse } from '../../../types';
+import apiClient from "../../../services/api/client";
+import type { ApiResponse, PaginatedResponse } from "../../../types";
 
 export type BloggerProductType = "digital" | "physical";
 

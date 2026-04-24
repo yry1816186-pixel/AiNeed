@@ -1,4 +1,5 @@
-﻿import React, { useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useCallback } from "react";
 import {
   View,
   Text,

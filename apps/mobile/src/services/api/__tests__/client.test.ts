@@ -1,4 +1,5 @@
-﻿import { AxiosError, AxiosHeaders } from "axios";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, @typescript-eslint/unbound-method, no-irregular-whitespace */
+import { AxiosError, AxiosHeaders } from "axios";
 
 import { apiClient } from "../client";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";

@@ -155,9 +155,12 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
         set({ isLoading: true, error: null });
         try {
           const { answers } = get();
-          const response: ApiResponse<QuizResult> = await apiClient.post<QuizResult>("/quiz/submit", {
-            answers,
-          });
+          const response: ApiResponse<QuizResult> = await apiClient.post<QuizResult>(
+            "/quiz/submit",
+            {
+              answers,
+            }
+          );
           if (response.success && response.data) {
             set({ result: response.data, isLoading: false });
           } else {
@@ -190,7 +193,10 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
 
       nextQuestion: () =>
         set((state) => ({
-          currentQuestionIndex: Math.min(state.currentQuestionIndex + 1, state.questions.length - 1),
+          currentQuestionIndex: Math.min(
+            state.currentQuestionIndex + 1,
+            state.questions.length - 1
+          ),
         })),
 
       previousQuestion: () =>
@@ -232,7 +238,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
           await styleQuizApi.saveProgress(quizId, newQuestionIndex, newAnswers);
         } catch (error) {
           // Progress save failure is non-blocking
-          console.error('Quiz progress operation failed:', error);
+          console.error("Quiz progress operation failed:", error);
         }
       },
 
@@ -245,7 +251,10 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
             optionId,
           }));
 
-          const response: ApiResponse<StyleQuizResult> = await styleQuizApi.batchSubmit(quizId, styleAnswers);
+          const response: ApiResponse<StyleQuizResult> = await styleQuizApi.batchSubmit(
+            quizId,
+            styleAnswers
+          );
           if (response.success && response.data) {
             set({ result: response.data as unknown as QuizResult, isLoading: false });
           } else {
@@ -272,7 +281,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
           }
         } catch (error) {
           // If progress load fails, keep existing local progress
-          console.error('Quiz progress operation failed:', error);
+          console.error("Quiz progress operation failed:", error);
         }
       },
     }),

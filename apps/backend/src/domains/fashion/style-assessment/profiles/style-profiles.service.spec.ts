@@ -118,12 +118,8 @@ describe("StyleProfilesService", () => {
     it("应该在找不到档案时抛出 NotFoundException", async () => {
       mockPrismaService.styleProfile.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne(userId, "non-existent-id")).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findOne(userId, "non-existent-id")).rejects.toThrow(
-        "风格档案不存在",
-      );
+      await expect(service.findOne(userId, "non-existent-id")).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(userId, "non-existent-id")).rejects.toThrow("风格档案不存在");
     });
   });
 
@@ -231,9 +227,7 @@ describe("StyleProfilesService", () => {
     it("应该在删除不存在的档案时抛出 NotFoundException", async () => {
       mockPrismaService.styleProfile.findFirst.mockResolvedValue(null);
 
-      await expect(service.remove(userId, "non-existent-id")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.remove(userId, "non-existent-id")).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -263,7 +257,7 @@ describe("StyleProfilesService", () => {
       mockPrismaService.styleProfile.findFirst.mockResolvedValue(null);
 
       await expect(service.setDefault(userId, "non-existent-id")).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
   });

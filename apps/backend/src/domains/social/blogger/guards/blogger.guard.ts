@@ -16,10 +16,7 @@ export const RequireBigV = () => SetMetadata(REQUIRE_BIG_V, true);
 
 @Injectable()
 export class BloggerGuard implements CanActivate {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly reflector: Reflector,
-  ) {}
+  constructor(private readonly prisma: PrismaService, private readonly reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -29,10 +26,11 @@ export class BloggerGuard implements CanActivate {
       throw new ForbiddenException("User not authenticated");
     }
 
-    const requireBigV = this.reflector.getAllAndOverride<boolean>(REQUIRE_BIG_V, [
-      context.getHandler(),
-      context.getClass(),
-    ]) ?? false;
+    const requireBigV =
+      this.reflector.getAllAndOverride<boolean>(REQUIRE_BIG_V, [
+        context.getHandler(),
+        context.getClass(),
+      ]) ?? false;
 
     const dbUser = await this.prisma.user.findUnique({
       where: { id: user.id },

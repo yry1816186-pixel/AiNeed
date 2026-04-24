@@ -33,6 +33,7 @@ export default function ProductList() {
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyword, category]);
 
   const handleSearch = () => fetchData(1, pagination.pageSize);

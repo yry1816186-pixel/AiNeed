@@ -1,5 +1,5 @@
-import apiClient from '../../../services/api/client';
-import { ApiResponse, PaginatedResponse } from '../../../types';
+import apiClient from "../../../services/api/client";
+import { ApiResponse, PaginatedResponse } from "../../../types";
 
 export interface CommunityPost {
   id: string;

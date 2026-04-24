@@ -1,5 +1,5 @@
 import apiClient from "../../../services/api/client";
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from "../../../types";
 import {
   User,
   UserPreferences,
@@ -9,7 +9,7 @@ import {
   AuthTokens,
   BodyAnalysis,
   ColorAnalysis,
-} from '../../../types/user';
+} from "../../../types/user";
 
 interface AuthResponsePayload {
   user: User;
@@ -21,23 +21,14 @@ interface AuthResponsePayload {
 export const authApi = {
   async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponsePayload>> {
     const response = await apiClient.post<AuthResponsePayload>("/auth/login", credentials);
-    if (response.success && response.data?.token) {
-      await apiClient.setToken(response.data.token);
-      if (response.data.refreshToken) {
-        await apiClient.setRefreshToken(response.data.refreshToken);
-      }
-    }
+    // Token is set by the auth store's setToken/persistTokens after login success
+    // No need to set it here to avoid redundant API client calls.
     return response;
   },
 
   async register(data: RegisterData): Promise<ApiResponse<AuthResponsePayload>> {
     const response = await apiClient.post<AuthResponsePayload>("/auth/register", data);
-    if (response.success && response.data?.token) {
-      await apiClient.setToken(response.data.token);
-      if (response.data.refreshToken) {
-        await apiClient.setRefreshToken(response.data.refreshToken);
-      }
-    }
+    // Token is set by the auth store after register success
     return response;
   },
 

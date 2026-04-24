@@ -1,23 +1,17 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
   type TextStyle,
 } from "react-native";
-import { useNavigation, NavigationProp, CompositeNavigationProp } from "@react-navigation/native";
+import { useNavigation, CompositeNavigationProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { FlashList } from "@/src/polyfills/flash-list";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 import { useHomeStore } from "../stores/homeStore";
 import { useAuthStore } from "../../auth/stores/index";
 import { useRecommendationFeedStore } from "../stores/recommendationFeedStore";
@@ -31,16 +25,16 @@ import { WeatherGreeting } from "./components/WeatherGreeting";
 import { ProfileCompletionBanner } from "./components/ProfileCompletionBanner";
 import QuickActions from "./components/QuickActions";
 import { RecommendationCard } from "../components/RecommendationFeedCard";
-import type { RootStackParamList, HomeStackParamList } from "../../../types/navigation";
+import type { RootStackParamList, TodayStackParamList } from "../../../types/navigation";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-type HomeScreenNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<HomeStackParamList>,
-  NativeStackNavigationProp<RootStackParamList>
->;
 import type { FeedItem } from "../../../services/api/recommendation-feed.api";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
+
+type HomeScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<TodayStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 const HORIZONTAL_PADDING = 20;
 
@@ -112,13 +106,16 @@ const HomeScreen: React.FC = () => {
     }
     locationFetched.current = true;
     try {
-      const { PermissionsAndroid } = require("react-native");
+      const { PermissionsAndroid } = require("react-native") as {
+        PermissionsAndroid: {
+          check: (perm: string) => Promise<boolean>;
+          PERMISSIONS: { ACCESS_FINE_LOCATION: string };
+        };
+      };
       const granted = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-      granted
-        .then((hasPermission: boolean) => {
-          if (hasPermission && isMountedRef.current) {
-            setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
-          } else if (isMountedRef.current) {
+      void granted
+        .then((_hasPermission: boolean) => {
+          if (isMountedRef.current) {
             setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
           }
         })
@@ -163,7 +160,7 @@ const HomeScreen: React.FC = () => {
   }, [navigation]);
 
   const handleProfilePress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Profile", params: { screen: "ProfileMain" } });
+    navigation.navigate("MainTabs", { screen: "Me", params: { screen: "ProfileMain" } });
   }, [navigation]);
 
   const handleAiStylistPress = useCallback(() => {
@@ -171,22 +168,22 @@ const HomeScreen: React.FC = () => {
   }, [navigation]);
 
   const handleVirtualTryOnPress = useCallback(() => {
-    (navigation as any).navigate("MainTabs", {
+    (navigation.navigate as unknown as (route: string, params?: object) => void)("MainTabs", {
       screen: "TryOn",
       params: { screen: "VirtualTryOn" },
     });
   }, [navigation]);
 
   const handleWardrobePress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Profile", params: { screen: "Wardrobe" } });
+    navigation.navigate("MainTabs", { screen: "Me", params: { screen: "Wardrobe" } });
   }, [navigation]);
 
   const handleStyleReportPress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Profile", params: { screen: "ProfileMain" } });
+    navigation.navigate("MainTabs", { screen: "Me", params: { screen: "ProfileMain" } });
   }, [navigation]);
 
   const handleCartPress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Profile", params: { screen: "Cart" } });
+    navigation.navigate("MainTabs", { screen: "Me", params: { screen: "Cart" } });
   }, [navigation]);
 
   const handleBannerDismiss = useCallback(() => {
@@ -302,6 +299,15 @@ const HomeScreen: React.FC = () => {
       handleCartPress,
       isRecommendationFeed,
       accentColor,
+      navigation,
+      styles.searchBar,
+      styles.searchText,
+      styles.sectionHeader,
+      styles.sectionMore,
+      styles.sectionTitle,
+      t.home.forYou,
+      t.home.seeAll,
+      t.search.placeholder,
     ]
   );
 
@@ -328,7 +334,9 @@ const HomeScreen: React.FC = () => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={() => {
+              void handleRefresh();
+            }}
             tintColor={colors.primary}
           />
         }

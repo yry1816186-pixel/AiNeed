@@ -1,10 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-
+import { Spacing, flatColors as staticColors } from "../../../design-system/theme";
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -21,7 +20,7 @@ interface CreatePostModalProps {
 }
 
 function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("outfit");
@@ -117,9 +116,20 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: staticColors.border,
   },
-  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary },
-  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary },
-  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: staticColors.primary },
+  modalTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: staticColors.textPrimary,
+  },
+  modalCancelText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: staticColors.textSecondary,
+  },
+  modalSubmitText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: staticColors.primary,
+  },
   modalCategoryRow: {
     flexDirection: "row",
     paddingHorizontal: DesignTokens.spacing[5],
@@ -129,17 +139,20 @@ const s = StyleSheet.create({
     borderBottomColor: staticColors.border,
   },
   modalCategoryChip: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
+    paddingVertical: DesignTokens.spacing["1.5"],
     borderRadius: 16,
     backgroundColor: staticColors.surface,
   },
   modalCategoryChipActive: { backgroundColor: staticColors.primary },
-  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary },
+  modalCategoryChipText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: staticColors.textSecondary,
+  },
   modalCategoryChipTextActive: { color: staticColors.surface, fontWeight: "600" },
   modalTitleInput: {
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: staticColors.textPrimary,
@@ -149,7 +162,7 @@ const s = StyleSheet.create({
   modalContentInput: {
     flex: 1,
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     fontSize: DesignTokens.typography.sizes.base,
     color: staticColors.textPrimary,
     lineHeight: 22,
@@ -163,6 +176,6 @@ const s = StyleSheet.create({
     borderTopColor: staticColors.border,
     gap: Spacing.lg,
   },
-  modalToolBtn: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
+  modalToolBtn: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing["1.5"] },
   modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary },
 });

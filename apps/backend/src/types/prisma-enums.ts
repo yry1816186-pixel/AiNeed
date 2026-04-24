@@ -47,6 +47,7 @@ import {
   UserRole as PrismaUserRole,
   UserProfile as PrismaGeneratedUserProfile,
   WithdrawalStatus as PrismaWithdrawalStatus,
+  DataSource as PrismaDataSource,
 } from "@prisma/client";
 
 export const CouponType = PrismaCouponType;
@@ -202,3 +203,6 @@ export const UserRole = PrismaUserRole;
 export type UserRole = PrismaUserRole;
 
 export type PrismaUserProfile = PrismaGeneratedUserProfile;
+
+export const DataSource = PrismaDataSource;
+export type DataSource = PrismaDataSource;

@@ -10,13 +10,7 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../../common/types/common.types";
 import { AuthGuard } from "../../../../domains/identity/auth/guards/auth.guard";
@@ -37,9 +31,7 @@ import { WardrobeCollectionService } from "./wardrobe-collection.service";
 @ApiBearerAuth()
 @Controller("wardrobe/collections")
 export class WardrobeCollectionController {
-  constructor(
-    private readonly wardrobeCollectionService: WardrobeCollectionService,
-  ) {}
+  constructor(private readonly wardrobeCollectionService: WardrobeCollectionService) {}
 
   // ==================== 分类 CRUD ====================
 
@@ -51,7 +43,7 @@ export class WardrobeCollectionController {
   @ApiResponse({ status: 401, description: "未授权" })
   async createCollection(
     @Request() req: RequestWithUser,
-    @Body() dto: CreateWardrobeCollectionDto,
+    @Body() dto: CreateWardrobeCollectionDto
   ) {
     return this.wardrobeCollectionService.createCollection(req.user.id, dto);
   }
@@ -63,7 +55,7 @@ export class WardrobeCollectionController {
   @ApiResponse({ status: 401, description: "未授权" })
   async getCollections(
     @Request() req: RequestWithUser,
-    @Query() query: WardrobeCollectionQueryDto,
+    @Query() query: WardrobeCollectionQueryDto
   ) {
     return this.wardrobeCollectionService.getCollections(req.user.id, query);
   }
@@ -75,10 +67,7 @@ export class WardrobeCollectionController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "分类不存在" })
   @ApiParam({ name: "id", description: "分类ID" })
-  async getCollectionById(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async getCollectionById(@Request() req: RequestWithUser, @Param("id") id: string) {
     return this.wardrobeCollectionService.getCollectionById(req.user.id, id);
   }
 
@@ -93,7 +82,7 @@ export class WardrobeCollectionController {
   async updateCollection(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: UpdateWardrobeCollectionDto,
+    @Body() dto: UpdateWardrobeCollectionDto
   ) {
     return this.wardrobeCollectionService.updateCollection(req.user.id, id, dto);
   }
@@ -105,10 +94,7 @@ export class WardrobeCollectionController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "分类不存在" })
   @ApiParam({ name: "id", description: "分类ID" })
-  async deleteCollection(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async deleteCollection(@Request() req: RequestWithUser, @Param("id") id: string) {
     return this.wardrobeCollectionService.deleteCollection(req.user.id, id);
   }
 
@@ -124,13 +110,9 @@ export class WardrobeCollectionController {
   async addCollectionItem(
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
-    @Body() dto: CreateCollectionItemDto,
+    @Body() dto: CreateCollectionItemDto
   ) {
-    return this.wardrobeCollectionService.addCollectionItem(
-      req.user.id,
-      collectionId,
-      dto,
-    );
+    return this.wardrobeCollectionService.addCollectionItem(req.user.id, collectionId, dto);
   }
 
   @Post(":id/items/batch")
@@ -143,13 +125,9 @@ export class WardrobeCollectionController {
   async batchAddCollectionItems(
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
-    @Body() dto: BatchCreateCollectionItemsDto,
+    @Body() dto: BatchCreateCollectionItemsDto
   ) {
-    return this.wardrobeCollectionService.batchAddCollectionItems(
-      req.user.id,
-      collectionId,
-      dto,
-    );
+    return this.wardrobeCollectionService.batchAddCollectionItems(req.user.id, collectionId, dto);
   }
 
   @Get(":id/items")
@@ -161,13 +139,9 @@ export class WardrobeCollectionController {
   async getCollectionItems(
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
-    @Query() query: CollectionItemQueryDto,
+    @Query() query: CollectionItemQueryDto
   ) {
-    return this.wardrobeCollectionService.getCollectionItems(
-      req.user.id,
-      collectionId,
-      query,
-    );
+    return this.wardrobeCollectionService.getCollectionItems(req.user.id, collectionId, query);
   }
 
   @Put(":id/items/:itemId")
@@ -183,13 +157,13 @@ export class WardrobeCollectionController {
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
     @Param("itemId") itemId: string,
-    @Body() dto: UpdateCollectionItemDto,
+    @Body() dto: UpdateCollectionItemDto
   ) {
     return this.wardrobeCollectionService.updateCollectionItem(
       req.user.id,
       collectionId,
       itemId,
-      dto,
+      dto
     );
   }
 
@@ -204,13 +178,9 @@ export class WardrobeCollectionController {
   async removeCollectionItem(
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
-    @Param("itemId") itemId: string,
+    @Param("itemId") itemId: string
   ) {
-    return this.wardrobeCollectionService.removeCollectionItem(
-      req.user.id,
-      collectionId,
-      itemId,
-    );
+    return this.wardrobeCollectionService.removeCollectionItem(req.user.id, collectionId, itemId);
   }
 
   @Put(":id/items/reorder")
@@ -223,12 +193,8 @@ export class WardrobeCollectionController {
   async reorderCollectionItems(
     @Request() req: RequestWithUser,
     @Param("id") collectionId: string,
-    @Body() dto: ReorderCollectionItemsDto,
+    @Body() dto: ReorderCollectionItemsDto
   ) {
-    return this.wardrobeCollectionService.reorderCollectionItems(
-      req.user.id,
-      collectionId,
-      dto,
-    );
+    return this.wardrobeCollectionService.reorderCollectionItems(req.user.id, collectionId, dto);
   }
 }

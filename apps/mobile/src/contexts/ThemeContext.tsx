@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 /**
  * @deprecated Use ThemeProvider from shared/contexts/ThemeContext instead.

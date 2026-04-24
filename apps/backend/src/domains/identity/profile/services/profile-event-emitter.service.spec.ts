@@ -15,10 +15,7 @@ describe("ProfileEventEmitter", () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ProfileEventEmitter,
-        { provide: RedisService, useValue: redisService },
-      ],
+      providers: [ProfileEventEmitter, { provide: RedisService, useValue: redisService }],
     }).compile();
 
     service = module.get<ProfileEventEmitter>(ProfileEventEmitter);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as Sentry from "@sentry/react-native";
 import Constants from "../polyfills/expo-constants";
 

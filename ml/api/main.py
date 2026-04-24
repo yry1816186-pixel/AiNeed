@@ -203,6 +203,14 @@ try:
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load virtual try-on API: %s", e)
 
+try:
+    from ml.api.routes.vector import router as vector_router
+
+    app.include_router(vector_router)
+    logging.getLogger(__name__).info("Vector search API routes loaded")
+except Exception as e:
+    logging.getLogger(__name__).warning("Failed to load vector search API: %s", e)
+
 
 if __name__ == "__main__":
     import uvicorn

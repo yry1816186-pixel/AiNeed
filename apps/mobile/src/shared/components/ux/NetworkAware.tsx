@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Spacing, Typography, ZIndex } from "../../../design-system/theme";
+import { Spacing, Typography, ZIndex } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface NetworkAwareProps {
@@ -54,7 +54,7 @@ export function NetworkAware({
           accessibilityLabel={offlineMessage}
           accessibilityRole="alert"
         >
-          <Ionicons name="cloud-offline-outline" size={16} color={colors.neutral[0]} />
+          <Ionicons name="cloud-offline-outline" size={16} color={colors.neutral.white} />
           <Text style={styles.bannerText}>{offlineMessage}</Text>
         </Animated.View>
       )}
@@ -93,7 +93,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.warning[500],
     elevation: 4,
   },
-  bannerText: { ...Typography.caption.md, color: colors.neutral[0], fontWeight: "600" },
+  bannerText: { ...Typography.caption.md, color: colors.neutral.white, fontWeight: "600" },
 }));
 
 export default NetworkAware;

@@ -17,7 +17,9 @@ function createRedisMock() {
     store,
     get: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) {return Promise.resolve(null);}
+      if (!entry) {
+        return Promise.resolve(null);
+      }
       if (entry.pttlMs && Date.now() - entry.setAt > entry.pttlMs) {
         store.delete(key);
         return Promise.resolve(null);
@@ -42,7 +44,9 @@ function createRedisMock() {
     del: jest.fn((...keys: string[]) => {
       let count = 0;
       for (const key of keys) {
-        if (store.delete(key)) {count++;}
+        if (store.delete(key)) {
+          count++;
+        }
       }
       return Promise.resolve(count);
     }),
@@ -141,18 +145,18 @@ describe("AiCircuitBreakerService", () => {
       await redis.set("xuno:cb:test-service:state", CircuitState.OPEN);
       await redis.set("xuno:cb:test-service:lastFailure", String(Date.now()));
 
-      await expect(
-        service.execute("test-service", async () => "success"),
-      ).rejects.toThrow(CircuitBreakerOpenException);
+      await expect(service.execute("test-service", async () => "success")).rejects.toThrow(
+        CircuitBreakerOpenException
+      );
     });
 
     it("异常消息应该包含服务名称", async () => {
       await redis.set("xuno:cb:test-service:state", CircuitState.OPEN);
       await redis.set("xuno:cb:test-service:lastFailure", String(Date.now()));
 
-      await expect(
-        service.execute("test-service", async () => "success"),
-      ).rejects.toThrow("test-service");
+      await expect(service.execute("test-service", async () => "success")).rejects.toThrow(
+        "test-service"
+      );
     });
   });
 
@@ -205,7 +209,7 @@ describe("AiCircuitBreakerService", () => {
         "circuit.opened",
         expect.objectContaining({
           serviceName: "test-service",
-        }),
+        })
       );
     });
   });
@@ -229,7 +233,7 @@ describe("AiCircuitBreakerService", () => {
         "circuit.half_opened",
         expect.objectContaining({
           serviceName: "test-service",
-        }),
+        })
       );
     });
   });
@@ -257,7 +261,7 @@ describe("AiCircuitBreakerService", () => {
         "circuit.closed",
         expect.objectContaining({
           serviceName: "test-service",
-        }),
+        })
       );
     });
   });
@@ -297,7 +301,7 @@ describe("AiCircuitBreakerService", () => {
         "circuit.global_trip",
         expect.objectContaining({
           services: expect.any(Array),
-        }),
+        })
       );
     });
   });
@@ -317,7 +321,7 @@ describe("AiCircuitBreakerService", () => {
         "circuit.opened",
         expect.objectContaining({
           serviceName: "manual-trip-service",
-        }),
+        })
       );
     });
   });
@@ -410,7 +414,7 @@ describe("AiCircuitBreakerService", () => {
       await expect(
         service.execute("test-service", async () => {
           throw originalError;
-        }),
+        })
       ).rejects.toThrow("Service unavailable");
     });
   });

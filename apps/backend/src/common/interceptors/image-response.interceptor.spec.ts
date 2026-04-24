@@ -4,8 +4,7 @@ import { of } from "rxjs";
 import { ImageResponseInterceptor } from "./image-response.interceptor";
 
 describe("ImageResponseInterceptor", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let interceptor: ImageResponseInterceptor<any>;
+  let interceptor: ImageResponseInterceptor<unknown>;
 
   beforeEach(() => {
     interceptor = new ImageResponseInterceptor();
@@ -19,12 +18,10 @@ describe("ImageResponseInterceptor", () => {
       switchToHttp: () => ({
         getRequest: () => ({ query, headers }),
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    } as unknown as ExecutionContext;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const createMockHandler = (data: any): CallHandler => {
+  const createMockHandler = (data: unknown): CallHandler => {
     return { handle: () => of(data) };
   };
 

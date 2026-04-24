@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";

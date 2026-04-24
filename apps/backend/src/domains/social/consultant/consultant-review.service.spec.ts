@@ -42,10 +42,7 @@ describe("ConsultantReviewService", () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ConsultantReviewService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [ConsultantReviewService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<ConsultantReviewService>(ConsultantReviewService);
@@ -94,7 +91,7 @@ describe("ConsultantReviewService", () => {
             userId,
             rating: dto.rating,
           }),
-        }),
+        })
       );
     });
 
@@ -106,9 +103,7 @@ describe("ConsultantReviewService", () => {
         status: "pending",
       });
 
-      await expect(service.createReview(userId, dto)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.createReview(userId, dto)).rejects.toThrow(BadRequestException);
     });
 
     it("should throw when booking already reviewed", async () => {
@@ -122,9 +117,7 @@ describe("ConsultantReviewService", () => {
         id: "existing-review",
       });
 
-      await expect(service.createReview(userId, dto)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.createReview(userId, dto)).rejects.toThrow(BadRequestException);
     });
 
     it("should throw when user is not the booking owner", async () => {
@@ -135,17 +128,13 @@ describe("ConsultantReviewService", () => {
         status: "completed",
       });
 
-      await expect(service.createReview(userId, dto)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(service.createReview(userId, dto)).rejects.toThrow(ForbiddenException);
     });
 
     it("should throw when booking does not exist", async () => {
       prisma.serviceBooking.findUnique.mockResolvedValue(null);
 
-      await expect(service.createReview(userId, dto)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.createReview(userId, dto)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -248,7 +237,7 @@ describe("ConsultantReviewService", () => {
           data: expect.objectContaining({
             reviewCount: 3,
           }),
-        }),
+        })
       );
     });
   });

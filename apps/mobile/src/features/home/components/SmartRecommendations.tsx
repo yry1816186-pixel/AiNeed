@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 // @ts-nocheck
 import React, { useEffect } from "react";
 import {

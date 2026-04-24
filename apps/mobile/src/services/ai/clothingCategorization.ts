@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { apiClient } from "../api/client";
 import { ClothingCategory, ClothingStyle, Season, Occasion } from "../../types/clothing";
 
@@ -73,27 +74,12 @@ class ClothingCategorizationService {
         type,
       } satisfies FormDataValue);
 
-      formData.append(
-        "validCategories",
-        JSON.stringify(CATEGORY_LIST)
-      );
-      formData.append(
-        "validStyles",
-        JSON.stringify(STYLE_LIST)
-      );
-      formData.append(
-        "validSeasons",
-        JSON.stringify(SEASON_LIST)
-      );
-      formData.append(
-        "validOccasions",
-        JSON.stringify(OCCASION_LIST)
-      );
+      formData.append("validCategories", JSON.stringify(CATEGORY_LIST));
+      formData.append("validStyles", JSON.stringify(STYLE_LIST));
+      formData.append("validSeasons", JSON.stringify(SEASON_LIST));
+      formData.append("validOccasions", JSON.stringify(OCCASION_LIST));
 
-      const response = await apiClient.upload<CategorizationResult>(
-        "/ai/categorize",
-        formData
-      );
+      const response = await apiClient.upload<CategorizationResult>("/ai/categorize", formData);
 
       if (!response.success || !response.data) {
         console.error("Categorization failed:", response.error);
@@ -104,10 +90,10 @@ class ClothingCategorizationService {
       return {
         category: this.validateCategory(parsed.category),
         subcategory: parsed.subcategory,
-        style: this.validateArray(parsed.style, STYLE_LIST) as ClothingStyle[],
+        style: this.validateArray(parsed.style, STYLE_LIST),
         colors: parsed.colors || [],
-        seasons: this.validateArray(parsed.seasons, SEASON_LIST) as Season[],
-        occasions: this.validateArray(parsed.occasions, OCCASION_LIST) as Occasion[],
+        seasons: this.validateArray(parsed.seasons, SEASON_LIST),
+        occasions: this.validateArray(parsed.occasions, OCCASION_LIST),
         confidence: parsed.confidence || 0.8,
         tags: parsed.tags || [],
         name: parsed.name,

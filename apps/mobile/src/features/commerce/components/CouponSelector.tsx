@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";

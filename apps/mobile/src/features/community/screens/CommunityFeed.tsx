@@ -8,15 +8,12 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import { FlashList } from "../../polyfills/flash-list";
+import { FlashList } from "../../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
-import { PostMasonryCard } from "../../../components/community/PostMasonryCard";
-import type { PostCardData } from "../../../components/community/PostMasonryCard";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
+import { PostMasonryCard } from "../components/PostMasonryCard";
+import type { PostCardData } from "../components/PostMasonryCard";
 
 type PostCardDataInternal = PostCardData;
 
@@ -148,7 +145,7 @@ function CommunityFeedInner({
           index={index}
           onPress={() => {}}
           visible={visibleIds.has(item.id)}
-          onHeightMeasured={(height) => onHeightMeasured(item.id, height)}
+          onHeightMeasured={(height: number) => onHeightMeasured(item.id, height)}
         />
       )}
       onEndReached={onLoadMore}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";

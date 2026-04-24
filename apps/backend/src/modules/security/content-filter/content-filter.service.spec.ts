@@ -28,7 +28,7 @@ jest.mock("fs", () => ({
       "# Political Sensitive",
       "extremism",
       "cult",
-    ].join("\n"),
+    ].join("\n")
   ),
 }));
 
@@ -42,7 +42,9 @@ describe("ContentFilterService", () => {
 
   const createConfigService = (sensitivity: string = "moderate") => ({
     get: jest.fn((key: string, defaultValue?: string) => {
-      if (key === "CONTENT_FILTER_SENSITIVITY") {return sensitivity;}
+      if (key === "CONTENT_FILTER_SENSITIVITY") {
+        return sensitivity;
+      }
       return defaultValue;
     }),
   });
@@ -95,7 +97,7 @@ describe("ContentFilterService", () => {
           expect.objectContaining({
             matchedCount: expect.any(Number),
             sensitivity: "moderate",
-          }),
+          })
         );
       });
 
@@ -260,7 +262,7 @@ describe("ContentFilterService", () => {
       const moderateResult = moderateService.filterContent(testContent);
 
       expect(strictResult.matchedKeywords.length).toBeGreaterThanOrEqual(
-        moderateResult.matchedKeywords.length,
+        moderateResult.matchedKeywords.length
       );
     });
   });

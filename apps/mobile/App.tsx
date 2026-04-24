@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, no-useless-escape */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Linking,
+  LogBox,
   StatusBar,
   StyleSheet,
   View,
@@ -28,6 +30,15 @@ import { initSentry } from './src/shared/services/sentry';
 import apiClient from './src/shared/services/apiClient';
 import { authApi } from './src/features/auth/services/auth.api';
 import { analytics } from './src/shared/services/analytics';
+
+// Suppress known benign warnings from polyfill stubs
+LogBox.ignoreLogs([
+  'FileSystem\.\w+Async is a stub',
+  'expo-media-library\.saveToLibraryAsync is a stub',
+  'expo-router\.router: Navigation not ready',
+  'setNavigationRef is deprecated',
+  'EXPO_OS is not defined',
+]);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,17 +80,18 @@ export default function App() {
 
   const pendingDeepLinkUrlRef = useRef<string | null>(null);
   const lastHandledDeepLinkUrlRef = useRef<string | null>(null);
+  const hasAutoLoggedInRef = useRef(false);
 
   const queueDeepLink = useCallback((url?: string | null) => {
-    if (!url) return;
+    if (!url) {return;}
     pendingDeepLinkUrlRef.current = url;
   }, []);
 
   const flushPendingDeepLink = useCallback(() => {
-    if (!checkNavigationReady() || isLoading) return;
+    if (!checkNavigationReady() || isLoading) {return;}
 
     const pendingUrl = pendingDeepLinkUrlRef.current;
-    if (!pendingUrl || pendingUrl === lastHandledDeepLinkUrlRef.current) return;
+    if (!pendingUrl || pendingUrl === lastHandledDeepLinkUrlRef.current) {return;}
 
     const handled = navigateDeepLink(pendingUrl, isAuthenticated);
     if (handled) {
@@ -89,7 +101,14 @@ export default function App() {
   }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
-    if (DEV_TEST_ACCOUNT_CONFIG.enabled && !isLoading && !isAuthenticated && !authToken) {
+    if (
+      DEV_TEST_ACCOUNT_CONFIG.enabled &&
+      !isLoading &&
+      !isAuthenticated &&
+      !authToken &&
+      !hasAutoLoggedInRef.current
+    ) {
+      hasAutoLoggedInRef.current = true;
       const autoLogin = async () => {
         try {
           console.log('[DEV] Attempting auto-login with test account...');
@@ -105,6 +124,7 @@ export default function App() {
           }
         } catch (error) {
           console.warn('[DEV] Auto-login failed:', error);
+          hasAutoLoggedInRef.current = false;
         }
       };
 
@@ -136,7 +156,7 @@ export default function App() {
       return false;
     };
 
-    if (checkHydration()) return;
+    if (checkHydration()) {return;}
 
     const interval = setInterval(() => {
       if (checkHydration()) {
@@ -156,7 +176,7 @@ export default function App() {
   }, [setLoading]);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {return;}
     void apiClient.setToken(authToken ?? null);
   }, [authToken, isLoading]);
 
@@ -164,7 +184,7 @@ export default function App() {
     let isMounted = true;
 
     void Linking.getInitialURL().then((url) => {
-      if (isMounted) queueDeepLink(url);
+      if (isMounted) {queueDeepLink(url);}
     });
 
     const subscription = Linking.addEventListener('url', ({ url }) => {

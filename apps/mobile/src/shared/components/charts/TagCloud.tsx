@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { colors } from "../../design-system/theme/tokens/colors";
+import { View, Text } from "react-native";
 
-import { spacing } from "../../design-system/theme/tokens/spacing";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { spacing } from "../../../design-system/theme/tokens/spacing";
+
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export interface TagCloudTag {

@@ -1,0 +1,1515 @@
+﻿================================================================================
+瀵昏３AI鏅鸿兘绌挎惌鎺ㄨ崘绯荤粺 V1.0 - 婧愪唬鐮?杞欢钁椾綔鏉冪櫥璁扮敵璇锋潗鏂?- 杞欢閴村埆鏉愭枡
+================================================================================
+
+// ========== FILE: apps\backend\src\main.ts ==========
+// Lines: 137
+
+   1  import { ValidationPipe, VersioningType } from "@nestjs/common";
+   2  import { ConfigService } from "@nestjs/config";
+   3  import { NestFactory } from "@nestjs/core";
+   4  import { SwaggerModule } from "@nestjs/swagger";
+   5  import compression from "compression";
+   6  import { Request, Response, NextFunction } from "express";
+   7  import helmet from "helmet";
+   8  
+   9  import { AppModule } from "./app.module";
+  10  import { AllExceptionsFilter } from "./common/filters";
+  11  import { ErrorHandlerMiddleware } from "./common/middleware/error-handler.middleware";
+  12  import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
+  13  import { XssSanitizationPipe } from "./common/pipes/xss-sanitization.pipe";
+  14  import { createSwaggerConfig } from "./config/swagger.config";
+  15  import { MetricsService } from "./domains/platform/metrics/metrics.service";
+  16  
+  17  async function bootstrap() {
+  18    const app = await NestFactory.create(AppModule);
+  19  
+  20    // 获取 MetricsService 实例
+  21    const metricsService = app.get(MetricsService);
+  22    const metricsMiddleware = new MetricsMiddleware(metricsService);
+  23  
+  24    // 应用全局错误处理中间件（必须在最前面）
+  25    const errorHandlerMiddleware = new ErrorHandlerMiddleware();
+  26    app.use((req: Request, res: Response, next: NextFunction) => {
+  27      errorHandlerMiddleware.use(req, res, next);
+  28    });
+  29  
+  30    // 应用指标中间件（排除 /metrics 端点）
+  31    app.use((req: Request, res: Response, next: NextFunction) => {
+  32      if (!req.path.includes('/metrics')) {
+  33        metricsMiddleware.use(req, res, next);
+  34      } else {
+  35        next();
+  36      }
+  37    });
+  38  
+  39    // 安全中间件
+  40    app.use(
+  41      helmet({
+  42        contentSecurityPolicy: {
+  43          directives: {
+  44            defaultSrc: ["'self'"],
+  45            scriptSrc: ["'self'"],
+  46            styleSrc: ["'self'", "'unsafe-inline'"],
+  47            imgSrc: ["'self'", "data:", "blob:"],
+  48            connectSrc: ["'self'", "ws://localhost:8081"],
+  49            fontSrc: ["'self'"],
+  50            objectSrc: ["'none'"],
+  51            upgradeInsecureRequests: [],
+  52          },
+  53        },
+  54        crossOriginResourcePolicy: { policy: "same-site" },
+  55        crossOriginOpenerPolicy: { policy: "same-origin" },
+  56        crossOriginEmbedderPolicy: { policy: "require-corp" },
+  57        referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  58      }),
+  59    );
+  60  
+  61    // 响应压缩
+  62    app.use(
+  63      compression({
+  64        threshold: 1024, // 超过 1KB 的响应才压缩
+  65        level: 6, // 压缩级别 1-9
+  66      }),
+  67    );
+  68  
+  69    // CORS 配置
+  70    const corsOrigins = process.env.CORS_ORIGINS?.split(",").filter(Boolean) || [];
+  71    app.enableCors({
+  72      origin: corsOrigins.length > 0
+  73        ? corsOrigins
+  74        : (process.env.NODE_ENV === "production"
+  75          ? []
+  76          : ["http://localhost:3000", "http://localhost:3001"]),
+  77      credentials: true,
+  78      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  79      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"],
+  80      exposedHeaders: ["X-Total-Count", "X-CSRF-Token"],
+  81      maxAge: 86400,
+  82    });
+  83  
+  84    // API 版本控制
+  85    app.setGlobalPrefix("api");
+  86    app.enableVersioning({
+  87      type: VersioningType.URI,
+  88      defaultVersion: "1",
+  89    });
+  90  
+  91    // 全局验证管道 (XSS防护 + 输入验证)
+  92    app.useGlobalPipes(
+  93      new XssSanitizationPipe(),
+  94      new ValidationPipe({
+  95        whitelist: true,
+  96        forbidNonWhitelisted: true,
+  97        transform: true,
+  98        transformOptions: {
+  99          enableImplicitConversion: true,
+ 100        },
+ 101      }),
+ 102    );
+ 103  
+ 104    // 全局异常过滤器
+ 105    app.useGlobalFilters(new AllExceptionsFilter());
+ 106  
+ 107    // Swagger API 文档配置 - 仅在非生产环境启用
+ 108    if (process.env.NODE_ENV !== "production") {
+ 109      const config = createSwaggerConfig();
+ 110  
+ 111      const document = SwaggerModule.createDocument(app, config);
+ 112      SwaggerModule.setup("api/docs", app, document, {
+ 113        swaggerOptions: {
+ 114          persistAuthorization: true,
+ 115          displayRequestDuration: true,
+ 116          docExpansion: "list",
+ 117        },
+ 118      });
+ 119    }
+ 120  
+ 121    const configService = app.get(ConfigService);
+ 122    const port = configService.get<number>("PORT", 3001);
+ 123  
+ 124    await app.listen(port);
+ 125  
+ 126    if (process.env.NODE_ENV !== "production") {
+ 127      // eslint-disable-next-line no-console
+ 128      console.log(`🚀 寻裳 API running on: http://localhost:${port}/api`);
+ 129      // eslint-disable-next-line no-console
+ 130      console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+ 131    } else {
+ 132      // eslint-disable-next-line no-console
+ 133      console.log(`🚀 寻裳 API running in production mode on port ${port}`);
+ 134    }
+ 135  }
+ 136  
+ 137  bootstrap();
+
+// ========== FILE: apps\backend\src\app.module.ts ==========
+// Lines: 180
+
+   1  import { resolve } from "path";
+   2  
+   3  import { Module, MiddlewareConsumer, RequestMethod, NestModule } from "@nestjs/common";
+   4  import { ConfigModule, ConfigService } from "@nestjs/config";
+   5  import { APP_INTERCEPTOR, APP_GUARD } from "@nestjs/core";
+   6  import { JwtAuthGuard } from "./domains/identity/auth/guards/jwt-auth.guard";
+   7  import { EventEmitterModule } from "@nestjs/event-emitter";
+   8  import { MulterModule } from "@nestjs/platform-express";
+   9  import { ScheduleModule } from "@nestjs/schedule";
+  10  import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+  11  
+  12  import { envValidationFactory } from "./common/config/env.validation";
+  13  import { EmailModule } from "./common/email/email.module";
+  14  import { EncryptionModule } from "./common/encryption/encryption.module";
+  15  import { GatewayModule } from "./common/gateway/gateway.module";
+  16  import { CsrfModule } from "./common/guards/csrf/csrf.module";
+  17  import { JsonApiInterceptor, CacheInterceptor, PerformanceInterceptor } from "./common/interceptors";
+  18  import { LoggingModule } from "./common/logging";
+  19  import { SoftDeleteMiddleware } from "./common/middleware";
+  20  import { PrismaModule } from "./common/prisma/prisma.module";
+  21  import { RedisModule } from "./common/redis/redis.module";
+  22  import { SentryModule } from "./common/sentry";
+  23  import { SoftDeleteModule } from "./common/soft-delete";
+  24  import { StorageModule } from "./common/storage/storage.module";
+  25  import { AdminModule } from "./domains/platform/admin/admin.module";
+  26  import { AIModule } from "./domains/ai-core/ai/ai.module";
+  27  import { AISafetyModule } from "./domains/ai-core/ai-safety/ai-safety.module";
+  28  import { AiStylistModule } from "./domains/ai-core/ai-stylist/ai-stylist.module";
+  29  import { AnalyticsModule } from "./domains/platform/analytics/analytics.module";
+  30  import { AuthModule } from "./domains/identity/auth/auth.module";
+  31  import { BrandsModule } from "./domains/fashion/brands/brands.module";
+  32  import { BloggerModule } from "./domains/social/blogger/blogger.module";
+  33  import { CacheModule } from "./modules/cache/cache.module";
+  34  import { CacheService } from "./modules/cache/cache.service";
+  35  import { ChatModule } from "./domains/social/chat/chat.module";
+  36  import { ClothingModule } from "./domains/fashion/clothing/clothing.module";
+  37  import { CommerceModule } from "./domains/commerce/commerce.module";
+  38  import { CommunityModule } from "./domains/social/community/community.module";
+  39  import { ConsultantModule } from "./domains/social/consultant/consultant.module";
+  40  import { CustomizationModule } from "./domains/customization/customization/customization.module";
+  41  import { DatabaseModule } from "./modules/database/database.module";
+  42  import { WardrobeModule } from "./domains/fashion/wardrobe/wardrobe.module";
+  43  import { FeatureFlagModule } from "./domains/platform/feature-flags/feature-flag.module";
+  44  import { HealthModule } from "./domains/platform/health/health.module";
+  45  import { MerchantModule } from "./domains/platform/merchant/merchant.module";
+  46  import { MetricsModule } from "./domains/platform/metrics/metrics.module";
+  47  import { MetricsService } from "./domains/platform/metrics/metrics.service";
+  48  import { NotificationModule } from "./domains/platform/notification/notification.module";
+  49  import { OnboardingModule } from "./domains/identity/onboarding/onboarding.module";
+  50  import { PhotosModule } from "./domains/ai-core/photos/photos.module";
+  51  import { PrivacyModule } from "./domains/identity/privacy/privacy.module";
+  52  import { ProfileModule } from "./domains/identity/profile/profile.module";
+  53  import { QueueModule } from "./domains/platform/queue/queue.module";
+  54  import { RecommendationsModule } from "./domains/platform/recommendations/recommendations.module";
+  55  import { SearchModule } from "./domains/fashion/search/search.module";
+  56  import { SecurityModule } from "./modules/security/security.module";
+  57  import { ShareTemplateModule } from "./domains/customization/share-template/share-template.module";
+  58  import { StyleAssessmentModule } from "./domains/fashion/style-assessment/style-assessment.module";
+  59  import { SystemReadinessService } from "./modules/system/system-readiness.service";
+  60  import { TryOnModule } from "./domains/ai-core/try-on/try-on.module";
+  61  import { UsersModule } from "./domains/identity/users/users.module";
+  62  import { WeatherModule } from "./domains/fashion/weather/weather.module";
+  63  import { WSModule } from "./modules/ws/ws.module";
+  64  
+  65  @Module({
+  66    imports: [
+  67      ConfigModule.forRoot({
+  68        isGlobal: true,
+  69        envFilePath: [
+  70          resolve(process.cwd(), ".env.local"),
+  71          resolve(process.cwd(), "../../.env.local"),
+  72          resolve(process.cwd(), "../../.env"),
+  73          resolve(process.cwd(), ".env"),
+  74        ],
+  75        validate: envValidationFactory,
+  76      }),
+  77      EventEmitterModule.forRoot(),
+  78      ThrottlerModule.forRoot([
+  79        {
+  80          ttl: 60000,
+  81          limit: 100,
+  82        },
+  83      ]),
+  84      ScheduleModule.forRoot(),
+  85      MulterModule.register({
+  86        limits: {
+  87          fileSize: 10 * 1024 * 1024,
+  88          files: 1,
+  89        },
+  90      }),
+  91      LoggingModule.forRoot(),
+  92      SentryModule.forRoot(),
+  93      // Common Infrastructure
+  94      PrismaModule,
+  95      RedisModule,
+  96      StorageModule,
+  97      GatewayModule,
+  98      CsrfModule,
+  99      SoftDeleteModule,
+ 100      SecurityModule,
+ 101      EmailModule,
+ 102      DatabaseModule,
+ 103      CacheModule,
+ 104  
+ 105      // Identity Domain
+ 106      AuthModule,
+ 107      UsersModule,
+ 108      ProfileModule,
+ 109      OnboardingModule,
+ 110      PrivacyModule,
+ 111  
+ 112      // AI Core Domain
+ 113      PhotosModule,
+ 114      TryOnModule,
+ 115      AiStylistModule,
+ 116      AIModule,
+ 117      AISafetyModule,
+ 118  
+ 119      // Fashion Domain
+ 120      ClothingModule,
+ 121      SearchModule,
+ 122      WardrobeModule,
+ 123      BrandsModule,
+ 124      StyleAssessmentModule,
+ 125      WeatherModule,
+ 126  
+ 127      // Commerce Domain
+ 128      CommerceModule,
+ 129      CustomizationModule,
+ 130      ShareTemplateModule,
+ 131  
+ 132      // Social Domain
+ 133      CommunityModule,
+ 134      BloggerModule,
+ 135      ConsultantModule,
+ 136      ChatModule,
+ 137  
+ 138      // Platform Layer
+ 139      RecommendationsModule,
+ 140      AnalyticsModule,
+ 141      NotificationModule,
+ 142      MerchantModule,
+ 143      HealthModule,
+ 144      MetricsModule,
+ 145      QueueModule,
+ 146      FeatureFlagModule,
+ 147      AdminModule,
+ 148  
+ 149      // Unmigrated Modules
+ 150      WSModule,
+ 151    ],
+ 152    providers: [
+ 153      SystemReadinessService,
+ 154      {
+ 155        provide: APP_INTERCEPTOR,
+ 156        useClass: JsonApiInterceptor,
+ 157      },
+ 158      {
+ 159        provide: APP_INTERCEPTOR,
+ 160        useClass: CacheInterceptor,
+ 161      },
+ 162      {
+ 163        provide: APP_INTERCEPTOR,
+ 164        useClass: PerformanceInterceptor,
+ 165      },
+ 166      {
+ 167        provide: APP_GUARD,
+ 168        useClass: ThrottlerGuard,
+ 169      },
+ 170      {
+ 171        provide: APP_GUARD,
+ 172        useClass: JwtAuthGuard,
+ 173      },
+ 174    ],
+ 175  })
+ 176  export class AppModule implements NestModule {
+ 177    configure(consumer: MiddlewareConsumer) {
+ 178      consumer.apply(SoftDeleteMiddleware).forRoutes('*');
+ 179    }
+ 180  }
+
+// ========== FILE: ml\services\stylist\intelligent_stylist_service.py ==========
+// Lines: 1713
+
+   1  """
+   2  智能造型师服务 - GLM-5 驱动的个人形象定制系统
+   3  真正的大语言模型驱动，而非简单的模板匹配
+   4  """
+   5  
+   6  import os
+   7  import json
+   8  import asyncio
+   9  import time
+  10  import logging
+  11  import hashlib
+  12  import threading
+  13  from typing import Dict, List, Optional, Any
+  14  from dataclasses import dataclass, field
+  15  from datetime import datetime
+  16  from functools import wraps
+  17  from enum import Enum
+  18  from collections import OrderedDict
+  19  import aiohttp
+  20  
+  21  from ..common.secure_api_key import SecureAPIKeyManager, api_key_manager
+  22  from ..common.rate_limiter import rate_limiter
+  23  
+  24  # Lazy import RAG to avoid circular dependencies
+  25  _fashion_rag = None
+  26  
+  27  def get_fashion_rag():
+  28      """Get Fashion RAG instance (lazy loading)"""
+  29      global _fashion_rag
+  30      if _fashion_rag is None:
+  31          try:
+  32              from ml.services.recommender.fashion_knowledge_rag import FashionKnowledgeRAG, FashionRAGConfig
+  33              config = FashionRAGConfig(
+  34                  qdrant_host=os.getenv("QDRANT_URL", "http://localhost:6333").replace("http://", "").split(":")[0],
+  35                  qdrant_port=int(os.getenv("QDRANT_URL", "http://localhost:6333").split(":")[-1].split("/")[0])
+  36              )
+  37              _fashion_rag = FashionKnowledgeRAG(config)
+  38              logger.info("Fashion RAG initialized")
+  39          except Exception as e:
+  40              logger.warning(f"Failed to initialize Fashion RAG: {e}")
+  41      return _fashion_rag
+  42  
+  43  
+  44  logging.basicConfig(level=logging.INFO)
+  45  logger = logging.getLogger(__name__)
+  46  
+  47  
+  48  class ResponseCache:
+  49      """LRU cache for LLM responses with TTL support"""
+  50      
+  51      def __init__(self, max_size: int = 500, ttl_seconds: int = 1800):
+  52          self.max_size = max_size
+  53          self.ttl_seconds = ttl_seconds
+  54          self._cache: OrderedDict[str, tuple] = OrderedDict()
+  55          self._lock = threading.RLock()
+  56          self._hits = 0
+  57          self._misses = 0
+  58      
+  59      def _compute_key(self, *args, **kwargs) -> str:
+  60          """Compute cache key from arguments"""
+  61          key_data = json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True, default=str)
+  62          return hashlib.sha256(key_data.encode('utf-8')).hexdigest()
+  63      
+  64      def get(self, key: str) -> Optional[Any]:
+  65          """Get cached response if exists and not expired"""
+  66          with self._lock:
+  67              if key not in self._cache:
+  68                  self._misses += 1
+  69                  return None
+  70              
+  71              value, timestamp = self._cache[key]
+  72              
+  73              if time.time() - timestamp > self.ttl_seconds:
+  74                  del self._cache[key]
+  75                  self._misses += 1
+  76                  return None
+  77              
+  78              self._cache.move_to_end(key)
+  79              self._hits += 1
+  80              return value
+  81      
+  82      def set(self, key: str, value: Any) -> None:
+  83          """Store response in cache"""
+  84          with self._lock:
+  85              if key in self._cache:
+  86                  del self._cache[key]
+  87              
+  88              self._cache[key] = (value, time.time())
+  89              
+  90              while len(self._cache) > self.max_size:
+  91                  self._cache.popitem(last=False)
+  92      
+  93      def invalidate_pattern(self, pattern: str) -> int:
+  94          """Invalidate cache entries matching pattern prefix"""
+  95          with self._lock:
+  96              keys_to_delete = [k for k in self._cache.keys() if k.startswith(pattern)]
+  97              for key in keys_to_delete:
+  98                  del self._cache[key]
+  99              return len(keys_to_delete)
+ 100      
+ 101      def clear(self) -> None:
+ 102          """Clear all cached entries"""
+ 103          with self._lock:
+ 104              self._cache.clear()
+ 105      
+ 106      def get_stats(self) -> Dict[str, Any]:
+ 107          """Get cache statistics"""
+ 108          with self._lock:
+ 109              total = self._hits + self._misses
+ 110              hit_rate = self._hits / total if total > 0 else 0
+ 111              return {
+ 112                  "size": len(self._cache),
+ 113                  "max_size": self.max_size,
+ 114                  "hits": self._hits,
+ 115                  "misses": self._misses,
+ 116                  "hit_rate": round(hit_rate, 4),
+ 117                  "ttl_seconds": self.ttl_seconds
+ 118              }
+ 119  
+ 120  
+ 121  class CircuitState(Enum):
+ 122      CLOSED = "closed"
+ 123      OPEN = "open"
+ 124      HALF_OPEN = "half_open"
+ 125  
+ 126  
+ 127  class CircuitBreaker:
+ 128      """Circuit breaker for LLM API calls"""
+ 129      
+ 130      def __init__(
+ 131          self,
+ 132          failure_threshold: int = 5,
+ 133          recovery_timeout: int = 60,
+ 134          half_open_max_calls: int = 3
+ 135      ):
+ 136          self.failure_threshold = failure_threshold
+ 137          self.recovery_timeout = recovery_timeout
+ 138          self.half_open_max_calls = half_open_max_calls
+ 139          self.failure_count = 0
+ 140          self.last_failure_time: Optional[float] = None
+ 141          self.state = CircuitState.CLOSED
+ 142          self.half_open_calls = 0
+ 143      
+ 144      def can_execute(self) -> bool:
+ 145          if self.state == CircuitState.CLOSED:
+ 146              return True
+ 147          if self.state == CircuitState.OPEN:
+ 148              if self.last_failure_time and time.time() - self.last_failure_time >= self.recovery_timeout:
+ 149                  self.state = CircuitState.HALF_OPEN
+ 150                  self.half_open_calls = 0
+ 151                  logger.info("Circuit breaker entering HALF_OPEN state")
+ 152                  return True
+ 153              return False
+ 154          if self.state == CircuitState.HALF_OPEN:
+ 155              if self.half_open_calls < self.half_open_max_calls:
+ 156                  self.half_open_calls += 1
+ 157                  return True
+ 158              return False
+ 159          return False
+ 160      
+ 161      def record_success(self):
+ 162          if self.state == CircuitState.HALF_OPEN:
+ 163              self.state = CircuitState.CLOSED
+ 164              self.failure_count = 0
+ 165              logger.info("Circuit breaker recovered to CLOSED state")
+ 166      
+ 167      def record_failure(self):
+ 168          self.failure_count += 1
+ 169          self.last_failure_time = time.time()
+ 170          if self.state == CircuitState.HALF_OPEN:
+ 171              self.state = CircuitState.OPEN
+ 172              logger.warning("Circuit breaker returned to OPEN state")
+ 173          elif self.failure_count >= self.failure_threshold:
+ 174              self.state = CircuitState.OPEN
+ 175              logger.error(f"Circuit breaker opened after {self.failure_count} failures")
+ 176  
+ 177  
+ 178  class RetryableError(Exception):
+ 179      """可重试的错误（5xx、429、网络错误、超时）"""
+ 180      pass
+ 181  
+ 182  
+ 183  class NonRetryableError(Exception):
+ 184      """不可重试的错误（4xx 客户端错误、token 超限等）"""
+ 185      pass
+ 186  
+ 187  
+ 188  def with_retry_and_circuit_breaker(
+ 189      max_retries: int = 3,
+ 190      base_delay: float = 1.0,
+ 191      max_delay: float = 30.0,
+ 192      exponential_base: float = 2.0,
+ 193      circuit_breaker: Optional[CircuitBreaker] = None
+ 194  ):
+ 195      """Decorator for retry with exponential backoff and circuit breaker
+ 196  
+ 197      A-P2-1: 增强重试逻辑
+ 198      - 区分可重试错误（RetryableError）和不可重试错误（NonRetryableError）
+ 199      - 可重试错误触发指数退避重试
+ 200      - 不可重试错误立即抛出，不重试
+ 201      - 熔断器仅对可重试错误计数
+ 202      """
+ 203  
+ 204      def decorator(func):
+ 205          @wraps(func)
+ 206          async def wrapper(*args, **kwargs):
+ 207              if circuit_breaker and not circuit_breaker.can_execute():
+ 208                  raise NonRetryableError("Circuit breaker is OPEN - LLM service unavailable")
+ 209  
+ 210              last_exception = None
+ 211              for attempt in range(max_retries):
+ 212                  try:
+ 213                      result = await func(*args, **kwargs)
+ 214                      if circuit_breaker:
+ 215                          circuit_breaker.record_success()
+ 216                      return result
+ 217                  except NonRetryableError as e:
+ 218                      # 不可重试错误：立即抛出
+ 219                      logger.error(f"Non-retryable error, aborting: {e}")
+ 220                      raise
+ 221                  except (RetryableError, Exception) as e:
+ 222                      last_exception = e
+ 223                      if circuit_breaker:
+ 224                          circuit_breaker.record_failure()
+ 225  
+ 226                      if attempt < max_retries - 1:
+ 227                          delay = min(base_delay * (exponential_base ** attempt), max_delay)
+ 228                          # 如果是 429 错误，尝试从异常信息中提取 Retry-After
+ 229                          retry_after = getattr(e, 'retry_after', None)
+ 230                          if retry_after and retry_after > 0:
+ 231                              delay = max(delay, min(retry_after, max_delay))
+ 232                          logger.warning(
+ 233                              f"LLM API call failed (attempt {attempt + 1}/{max_retries}): {e}. "
+ 234                              f"Retrying in {delay:.1f}s..."
+ 235                          )
+ 236                          await asyncio.sleep(delay)
+ 237                      else:
+ 238                          logger.error(f"LLM API call failed after {max_retries} attempts: {e}")
+ 239  
+ 240              raise last_exception
+ 241          return wrapper
+ 242      return decorator
+ 243  
+ 244  
+ 245  @dataclass
+ 246  class UserProfile:
+ 247      body_type: Optional[str] = None
+ 248      skin_tone: Optional[str] = None
+ 249      color_season: Optional[str] = None
+ 250      face_shape: Optional[str] = None
+ 251      height: Optional[int] = None
+ 252      weight: Optional[int] = None
+ 253      age_range: Optional[str] = None
+ 254      gender: Optional[str] = None
+ 255      style_preferences: List[str] = field(default_factory=list)
+ 256      style_avoidances: List[str] = field(default_factory=list)
+ 257      color_preferences: List[str] = field(default_factory=list)
+ 258      budget_range: Optional[Dict[str, int]] = None
+ 259      lifestyle: List[str] = field(default_factory=list)
+ 260      occupation: Optional[str] = None
+ 261      fashion_goals: List[str] = field(default_factory=list)
+ 262  
+ 263  
+ 264  @dataclass
+ 265  class SceneContext:
+ 266      occasion: Optional[str] = None
+ 267      weather: Optional[str] = None
+ 268      season: Optional[str] = None
+ 269      time_of_day: Optional[str] = None
+ 270      formality_level: Optional[str] = None
+ 271      special_requirements: List[str] = field(default_factory=list)
+ 272  
+ 273  
+ 274  @dataclass
+ 275  class OutfitItem:
+ 276      category: str
+ 277      subcategory: Optional[str] = None
+ 278      name: str = ""
+ 279      description: str = ""
+ 280      color: str = ""
+ 281      material: Optional[str] = None
+ 282      style_tags: List[str] = field(default_factory=list)
+ 283      price_range: Optional[str] = None
+ 284      why_recommended: str = ""
+ 285      alternatives: List[str] = field(default_factory=list)
+ 286  
+ 287  
+ 288  @dataclass
+ 289  class OutfitPlan:
+ 290      title: str
+ 291      overall_style: str
+ 292      items: List[OutfitItem]
+ 293      styling_tips: List[str]
+ 294      color_harmony: str
+ 295      body_flattering_points: List[str]
+ 296      occasion_fit: str
+ 297      estimated_budget: str
+ 298      confidence_score: float = 0.0
+ 299  
+ 300  
+ 301  class GLMStylistEngine:
+ 302      """
+ 303      P1-006修复: 增强版GLM引擎，包含准确的token计数和prompt截断机制
+ 304      """
+ 305  
+ 306      # GLM模型的token限制
+ 307      # GLM-4: 128K context, GLM-3-Turbo: 128K context
+ 308      # 为安全起见，使用保守的限制值
+ 309      MAX_CONTEXT_TOKENS = 128000  # 最大上下文token数
+ 310      MAX_OUTPUT_TOKENS = 4096     # 最大输出token数
+ 311      SAFETY_MARGIN = 500          # 安全边界，防止估算误差
+ 312  
+ 313      def __init__(self):
+ 314          self._key_manager = SecureAPIKeyManager()
+ 315          self.api_endpoint = os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4")
+ 316          self.model = os.getenv("GLM_MODEL", "glm-5")
+ 317          self.circuit_breaker = CircuitBreaker(
+ 318              failure_threshold=5,
+ 319              recovery_timeout=60,
+ 320              half_open_max_calls=3
+ 321          )
+ 322          self._token_counter = 0
+ 323          self._request_counter = 0
+ 324          self._truncation_counter = 0  # 截断计数
+ 325  
+ 326      @property
+ 327      def api_key(self) -> str:
+ 328          return self._key_manager.get_key("GLM_API_KEY")
+ 329  
+ 330      def _count_tokens(self, text: str) -> int:
+ 331          """
+ 332          A-P1-7: Improved token counting with tiktoken fallback.
+ 333  
+ 334          Token counting strategy (in order of preference):
+ 335          1. tiktoken library (if available) - most accurate for GPT-compatible tokenizers
+ 336          2. Character-based estimation with improved accuracy for mixed CJK/Latin text
+ 337  
+ 338          Estimation rules for fallback:
+ 339          - CJK characters: ~1.5 tokens/char (refined from 1.8 based on empirical data)
+ 340          - Full-width punctuation/kana: ~1.2 tokens/char
+ 341          - English words: ~1.3 tokens/word (average across word lengths)
+ 342          - Punctuation and whitespace: ~0.3 tokens/char
+ 343          - Numbers: ~0.5 tokens/digit group
+ 344          """
+ 345          if not text:
+ 346              return 0
+ 347  
+ 348          # Strategy 1: Try tiktoken for accurate counting
+ 349          try:
+ 350              import tiktoken
+ 351              # Use cl100k_base encoding (GPT-4/GLM compatible)
+ 352              enc = tiktoken.get_encoding("cl100k_base")
+ 353              return len(enc.encode(text))
+ 354          except ImportError:
+ 355              pass
+ 356          except Exception:
+ 357              pass
+ 358  
+ 359          # Strategy 2: Improved character-based estimation
+ 360          token_count = 0.0
+ 361          i = 0
+ 362          while i < len(text):
+ 363              char = text[i]
+ 364  
+ 365              # CJK Unified Ideographs (common Chinese characters)
+ 366              if '\u4e00' <= char <= '\u9fff':
+ 367                  token_count += 1.5
+ 368              # CJK Extension A and B (rare characters)
+ 369              elif '\u3400' <= char <= '\u4dbf' or '\U00020000' <= char <= '\U0002a6df':
+ 370                  token_count += 1.5
+ 371              # Full-width punctuation, CJK symbols
+ 372              elif '\u3000' <= char <= '\u303f':
+ 373                  token_count += 1.2
+ 374              # Hiragana and Katakana
+ 375              elif '\u3040' <= char <= '\u309f' or '\u30a0' <= char <= '\u30ff':
+ 376                  token_count += 1.2
+ 377              # Hangul syllables
+ 378              elif '\uac00' <= char <= '\ud7af':
+ 379                  token_count += 1.5
+ 380              # English letters and numbers - process as word groups
+ 381              elif char.isascii() and char.isalnum():
+ 382                  word_start = i
+ 383                  while i < len(text) and text[i].isascii() and text[i].isalnum():
+ 384                      i += 1
+ 385                  word_length = i - word_start
+ 386                  # English word token ratio: shorter words have higher ratio
+ 387                  # 1 char ~1 token, 2 chars ~1.5, 3+ chars ~1.3/word
+ 388                  if word_length <= 1:
+ 389                      token_count += 1.0
+ 390                  elif word_length <= 2:
+ 391                      token_count += 1.5
+ 392                  else:
+ 393                      token_count += max(1.0, word_length * 0.4)
+ 394                  continue  # Skip i increment, already advanced
+ 395              # ASCII punctuation and whitespace
+ 396              elif char.isascii():
+ 397                  token_count += 0.3
+ 398              # Other Unicode (emoji, etc.)
+ 399              else:
+ 400                  token_count += 1.5
+ 401  
+ 402              i += 1
+ 403  
+ 404          return max(1, int(token_count))
+ 405  
+ 406      def _truncate_prompt(
+ 407          self,
+ 408          system_prompt: str,
+ 409          user_prompt: str,
+ 410          max_output_tokens: int = 4096
+ 411      ) -> tuple:
+ 412          """
+ 413          P1-006修复: Prompt截断逻辑
+ 414  
+ 415          当输入token超过限制时，智能截断用户prompt，保留系统prompt完整性。
+ 416  
+ 417          截断策略：
+ 418          1. 始终保留系统prompt（包含核心指令）
+ 419          2. 优先截断用户prompt的中部和尾部
+ 420          3. 保留用户prompt的开头和结尾关键信息
+ 421          4. 添加截断标记提示
+ 422  
+ 423          Args:
+ 424              system_prompt: 系统提示词
+ 425              user_prompt: 用户提示词
+ 426              max_output_tokens: 最大输出token数
+ 427  
+ 428          Returns:
+ 429              tuple: (截断后的system_prompt, 截断后的user_prompt, 是否被截断)
+ 430          """
+ 431          system_tokens = self._count_tokens(system_prompt)
+ 432          user_tokens = self._count_tokens(user_prompt)
+ 433  
+ 434          # 计算可用的输入token空间
+ 435          available_input_tokens = (
+ 436              self.MAX_CONTEXT_TOKENS
+ 437              - max_output_tokens
+ 438              - self.SAFETY_MARGIN
+ 439              - system_tokens
+ 440          )
+ 441  
+ 442          # 如果用户prompt在限制内，无需截断
+ 443          if user_tokens <= available_input_tokens:
+ 444              return system_prompt, user_prompt, False
+ 445  
+ 446          logger.warning(
+ 447              f"Prompt truncation required: user_tokens={user_tokens}, "
+ 448              f"available={available_input_tokens}"
+ 449          )
+ 450  
+ 451          # 执行截断
+ 452          self._truncation_counter += 1
+ 453  
+ 454          # 计算需要保留的字符比例
+ 455          target_ratio = available_input_tokens / user_tokens
+ 456  
+ 457          # 截断策略：保留开头60%和结尾40%的目标内容
+ 458          # 这样可以保留问题的背景和具体请求
+ 459          keep_ratio_head = 0.6 * target_ratio
+ 460          keep_ratio_tail = 0.4 * target_ratio
+ 461  
+ 462          truncate_point_head = int(len(user_prompt) * keep_ratio_head)
+ 463          truncate_point_tail = int(len(user_prompt) * (1 - keep_ratio_tail))
+ 464  
+ 465          # 在句子边界截断（寻找标点符号）
+ 466          # 向前寻找最近的句子结束点
+ 467          for offset in range(min(100, truncate_point_head)):
+ 468              idx = truncate_point_head - offset
+ 469              if idx > 0 and user_prompt[idx] in '。！？\n':
+ 470                  truncate_point_head = idx + 1
+ 471                  break
+ 472  
+ 473          # 向后寻找最近的句子开始点
+ 474          for offset in range(min(100, len(user_prompt) - truncate_point_tail)):
+ 475              idx = truncate_point_tail + offset
+ 476              if idx < len(user_prompt) and user_prompt[idx] in '。！？\n':
+ 477                  truncate_point_tail = idx + 1
+ 478                  break
+ 479  
+ 480          # 构建截断后的prompt
+ 481          truncation_marker = "\n\n[...内容已省略...]\n\n"
+ 482          truncated_user_prompt = (
+ 483              user_prompt[:truncate_point_head]
+ 484              + truncation_marker
+ 485              + user_prompt[truncate_point_tail:]
+ 486          )
+ 487  
+ 488          # 验证截断后的token数
+ 489          new_user_tokens = self._count_tokens(truncated_user_prompt)
+ 490          if new_user_tokens > available_input_tokens:
+ 491              # 如果仍然超限，执行更激进的截断
+ 492              # 只保留开头部分
+ 493              safe_length = int(len(user_prompt) * target_ratio * 0.8)
+ 494              truncated_user_prompt = (
+ 495                  user_prompt[:safe_length]
+ 496                  + "\n\n[...内容因长度限制已省略，请根据以上信息提供建议...]"
+ 497              )
+ 498  
+ 499          logger.info(
+ 500              f"Prompt truncated: original={user_tokens} tokens, "
+ 501              f"truncated={self._count_tokens(truncated_user_prompt)} tokens"
+ 502          )
+ 503  
+ 504          return system_prompt, truncated_user_prompt, True
+ 505  
+ 506      def _estimate_tokens(self, text: str) -> int:
+ 507          """Estimate token count for cost tracking (使用增强的计数方法)"""
+ 508          return self._count_tokens(text)
+ 509  
+ 510      def get_usage_stats(self) -> Dict[str, Any]:
+ 511          """Get API usage statistics"""
+ 512          return {
+ 513              "total_requests": self._request_counter,
+ 514              "estimated_tokens": self._token_counter,
+ 515              "truncation_count": self._truncation_counter,
+ 516              "circuit_breaker_state": self.circuit_breaker.state.value
+ 517          }
+ 518  
+ 519      @with_retry_and_circuit_breaker(max_retries=3, base_delay=1.0)
+ 520      async def generate(self, system_prompt: str, user_prompt: str, max_tokens: int = 4000) -> str:
+ 521          # P1-006修复: 执行prompt截断检查
+ 522          system_prompt, user_prompt, was_truncated = self._truncate_prompt(
+ 523              system_prompt, user_prompt, max_tokens
+ 524          )
+ 525  
+ 526          if was_truncated:
+ 527              logger.warning("Prompt was truncated to fit within token limits")
+ 528  
+ 529          estimated_tokens = self._count_tokens(system_prompt) + self._count_tokens(user_prompt) + max_tokens
+ 530  
+ 531          if not await rate_limiter.wait_and_acquire("glm", estimated_tokens, max_wait_ms=30000):
+ 532              raise Exception("Rate limit exceeded - please try again later")
+ 533  
+ 534          headers = {
+ 535              "Authorization": f"Bearer {self.api_key}",
+ 536              "Content-Type": "application/json"
+ 537          }
+ 538  
+ 539          payload = {
+ 540              "model": self.model,
+ 541              "messages": [
+ 542                  {"role": "system", "content": system_prompt},
+ 543                  {"role": "user", "content": user_prompt}
+ 544              ],
+ 545              "max_tokens": max_tokens,
+ 546              "temperature": 0.8,
+ 547              "top_p": 0.9
+ 548          }
+ 549  
+ 550          self._request_counter += 1
+ 551          self._token_counter += self._count_tokens(system_prompt) + self._count_tokens(user_prompt)
+ 552  
+ 553          try:
+ 554              async with aiohttp.ClientSession() as session:
+ 555                  async with session.post(
+ 556                      f"{self.api_endpoint}/chat/completions",
+ 557                      headers=headers,
+ 558                      json=payload,
+ 559                      timeout=aiohttp.ClientTimeout(total=180)
+ 560                  ) as response:
+ 561                      if response.status == 200:
+ 562                          result = await response.json()
+ 563                          content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+ 564                          self._token_counter += self._count_tokens(content)
+ 565                          return content
+ 566                      elif response.status == 429:
+ 567                          # A-P2-1: 429 为可重试错误，提取 Retry-After
+ 568                          retry_after_header = response.headers.get("Retry-After")
+ 569                          err = RetryableError("Rate limit exceeded - please try again later")
+ 570                          if retry_after_header:
+ 571                              try:
+ 572                                  err.retry_after = float(retry_after_header)
+ 573                              except (ValueError, TypeError):
+ 574                                  pass
+ 575                          raise err
+ 576                      elif response.status >= 500:
+ 577                          # A-P2-1: 5xx 为可重试错误
+ 578                          raise RetryableError(f"Server error: {response.status}")
+ 579                      else:
+ 580                          error_text = await response.text()
+ 581                          # P1-006修复: 处理token超限错误
+ 582                          if "token" in error_text.lower() or "length" in error_text.lower():
+ 583                              raise NonRetryableError(f"Token limit exceeded: {error_text}")
+ 584                          # A-P2-1: 其他 4xx 为不可重试错误
+ 585                          raise NonRetryableError(f"GLM API error: {response.status} - {error_text}")
+ 586          except asyncio.TimeoutError:
+ 587              # A-P2-1: 超时为可重试错误
+ 588              raise RetryableError("API request timed out after 180s")
+ 589          except aiohttp.ClientError as e:
+ 590              # A-P2-1: 网络错误为可重试错误
+ 591              raise RetryableError(f"Network error: {e}")
+ 592  
+ 593  
+ 594  class ConversationMemory:
+ 595      """
+ 596      对话历史管理器
+ 597      
+ 598      功能：
+ 599      - 基于会话 ID 的对话历史存储
+ 600      - 支持 Redis 持久化（可选）
+ 601      - 自动过期清理
+ 602      - 上下文窗口管理
+ 603      """
+ 604      
+ 605      def __init__(
+ 606          self,
+ 607          max_history_turns: int = 10,
+ 608          ttl_seconds: int = 3600,
+ 609          use_redis: bool = False,
+ 610          redis_client = None
+ 611      ):
+ 612          self.max_history_turns = max_history_turns
+ 613          self.ttl_seconds = ttl_seconds
+ 614          self.use_redis = use_redis
+ 615          self.redis_client = redis_client
+ 616          self._local_cache: Dict[str, List[Dict[str, str]]] = {}
+ 617          self._lock = threading.RLock()
+ 618      
+ 619      def _get_redis_key(self, session_id: str) -> str:
+ 620          return f"stylist:conversation:{session_id}"
+ 621      
+ 622      async def get_history(self, session_id: str) -> List[Dict[str, str]]:
+ 623          """
+ 624          获取会话的对话历史
+ 625          
+ 626          Args:
+ 627              session_id: 会话 ID
+ 628              
+ 629          Returns:
+ 630              对话历史列表
+ 631          """
+ 632          if self.use_redis and self.redis_client:
+ 633              try:
+ 634                  key = self._get_redis_key(session_id)
+ 635                  data = await self.redis_client.get(key)
+ 636                  if data:
+ 637                      return json.loads(data)
+ 638              except Exception as e:
+ 639                  logger.warning(f"Redis get failed for session {session_id}: {e}")
+ 640          
+ 641          with self._lock:
+ 642              return self._local_cache.get(session_id, [])
+ 643      
+ 644      async def add_message(
+ 645          self,
+ 646          session_id: str,
+ 647          role: str,
+ 648          content: str
+ 649      ) -> List[Dict[str, str]]:
+ 650          """
+ 651          添加消息到对话历史
+ 652          
+ 653          Args:
+ 654              session_id: 会话 ID
+ 655              role: 角色 (user/assistant/system)
+ 656              content: 消息内容
+ 657              
+ 658          Returns:
+ 659              更新后的对话历史
+ 660          """
+ 661          with self._lock:
+ 662              history = self._local_cache.get(session_id, [])
+ 663              
+ 664              # 添加新消息
+ 665              history.append({
+ 666                  "role": role,
+ 667                  "content": content,
+ 668                  "timestamp": datetime.now().isoformat()
+ 669              })
+ 670              
+ 671              # 保持历史记录在限制内（保留最近 N 轮对话）
+ 672              max_messages = self.max_history_turns * 2
+ 673              if len(history) > max_messages:
+ 674                  history = history[-max_messages:]
+ 675              
+ 676              self._local_cache[session_id] = history
+ 677          
+ 678          # 持久化到 Redis
+ 679          if self.use_redis and self.redis_client:
+ 680              try:
+ 681                  key = self._get_redis_key(session_id)
+ 682                  await self.redis_client.setex(
+ 683                      key,
+ 684                      self.ttl_seconds,
+ 685                      json.dumps(history)
+ 686                  )
+ 687              except Exception as e:
+ 688                  logger.warning(f"Redis set failed for session {session_id}: {e}")
+ 689          
+ 690          return history
+ 691      
+ 692      async def clear_history(self, session_id: str) -> None:
+ 693          """
+ 694          清除会话的对话历史
+ 695          
+ 696          Args:
+ 697              session_id: 会话 ID
+ 698          """
+ 699          with self._lock:
+ 700              if session_id in self._local_cache:
+ 701                  del self._local_cache[session_id]
+ 702          
+ 703          if self.use_redis and self.redis_client:
+ 704              try:
+ 705                  key = self._get_redis_key(session_id)
+ 706                  await self.redis_client.delete(key)
+ 707              except Exception as e:
+ 708                  logger.warning(f"Redis delete failed for session {session_id}: {e}")
+ 709      
+ 710      def get_stats(self) -> Dict[str, Any]:
+ 711          """获取统计信息"""
+ 712          with self._lock:
+ 713              return {
+ 714                  "active_sessions": len(self._local_cache),
+ 715                  "total_messages": sum(len(h) for h in self._local_cache.values()),
+ 716                  "max_history_turns": self.max_history_turns,
+ 717                  "ttl_seconds": self.ttl_seconds,
+ 718                  "use_redis": self.use_redis
+ 719              }
+ 720  
+ 721  
+ 722  class IntelligentStylistService:
+ 723      SYSTEM_PROMPT = """你是一位世界顶级的私人形象顾问和时尚造型师，拥有以下专业能力：
+ 724  
+ 725  ## 专业背景
+ 726  - 20年高端时尚行业经验，曾为众多名人和企业高管提供形象咨询服务
+ 727  - 深谙色彩理论、体型分析、面部美学等专业领域
+ 728  - 熟悉各大时装周趋势、当季流行元素和经典穿搭法则
+ 729  - 擅长根据个人特点打造独特且适合的风格
+ 730  
+ 731  ## 核心能力
+ 732  1. **个人形象深度分析**
+ 733     - 体型特征识别与优化建议
+ 734     - 肤色分析与最佳色彩推荐
+ 735     - 脸型与发型、配饰搭配
+ 736     - 个人风格定位
+ 737  
+ 738  2. **场景化穿搭设计**
+ 739     - 根据具体场合（面试、约会、商务等）定制方案
+ 740     - 考虑天气、季节、时间等环境因素
+ 741     - 平衡正式度与个人风格表达
+ 742  
+ 743  3. **时尚趋势整合**
+ 744     - 将当季流行元素融入日常穿搭
+ 745     - 推荐适合用户风格的潮流单品
+ 746     - 经典款与时尚款的平衡搭配
+ 747  
+ 748  4. **个性化建议**
+ 749     - 基于用户预算提供分价位选择
+ 750     - 考虑用户生活方式和穿衣习惯
+ 751     - 提供可落地的购买和搭配建议
+ 752  
+ 753  ## 输出原则
+ 754  - 建议必须具体、可操作，避免空洞的描述
+ 755  - 每个推荐都要说明理由，让用户理解"为什么适合我"
+ 756  - 尊重用户的个人偏好，不强推不适合的风格
+ 757  - 考虑实用性，推荐的单品应该易于购买和搭配
+ 758  
+ 759  请始终以专业、亲切、个性化的方式与用户交流，帮助他们发现最适合自己的风格。"""
+ 760  
+ 761      TREND_PROMPT_TEMPLATE = """基于以下用户信息，请分析并推荐最适合的穿搭方案：
+ 762  
+ 763  ## 用户档案
+ 764  {user_profile}
+ 765  
+ 766  ## 场景需求
+ 767  {scene_context}
+ 768  
+ 769  ## 当前时尚趋势（{current_season}）
+ 770  {fashion_trends}
+ 771  
+ 772  ## 用户具体需求
+ 773  {user_request}
+ 774  
+ 775  请提供：
+ 776  1. 个人形象分析（简要，不超过100字）
+ 777  2. 2套完整的穿搭方案（每套包含上下装、鞋履、配饰，每个单品描述不超过30字）
+ 778  3. 每套方案的搭配理由和适用场景
+ 779  4. 简要的购买建议
+ 780  
+ 781  请以JSON格式输出，结构如下（注意：内容要简洁，避免过长）：
+ 782  {{
+ 783    "personal_analysis": {{
+ 784      "body_type_analysis": "体型分析（简短）",
+ 785      "color_analysis": "肤色色彩分析（简短）",
+ 786      "style_positioning": "个人风格定位（简短）",
+ 787      "key_recommendations": ["核心建议1", "核心建议2"]
+ 788    }},
+ 789    "outfit_plans": [
+ 790      {{
+ 791        "title": "方案名称",
+ 792        "overall_style": "整体风格描述",
+ 793        "items": [
+ 794          {{
+ 795            "category": "上装/下装/鞋履/配饰",
+ 796            "name": "具体单品名称",
+ 797            "description": "简短描述",
+ 798            "color": "推荐颜色",
+ 799            "why_recommended": "推荐理由（简短）",
+ 800            "price_range": "价格区间"
+ 801          }}
+ 802        ],
+ 803        "styling_tips": ["搭配技巧1"],
+ 804        "color_harmony": "色彩搭配说明",
+ 805        "occasion_fit": "适用场景",
+ 806        "estimated_budget": "预估总价"
+ 807      }}
+ 808    ],
+ 809    "shopping_guide": {{
+ 810      "priority_items": ["优先购买的单品"],
+ 811      "budget_friendly_alternatives": ["平价替代"]
+ 812    }}
+ 813  }}"""
+ 814  
+ 815      FASHION_TRENDS_2025 = {
+ 816          "spring": {
+ 817              "colors": ["柔和紫", "薄荷绿", "奶油白", "珊瑚粉", "经典蓝"],
+ 818              "key_items": ["轻薄风衣", "针织开衫", "阔腿牛仔裤", "芭蕾舞鞋", "编织包"],
+ 819              "patterns": ["细条纹", "小碎花", "几何印花"],
+ 820              "materials": ["亚麻", "轻薄针织", "真丝混纺"],
+ 821              "styles": ["法式慵懒", "新中式", "运动休闲融合"],
+ 822              "accessories": ["珍珠项链", "丝巾", "编织草帽", "极简手表"]
+ 823          },
+ 824          "summer": {
+ 825              "colors": ["柠檬黄", "天空蓝", "纯白", "薄荷绿", "西瓜红"],
+ 826              "key_items": ["亚麻衬衫", "棉质T恤", "高腰短裤", "凉鞋", "草编包"],
+ 827              "patterns": ["热带印花", "波点", "纯色"],
+ 828              "materials": ["棉", "麻", "天丝"],
+ 829              "styles": ["度假风", "极简风", "运动风"],
+ 830              "accessories": ["墨镜", "编织腰带", "帆布包", "运动手表"]
+ 831          },
+ 832          "fall": {
+ 833              "colors": ["焦糖色", "酒红", "墨绿", "驼色", "深蓝"],
+ 834              "key_items": ["风衣", "针织毛衣", "西装外套", "高腰西裤", "切尔西靴"],
+ 835              "patterns": ["格纹", "千鸟格", "素色"],
+ 836              "materials": ["羊毛", "灯芯绒", "皮革"],
+ 837              "styles": ["复古风", "商务休闲", "街头潮流"],
+ 838              "accessories": ["围巾", "皮带", "公文包", "踝靴"]
+ 839          },
+ 840          "winter": {
+ 841              "colors": ["黑色", "深灰", "酒红", "墨绿", "奶油白"],
+ 842              "key_items": ["羊毛大衣", "羽绒服", "高领毛衣", "加绒牛仔裤", "雪地靴"],
+ 843              "patterns": ["纯色", "粗花呢", "提花"],
+ 844              "materials": ["羊毛", "羊绒", "羽绒", "皮革"],
+ 845              "styles": ["极简风", "经典优雅", "温暖舒适"],
+ 846              "accessories": ["毛线帽", "手套", "围巾", "厚底靴"]
+ 847          }
+ 848      }
+ 849  
+ 850      BODY_TYPE_GUIDE = {
+ 851          "rectangle": {
+ 852              "name": "H型/矩形身材",
+ 853              "characteristics": "肩、腰、臀宽度相近，曲线不明显",
+ 854              "optimize_tips": [
+ 855                  "选择有腰线设计的单品，创造曲线感",
+ 856                  "上身或下身选择有量感的款式增加层次",
+ 857                  "高腰设计可以优化比例",
+ 858                  "层叠穿搭增加视觉层次"
+ 859              ],
+ 860              "avoid": ["过于直筒的连衣裙", "没有腰线的宽松上衣"],
+ 861              "best_items": ["收腰连衣裙", "A字裙", "高腰裤", "有垫肩的外套"]
+ 862          },
+ 863          "triangle": {
+ 864              "name": "A型/梨形身材",
+ 865              "characteristics": "臀部比肩部宽，下半身较丰满",
+ 866              "optimize_tips": [
+ 867                  "上身选择亮色或有设计感的款式吸引视线",
+ 868                  "下装选择深色、简洁款式",
+ 869                  "A字裙或阔腿裤平衡臀宽",
+ 870                  "船领、一字领等扩展肩部线条"
+ 871              ],
+ 872              "avoid": ["紧身铅笔裤", "臀部有装饰的裤子", "过于修身的连衣裙"],
+ 873              "best_items": ["船领上衣", "A字裙", "阔腿裤", "深色直筒牛仔裤"]
+ 874          },
+ 875          "inverted_triangle": {
+ 876              "name": "Y型/倒三角身材",
+ 877              "characteristics": "肩部比臀部宽，上身较壮",
+ 878              "optimize_tips": [
+ 879                  "下装选择有量感或亮色的款式",
+ 880                  "V领、U领柔和肩部线条",
+ 881                  "避免垫肩或肩部有装饰的款式",
+ 882                  "A字裙或阔腿裤增加下身量感"
+ 883              ],
+ 884              "avoid": ["垫肩外套", "船领上衣", "紧身裤"],
+ 885              "best_items": ["V领上衣", "阔腿裤", "A字裙", "深色上装"]
+ 886          },
+ 887          "hourglass": {
+ 888              "name": "X型/沙漏身材",
+ 889              "characteristics": "肩臀宽度相近，腰线明显",
+ 890              "optimize_tips": [
+ 891                  "选择收腰设计的单品展示曲线",
+ 892                  "合身剪裁比宽松款更显身材优势",
+ 893                  "腰带是很好的配饰选择",
+ 894                  "避免过于宽松掩盖腰线"
+ 895              ],
+ 896              "avoid": ["直筒连衣裙", "过于宽松的上衣", "低腰裤"],
+ 897              "best_items": ["收腰连衣裙", "高腰裤", "铅笔裙", "合身衬衫"]
+ 898          },
+ 899          "oval": {
+ 900              "name": "O型/苹果身材",
+ 901              "characteristics": "腰腹较丰满，四肢相对纤细",
+ 902              "optimize_tips": [
+ 903                  "V领设计拉长颈部线条",
+ 904                  "选择垂感好的面料",
+ 905                  "长款外套修饰腰腹",
+ 906                  "展示纤细的四肢"
+ 907              ],
+ 908              "avoid": ["紧身款", "腰部有装饰的款式", "短款上衣"],
+ 909              "best_items": ["V领上衣", "长款开衫", "直筒裤", "A字连衣裙"]
+ 910          }
+ 911      }
+ 912  
+ 913      COLOR_SEASON_GUIDE = {
+ 914          "spring": {
+ 915              "name": "春季型",
+ 916              "characteristics": "肤色偏暖，有桃红或杏色调",
+ 917              "best_colors": ["珊瑚粉", "桃红", "杏色", "暖黄", "草绿", "浅蓝绿"],
+ 918              "avoid_colors": ["纯黑", "纯白", "冷灰", "深紫"],
+ 919              "neutrals": ["米色", "奶油白", "暖灰"]
+ 920          },
+ 921          "summer": {
+ 922              "name": "夏季型",
+ 923              "characteristics": "肤色偏冷，有粉色调",
+ 924              "best_colors": ["玫瑰粉", "薰衣草紫", "天蓝", "薄荷绿", "灰粉"],
+ 925              "avoid_colors": ["橙色", "金黄", "暖棕"],
+ 926              "neutrals": ["冷灰", "银灰", "白色"]
+ 927          },
+ 928          "autumn": {
+ 929              "name": "秋季型",
+ 930              "characteristics": "肤色偏暖，有金色调",
+ 931              "best_colors": ["焦糖色", "酒红", "墨绿", "棕色", "橙色", "芥末黄"],
+ 932              "avoid_colors": ["荧光色", "冷粉", "纯白"],
+ 933              "neutrals": ["驼色", "米色", "深棕"]
+ 934          },
+ 935          "winter": {
+ 936              "name": "冬季型",
+ 937              "characteristics": "肤色偏冷，对比度高",
+ 938              "best_colors": ["正红", "宝蓝", "纯白", "黑色", "玫红", "翠绿"],
+ 939              "avoid_colors": ["暖橙", "土黄", "暖棕"],
+ 940              "neutrals": ["黑色", "白色", "深灰"]
+ 941          }
+ 942      }
+ 943  
+ 944      OCCASION_GUIDE = {
+ 945          "interview": {
+ 946              "name": "面试",
+ 947              "formality": "high",
+ 948              "keywords": ["专业", "得体", "自信", "稳重"],
+ 949              "style_hints": ["商务正装", "轻正式", "简约大方"],
+ 950              "color_palette": ["深蓝", "灰色", "黑色", "白色", "米色"],
+ 951              "avoid": ["过于时尚", "暴露", "休闲", "夸张配饰"]
+ 952          },
+ 953          "work": {
+ 954              "name": "通勤/上班",
+ 955              "formality": "medium_high",
+ 956              "keywords": ["专业", "舒适", "得体", "效率"],
+ 957              "style_hints": ["商务休闲", "轻正式", "极简风"],
+ 958              "color_palette": ["深蓝", "灰色", "米色", "白色", "驼色"],
+ 959              "avoid": ["过于休闲", "过于正式", "不便活动"]
+ 960          },
+ 961          "date": {
+ 962              "name": "约会",
+ 963              "formality": "medium",
+ 964              "keywords": ["魅力", "自信", "精致", "舒适"],
+ 965              "style_hints": ["法式慵懒", "韩系", "浪漫风"],
+ 966              "color_palette": ["粉色", "酒红", "米色", "浅蓝", "白色"],
+ 967              "avoid": ["过于正式", "邋遢", "不舒适"]
+ 968          },
+ 969          "travel": {
+ 970              "name": "出游/旅行",
+ 971              "formality": "low",
+ 972              "keywords": ["舒适", "方便", "上镜", "实用"],
+ 973              "style_hints": ["休闲风", "运动风", "度假风"],
+ 974              "color_palette": ["白色", "蓝色", "卡其", "绿色", "黄色"],
+ 975              "avoid": ["不便活动", "易皱", "难打理"]
+ 976          },
+ 977          "party": {
+ 978              "name": "聚会/派对",
+ 979              "formality": "medium",
+ 980              "keywords": ["时尚", "精致", "有记忆点", "社交"],
+ 981              "style_hints": ["街头潮流", "复古风", "时髦风"],
+ 982              "color_palette": ["黑色", "金色", "银色", "红色", "亮片"],
+ 983              "avoid": ["过于保守", "不修边幅"]
+ 984          },
+ 985          "daily": {
+ 986              "name": "日常",
+ 987              "formality": "low",
+ 988              "keywords": ["舒适", "百搭", "实用", "自在"],
+ 989              "style_hints": ["休闲风", "极简风", "韩系"],
+ 990              "color_palette": ["白色", "黑色", "灰色", "蓝色", "米色"],
+ 991              "avoid": ["过于正式", "不便活动"]
+ 992          },
+ 993          "campus": {
+ 994              "name": "校园",
+ 995              "formality": "low",
+ 996              "keywords": ["年轻", "活力", "舒适", "学生气"],
+ 997              "style_hints": ["韩系", "日系", "学院风"],
+ 998              "color_palette": ["白色", "蓝色", "灰色", "卡其", "粉色"],
+ 999              "avoid": ["过于正式", "过于成熟"]
+1000          }
+1001      }
+1002  
+1003      def __init__(self, use_redis: bool = False, redis_client = None):
+1004          self.engine = GLMStylistEngine()
+1005          self.current_season = self._get_current_season()
+1006          self._response_cache = ResponseCache(max_size=500, ttl_seconds=1800)
+1007          self._conversation_memory = ConversationMemory(
+1008              max_history_turns=10,
+1009              ttl_seconds=3600,
+1010              use_redis=use_redis,
+1011              redis_client=redis_client
+1012          )
+1013          # P1-7: Degradation strategy - cache last successful results for fallback
+1014          self._last_successful_recommendations: OrderedDict[str, Dict[str, Any]] = OrderedDict()
+1015          self._degradation_lock = threading.Lock()
+1016          self._max_fallback_cache = 50
+1017          # P1-7: Default timeout for GLM API calls (30 seconds)
+1018          self._api_timeout_seconds = 30
+1019          # Dialog state machine
+1020          self._dialog_contexts: Dict[str, Any] = {}
+1021          self._dialog_contexts_lock = threading.RLock()
+1022          self._init_dialog_engine()
+1023      
+1024      def get_cache_stats(self) -> Dict[str, Any]:
+1025          """Get response cache statistics"""
+1026          return self._response_cache.get_stats()
+1027      
+1028      def get_conversation_stats(self) -> Dict[str, Any]:
+1029          """Get conversation memory statistics"""
+1030          return self._conversation_memory.get_stats()
+1031      
+1032      def clear_cache(self) -> None:
+1033          """Clear the response cache"""
+1034          self._response_cache.clear()
+1035      
+1036      def _init_dialog_engine(self) -> None:
+1037          from ml.services.stylist.slot_extractor import SlotExtractor
+1038          from ml.services.stylist.dialog_engine import DialogEngine
+1039          
+1040          slot_extractor = SlotExtractor(llm_call_fn=self._call_llm_with_resilience)
+1041          self.dialog_engine = DialogEngine(
+1042              slot_extractor=slot_extractor,
+1043              llm_call_fn=self._call_llm_with_resilience,
+1044              outfit_generator=self._generate_outfits_from_context,
+1045          )
+1046      
+1047      async def _generate_outfits_from_context(self, context) -> list:
+1048          from ml.services.stylist.full_outfit_engine import (
+1049              FullOutfitEngine,
+1050              OutfitContext,
+1051              generate_full_outfit,
+1052          )
+1053          from ml.services.stylist.intelligent_stylist_service import UserProfile
+1054          
+1055          user_profile = UserProfile(
+1056              style_preferences=context.slots.style_preference,
+1057              color_preferences=context.slots.color_preference,
+1058              budget_range=context.slots.budget,
+1059              body_type=context.slots.body_type,
+1060          )
+1061          outfit_context = OutfitContext(
+1062              occasion=context.slots.occasion or "daily",
+1063              temperature_celsius=context.slots.temperature,
+1064          )
+1065          budget = 5000.0
+1066          if context.slots.budget:
+1067              budget = context.slots.budget.get("max", 5000.0)
+1068          
+1069          try:
+1070              plans = await generate_full_outfit(
+1071                  user_profile=user_profile,
+1072                  context=outfit_context,
+1073                  budget=budget,
+1074                  candidates=None,
+1075                  num_plans=3,
+1076              )
+1077              return plans
+1078          except Exception as e:
+1079              logger.warning(f"Outfit generation from context failed: {e}")
+1080              return []
+1081      
+1082      async def _get_or_create_dialog_context(self, session_id: str):
+1083          from ml.services.stylist.dialog_state import DialogContext
+1084          
+1085          with self._dialog_contexts_lock:
+1086              if session_id not in self._dialog_contexts:
+1087                  self._dialog_contexts[session_id] = DialogContext()
+1088              return self._dialog_contexts[session_id]
+1089      
+1090      async def _save_dialog_context(self, session_id: str, context) -> None:
+1091          with self._dialog_contexts_lock:
+1092              self._dialog_contexts[session_id] = context
+1093      
+1094      async def clear_dialog_context(self, session_id: str) -> None:
+1095          with self._dialog_contexts_lock:
+1096              self._dialog_contexts.pop(session_id, None)
+1097      
+1098      async def get_conversation_history(self, session_id: str) -> List[Dict[str, str]]:
+1099          """
+1100          获取会话的对话历史
+1101          
+1102          Args:
+1103              session_id: 会话 ID
+1104              
+1105          Returns:
+1106              对话历史列表
+1107          """
+1108          return await self._conversation_memory.get_history(session_id)
+1109      
+1110      async def add_to_conversation(
+1111          self,
+1112          session_id: str,
+1113          role: str,
+1114          content: str
+1115      ) -> List[Dict[str, str]]:
+1116          """
+1117          添加消息到对话历史
+1118          
+1119          Args:
+1120              session_id: 会话 ID
+1121              role: 角色 (user/assistant)
+1122              content: 消息内容
+1123              
+1124          Returns:
+1125              更新后的对话历史
+1126          """
+1127          return await self._conversation_memory.add_message(session_id, role, content)
+1128      
+1129      async def clear_conversation(self, session_id: str) -> None:
+1130          """
+1131          清除会话的对话历史
+1132          
+1133          Args:
+1134              session_id: 会话 ID
+1135          """
+1136          await self._conversation_memory.clear_history(session_id)
+1137      
+1138      def _compute_cache_key(self, prefix: str, *args, **kwargs) -> str:
+1139          """Compute cache key for method calls"""
+1140          key_data = json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True, default=str)
+1141          key_hash = hashlib.sha256(key_data.encode('utf-8')).hexdigest()
+1142          return f"{prefix}:{key_hash}"
+1143  
+1144      def _get_current_season(self) -> str:
+1145          month = datetime.now().month
+1146          if month in [3, 4, 5]:
+1147              return "spring"
+1148          elif month in [6, 7, 8]:
+1149              return "summer"
+1150          elif month in [9, 10, 11]:
+1151              return "fall"
+1152          else:
+1153              return "winter"
+1154  
+1155      def _format_user_profile(self, profile: UserProfile) -> str:
+1156          parts = []
+1157          
+1158          if profile.body_type:
+1159              guide = self.BODY_TYPE_GUIDE.get(profile.body_type, {})
+1160              parts.append(f"体型：{guide.get('name', profile.body_type)}")
+1161              if guide.get('characteristics'):
+1162                  parts.append(f"特征：{guide['characteristics']}")
+1163          
+1164          if profile.skin_tone:
+1165              parts.append(f"肤色：{profile.skin_tone}")
+1166          
+1167          if profile.color_season:
+1168              guide = self.COLOR_SEASON_GUIDE.get(profile.color_season, {})
+1169              parts.append(f"色彩季型：{guide.get('name', profile.color_season)}")
+1170              if guide.get('best_colors'):
+1171                  parts.append(f"最佳色彩：{', '.join(guide['best_colors'][:5])}")
+1172          
+1173          if profile.height and profile.weight:
+1174              bmi = profile.weight / ((profile.height / 100) ** 2)
+1175              parts.append(f"身高：{profile.height}cm，体重：{profile.weight}kg")
+1176          
+1177          if profile.style_preferences:
+1178              parts.append(f"偏好风格：{', '.join(profile.style_preferences)}")
+1179          
+1180          if profile.style_avoidances:
+1181              parts.append(f"避免风格：{', '.join(profile.style_avoidances)}")
+1182          
+1183          if profile.budget_range:

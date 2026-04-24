@@ -11,12 +11,12 @@ import {
   type UseInfiniteQueryOptions,
 } from "@tanstack/react-query";
 
-import { clothingApi } from '../../services/api/clothing.api';
-import { cartApi, searchApi } from '../../services/api/commerce.api';
-import { profileApi } from '../../services/api/profile.api';
-import { tryOnApi, recommendationsApi } from '../../services/api/tryon.api';
-import { aiStylistApi } from '../../services/api/ai-stylist.api';
-import { recommendationFeedApi } from '../../services/api/recommendation-feed.api';
+import { clothingApi } from "../../services/api/clothing.api";
+import { cartApi, searchApi } from "../../services/api/commerce.api";
+import { profileApi } from "../../services/api/profile.api";
+import { tryOnApi, recommendationsApi } from "../../services/api/tryon.api";
+import { aiStylistApi } from "../../services/api/ai-stylist.api";
+import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
 
 import type { ApiResponse, PaginatedResponse, SearchFilters } from "../types";
 import type { ClothingItem, ClothingFilter, ClothingSortOptions } from "../../types/clothing";
@@ -57,8 +57,12 @@ export const queryKeys = {
   },
   recommendations: {
     all: ["recommendations"] as const,
-    personalized: (params?: { category?: string; occasion?: string; season?: string; limit?: number }) =>
-      ["recommendations", "personalized", params] as const,
+    personalized: (params?: {
+      category?: string;
+      occasion?: string;
+      season?: string;
+      limit?: number;
+    }) => ["recommendations", "personalized", params] as const,
     feed: (params?: FeedParams) => ["recommendations", "feed", params] as const,
     daily: () => ["recommendations", "daily"] as const,
     trending: (limit?: number) => ["recommendations", "trending", limit] as const,
@@ -123,7 +127,10 @@ export interface ClothingListParams {
  * - gcTime 30 分钟
  * - 参数变化自动重新请求
  */
-export function useClothingList(params?: ClothingListParams, options?: Partial<UseQueryOptions<PaginatedResponse<ClothingItem>>>) {
+export function useClothingList(
+  params?: ClothingListParams,
+  options?: Partial<UseQueryOptions<PaginatedResponse<ClothingItem>>>
+) {
   return useQuery({
     queryKey: queryKeys.clothing.list(params),
     queryFn: () => clothingApi.getAll(params).then(unwrap),
@@ -139,7 +146,10 @@ export function useClothingList(params?: ClothingListParams, options?: Partial<U
  * - id 为 falsy 时自动禁用（enabled: false）
  * - staleTime 5 分钟
  */
-export function useClothingDetail(id: string | undefined | null, options?: Partial<UseQueryOptions<ClothingItem>>) {
+export function useClothingDetail(
+  id: string | undefined | null,
+  options?: Partial<UseQueryOptions<ClothingItem>>
+) {
   return useQuery({
     queryKey: queryKeys.clothing.detail(id ?? ""),
     queryFn: () => clothingApi.getById(id!).then(unwrap),
@@ -158,12 +168,11 @@ export function useClothingDetail(id: string | undefined | null, options?: Parti
  */
 export function useRecommendations(
   params?: { category?: string; occasion?: string; season?: string; limit?: number },
-  options?: Partial<UseInfiniteQueryOptions<RecommendedItem[], Error>>,
+  options?: Partial<UseInfiniteQueryOptions<RecommendedItem[], Error>>
 ) {
   return useInfiniteQuery({
     queryKey: queryKeys.recommendations.personalized(params),
     queryFn: async ({ pageParam }) => {
-      const _page = pageParam as number;
       const response = await recommendationsApi.getPersonalized({
         ...params,
         limit: params?.limit ?? 20,
@@ -174,7 +183,9 @@ export function useRecommendations(
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       // 推荐接口返回数组，若数量不足 limit 则无更多
       const limit = params?.limit ?? 20;
-      if (lastPage.length < limit) { return undefined; }
+      if (lastPage.length < limit) {
+        return undefined;
+      }
       return (lastPageParam as number) + 1;
     },
     staleTime: 5 * 60 * 1000,
@@ -190,7 +201,7 @@ export function useRecommendations(
  */
 export function useRecommendationFeed(
   params?: FeedParams,
-  options?: Partial<UseInfiniteQueryOptions<FeedResult, Error>>,
+  options?: Partial<UseInfiniteQueryOptions<FeedResult, Error>>
 ) {
   return useInfiniteQuery({
     queryKey: queryKeys.recommendations.feed(params),
@@ -199,7 +210,8 @@ export function useRecommendationFeed(
       return recommendationFeedApi.getFeed({ ...params, page, pageSize: params?.pageSize ?? 10 });
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => (lastPage.hasMore ? (lastPage.items.length > 0 ? undefined : undefined) : undefined),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore ? (lastPage.items.length > 0 ? undefined : undefined) : undefined,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     ...options,
@@ -266,7 +278,7 @@ export function useColorAnalysis(options?: Partial<UseQueryOptions<ColorAnalysis
 export function useTryOnHistory(
   page?: number,
   limit?: number,
-  options?: Partial<UseQueryOptions<{ items: TryOnResult[]; total: number }>>,
+  options?: Partial<UseQueryOptions<{ items: TryOnResult[]; total: number }>>
 ) {
   return useQuery({
     queryKey: queryKeys.tryOn.history(page, limit),
@@ -282,7 +294,7 @@ export function useTryOnHistory(
  */
 export function useTryOnStatus(
   id: string | undefined | null,
-  options?: Partial<UseQueryOptions<TryOnResult>>,
+  options?: Partial<UseQueryOptions<TryOnResult>>
 ) {
   return useQuery({
     queryKey: queryKeys.tryOn.status(id ?? ""),
@@ -307,7 +319,7 @@ export function useTryOnStatus(
  */
 export function useAiStylistSession(
   id: string | undefined | null,
-  options?: Partial<UseQueryOptions<AiStylistSessionResponse>>,
+  options?: Partial<UseQueryOptions<AiStylistSessionResponse>>
 ) {
   return useQuery({
     queryKey: queryKeys.aiStylist.session(id ?? ""),
@@ -322,7 +334,9 @@ export function useAiStylistSession(
 /**
  * AI 造型师建议查询
  */
-export function useAiStylistSuggestions(options?: Partial<UseQueryOptions<AiStylistSuggestionResponse>>) {
+export function useAiStylistSuggestions(
+  options?: Partial<UseQueryOptions<AiStylistSuggestionResponse>>
+) {
   return useQuery({
     queryKey: queryKeys.aiStylist.suggestions(),
     queryFn: () => aiStylistApi.getSuggestions().then(unwrap),
@@ -339,7 +353,7 @@ export function useAiStylistSuggestions(options?: Partial<UseQueryOptions<AiStyl
  */
 export function useSearch(
   filters: SearchFilters,
-  options?: Partial<UseInfiniteQueryOptions<ClothingItem[], Error>>,
+  options?: Partial<UseInfiniteQueryOptions<ClothingItem[], Error>>
 ) {
   return useInfiniteQuery({
     queryKey: queryKeys.search.clothing(filters),
@@ -360,7 +374,9 @@ export function useSearch(
  * 每日穿搭推荐
  */
 export function useDailyOutfit(
-  options?: Partial<UseQueryOptions<{ items: RecommendedItem[]; outfitName: string; description: string }>>,
+  options?: Partial<
+    UseQueryOptions<{ items: RecommendedItem[]; outfitName: string; description: string }>
+  >
 ) {
   return useQuery({
     queryKey: queryKeys.recommendations.daily(),
@@ -376,7 +392,7 @@ export function useDailyOutfit(
  */
 export function useTrendingRecommendations(
   limit?: number,
-  options?: Partial<UseQueryOptions<RecommendedItem[]>>,
+  options?: Partial<UseQueryOptions<RecommendedItem[]>>
 ) {
   return useQuery({
     queryKey: queryKeys.recommendations.trending(limit),
@@ -391,7 +407,7 @@ export function useTrendingRecommendations(
  * 试衣每日配额
  */
 export function useTryOnDailyQuota(
-  options?: Partial<UseQueryOptions<{ used: number; limit: number; remaining: number }>>,
+  options?: Partial<UseQueryOptions<{ used: number; limit: number; remaining: number }>>
 ) {
   return useQuery({
     queryKey: queryKeys.tryOn.dailyQuota(),

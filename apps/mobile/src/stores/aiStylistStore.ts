@@ -199,7 +199,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
         set({ isAlternativesLoading: false });
       }
     } catch (error) {
-      console.error('AI Stylist operation failed:', error);
+      console.error("AI Stylist operation failed:", error);
       set({ isAlternativesLoading: false });
     }
   },
@@ -218,7 +218,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       }
       return false;
     } catch (error) {
-      console.error('AI Stylist operation failed:', error);
+      console.error("AI Stylist operation failed:", error);
       return false;
     }
   },
@@ -241,7 +241,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       });
       return response.success;
     } catch (error) {
-      console.error('AI Stylist operation failed:', error);
+      console.error("AI Stylist operation failed:", error);
       return false;
     }
   },
@@ -258,7 +258,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       }
     } catch (error) {
       // silent fail
-      console.error('AI Stylist operation failed:', error);
+      console.error("AI Stylist operation failed:", error);
     }
   },
 

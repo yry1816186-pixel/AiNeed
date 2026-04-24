@@ -42,7 +42,11 @@ import {
   TrendingQueryDto,
 } from "./dto/community.dto";
 
-const imageFileFilter = (_req: any, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
+const imageFileFilter = (
+  _req: any,
+  file: Express.Multer.File,
+  callback: (error: Error | null, acceptFile: boolean) => void
+) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
     return callback(new Error("Only image files are allowed"), false);
   }
@@ -62,7 +66,7 @@ export class CommunityController {
     FilesInterceptor("images", 9, {
       limits: { fileSize: 10 * 1024 * 1024 },
       fileFilter: imageFileFilter,
-    }),
+    })
   )
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "创建帖子", description: "创建一个新的社区帖子，支持多图上传" })
@@ -72,16 +76,19 @@ export class CommunityController {
   async createPost(
     @NestRequest() req: RequestWithUser,
     @Body() dto: CreatePostDto,
-    @UploadedFiles() _files: Express.Multer.File[],
+    @UploadedFiles() _files: Express.Multer.File[]
   ) {
     return this.communityService.createPost(req.user.id, dto);
   }
 
   @Get("posts")
-  @ApiOperation({ summary: "获取帖子列表", description: "分页获取社区帖子列表，支持按分类、标签、作者筛选" })
+  @ApiOperation({
+    summary: "获取帖子列表",
+    description: "分页获取社区帖子列表，支持按分类、标签、作者筛选",
+  })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getPosts(@Query() query: PostQueryDto, @NestRequest() req: RequestWithUser) {
-    const adminMode = req.user?.role === 'admin';
+    const adminMode = req.user?.role === "admin";
     return this.communityService.getPosts(query, req.user?.id, adminMode);
   }
 
@@ -103,7 +110,7 @@ export class CommunityController {
   async getFollowingFeed(
     @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
-    @Query("pageSize", ParseIntPipe) pageSize = 20,
+    @Query("pageSize", ParseIntPipe) pageSize = 20
   ) {
     return this.communityService.getFollowingFeed(req.user.id, page, pageSize);
   }
@@ -119,7 +126,7 @@ export class CommunityController {
   async getFollowingPosts(
     @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
-    @Query("pageSize", ParseIntPipe) pageSize = 20,
+    @Query("pageSize", ParseIntPipe) pageSize = 20
   ) {
     return this.communityService.getFollowingPosts(req.user.id, page, pageSize);
   }
@@ -135,13 +142,9 @@ export class CommunityController {
   async getRecommendedPosts(
     @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
-    @Query("pageSize", ParseIntPipe) pageSize = 20,
+    @Query("pageSize", ParseIntPipe) pageSize = 20
   ) {
-    return this.communityService.getRecommendedPosts(
-      req.user.id,
-      page,
-      pageSize,
-    );
+    return this.communityService.getRecommendedPosts(req.user.id, page, pageSize);
   }
 
   @Get("posts/:id")
@@ -150,7 +153,7 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async getPostById(@Param("id") id: string, @NestRequest() req: RequestWithUser) {
-    const adminMode = req.user?.role === 'admin';
+    const adminMode = req.user?.role === "admin";
     return this.communityService.getPostById(id, req.user?.id, adminMode);
   }
 
@@ -167,7 +170,7 @@ export class CommunityController {
   async updatePost(
     @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: UpdatePostDto,
+    @Body() dto: UpdatePostDto
   ) {
     return this.communityService.updatePost(req.user.id, id, dto);
   }
@@ -208,7 +211,7 @@ export class CommunityController {
   async bookmarkPost(
     @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: BookmarkPostDto,
+    @Body() dto: BookmarkPostDto
   ) {
     return this.communityService.bookmarkPost(req.user.id, id, dto);
   }
@@ -224,7 +227,7 @@ export class CommunityController {
   async sharePost(
     @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() _dto: SharePostDto,
+    @Body() _dto: SharePostDto
   ) {
     return this.communityService.sharePost(req.user.id, id);
   }
@@ -241,23 +244,21 @@ export class CommunityController {
   async createComment(
     @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: CreateCommentDto,
+    @Body() dto: CreateCommentDto
   ) {
     return this.communityService.createComment(req.user.id, id, dto);
   }
 
   @Get("posts/:id/comments")
-  @ApiOperation({ summary: "获取帖子评论", description: "分页获取指定帖子的评论列表，支持折叠回复" })
+  @ApiOperation({
+    summary: "获取帖子评论",
+    description: "分页获取指定帖子的评论列表，支持折叠回复",
+  })
   @ApiResponse({ status: 200, description: "获取成功" })
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async getComments(@Param("id") id: string, @Query() query: CommentQueryDto) {
-    return this.communityService.getComments(
-      id,
-      query.page,
-      query.pageSize,
-      query.repliesLimit,
-    );
+    return this.communityService.getComments(id, query.page, query.pageSize, query.repliesLimit);
   }
 
   @Post("reports")
@@ -268,10 +269,7 @@ export class CommunityController {
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 409, description: "已经举报过" })
-  async reportContent(
-    @NestRequest() req: RequestWithUser,
-    @Body() dto: CreateReportDto,
-  ) {
+  async reportContent(@NestRequest() req: RequestWithUser, @Body() dto: CreateReportDto) {
     return this.communityService.reportContent(req.user.id, dto);
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string, @typescript-eslint/no-unused-vars, @typescript-eslint/restrict-template-expressions */
 import axios from "axios";
 
 import apiClient from "./client";

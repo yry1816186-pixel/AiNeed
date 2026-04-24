@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useRef, useState, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,

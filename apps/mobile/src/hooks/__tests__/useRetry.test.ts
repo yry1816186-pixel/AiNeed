@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable, @typescript-eslint/no-misused-promises */
 import { renderHook, act } from "@testing-library/react-native";
 import { useRetry } from "../useRetry";
 

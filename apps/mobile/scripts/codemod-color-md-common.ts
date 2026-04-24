@@ -87,19 +87,23 @@ const COMMON_COLOR_MAP: Record<string, string> = {
 };
 
 function shouldExclude(filePath: string): boolean {
-  return EXCLUDE_DIRS.some(dir => filePath.includes(dir));
+  return EXCLUDE_DIRS.some((dir) => filePath.includes(dir));
 }
 
 function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
   const results: string[] = [];
-  if (!fs.existsSync(dir)) return results;
+  if (!fs.existsSync(dir)) {
+    return results;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (shouldExclude(fullPath)) continue;
+    if (shouldExclude(fullPath)) {
+      continue;
+    }
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
-    } else if (ext.some(e => entry.name.endsWith(e))) {
+    } else if (ext.some((e) => entry.name.endsWith(e))) {
       results.push(fullPath);
     }
   }
@@ -107,7 +111,10 @@ function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
 }
 
 function getImportPath(filePath: string): string {
-  const rel = path.relative(path.dirname(filePath), path.join(SRC_DIR, "design-system", "theme", "tokens", "design-tokens.ts"));
+  const rel = path.relative(
+    path.dirname(filePath),
+    path.join(SRC_DIR, "design-system", "theme", "tokens", "design-tokens.ts")
+  );
   const normalized = rel.replace(/\\/g, "/").replace(/\.ts$/, "");
   return `import { DesignTokens } from "${normalized}";`;
 }
@@ -123,14 +130,19 @@ function processFile(filePath: string): { changed: boolean; replacements: number
       const regex = new RegExp(`["'\`]${hex}["'\`]`, "gi");
       let match;
       while ((match = regex.exec(content)) !== null) {
-        content = content.slice(0, match.index) + token + content.slice(match.index + match[0].length);
+        content =
+          content.slice(0, match.index) + token + content.slice(match.index + match[0].length);
         replacements++;
         regex.lastIndex = match.index + token.length;
       }
     }
   }
 
-  if (replacements > 0 && content.includes("DesignTokens.colors") && !content.includes("import { DesignTokens }")) {
+  if (
+    replacements > 0 &&
+    content.includes("DesignTokens.colors") &&
+    !content.includes("import { DesignTokens }")
+  ) {
     const importLine = getImportPath(filePath);
     const lastImportIndex = content.lastIndexOf("\nimport ");
     if (lastImportIndex !== -1) {

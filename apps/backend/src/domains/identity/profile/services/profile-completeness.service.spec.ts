@@ -117,7 +117,7 @@ describe("ProfileCompletenessService", () => {
       expect(result.missingFields).toEqual(
         expect.arrayContaining([
           expect.stringMatching(/[\u4e00-\u9fff]/), // Contains Chinese characters
-        ]),
+        ])
       );
     });
   });

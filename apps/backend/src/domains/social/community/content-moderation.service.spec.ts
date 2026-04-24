@@ -88,14 +88,14 @@ describe("ContentModerationService", () => {
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "approved" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             action: "auto_pass",
           }),
-        }),
+        })
       );
     });
 
@@ -108,7 +108,7 @@ describe("ContentModerationService", () => {
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "pending" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -116,7 +116,7 @@ describe("ContentModerationService", () => {
             action: "auto_block",
             reason: expect.stringContaining("违禁关键词"),
           }),
-        }),
+        })
       );
     });
 
@@ -130,7 +130,7 @@ describe("ContentModerationService", () => {
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "pending" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -138,7 +138,7 @@ describe("ContentModerationService", () => {
             action: "auto_block",
             reason: expect.stringContaining("quickCheck"),
           }),
-        }),
+        })
       );
     });
 
@@ -151,9 +151,7 @@ describe("ContentModerationService", () => {
       const originalRandom = Math.random;
       Math.random = jest.fn().mockReturnValue(0.05);
 
-      await service.moderateContent(contentType, contentId, cleanContent, [
-        "img1.jpg",
-      ]);
+      await service.moderateContent(contentType, contentId, cleanContent, ["img1.jpg"]);
 
       expect(mockModerationQueue.add).toHaveBeenCalledWith(
         "ai_deep_review",
@@ -166,7 +164,7 @@ describe("ContentModerationService", () => {
         expect.objectContaining({
           attempts: 3,
           backoff: { type: "exponential", delay: 1000 },
-        }),
+        })
       );
 
       Math.random = originalRandom;
@@ -200,7 +198,7 @@ describe("ContentModerationService", () => {
             data: expect.objectContaining({
               action: "auto_block",
             }),
-          }),
+          })
         );
 
         jest.clearAllMocks();
@@ -233,16 +231,14 @@ describe("ContentModerationService", () => {
       expect(mockPrismaService.communityPost.update).not.toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "rejected" },
-        }),
+        })
       );
     });
 
     it("AI 验证未通过时应该拒绝内容", async () => {
       mockAISafetyService.validateResponse.mockResolvedValue({
         isValid: false,
-        issues: [
-          { type: "inappropriate", description: "内容不当" },
-        ],
+        issues: [{ type: "inappropriate", description: "内容不当" }],
         confidenceScore: 0.9,
       });
       mockPrismaService.communityPost.update.mockResolvedValue({});
@@ -253,7 +249,7 @@ describe("ContentModerationService", () => {
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "rejected" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -261,7 +257,7 @@ describe("ContentModerationService", () => {
             action: "auto_block",
             reason: expect.stringContaining("AI深度审核"),
           }),
-        }),
+        })
       );
     });
 
@@ -281,7 +277,7 @@ describe("ContentModerationService", () => {
           data: expect.objectContaining({
             reason: expect.stringContaining("confidence"),
           }),
-        }),
+        })
       );
     });
   });
@@ -297,21 +293,14 @@ describe("ContentModerationService", () => {
       mockPrismaService.communityPost.findUnique.mockResolvedValue({
         authorId: "author_1",
       });
-      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue(
-        {},
-      );
+      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue({});
 
-      await service.manualReview(
-        moderatorId,
-        contentId,
-        contentType,
-        "approve",
-      );
+      await service.manualReview(moderatorId, contentId, contentType, "approve");
 
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "approved" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -319,15 +308,13 @@ describe("ContentModerationService", () => {
             action: "manual_approve",
             moderatorId,
           }),
-        }),
+        })
       );
-      expect(
-        mockGatewayNotificationService.sendCustomNotification,
-      ).toHaveBeenCalledWith(
+      expect(mockGatewayNotificationService.sendCustomNotification).toHaveBeenCalledWith(
         "author_1",
         expect.objectContaining({
           title: "内容审核通过",
-        }),
+        })
       );
     });
 
@@ -337,22 +324,20 @@ describe("ContentModerationService", () => {
       mockPrismaService.communityPost.findUnique.mockResolvedValue({
         authorId: "author_1",
       });
-      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue(
-        {},
-      );
+      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue({});
 
       await service.manualReview(
         moderatorId,
         contentId,
         contentType,
         "reject",
-        "内容不符合社区规范",
+        "内容不符合社区规范"
       );
 
       expect(mockPrismaService.communityPost.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { moderationStatus: "rejected" },
-        }),
+        })
       );
       expect(mockPrismaService.contentModerationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -361,15 +346,13 @@ describe("ContentModerationService", () => {
             reason: "内容不符合社区规范",
             moderatorId,
           }),
-        }),
+        })
       );
-      expect(
-        mockGatewayNotificationService.sendCustomNotification,
-      ).toHaveBeenCalledWith(
+      expect(mockGatewayNotificationService.sendCustomNotification).toHaveBeenCalledWith(
         "author_1",
         expect.objectContaining({
           title: "内容审核未通过",
-        }),
+        })
       );
     });
 
@@ -378,16 +361,9 @@ describe("ContentModerationService", () => {
       mockPrismaService.contentModerationLog.create.mockResolvedValue({});
       mockPrismaService.communityPost.findUnique.mockResolvedValue(null);
 
-      await service.manualReview(
-        moderatorId,
-        contentId,
-        contentType,
-        "approve",
-      );
+      await service.manualReview(moderatorId, contentId, contentType, "approve");
 
-      expect(
-        mockGatewayNotificationService.sendCustomNotification,
-      ).not.toHaveBeenCalled();
+      expect(mockGatewayNotificationService.sendCustomNotification).not.toHaveBeenCalled();
     });
 
     it("审核拒绝时没有备注应该使用默认消息", async () => {
@@ -396,24 +372,15 @@ describe("ContentModerationService", () => {
       mockPrismaService.communityPost.findUnique.mockResolvedValue({
         authorId: "author_1",
       });
-      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue(
-        {},
-      );
+      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue({});
 
-      await service.manualReview(
-        moderatorId,
-        contentId,
-        contentType,
-        "reject",
-      );
+      await service.manualReview(moderatorId, contentId, contentType, "reject");
 
-      expect(
-        mockGatewayNotificationService.sendCustomNotification,
-      ).toHaveBeenCalledWith(
+      expect(mockGatewayNotificationService.sendCustomNotification).toHaveBeenCalledWith(
         "author_1",
         expect.objectContaining({
           message: expect.stringContaining("修改后重新发布"),
-        }),
+        })
       );
     });
 
@@ -423,21 +390,14 @@ describe("ContentModerationService", () => {
       });
       mockPrismaService.communityPost.update.mockResolvedValue({});
       mockPrismaService.contentModerationLog.create.mockResolvedValue({});
-      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue(
-        {},
-      );
+      mockGatewayNotificationService.sendCustomNotification.mockResolvedValue({});
 
-      await service.manualReview(
-        moderatorId,
-        "comment_123",
-        "comment",
-        "approve",
-      );
+      await service.manualReview(moderatorId, "comment_123", "comment", "approve");
 
       expect(mockPrismaService.postComment.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "comment_123" },
-        }),
+        })
       );
     });
   });
@@ -506,7 +466,7 @@ describe("ContentModerationService", () => {
             action: "auto_block",
             reason: expect.stringContaining("report_threshold_reached"),
           }),
-        }),
+        })
       );
     });
 
@@ -536,7 +496,7 @@ describe("ContentModerationService", () => {
           contentType,
           contentId,
         }),
-        expect.any(Object),
+        expect.any(Object)
       );
     });
 

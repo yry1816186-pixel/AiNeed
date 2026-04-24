@@ -1,4 +1,5 @@
-﻿import { create } from "zustand";
+/* eslint-disable @typescript-eslint/require-await */
+import { create } from "zustand";
 
 import { couponApi, type UserCoupon } from "../../../services/api/commerce.api";
 
@@ -87,12 +88,12 @@ export const useCouponStore = create<CouponStore>((set) => ({
 // ==================== Size Recommendation Store ====================
 
 interface SizeRecommendationState {
-  recommendations: Array<{
+  recommendations: {
     clothingId: string;
     recommendedSize: string;
     confidence: number;
     brand?: string;
-  }>;
+  }[];
   isLoading: boolean;
   error: string | null;
 

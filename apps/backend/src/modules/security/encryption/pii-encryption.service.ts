@@ -5,7 +5,15 @@ import { EncryptionService } from "../../../common/encryption/encryption.service
 import { UserKeyService } from "../../../common/security/user-key.service";
 
 export const PII_FIELDS: Record<string, readonly string[]> = {
-  User: ["phone", "realName", "idNumber", "email", "wechatOpenId", "wechatUnionId", "birthDate"] as const,
+  User: [
+    "phone",
+    "realName",
+    "idNumber",
+    "email",
+    "wechatOpenId",
+    "wechatUnionId",
+    "birthDate",
+  ] as const,
   UserAddress: ["phone", "address", "name"] as const,
   OrderAddress: ["phone", "address", "name"] as const,
   Brand: ["contactEmail", "contactPhone"] as const,
@@ -22,7 +30,7 @@ export class SecurityPIIEncryptionService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly encryptionService: EncryptionService,
-    private readonly userKeyService: UserKeyService,
+    private readonly userKeyService: UserKeyService
   ) {}
 
   onModuleInit() {
@@ -38,7 +46,10 @@ export class SecurityPIIEncryptionService implements OnModuleInit {
     }
   }
 
-  async encryptField(plaintext: string | null | undefined, userId?: string): Promise<string | null> {
+  async encryptField(
+    plaintext: string | null | undefined,
+    userId?: string
+  ): Promise<string | null> {
     if (!this.enabled || !plaintext) {
       return plaintext ?? null;
     }
@@ -58,7 +69,10 @@ export class SecurityPIIEncryptionService implements OnModuleInit {
     }
   }
 
-  async decryptField(ciphertext: string | null | undefined, userId?: string): Promise<string | null> {
+  async decryptField(
+    ciphertext: string | null | undefined,
+    userId?: string
+  ): Promise<string | null> {
     if (!this.enabled || !ciphertext) {
       return ciphertext ?? null;
     }
@@ -72,7 +86,9 @@ export class SecurityPIIEncryptionService implements OnModuleInit {
       }
       return this.encryptionService.decrypt(ciphertext);
     } catch (error) {
-      this.logger.error(`decryptField failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `decryptField failed: ${error instanceof Error ? error.message : String(error)}`
+      );
       return ciphertext;
     }
   }
@@ -119,7 +135,11 @@ export class SecurityPIIEncryptionService implements OnModuleInit {
         try {
           (result as Record<string, unknown>)[field] = await this.decryptField(value, userId);
         } catch (error) {
-          this.logger.error(`decryptModel failed for ${modelName}.${field}: ${error instanceof Error ? error.message : String(error)}`);
+          this.logger.error(
+            `decryptModel failed for ${modelName}.${field}: ${
+              error instanceof Error ? error.message : String(error)
+            }`
+          );
         }
       }
     }

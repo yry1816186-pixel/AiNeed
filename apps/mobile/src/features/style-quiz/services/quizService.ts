@@ -1,6 +1,6 @@
-import apiClient from '../../../services/api/client';
-import type { ApiResponse } from '../../../types/api';
-import type { QuizQuestion, QuizAnswer, QuizResult } from '../stores/quizStore';
+import apiClient from "../../../services/api/client";
+import type { ApiResponse } from "../../../types/api";
+import type { QuizQuestion, QuizAnswer, QuizResult } from "../stores/quizStore";
 
 export const quizApi = {
   getQuestions: (): Promise<ApiResponse<QuizQuestion[]>> =>

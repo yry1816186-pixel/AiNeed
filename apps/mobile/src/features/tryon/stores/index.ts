@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import {
   aiStylistApi,
   type AiStylistSessionResponse,
@@ -192,7 +192,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
         set({
           alternatives: Array.isArray(data)
             ? (data as AlternativeItem[])
-            : (((data as Record<string, unknown>).items as AlternativeItem[]) ?? []),
+            : ((data as Record<string, unknown>).items as AlternativeItem[]) ?? [],
           isAlternativesLoading: false,
         });
       } else {
@@ -304,13 +304,13 @@ export type PhotoQualityIssue =
   | "multiple_people";
 
 interface PhotoState {
-  photos: Array<{
+  photos: {
     id: string;
     uri: string;
     type: "body" | "face" | "full" | "outfit";
     qualityResult: PhotoQualityResult | null;
     createdAt: string;
-  }>;
+  }[];
   isUploading: boolean;
   isAnalyzing: boolean;
   error: string | null;

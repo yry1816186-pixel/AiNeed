@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-type-constituents, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unused-vars, curly */
 import React, { useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, Dimensions, ViewStyle } from "react-native";
 import Animated, {

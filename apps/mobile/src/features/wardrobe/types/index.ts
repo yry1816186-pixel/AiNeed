@@ -6,4 +6,7 @@ export type {
   PriceRange,
 } from "@xuno/types";
 
-export { ClothingCategory as SharedClothingCategory, PriceRange as SharedPriceRange } from "@xuno/types";
+export {
+  ClothingCategory as SharedClothingCategory,
+  PriceRange as SharedPriceRange,
+} from "@xuno/types";

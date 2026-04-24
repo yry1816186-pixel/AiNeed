@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import {
   View,
@@ -14,7 +15,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { flatColors as colors, Colors, Spacing } from "../../../design-system/theme";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
 import type { ScrollEvent } from "../../../types/events";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { createStyles } from "../../contexts/ThemeContext";

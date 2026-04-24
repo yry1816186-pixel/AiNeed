@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { create } from "zustand";
 import { profileApi } from "../../../services/api/profile.api";
 
@@ -50,15 +51,16 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setAnalyzing: (isAnalyzing) => set({ isAnalyzing }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
-  clearAnalysis: () => set({ clothingAnalysis: null, bodyAnalysis: null, currentImageUri: null, error: null }),
+  clearAnalysis: () =>
+    set({ clothingAnalysis: null, bodyAnalysis: null, currentImageUri: null, error: null }),
 
   fetchClothingAnalysis: async () => {
     set({ isAnalyzing: true, error: null });
     try {
       // TODO: 连接后端服装分析 API 后替换（当前后端无直接服装分析端点）
-      set({ error: '功能开发中，敬请期待', isAnalyzing: false });
+      set({ error: "功能开发中，敬请期待", isAnalyzing: false });
     } catch {
-      set({ error: '获取服装分析失败，请稍后重试', isAnalyzing: false });
+      set({ error: "获取服装分析失败，请稍后重试", isAnalyzing: false });
     }
   },
 
@@ -70,9 +72,9 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
         const report = response.data;
         set({
           bodyAnalysis: {
-            body_type: report.bodyType?.type ?? 'rectangle',
-            skin_tone: 'medium',
-            color_season: 'autumn',
+            body_type: report.bodyType?.type ?? "rectangle",
+            skin_tone: "medium",
+            color_season: "autumn",
             recommendations: {
               suitable: report.recommendations?.idealStyles ?? [],
               avoid: report.recommendations?.avoidStyles ?? [],
@@ -82,10 +84,10 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
           isAnalyzing: false,
         });
       } else {
-        set({ error: '获取体型分析失败，请稍后重试', isAnalyzing: false });
+        set({ error: "获取体型分析失败，请稍后重试", isAnalyzing: false });
       }
     } catch {
-      set({ error: '获取体型分析失败，请稍后重试', isAnalyzing: false });
+      set({ error: "获取体型分析失败，请稍后重试", isAnalyzing: false });
     }
   },
 }));

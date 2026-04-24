@@ -1,13 +1,12 @@
+import { Controller, Get, Post, Delete, Param, Query, UseGuards } from "@nestjs/common";
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
-  Query,
-  UseGuards,
-} from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from "@nestjs/swagger";
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from "@nestjs/swagger";
 
 import { CurrentUser } from "../../../../domains/identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../../../domains/identity/auth/guards/jwt-auth.guard";
@@ -30,15 +29,12 @@ export class FavoritesController {
   async getFavorites(
     @CurrentUser("id") userId: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
-    return this.favoritesService.getUserFavorites(
-      userId,
-      {
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
-      },
-    );
+    return this.favoritesService.getUserFavorites(userId, {
+      page: page ? parseInt(page) : 1,
+      limit: limit ? parseInt(limit) : 20,
+    });
   }
 
   @Post(":itemId")
@@ -47,10 +43,7 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: "商品不存在或已下架" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "itemId", description: "商品 ID" })
-  async addFavorite(
-    @CurrentUser("id") userId: string,
-    @Param("itemId") itemId: string,
-  ) {
+  async addFavorite(@CurrentUser("id") userId: string, @Param("itemId") itemId: string) {
     return this.favoritesService.addFavorite(userId, itemId);
   }
 
@@ -59,10 +52,7 @@ export class FavoritesController {
   @ApiResponse({ status: 200, description: "取消收藏成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "itemId", description: "商品 ID" })
-  async removeFavorite(
-    @CurrentUser("id") userId: string,
-    @Param("itemId") itemId: string,
-  ) {
+  async removeFavorite(@CurrentUser("id") userId: string, @Param("itemId") itemId: string) {
     await this.favoritesService.removeFavorite(userId, itemId);
     return { success: true };
   }
@@ -72,10 +62,7 @@ export class FavoritesController {
   @ApiResponse({ status: 200, description: "查询成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "itemId", description: "商品 ID" })
-  async checkFavorite(
-    @CurrentUser("id") userId: string,
-    @Param("itemId") itemId: string,
-  ) {
+  async checkFavorite(@CurrentUser("id") userId: string, @Param("itemId") itemId: string) {
     const isFavorite = await this.favoritesService.isFavorite(userId, itemId);
     return { isFavorite };
   }

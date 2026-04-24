@@ -2295,25 +2295,25 @@ const subcategoryGenderMap: Record<string, Gender> = {
 };
 
 const categorySourceMap: Record<string, string> = {
-  tops: "manual",
-  bottoms: "manual",
-  dresses: "manual",
-  outerwear: "manual",
-  footwear: "manual",
-  accessories: "manual",
-  activewear: "manual",
-  swimwear: "manual",
+  tops: "MANUAL",
+  bottoms: "MANUAL",
+  dresses: "MANUAL",
+  outerwear: "MANUAL",
+  footwear: "MANUAL",
+  accessories: "MANUAL",
+  activewear: "MANUAL",
+  swimwear: "MANUAL",
 };
 
 const skuSourceMap: Record<string, string> = {
-  "AN-TOP-": "manual",
-  "AN-BOT-": "manual",
-  "AN-DRE-": "manual",
-  "AN-OUT-": "manual",
-  "AN-FOT-": "manual",
-  "AN-ACC-": "manual",
-  "AN-ACT-": "manual",
-  "AN-SWM-": "manual",
+  "AN-TOP-": "MANUAL",
+  "AN-BOT-": "MANUAL",
+  "AN-DRE-": "MANUAL",
+  "AN-OUT-": "MANUAL",
+  "AN-FOT-": "MANUAL",
+  "AN-ACC-": "MANUAL",
+  "AN-ACT-": "MANUAL",
+  "AN-SWM-": "MANUAL",
 };
 
 for (const item of clothingData) {
@@ -2342,11 +2342,11 @@ for (const item of clothingData) {
 
   if (!item.source) {
     const skuPrefix = Object.keys(skuSourceMap).find((prefix) => item.sku.startsWith(prefix));
-    item.source = skuPrefix ? skuSourceMap[skuPrefix] : "manual";
+    item.source = skuPrefix ? skuSourceMap[skuPrefix] : "MANUAL";
     if (clothingData.indexOf(item) > 100 && clothingData.indexOf(item) % 7 === 0) {
-      item.source = "taobao";
+      item.source = "TAOBAO";
     } else if (clothingData.indexOf(item) > 100 && clothingData.indexOf(item) % 11 === 0) {
-      item.source = "jd";
+      item.source = "JD";
     }
   }
 }
@@ -2376,7 +2376,7 @@ export async function seedClothing(
             material: existing.material ?? data.material ?? null,
             season: existing.season ?? data.season ?? null,
             gender: existing.gender ?? data.gender ?? null,
-            source: existing.source ?? data.source ?? "manual",
+            source: existing.source ?? data.source ?? "MANUAL",
           },
         });
         items.push(updated);
@@ -2416,7 +2416,7 @@ export async function seedClothing(
         material: data.material ?? null,
         season: data.season ?? null,
         gender: data.gender ?? null,
-        source: data.source ?? "manual",
+        source: data.source ?? "MANUAL",
       },
     });
 

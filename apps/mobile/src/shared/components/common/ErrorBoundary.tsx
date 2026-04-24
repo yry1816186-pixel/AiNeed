@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ErrorBoundary - 已合并至 ErrorBoundary/ 目录的企业级实现
  *
  * 此文件保留作为 re-export，避免破坏现有导入。

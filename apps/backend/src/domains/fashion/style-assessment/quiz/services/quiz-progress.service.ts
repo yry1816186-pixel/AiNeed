@@ -24,7 +24,7 @@ export class QuizProgressService {
     userId: string,
     quizId: string,
     questionIndex: number,
-    answers: Record<string, string>,
+    answers: Record<string, string>
   ): Promise<void> {
     const key = `${QuizProgressService.KEY_PREFIX}${userId}:${quizId}`;
     const progress: QuizProgress = {
@@ -36,7 +36,7 @@ export class QuizProgressService {
     await this.redisService.setex(
       key,
       QuizProgressService.PROGRESS_TTL_SECONDS,
-      JSON.stringify(progress),
+      JSON.stringify(progress)
     );
   }
 

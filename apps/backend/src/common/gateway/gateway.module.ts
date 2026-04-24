@@ -17,7 +17,9 @@ import { NotificationService } from "./notification.service";
       useFactory: (configService: ConfigService) => {
         const secret = configService.get<string>("JWT_SECRET");
         if (!secret) {
-          throw new Error("JWT_SECRET environment variable is required. Please set it in your .env file.");
+          throw new Error(
+            "JWT_SECRET environment variable is required. Please set it in your .env file."
+          );
         }
         return {
           secret,

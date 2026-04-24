@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
@@ -8,7 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
+import { Spacing, BorderRadius, Typography } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface RetryConfig {
@@ -109,7 +110,7 @@ export function RetryWrapper({
         accessibilityLabel={accessibilityLabel || "加载中"}
         accessibilityRole="progressbar"
       >
-        {loadingComponent || <ActivityIndicator size="large" color={colors.primary[500]} />}
+        {loadingComponent || <ActivityIndicator size="large" color={colors.primary} />}
       </View>
     );
   }
@@ -124,7 +125,7 @@ export function RetryWrapper({
         accessibilityLabel={accessibilityLabel || `加载失败，已重试${state.retryCount}次`}
         accessibilityRole="alert"
       >
-        <Ionicons name="alert-circle-outline" size={48} color={colors.error[500]} />
+        <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
         <Text style={styles.errorText}>{state.error.message || "加载失败"}</Text>
         {state.retryCount < maxRetries && (
           <TouchableOpacity
@@ -134,7 +135,7 @@ export function RetryWrapper({
             accessibilityLabel="重试"
             accessibilityRole="button"
           >
-            <Ionicons name="refresh-outline" size={18} color={colors.neutral[0]} />
+            <Ionicons name="refresh-outline" size={18} color={colors.neutral.white} />
             <Text style={styles.retryButtonText}>重试 ({maxRetries - state.retryCount})</Text>
           </TouchableOpacity>
         )}
@@ -161,13 +162,18 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing[2],
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.xl,
     elevation: 3,
   },
-  retryButtonText: { ...Typography.styles.button, color: colors.neutral[0] },
+  retryButtonText: {
+    fontSize: Typography.styles.button.fontSize,
+    lineHeight: Typography.styles.button.lineHeight,
+    fontWeight: Typography.styles.button.fontWeight as "600",
+    color: colors.neutral.white,
+  },
   retryInfo: { ...Typography.caption.sm, color: colors.neutral[400], marginTop: Spacing[2] },
 }));
 

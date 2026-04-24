@@ -1,7 +1,7 @@
-﻿import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { Skeleton } from "../../design-system/ui/Skeleton";
-import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
+import React from "react";
+import { View, Dimensions } from "react-native";
+import { Skeleton } from "../../../design-system/ui/Skeleton";
+import { Colors, BorderRadius } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

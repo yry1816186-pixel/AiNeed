@@ -1,4 +1,4 @@
-﻿﻿// UI Component Index - Single source of truth
+﻿// UI Component Index - Single source of truth
 // All components are re-exported from their dedicated files.
 // No inline implementations allowed in this file.
 // Overlapping components with primitives/ are re-exported from primitives/ to avoid duplication.
@@ -10,10 +10,20 @@ export { Button, IconButton } from "../../design-system/primitives/Button";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "../../design-system/primitives/Button";
 
 export { Input, SearchInput } from "../../design-system/primitives/Input";
-export type { InputProps, SearchInputProps, InputVariant, InputSize } from "../../design-system/primitives/Input";
+export type {
+  InputProps,
+  SearchInputProps,
+  InputVariant,
+  InputSize,
+} from "../../design-system/primitives/Input";
 
 export { Card, ProductCard } from "../../design-system/primitives/Card";
-export type { CardProps, CardVariant, CardPadding, ProductCardProps } from "../../design-system/primitives/Card";
+export type {
+  CardProps,
+  CardVariant,
+  CardPadding,
+  ProductCardProps,
+} from "../../design-system/primitives/Card";
 
 export {
   EmptyState,
@@ -39,6 +49,11 @@ export type {
 
 export { Avatar, AvatarGroup } from "./Avatar";
 export type { AvatarProps, AvatarSize } from "./Avatar";
+
+export { YiyiAvatar } from "./YiyiAvatar";
+export type { YiyiAvatarProps, YiyiAvatarSize } from "./YiyiAvatar";
+export { SimilarityHeatmap } from "./SimilarityHeatmap";
+export type { SimilarityHeatmapProps } from "./SimilarityHeatmap";
 
 export { LoadingSpinner, InlineSpinner } from "./LoadingSpinner";
 export type { LoadingSpinnerProps, SpinnerSize } from "./LoadingSpinner";
@@ -85,6 +100,9 @@ export type { SectionProps } from "./Section";
 
 export { IconCard } from "./IconCard";
 export type { IconCardProps } from "./IconCard";
+
+export { MatchRadarChart } from "./MatchRadarChart";
+export type { MatchRadarChartProps, MatchScores } from "./MatchRadarChart";
 
 // ─── Modern Components ────────────────────────────────────────────────
 export {

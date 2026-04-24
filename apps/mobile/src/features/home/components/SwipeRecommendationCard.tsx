@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef } from "react";
 import {
   View,
@@ -9,9 +10,11 @@ import {
   PanResponder,
   type GestureResponderEvent,
   type PanResponderGestureState,
+  type ViewStyle,
+  type ImageStyle,
 } from "react-native";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
-import type { FeedItem } from "../services/recommendation-feed.api";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { FeedItem } from "../../../services/api/recommendation-feed.api";
 
 interface SwipeRecommendationCardProps {
   item: FeedItem;
@@ -29,7 +32,6 @@ export function SwipeRecommendationCard({
   onSkip,
 }: SwipeRecommendationCardProps) {
   const pan = useRef(new Animated.ValueXY()).current;
-  const _rotate = useRef(new Animated.Value(0)).current;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -83,7 +85,7 @@ export function SwipeRecommendationCard({
     >
       <Image
         source={{ uri: item.mainImage }}
-        style={styles.image as ViewStyle}
+        style={styles.image as ImageStyle}
         resizeMode="cover"
       />
 
@@ -118,10 +120,10 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: DesignTokens.borderRadius.lg,
-    backgroundColor: DesignTokens.DesignTokens.colors.backgrounds.primary,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: DesignTokens.DesignTokens.colors.neutral.black,
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -139,23 +141,23 @@ const styles = StyleSheet.create({
   },
   likeOverlay: {
     right: 20,
-    borderColor: DesignTokens.DesignTokens.colors.semantic.success,
+    borderColor: DesignTokens.colors.semantic.success,
     backgroundColor: "rgba(74, 222, 128, 0.15)",
   },
   dislikeOverlay: {
     left: 20,
-    borderColor: DesignTokens.DesignTokens.colors.semantic.error,
+    borderColor: DesignTokens.colors.semantic.error,
     backgroundColor: "rgba(239, 68, 68, 0.15)",
   },
   likeText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
-    color: DesignTokens.DesignTokens.colors.semantic.success,
+    color: DesignTokens.colors.semantic.success,
   },
   dislikeText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
-    color: DesignTokens.DesignTokens.colors.semantic.error,
+    color: DesignTokens.colors.semantic.error,
   },
   infoBar: {
     paddingHorizontal: 12,
@@ -164,16 +166,16 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.DesignTokens.colors.text.secondary,
+    color: DesignTokens.colors.text.secondary,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
-    color: DesignTokens.DesignTokens.colors.text.primary,
+    color: DesignTokens.colors.text.primary,
   },
   matchReason: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.DesignTokens.colors.brand.terracotta,
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
   actionHints: {
@@ -187,6 +189,6 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.DesignTokens.colors.text.tertiary,
+    color: DesignTokens.colors.text.tertiary,
   },
 });

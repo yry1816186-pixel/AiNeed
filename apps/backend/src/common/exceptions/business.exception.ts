@@ -14,7 +14,7 @@
  * ```
  */
 
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 /**
  * 业务错误详情接口
@@ -112,7 +112,7 @@ export class BusinessException extends HttpException {
     message: string,
     details?: BusinessErrorDetails,
     businessCode?: BusinessErrorCode | number,
-    httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
+    httpStatus: HttpStatus = HttpStatus.BAD_REQUEST
   ) {
     super(
       {
@@ -121,7 +121,7 @@ export class BusinessException extends HttpException {
         code: businessCode ?? BusinessException.inferBusinessCode(httpStatus),
         details,
       },
-      httpStatus,
+      httpStatus
     );
 
     this.errorKey = errorKey;
@@ -158,75 +158,63 @@ export class BusinessException extends HttpException {
    */
   static userNotFound(userId: string): BusinessException {
     return new BusinessException(
-      'USER_NOT_FOUND',
-      '用户不存在',
+      "USER_NOT_FOUND",
+      "用户不存在",
       { userId },
       BusinessErrorCode.USER_NOT_FOUND,
-      HttpStatus.NOT_FOUND,
+      HttpStatus.NOT_FOUND
     );
   }
 
   /**
    * 创建余额不足异常
    */
-  static insufficientBalance(
-    currentBalance: number,
-    requiredAmount: number,
-  ): BusinessException {
+  static insufficientBalance(currentBalance: number, requiredAmount: number): BusinessException {
     return new BusinessException(
-      'USER_BALANCE_INSUFFICIENT',
-      '用户余额不足',
+      "USER_BALANCE_INSUFFICIENT",
+      "用户余额不足",
       { currentBalance, requiredAmount },
       BusinessErrorCode.USER_BALANCE_INSUFFICIENT,
-      HttpStatus.BAD_REQUEST,
+      HttpStatus.BAD_REQUEST
     );
   }
 
   /**
    * 创建资源不存在异常
    */
-  static resourceNotFound(
-    resourceType: string,
-    resourceId: string,
-  ): BusinessException {
+  static resourceNotFound(resourceType: string, resourceId: string): BusinessException {
     return new BusinessException(
-      'RESOURCE_NOT_FOUND',
+      "RESOURCE_NOT_FOUND",
       `${resourceType} 不存在`,
       { resourceType, resourceId },
       BusinessErrorCode.RESOURCE_NOT_FOUND,
-      HttpStatus.NOT_FOUND,
+      HttpStatus.NOT_FOUND
     );
   }
 
   /**
    * 创建外部服务错误异常
    */
-  static externalServiceError(
-    serviceName: string,
-    originalError?: string,
-  ): BusinessException {
+  static externalServiceError(serviceName: string, originalError?: string): BusinessException {
     return new BusinessException(
-      'EXTERNAL_SERVICE_ERROR',
+      "EXTERNAL_SERVICE_ERROR",
       `${serviceName} 服务异常`,
       { serviceName, originalError },
       BusinessErrorCode.EXTERNAL_SERVICE_ERROR,
-      HttpStatus.BAD_GATEWAY,
+      HttpStatus.BAD_GATEWAY
     );
   }
 
   /**
    * 创建 AI 服务错误异常
    */
-  static aiServiceError(
-    serviceName: string,
-    originalError?: string,
-  ): BusinessException {
+  static aiServiceError(serviceName: string, originalError?: string): BusinessException {
     return new BusinessException(
-      'AI_SERVICE_ERROR',
+      "AI_SERVICE_ERROR",
       `${serviceName} AI 服务异常`,
       { serviceName, originalError },
       BusinessErrorCode.AI_SERVICE_ERROR,
-      HttpStatus.SERVICE_UNAVAILABLE,
+      HttpStatus.SERVICE_UNAVAILABLE
     );
   }
 }

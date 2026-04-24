@@ -19,5 +19,4 @@ export const CacheTTL = (ttl: number) => SetMetadata(CACHE_TTL_METADATA, ttl);
  * Invalidate cache patterns after the handler executes.
  * Used on mutation endpoints (POST/PUT/PATCH/DELETE).
  */
-export const CacheClear = (patterns: string[]) =>
-  SetMetadata(CACHE_CLEAR_METADATA, patterns);
+export const CacheClear = (patterns: string[]) => SetMetadata(CACHE_CLEAR_METADATA, patterns);

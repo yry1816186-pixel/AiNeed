@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import {
   View,
@@ -11,7 +12,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from "../../../types/clothing";
@@ -146,21 +147,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(function Filte
       <FilterChipGroup
         title="分类"
         items={CATEGORIES}
-        labels={CATEGORY_LABELS as Record<ClothingCategory, string>}
+        labels={CATEGORY_LABELS}
         selected={selectedCategory}
         onSelect={setSelectedCategory}
       />
       <FilterChipGroup
         title="季节"
         items={SEASONS}
-        labels={SEASON_LABELS as Record<Season, string>}
+        labels={SEASON_LABELS}
         selected={selectedSeason}
         onSelect={setSelectedSeason}
       />
       <FilterChipGroup
         title="场合"
         items={OCCASIONS}
-        labels={OCCASION_LABELS as Record<Occasion, string>}
+        labels={OCCASION_LABELS}
         selected={selectedOccasion}
         onSelect={setSelectedOccasion}
       />
@@ -319,7 +320,7 @@ export const ResultCard: React.FC<ResultCardProps> = React.memo(function ResultC
       onPress={() => onPress(item)}
       activeOpacity={0.72}
       accessibilityLabel={`${item.name || "未命名单品"}, ${
-        CATEGORY_LABELS[item.category as ClothingCategory] || item.category
+        CATEGORY_LABELS[item.category] || item.category
       }`}
       accessibilityRole="button"
     >
@@ -339,9 +340,7 @@ export const ResultCard: React.FC<ResultCardProps> = React.memo(function ResultC
           {item.name || "未命名单品"}
         </Text>
         <View style={styles.cardMeta}>
-          <Text style={styles.cardCategory}>
-            {CATEGORY_LABELS[item.category as ClothingCategory] || item.category}
-          </Text>
+          <Text style={styles.cardCategory}>{CATEGORY_LABELS[item.category] || item.category}</Text>
           {item.brand ? (
             <Text style={styles.cardBrand} numberOfLines={1}>
               {item.brand}

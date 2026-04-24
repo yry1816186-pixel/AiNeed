@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { useNotificationStore } from "../../features/notifications/stores/notificationStore";
 import {
   notificationApi,

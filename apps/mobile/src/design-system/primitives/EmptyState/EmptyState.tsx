@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import { View, Text, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -10,8 +10,8 @@ import {
   BorderRadius,
   Shadows,
   DesignTokens,
-} from "../theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+} from "../../theme";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;

@@ -25,10 +25,7 @@ describe("WeatherService", () => {
     originalFetch = globalThis.fetch;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        WeatherService,
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [WeatherService, { provide: ConfigService, useValue: mockConfigService }],
     }).compile();
 
     service = module.get<WeatherService>(WeatherService);
@@ -147,10 +144,7 @@ describe("WeatherService", () => {
       };
 
       const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          WeatherService,
-          { provide: ConfigService, useValue: configWithKey },
-        ],
+        providers: [WeatherService, { provide: ConfigService, useValue: configWithKey }],
       }).compile();
 
       serviceWithKey = module.get<WeatherService>(WeatherService);
@@ -209,9 +203,7 @@ describe("WeatherService", () => {
       expect(result!.temperature).toBe(18);
       expect(result!.condition).toBe("多云");
       expect(result!.location).toBe("Shanghai");
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("q=Shanghai"),
-      );
+      expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("q=Shanghai"));
     });
   });
 });

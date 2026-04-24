@@ -1,14 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
+import { Injectable, Inject } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import Redis from "ioredis";
 
-import { REDIS_CLIENT } from '../../../common/redis/redis.service';
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 
 export enum CircuitState {
-  CLOSED = 'CLOSED',
-  OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN',
+  CLOSED = "CLOSED",
+  OPEN = "OPEN",
+  HALF_OPEN = "HALF_OPEN",
 }
 
 export interface CircuitHealth {
@@ -21,7 +21,7 @@ export interface CircuitHealth {
 export class CircuitBreakerOpenException extends Error {
   constructor(serviceName: string) {
     super(`Circuit breaker is OPEN for service: ${serviceName}`);
-    this.name = 'CircuitBreakerOpenException';
+    this.name = "CircuitBreakerOpenException";
   }
 }
 
@@ -40,14 +40,14 @@ export class AiCircuitBreakerService {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {
     this.config = {
-      failureThreshold: this.configService.get<number>('CB_FAILURE_THRESHOLD', 5),
-      successThreshold: this.configService.get<number>('CB_SUCCESS_THRESHOLD', 3),
-      timeout: this.configService.get<number>('CB_TIMEOUT', 30000),
-      globalBudget: this.configService.get<number>('CB_GLOBAL_BUDGET', 20),
-      windowMs: this.configService.get<number>('CB_WINDOW_MS', 60000),
+      failureThreshold: this.configService.get<number>("CB_FAILURE_THRESHOLD", 5),
+      successThreshold: this.configService.get<number>("CB_SUCCESS_THRESHOLD", 3),
+      timeout: this.configService.get<number>("CB_TIMEOUT", 30000),
+      globalBudget: this.configService.get<number>("CB_GLOBAL_BUDGET", 20),
+      windowMs: this.configService.get<number>("CB_WINDOW_MS", 60000),
     };
   }
 
@@ -56,14 +56,14 @@ export class AiCircuitBreakerService {
   }
 
   private getGlobalFailureKey(): string {
-    return 'xuno:cb:global:failures';
+    return "xuno:cb:global:failures";
   }
 
   async execute<T>(serviceName: string, fn: () => Promise<T>): Promise<T> {
     const state = await this.getState(serviceName);
 
     if (state === CircuitState.OPEN) {
-      const lastFailure = await this.redis.get(this.key(serviceName, 'lastFailure'));
+      const lastFailure = await this.redis.get(this.key(serviceName, "lastFailure"));
       const elapsed = lastFailure ? Date.now() - parseInt(lastFailure, 10) : Infinity;
 
       if (elapsed >= this.config.timeout) {
@@ -84,8 +84,10 @@ export class AiCircuitBreakerService {
   }
 
   async getState(serviceName: string): Promise<CircuitState> {
-    const raw = await this.redis.get(this.key(serviceName, 'state'));
-    if (!raw) {return CircuitState.CLOSED;}
+    const raw = await this.redis.get(this.key(serviceName, "state"));
+    if (!raw) {
+      return CircuitState.CLOSED;
+    }
     return raw as CircuitState;
   }
 
@@ -95,13 +97,13 @@ export class AiCircuitBreakerService {
 
   async resetCircuit(serviceName: string): Promise<void> {
     const keys = [
-      this.key(serviceName, 'state'),
-      this.key(serviceName, 'failures'),
-      this.key(serviceName, 'successes'),
-      this.key(serviceName, 'lastFailure'),
+      this.key(serviceName, "state"),
+      this.key(serviceName, "failures"),
+      this.key(serviceName, "successes"),
+      this.key(serviceName, "lastFailure"),
     ];
     await this.redis.del(...keys);
-    await this.redis.set(this.key(serviceName, 'state'), CircuitState.CLOSED);
+    await this.redis.set(this.key(serviceName, "state"), CircuitState.CLOSED);
   }
 
   async getHealthStatus(): Promise<Record<string, CircuitHealth>> {
@@ -111,21 +113,21 @@ export class AiCircuitBreakerService {
 
     for (const svc of services) {
       const [state, failures, successes, lastFailure] = await Promise.all([
-        this.redis.get(this.key(svc, 'state')),
-        this.redis.get(this.key(svc, 'failures')),
-        this.redis.get(this.key(svc, 'successes')),
-        this.redis.get(this.key(svc, 'lastFailure')),
+        this.redis.get(this.key(svc, "state")),
+        this.redis.get(this.key(svc, "failures")),
+        this.redis.get(this.key(svc, "successes")),
+        this.redis.get(this.key(svc, "lastFailure")),
       ]);
 
       result[svc] = {
         state: (state as CircuitState) || CircuitState.CLOSED,
-        failures: parseInt(failures || '0', 10),
-        successes: parseInt(successes || '0', 10),
+        failures: parseInt(failures || "0", 10),
+        successes: parseInt(successes || "0", 10),
         lastFailure: lastFailure ? new Date(parseInt(lastFailure, 10)) : null,
       };
     }
 
-    result['__global__'] = {
+    result["__global__"] = {
       state: globalFailures >= this.config.globalBudget ? CircuitState.OPEN : CircuitState.CLOSED,
       failures: globalFailures,
       successes: 0,
@@ -139,7 +141,7 @@ export class AiCircuitBreakerService {
     const state = await this.getState(serviceName);
 
     if (state === CircuitState.HALF_OPEN) {
-      const newCount = await this.redis.incr(this.key(serviceName, 'successes'));
+      const newCount = await this.redis.incr(this.key(serviceName, "successes"));
       if (newCount >= this.config.successThreshold) {
         await this.transitionTo(serviceName, CircuitState.CLOSED);
       }
@@ -154,14 +156,14 @@ export class AiCircuitBreakerService {
       return;
     }
 
-    const failureKey = this.key(serviceName, 'failures');
+    const failureKey = this.key(serviceName, "failures");
     const newCount = await this.redis.incr(failureKey);
 
     if (newCount === 1) {
       await this.redis.pexpire(failureKey, this.config.windowMs);
     }
 
-    await this.redis.set(this.key(serviceName, 'lastFailure'), String(Date.now()));
+    await this.redis.set(this.key(serviceName, "lastFailure"), String(Date.now()));
 
     const globalCount = await this.redis.incr(this.getGlobalFailureKey());
     if (globalCount === 1) {
@@ -179,22 +181,21 @@ export class AiCircuitBreakerService {
 
   private async transitionTo(serviceName: string, newState: CircuitState): Promise<void> {
     const currentState = await this.getState(serviceName);
-    if (currentState === newState) {return;}
+    if (currentState === newState) {
+      return;
+    }
 
-    await this.redis.set(this.key(serviceName, 'state'), newState);
+    await this.redis.set(this.key(serviceName, "state"), newState);
 
     if (newState === CircuitState.CLOSED) {
-      await this.redis.del(
-        this.key(serviceName, 'failures'),
-        this.key(serviceName, 'successes'),
-      );
-      this.eventEmitter.emit('circuit.closed', { serviceName, previousState: currentState });
+      await this.redis.del(this.key(serviceName, "failures"), this.key(serviceName, "successes"));
+      this.eventEmitter.emit("circuit.closed", { serviceName, previousState: currentState });
     } else if (newState === CircuitState.OPEN) {
-      await this.redis.del(this.key(serviceName, 'successes'));
-      this.eventEmitter.emit('circuit.opened', { serviceName, previousState: currentState });
+      await this.redis.del(this.key(serviceName, "successes"));
+      this.eventEmitter.emit("circuit.opened", { serviceName, previousState: currentState });
     } else if (newState === CircuitState.HALF_OPEN) {
-      await this.redis.del(this.key(serviceName, 'successes'));
-      this.eventEmitter.emit('circuit.half_opened', { serviceName, previousState: currentState });
+      await this.redis.del(this.key(serviceName, "successes"));
+      this.eventEmitter.emit("circuit.half_opened", { serviceName, previousState: currentState });
     }
   }
 
@@ -203,7 +204,7 @@ export class AiCircuitBreakerService {
     for (const svc of services) {
       await this.transitionTo(svc, CircuitState.OPEN);
     }
-    this.eventEmitter.emit('circuit.global_trip', {
+    this.eventEmitter.emit("circuit.global_trip", {
       services,
       timestamp: new Date().toISOString(),
     });
@@ -215,13 +216,13 @@ export class AiCircuitBreakerService {
   }
 
   private async discoverServices(): Promise<string[]> {
-    const pattern = 'xuno:cb:*:state';
+    const pattern = "xuno:cb:*:state";
     const keys = await this.redis.keys(pattern);
     const serviceSet = new Set<string>();
 
     for (const key of keys) {
-      const parts = key.split(':');
-      if (parts.length >= 3 && parts[2] !== 'global') {
+      const parts = key.split(":");
+      if (parts.length >= 3 && parts[2] !== "global") {
         serviceSet.add(parts[2] ?? "");
       }
     }

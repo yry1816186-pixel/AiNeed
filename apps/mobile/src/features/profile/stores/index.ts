@@ -1,4 +1,18 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
+
+// ==================== Profile Store ====================
+
+import { createWithEqualityFn } from "zustand/traditional";
+import { shallow } from "zustand/shallow";
+import {
+  profileApi,
+  type UserProfile,
+  type UpdateProfileDto,
+  type BodyAnalysisReport,
+  type ColorAnalysisReport,
+} from "../../../services/api/profile.api";
+import apiClient from "../../../services/api/client";
+import type { ApiResponse } from "../../../types";
 
 interface ClothingAnalysis {
   category: string;
@@ -43,20 +57,6 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setAnalyzing: (isAnalyzing) => set({ isAnalyzing }),
   clearAnalysis: () => set({ clothingAnalysis: null, bodyAnalysis: null, currentImageUri: null }),
 }));
-
-// ==================== Profile Store ====================
-
-import { createWithEqualityFn } from "zustand/traditional";
-import { shallow } from "zustand/shallow";
-import {
-  profileApi,
-  type UserProfile,
-  type UpdateProfileDto,
-  type BodyAnalysisReport,
-  type ColorAnalysisReport,
-} from "../../../services/api/profile.api";
-import apiClient from "../../../services/api/client";
-import type { ApiResponse } from "../../../types";
 
 interface Completeness {
   percentage: number;
@@ -105,8 +105,9 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadCompleteness: async () => {
       try {
-        const response: ApiResponse<Completeness> =
-          await apiClient.get<Completeness>("/profile/completeness");
+        const response: ApiResponse<Completeness> = await apiClient.get<Completeness>(
+          "/profile/completeness"
+        );
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
@@ -162,10 +163,10 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         ]);
 
         set({
-          profile: profileRes.success ? (profileRes.data ?? null) : null,
-          completeness: completenessRes.success ? (completenessRes.data ?? null) : null,
-          bodyAnalysis: bodyRes.success ? (bodyRes.data ?? null) : null,
-          colorAnalysis: colorRes.success ? (colorRes.data ?? null) : null,
+          profile: profileRes.success ? profileRes.data ?? null : null,
+          completeness: completenessRes.success ? completenessRes.data ?? null : null,
+          bodyAnalysis: bodyRes.success ? bodyRes.data ?? null : null,
+          colorAnalysis: colorRes.success ? colorRes.data ?? null : null,
           isLoading: false,
         });
       } catch (err) {

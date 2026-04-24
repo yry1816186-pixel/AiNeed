@@ -17,9 +17,9 @@
  * ```
  */
 
-import { Injectable, NestMiddleware, HttpStatus, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable, NestMiddleware, HttpStatus, Logger } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * 错误响应接口
@@ -57,10 +57,10 @@ declare global {
 @Injectable()
 export class ErrorHandlerMiddleware implements NestMiddleware {
   private readonly isProduction: boolean;
-  private readonly logger = new Logger('ErrorHandlerMiddleware');
+  private readonly logger = new Logger("ErrorHandlerMiddleware");
 
   constructor() {
-    this.isProduction = process.env.NODE_ENV === 'production';
+    this.isProduction = process.env.NODE_ENV === "production";
   }
 
   /**
@@ -86,18 +86,18 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
    * 注入请求上下文
    */
   private injectRequestContext(req: Request, res: Response): void {
-    req.requestId = (req.headers['x-request-id'] as string) || uuidv4();
+    req.requestId = (req.headers["x-request-id"] as string) || uuidv4();
     req.requestStartTime = Date.now();
 
     // 设置响应头
-    res.setHeader('X-Request-Id', req.requestId);
+    res.setHeader("X-Request-Id", req.requestId);
   }
 
   /**
    * 设置请求超时处理
    */
   private setupTimeoutHandler(req: Request, res: Response): void {
-    const timeout = parseInt(process.env.REQUEST_TIMEOUT_MS || '30000', 10);
+    const timeout = parseInt(process.env.REQUEST_TIMEOUT_MS || "30000", 10);
 
     req.setTimeout(timeout, () => {
       this.handleTimeout(req, res);
@@ -115,14 +115,14 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
     if (!res.headersSent) {
       const errorResponse: ErrorResponseBody = {
         code: 50400,
-        message: '请求超时',
+        message: "请求超时",
         timestamp: new Date().toISOString(),
         requestId: req.requestId,
         path: req.url,
       };
 
       this.logger.warn({
-        message: 'Request timeout',
+        message: "Request timeout",
         requestId: req.requestId,
         method: req.method,
         url: req.url,
@@ -137,12 +137,12 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
    * 设置响应完成监听
    */
   private setupResponseListener(req: Request, res: Response): void {
-    res.on('finish', () => {
+    res.on("finish", () => {
       const duration = Date.now() - req.requestStartTime;
 
       if (res.statusCode >= 400) {
         this.logger.warn({
-          message: 'Request completed with error',
+          message: "Request completed with error",
           requestId: req.requestId,
           method: req.method,
           url: req.url,
@@ -161,16 +161,12 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
 
     res.json = (body: unknown): Response => {
       // 如果是错误响应且未标准化，进行标准化处理
-      if (res.statusCode >= 400 && body && typeof body === 'object') {
+      if (res.statusCode >= 400 && body && typeof body === "object") {
         const bodyObj = body as Record<string, unknown>;
 
         // 检查是否已经是标准格式
-        if (!('code' in bodyObj) || !('timestamp' in bodyObj)) {
-          const standardizedBody = this.standardizeErrorResponse(
-            bodyObj,
-            req,
-            res.statusCode,
-          );
+        if (!("code" in bodyObj) || !("timestamp" in bodyObj)) {
+          const standardizedBody = this.standardizeErrorResponse(bodyObj, req, res.statusCode);
           return originalJson(standardizedBody);
         }
       }
@@ -185,11 +181,11 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
   private standardizeErrorResponse(
     body: Record<string, unknown>,
     req: Request,
-    statusCode: number,
+    statusCode: number
   ): ErrorResponseBody {
     return {
       code: (body.code as number) ?? this.inferErrorCode(statusCode),
-      message: (body.message as string) ?? 'An error occurred',
+      message: (body.message as string) ?? "An error occurred",
       details: body.details as Record<string, unknown> | undefined,
       timestamp: new Date().toISOString(),
       requestId: req.requestId,

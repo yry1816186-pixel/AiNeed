@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Image, Dimensions } from "react-native";
+import { View, Text, ScrollView, Pressable, Image, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -19,7 +20,6 @@ import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
 import { ReasoningCard } from "./ReasoningCard";
 import { WeatherBadge } from "./WeatherBadge";
-import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -47,7 +47,6 @@ const AnimatedItemCard: React.FC<{
   onItemReplace: (outfitIndex: number, itemIndex: number) => void;
   activeOutfitIndex: number;
 }> = ({ item, itemIdx, cardWidth, onItemPress, onItemReplace, activeOutfitIndex }) => {
-  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const { reducedMotion } = useReducedMotion();

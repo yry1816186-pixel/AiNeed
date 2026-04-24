@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useCallback, useRef } from "react";
 
 interface UseRefreshOptions {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
 
 import { couponApi, type UserCoupon } from "../../../services/api/commerce.api";
@@ -33,7 +34,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
         set({ availableCoupons: response.data });
       }
     } catch (error) {
-      set({ error: '获取优惠券失败', isLoading: false });
+      set({ error: "获取优惠券失败", isLoading: false });
     } finally {
       set({ isLoading: false });
     }
@@ -54,7 +55,11 @@ export const useCouponStore = create<CouponStore>((set) => ({
         set({ validationResult: { valid: false, discount: 0 } });
       }
     } catch (error) {
-      set({ error: '优惠券验证失败，请检查券码', validationResult: { valid: false, discount: 0 }, isLoading: false });
+      set({
+        error: "优惠券验证失败，请检查券码",
+        validationResult: { valid: false, discount: 0 },
+        isLoading: false,
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -76,7 +81,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
         }));
       }
     } catch (error) {
-      set({ error: '应用优惠券失败，请稍后重试', isLoading: false });
+      set({ error: "应用优惠券失败，请稍后重试", isLoading: false });
     } finally {
       set({ isLoading: false });
     }

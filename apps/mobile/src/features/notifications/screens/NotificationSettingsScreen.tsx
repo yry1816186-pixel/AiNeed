@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
 import { Snackbar } from "react-native-paper";

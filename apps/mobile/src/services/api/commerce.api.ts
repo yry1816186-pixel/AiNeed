@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import apiClient from "./client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compressImage } from "../../utils/imageCompressor";

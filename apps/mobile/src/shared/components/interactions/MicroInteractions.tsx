@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
   useRef,
   useEffect,
@@ -38,7 +39,7 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from "../../../design-system/theme";
+
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -46,7 +47,7 @@ import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
+
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 
 const springConfig = {
@@ -467,7 +468,7 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
   const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const actionOpacity = useSharedValue(0);
-  const _activeAction = useSharedValue<string | null>(null);
+
   const { reducedMotionSV } = useReducedMotion();
 
   const gesture = Gesture.Pan()
@@ -777,8 +778,7 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const _focalX = useSharedValue(0);
-  const _focalY = useSharedValue(0);
+
   const { reducedMotionSV } = useReducedMotion();
 
   const pinchGesture = Gesture.Pinch()

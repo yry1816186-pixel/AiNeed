@@ -125,11 +125,7 @@ describe("RecommendationFeedService", () => {
       expect(result.items).toHaveLength(2);
       expect(result.total).toBe(2);
       expect(result.hasMore).toBe(false);
-      expect(mockCacheService.get).toHaveBeenCalledWith(
-        userId,
-        "daily",
-        undefined,
-      );
+      expect(mockCacheService.get).toHaveBeenCalledWith(userId, "daily", undefined);
     });
 
     it("缓存命中时应该支持分页", async () => {
@@ -166,7 +162,7 @@ describe("RecommendationFeedService", () => {
           id: "item_1",
           mainImage: "img1.jpg",
           brand: { id: "brand_1", name: "Brand1" },
-          price: new (require("@prisma/client").Prisma).Decimal(299),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
           originalPrice: null,
           attributes: { colors: ["#000000"], style: ["casual"] },
           category: "tops",
@@ -175,7 +171,7 @@ describe("RecommendationFeedService", () => {
           id: "item_2",
           mainImage: "img2.jpg",
           brand: null,
-          price: new (require("@prisma/client").Prisma).Decimal(199),
+          price: new (require("@prisma/client").Prisma.Decimal)(199),
           originalPrice: null,
           attributes: { colors: ["#000080"], style: ["formal"] },
           category: "bottoms",
@@ -194,7 +190,7 @@ describe("RecommendationFeedService", () => {
 
       expect(mockColdStart.getHybridRecommendations).toHaveBeenCalledWith(
         userId,
-        expect.any(Number),
+        expect.any(Number)
       );
       expect(mockEngine.getRecommendations).not.toHaveBeenCalled();
     });
@@ -214,7 +210,7 @@ describe("RecommendationFeedService", () => {
           id: "item_1",
           mainImage: "img1.jpg",
           brand: { id: "brand_1", name: "Brand1" },
-          price: new (require("@prisma/client").Prisma).Decimal(299),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
           originalPrice: null,
           attributes: { colors: ["#000000"], style: ["casual"] },
           category: "tops",
@@ -229,7 +225,7 @@ describe("RecommendationFeedService", () => {
         expect.objectContaining({
           userId,
           options: expect.objectContaining({ limit: expect.any(Number) }),
-        }),
+        })
       );
       expect(mockColdStart.getHybridRecommendations).not.toHaveBeenCalled();
     });
@@ -250,7 +246,7 @@ describe("RecommendationFeedService", () => {
         expect.objectContaining({
           subCategory: undefined,
           ttlMs: 30 * 60 * 1000,
-        }),
+        })
       );
     });
 
@@ -263,15 +259,11 @@ describe("RecommendationFeedService", () => {
 
       await service.getFeed(userId, "occasion", "date");
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(
-        userId,
-        "occasion",
-        "date",
-      );
+      expect(mockCacheService.get).toHaveBeenCalledWith(userId, "occasion", "date");
       expect(mockEngine.getRecommendations).toHaveBeenCalledWith(
         expect.objectContaining({
           context: { occasion: "date" },
-        }),
+        })
       );
     });
 
@@ -284,11 +276,7 @@ describe("RecommendationFeedService", () => {
 
       await service.getFeed(userId, "trending");
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(
-        userId,
-        "trending",
-        undefined,
-      );
+      expect(mockCacheService.get).toHaveBeenCalledWith(userId, "trending", undefined);
     });
 
     it("推荐结果为空时应该返回空列表", async () => {
@@ -317,18 +305,18 @@ describe("RecommendationFeedService", () => {
           item: { id: item.id, category: "tops" },
           score: 0.9 - i * 0.01,
           reasons: ["推荐"],
-        })),
+        }))
       );
       mockPrismaService.clothingItem.findMany.mockResolvedValue(
         manyItems.map((item, i) => ({
           id: item.id,
           mainImage: `img${i}.jpg`,
           brand: null,
-          price: new (require("@prisma/client").Prisma).Decimal(299),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
           originalPrice: null,
           attributes: { colors: ["#000000"], style: ["casual"] },
           category: "tops",
-        })),
+        }))
       );
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
       mockCacheService.set.mockResolvedValue({});
@@ -363,8 +351,8 @@ describe("RecommendationFeedService", () => {
           id: "item_1",
           mainImage: "img1.jpg",
           brand: { id: "brand_1", name: "Brand1" },
-          price: new (require("@prisma/client").Prisma).Decimal(299),
-          originalPrice: new (require("@prisma/client").Prisma).Decimal(399),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
+          originalPrice: new (require("@prisma/client").Prisma.Decimal)(399),
           attributes: {
             colors: ["#000000", "#FFFFFF"],
             style: ["casual", "streetwear"],
@@ -420,7 +408,7 @@ describe("RecommendationFeedService", () => {
           id: "item_1",
           mainImage: "img1.jpg",
           brand: null,
-          price: new (require("@prisma/client").Prisma).Decimal(299),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
           originalPrice: null,
           attributes: {},
           category: "tops",
@@ -449,7 +437,7 @@ describe("RecommendationFeedService", () => {
           id: "item_1",
           mainImage: "img1.jpg",
           brand: null,
-          price: new (require("@prisma/client").Prisma).Decimal(299),
+          price: new (require("@prisma/client").Prisma.Decimal)(299),
           originalPrice: null,
           attributes: { colors: ["#000000"] },
           category: "tops",

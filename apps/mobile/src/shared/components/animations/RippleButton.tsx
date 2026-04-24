@@ -75,7 +75,7 @@ const RippleCircle: React.FC<RippleCircleProps> = ({ x, y, color, onDone }) => {
   );
 };
 
-let rippleCounter = 0;
+const rippleCounter = 0;
 
 export const RippleButton: React.FC<RippleButtonProps> = ({
   onPress,

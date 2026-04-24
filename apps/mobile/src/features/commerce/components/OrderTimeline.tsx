@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Clipboard } from "react-native";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -16,8 +17,6 @@ interface TimelineEvent {
 interface OrderTimelineProps {
   events: TimelineEvent[];
 }
-
-const _STATUS_ORDER = ["pending", "paid", "shipped", "delivered"];
 
 export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
   const { colors } = useTheme();

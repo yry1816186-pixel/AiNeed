@@ -1,15 +1,18 @@
-import type { PODProvider, PODOrderResult, PODOrderStatus, PODProduct } from "./pod-provider.interface";
+import type {
+  PODProvider,
+  PODOrderResult,
+  PODOrderStatus,
+  PODProduct,
+} from "./pod-provider.interface";
 
 export class MockPODProvider implements PODProvider {
   async submitOrder(
     _designData: Record<string, unknown>,
     _template: { type: string; name: string },
-    _shippingAddress: Record<string, string>,
+    _shippingAddress: Record<string, string>
   ): Promise<PODOrderResult> {
     const providerOrderId = `pod-mock-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const estimatedDelivery = new Date(
-      Date.now() + 5 * 24 * 60 * 60 * 1000,
-    ).toISOString();
+    const estimatedDelivery = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
 
     return {
       providerOrderId,
@@ -45,10 +48,25 @@ export class MockPODProvider implements PODProvider {
 
   async getAvailableProducts(): Promise<PODProduct[]> {
     return [
-      { type: "tshirt", name: "T恤", availableColors: ["白色", "黑色", "灰色"], availableSizes: ["S", "M", "L", "XL", "XXL"] },
-      { type: "hat", name: "棒球帽", availableColors: ["黑色", "白色", "藏青色"], availableSizes: ["均码"] },
+      {
+        type: "tshirt",
+        name: "T恤",
+        availableColors: ["白色", "黑色", "灰色"],
+        availableSizes: ["S", "M", "L", "XL", "XXL"],
+      },
+      {
+        type: "hat",
+        name: "棒球帽",
+        availableColors: ["黑色", "白色", "藏青色"],
+        availableSizes: ["均码"],
+      },
       { type: "bag", name: "帆布包", availableColors: ["米色", "黑色"], availableSizes: ["均码"] },
-      { type: "phone_case", name: "手机壳", availableColors: ["透明", "黑色", "白色"], availableSizes: ["iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max"] },
+      {
+        type: "phone_case",
+        name: "手机壳",
+        availableColors: ["透明", "黑色", "白色"],
+        availableSizes: ["iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max"],
+      },
       { type: "mug", name: "马克杯", availableColors: ["白色"], availableSizes: ["11oz"] },
     ];
   }

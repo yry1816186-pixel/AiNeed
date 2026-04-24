@@ -5,4 +5,7 @@ export type {
   CustomizationQuote,
 } from "@xuno/types";
 
-export { CustomizationType as SharedCustomizationType, CustomizationStatus as SharedCustomizationStatus } from "@xuno/types";
+export {
+  CustomizationType as SharedCustomizationType,
+  CustomizationStatus as SharedCustomizationStatus,
+} from "@xuno/types";

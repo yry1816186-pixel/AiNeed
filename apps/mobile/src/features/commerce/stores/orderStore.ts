@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
 
 import { orderEnhancementApi } from "../../../services/api/commerce.api";
@@ -45,7 +46,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
         }));
       }
     } catch (error) {
-      set({ error: '获取订单失败，请稍后重试', isLoading: false });
+      set({ error: "获取订单失败，请稍后重试", isLoading: false });
     } finally {
       set({ isLoading: false });
     }
@@ -71,7 +72,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
         });
       }
     } catch (error) {
-      set({ error: '确认收货失败，请稍后重试' });
+      set({ error: "确认收货失败，请稍后重试" });
     }
   },
 
@@ -89,7 +90,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
         });
       }
     } catch (error) {
-      set({ error: '删除订单失败，请稍后重试' });
+      set({ error: "删除订单失败，请稍后重试" });
     }
   },
 

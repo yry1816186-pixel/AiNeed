@@ -24,10 +24,7 @@ describe("AliyunSmsService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AliyunSmsService,
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [AliyunSmsService, { provide: ConfigService, useValue: mockConfigService }],
     }).compile();
 
     service = module.get<AliyunSmsService>(AliyunSmsService);
@@ -121,22 +118,25 @@ describe("SmsService", () => {
 
       // Should store code with 300s TTL
       expect(redisService.setex).toHaveBeenCalledTimes(2);
-      const codeCall = redisService.setex.mock.calls.find(
-        (call: unknown[]) => (call as string[])[0]?.startsWith("sms:code:"),
+      const codeCall = redisService.setex.mock.calls.find((call: unknown[]) =>
+        (call as string[])[0]?.startsWith("sms:code:")
       );
       expect(codeCall).toBeDefined();
       expect((codeCall as string[])[1]).toBe(300); // 5 minutes TTL
       expect((codeCall as string[])[2]).toMatch(/^\d{6}$/); // 6-digit code
 
       // Should set rate limit with 60s TTL
-      const rateCall = redisService.setex.mock.calls.find(
-        (call: unknown[]) => (call as string[])[0]?.startsWith("sms:rate:"),
+      const rateCall = redisService.setex.mock.calls.find((call: unknown[]) =>
+        (call as string[])[0]?.startsWith("sms:rate:")
       );
       expect(rateCall).toBeDefined();
       expect((rateCall as string[])[1]).toBe(60);
 
       // Should call SMS provider
-      expect(smsProvider.sendCode).toHaveBeenCalledWith("13800138000", expect.stringMatching(/^\d{6}$/));
+      expect(smsProvider.sendCode).toHaveBeenCalledWith(
+        "13800138000",
+        expect.stringMatching(/^\d{6}$/)
+      );
     });
 
     it("should throw 429 when rate limited", async () => {

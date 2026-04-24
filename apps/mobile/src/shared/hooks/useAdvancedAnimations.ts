@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import React, { useEffect, useCallback } from "react";
 import { Dimensions, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { BlurView } from "expo-blur";

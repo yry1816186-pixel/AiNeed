@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-} from "@nestjs/common";
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -22,9 +17,7 @@ const SENSITIVE_NESTED_PREFIXES = ["analysisResult", "measurements"];
 @Injectable()
 export class SensitiveDataInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    return next.handle().pipe(
-      map((data) => this.sanitizeResponse(data)),
-    );
+    return next.handle().pipe(map((data) => this.sanitizeResponse(data)));
   }
 
   private sanitizeResponse(data: unknown): unknown {
@@ -36,7 +29,7 @@ export class SensitiveDataInterceptor implements NestInterceptor {
       return data.map((item) => this.sanitizeResponse(item));
     }
 
-    const sanitized = { ...data as Record<string, unknown> };
+    const sanitized = { ...(data as Record<string, unknown>) };
 
     for (const field of SENSITIVE_PROFILE_FIELDS) {
       if (field in sanitized) {

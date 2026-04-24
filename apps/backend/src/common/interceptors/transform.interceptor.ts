@@ -38,7 +38,8 @@ import {
   CallHandler,
   Inject,
   Optional,
- SetMetadata } from "@nestjs/common";
+  SetMetadata,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import type { Request, Response } from "express";
 import { Observable } from "rxjs";
@@ -96,7 +97,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
     @Optional()
     @Inject("ASYNC_LOCAL_STORAGE")
     private readonly asyncLocalStorage: AsyncLocalStorage<RequestContext>,
-    private readonly logger: StructuredLoggerService,
+    private readonly logger: StructuredLoggerService
   ) {
     this.logger.setContext("TransformInterceptor");
   }
@@ -106,10 +107,10 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
    */
   intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
     // 检查是否跳过转换
-    const skipTransform = this.reflector.getAllAndOverride<boolean>(
-      SKIP_RESPONSE_TRANSFORM,
-      [context.getHandler(), context.getClass()],
-    );
+    const skipTransform = this.reflector.getAllAndOverride<boolean>(SKIP_RESPONSE_TRANSFORM, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (skipTransform) {
       return next.handle();
@@ -162,7 +163,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         }
 
         return apiResponse;
-      }),
+      })
     );
   }
 

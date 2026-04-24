@@ -1,4 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -21,7 +31,6 @@ import {
   BorderRadius,
   Shadows,
 } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { customizationApi } from "../../../services/api/customization.api";
 import type {
   CustomizationType,

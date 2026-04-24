@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable, @typescript-eslint/no-misused-promises */
 import { renderHook, act } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStorage } from "../useStorage";

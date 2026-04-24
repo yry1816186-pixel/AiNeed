@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, {
@@ -13,7 +14,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, BorderRadius } from "../../../design-system/theme";
+import { Spacing } from "../../../design-system/theme";
 import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
 import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
 
@@ -37,7 +38,9 @@ export const OrderSuccessAnimation: React.FC = () => {
   const confetti2Opacity = useSharedValue(reducedMotion ? 1 : 0);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      return;
+    }
 
     ringScale.value = withSpring(1.2, SpringConfigs.gentle);
     ringOpacity.value = withTiming(0.15, { duration: Duration.slow });

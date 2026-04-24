@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, import/no-unresolved */
 // @ts-nocheck
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

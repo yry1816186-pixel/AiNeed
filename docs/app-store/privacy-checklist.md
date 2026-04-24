@@ -10,33 +10,33 @@
 
 ### Data Collected
 
-| Data Type | Purpose | Storage | Encrypted | Deletable |
-|-----------|---------|---------|-----------|-----------|
-| Phone number | Account registration | PRC servers | AES-256 | Yes (account deletion) |
-| Email address | Account registration, notifications | PRC servers | AES-256 | Yes |
-| Nickname/Avatar | Profile display | PRC servers | No | Yes |
-| Gender/Age range | Personalization | PRC servers | No | Yes |
-| Body measurements | AI recommendation | PRC servers | AES-256 | Yes |
-| User photos | Virtual try-on, body analysis | MinIO (PRC) | AES-256-GCM | Yes |
-| Style preferences | AI recommendation | PRC servers | No | Yes |
-| Device info | Analytics, crash reporting | Sentry (US) | TLS in transit | Partial (anon) |
-| IP address | Security, analytics | PRC servers | No | On account deletion |
-| Browsing history | Personalization | PRC servers | No | Yes (7-day purge) |
-| Purchase history | Order management | PRC servers | AES-256 | No (legal requirement) |
-| Push token | Push notifications | PRC servers | No | Yes (deregister) |
-| Location (approximate) | Weather, local recommendations | PRC servers | No | Yes |
+| Data Type              | Purpose                             | Storage     | Encrypted      | Deletable              |
+| ---------------------- | ----------------------------------- | ----------- | -------------- | ---------------------- |
+| Phone number           | Account registration                | PRC servers | AES-256        | Yes (account deletion) |
+| Email address          | Account registration, notifications | PRC servers | AES-256        | Yes                    |
+| Nickname/Avatar        | Profile display                     | PRC servers | No             | Yes                    |
+| Gender/Age range       | Personalization                     | PRC servers | No             | Yes                    |
+| Body measurements      | AI recommendation                   | PRC servers | AES-256        | Yes                    |
+| User photos            | Virtual try-on, body analysis       | MinIO (PRC) | AES-256-GCM    | Yes                    |
+| Style preferences      | AI recommendation                   | PRC servers | No             | Yes                    |
+| Device info            | Analytics, crash reporting          | Sentry (US) | TLS in transit | Partial (anon)         |
+| IP address             | Security, analytics                 | PRC servers | No             | On account deletion    |
+| Browsing history       | Personalization                     | PRC servers | No             | Yes (7-day purge)      |
+| Purchase history       | Order management                    | PRC servers | AES-256        | No (legal requirement) |
+| Push token             | Push notifications                  | PRC servers | No             | Yes (deregister)       |
+| Location (approximate) | Weather, local recommendations      | PRC servers | No             | Yes                    |
 
 ### Third-Party SDKs
 
-| SDK | Purpose | Data Collected | Privacy Impact |
-|-----|---------|---------------|----------------|
-| Firebase (FCM) | Push notifications (Android) | Device token | Low - token only |
-| APNs (Apple) | Push notifications (iOS) | Device token | Low - token only |
-| Sentry | Crash reporting, performance | Device info, crash logs | Medium - anonymized |
-| GLM API (Zhipu AI) | AI stylist, virtual try-on | Text input, images | High - see note |
-| QWeather | Weather data | Location (approx) | Low - city-level |
-| Alipay SDK | Payment processing | Payment token | Medium - PCI scope |
-| WeChat Pay SDK | Payment processing | Payment token | Medium - PCI scope |
+| SDK                | Purpose                      | Data Collected          | Privacy Impact      |
+| ------------------ | ---------------------------- | ----------------------- | ------------------- |
+| Firebase (FCM)     | Push notifications (Android) | Device token            | Low - token only    |
+| APNs (Apple)       | Push notifications (iOS)     | Device token            | Low - token only    |
+| Sentry             | Crash reporting, performance | Device info, crash logs | Medium - anonymized |
+| GLM API (Zhipu AI) | AI stylist, virtual try-on   | Text input, images      | High - see note     |
+| QWeather           | Weather data                 | Location (approx)       | Low - city-level    |
+| Alipay SDK         | Payment processing           | Payment token           | Medium - PCI scope  |
+| WeChat Pay SDK     | Payment processing           | Payment token           | Medium - PCI scope  |
 
 **GLM API Note:** User photos and text are sent to Zhipu AI's API for AI processing. Photos are used only for the requested service (virtual try-on, body analysis) and are not stored by the third party beyond processing time. Users are informed of this in the privacy policy.
 
@@ -46,34 +46,36 @@
 
 ### iOS (Info.plist)
 
-| Permission | Key | Description (Chinese) | Description (English) |
-|-----------|-----|----------------------|----------------------|
-| Camera | NSCameraUsageDescription | XunShang needs camera access to take photos for virtual try-on and body analysis | XunShang needs camera access for virtual try-on and body analysis |
-| Photo Library | NSPhotoLibraryUsageDescription | XunShang needs photo library access to select photos for virtual try-on and outfit sharing | XunShang needs photo library access for virtual try-on and sharing |
-| Notifications | - | Receive order updates, style recommendations, and community interactions | Receive order updates, recommendations, and community notifications |
-| Location | NSLocationWhenInUseUsageDescription | XunShang uses your location for weather-based outfit recommendations | XunShang uses location for weather-based recommendations |
+| Permission    | Key                                 | Description (Chinese)                                                                      | Description (English)                                               |
+| ------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Camera        | NSCameraUsageDescription            | XunShang needs camera access to take photos for virtual try-on and body analysis           | XunShang needs camera access for virtual try-on and body analysis   |
+| Photo Library | NSPhotoLibraryUsageDescription      | XunShang needs photo library access to select photos for virtual try-on and outfit sharing | XunShang needs photo library access for virtual try-on and sharing  |
+| Notifications | -                                   | Receive order updates, style recommendations, and community interactions                   | Receive order updates, recommendations, and community notifications |
+| Location      | NSLocationWhenInUseUsageDescription | XunShang uses your location for weather-based outfit recommendations                       | XunShang uses location for weather-based recommendations            |
 
 ### Android (AndroidManifest.xml)
 
-| Permission | Purpose | Required |
-|-----------|---------|----------|
-| INTERNET | API communication | Yes |
-| CAMERA | Photo capture for try-on | No |
-| READ_EXTERNAL_STORAGE | Photo selection | No |
-| POST_NOTIFICATIONS | Push notifications (Android 13+) | No |
-| ACCESS_FINE_LOCATION | Weather-based recommendations | No |
-| ACCESS_COARSE_LOCATION | Weather-based recommendations | No |
+| Permission             | Purpose                          | Required |
+| ---------------------- | -------------------------------- | -------- |
+| INTERNET               | API communication                | Yes      |
+| CAMERA                 | Photo capture for try-on         | No       |
+| READ_EXTERNAL_STORAGE  | Photo selection                  | No       |
+| POST_NOTIFICATIONS     | Push notifications (Android 13+) | No       |
+| ACCESS_FINE_LOCATION   | Weather-based recommendations    | No       |
+| ACCESS_COARSE_LOCATION | Weather-based recommendations    | No       |
 
 ---
 
 ## 3. Age Rating Assessment
 
 **App Store:** 4+ (No objectionable content)
+
 - No user-generated content displayed without moderation
 - No violence, gambling, or mature themes
 - AI-generated content is filtered for safety
 
 **Google Play:** Everyone
+
 - Content rating: IARC questionnaire
 - No violence, sexual content, or controlled substances
 - User interactions are moderated
@@ -119,21 +121,21 @@ PIPL is China's comprehensive data protection law. Key requirements:
 
 ### Data Collected
 
-| Data Type | Collected | Shared | Processed Ephemeral | Encrypted | Deletable |
-|-----------|-----------|--------|-------------------|-----------|-----------|
-| Personal info (name, email, phone) | Yes | No | No | Yes | Yes |
-| Photos and videos | Yes | No | No | Yes | Yes |
-| App activity (browsing, interactions) | Yes | No | No | No | Yes |
-| Device or other IDs | Yes | No | No | No | No |
+| Data Type                             | Collected | Shared | Processed Ephemeral | Encrypted | Deletable |
+| ------------------------------------- | --------- | ------ | ------------------- | --------- | --------- |
+| Personal info (name, email, phone)    | Yes       | No     | No                  | Yes       | Yes       |
+| Photos and videos                     | Yes       | No     | No                  | Yes       | Yes       |
+| App activity (browsing, interactions) | Yes       | No     | No                  | No        | Yes       |
+| Device or other IDs                   | Yes       | No     | No                  | No        | No        |
 
 ### Data Shared with Third Parties
 
-| Data Type | Shared With | Purpose |
-|-----------|------------|---------|
-| Text prompts | Zhipu AI (GLM) | AI outfit recommendation |
-| Photos | Zhipu AI (GLM) | Virtual try-on, body analysis |
-| Payment tokens | Alipay/WeChat | Payment processing |
-| Device token | Firebase/APNs | Push notifications |
+| Data Type      | Shared With    | Purpose                       |
+| -------------- | -------------- | ----------------------------- |
+| Text prompts   | Zhipu AI (GLM) | AI outfit recommendation      |
+| Photos         | Zhipu AI (GLM) | Virtual try-on, body analysis |
+| Payment tokens | Alipay/WeChat  | Payment processing            |
+| Device token   | Firebase/APNs  | Push notifications            |
 
 ### Data Handling
 
@@ -181,11 +183,11 @@ PIPL is China's comprehensive data protection law. Key requirements:
 
 ## 8. Key Compliance Risks
 
-| Risk | Mitigation | Status |
-|------|-----------|--------|
-| User photo privacy | AES-256-GCM encryption, purpose-limited use, user can delete | Mitigated |
-| AI-generated content safety | GLM content filtering + custom safety layer | Mitigated |
-| Payment data handling | PCI-compliant SDKs, no card data stored | Mitigated |
-| Cross-border data transfer | All data in PRC, no international servers | Not applicable |
-| Children's data | Age gate, guardian consent for under 14 | Mitigated |
-| Third-party SDK compliance | SDK list disclosed, data practices documented | Mitigated |
+| Risk                        | Mitigation                                                   | Status         |
+| --------------------------- | ------------------------------------------------------------ | -------------- |
+| User photo privacy          | AES-256-GCM encryption, purpose-limited use, user can delete | Mitigated      |
+| AI-generated content safety | GLM content filtering + custom safety layer                  | Mitigated      |
+| Payment data handling       | PCI-compliant SDKs, no card data stored                      | Mitigated      |
+| Cross-border data transfer  | All data in PRC, no international servers                    | Not applicable |
+| Children's data             | Age gate, guardian consent for under 14                      | Mitigated      |
+| Third-party SDK compliance  | SDK list disclosed, data practices documented                | Mitigated      |

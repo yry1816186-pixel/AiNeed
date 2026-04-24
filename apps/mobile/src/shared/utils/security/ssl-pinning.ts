@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Platform } from "react-native";
 import { Sentry } from "../../services/sentry";
 

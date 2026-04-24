@@ -1,11 +1,12 @@
+/* eslint-disable no-empty */
 import { create } from "zustand";
-import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
-import apiClient from "../services/api/client";
-import { smsApi } from "../services/api/sms.api";
-import type { User } from "../types/user";
 import type { ClothingItem } from "./clothingStore";
+
+// Import the unified auth store from features/auth/stores (re-export for consumers)
+import { useAuthStore } from "../features/auth/stores/index";
+export { useAuthStore };
 
 export * from "./uiStore";
 export * from "./clothingStore";
@@ -19,179 +20,6 @@ export * from "./homeStore";
 export * from "./user.store";
 export * from "./app.store";
 export * from "./bloggerStore";
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  onboardingCompleted: boolean;
-  isVip: boolean;
-  setUser: (user: User | null) => void;
-  setToken: (token: string | null) => void;
-  logout: () => void;
-  setLoading: (loading: boolean) => void;
-  loginWithPhone: (phone: string, code: string) => Promise<void>;
-  loginWithWechat: (code: string) => Promise<void>;
-  phoneRegister: (phone: string, code: string, nickname?: string) => Promise<void>;
-  setOnboardingCompleted: (completed: boolean) => void;
-}
-
-const secureStorageAdapter: StateStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    if (name === "auth-storage") {
-      const token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-      const userStr = await secureStorage.getItem(SECURE_STORAGE_KEYS.USER_DATA);
-      const onboardingStr = await AsyncStorage.getItem("auth_onboarding_completed");
-      return JSON.stringify({
-        state: {
-          token,
-          user: userStr ? JSON.parse(userStr) : null,
-          isAuthenticated: !!token,
-          onboardingCompleted: onboardingStr === "true",
-        },
-        version: 0,
-      });
-    }
-    return AsyncStorage.getItem(name);
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    if (name === "auth-storage") {
-      const { state } = JSON.parse(value);
-      if (state.token) {
-        await secureStorage.setItem(SECURE_STORAGE_KEYS.AUTH_TOKEN, state.token);
-      } else {
-        await secureStorage.deleteItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-      }
-      if (state.user) {
-        await secureStorage.setItem(SECURE_STORAGE_KEYS.USER_DATA, JSON.stringify(state.user));
-      } else {
-        await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
-      }
-      if (state.onboardingCompleted !== undefined) {
-        await AsyncStorage.setItem("auth_onboarding_completed", String(state.onboardingCompleted));
-      }
-      return;
-    }
-    return AsyncStorage.setItem(name, value);
-  },
-  removeItem: async (name: string): Promise<void> => {
-    if (name === "auth-storage") {
-      await secureStorage.deleteItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-      await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
-      await AsyncStorage.removeItem("auth_onboarding_completed");
-      return;
-    }
-    return AsyncStorage.removeItem(name);
-  },
-};
-
-interface PersistedAuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  onboardingCompleted: boolean;
-  isVip: boolean;
-}
-
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: true,
-      onboardingCompleted: false,
-      isVip: false,
-      setUser: (user) =>
-        set((state) => ({
-          user,
-          isAuthenticated: !!(state.token && user),
-        })),
-      setToken: (token) => {
-        void apiClient.setToken(token);
-        set((state) => ({
-          token,
-          isAuthenticated: !!(token && state.user),
-        }));
-      },
-      logout: () => {
-        void apiClient.setToken(null);
-        void apiClient.setRefreshToken(null);
-        set({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          onboardingCompleted: false,
-          isVip: false,
-        });
-      },
-      setLoading: (isLoading) => set({ isLoading }),
-      loginWithPhone: async (phone, code) => {
-        const response = await apiClient.post<{
-          accessToken: string;
-          refreshToken: string;
-          user: User;
-        }>("/auth/phone-login", { phone, code });
-        if (response.success && response.data) {
-          void apiClient.setToken(response.data.accessToken);
-          void apiClient.setRefreshToken(response.data.refreshToken);
-          set({
-            token: response.data.accessToken,
-            user: response.data.user,
-            isAuthenticated: true,
-          });
-        } else {
-          throw new Error(response.error?.message || "Phone login failed");
-        }
-      },
-      loginWithWechat: async (code) => {
-        const response = await apiClient.post<{
-          accessToken: string;
-          refreshToken: string;
-          user: User;
-        }>("/auth/wechat-login", { code });
-        if (response.success && response.data) {
-          void apiClient.setToken(response.data.accessToken);
-          void apiClient.setRefreshToken(response.data.refreshToken);
-          set({
-            token: response.data.accessToken,
-            user: response.data.user,
-            isAuthenticated: true,
-          });
-        } else {
-          throw new Error(response.error?.message || "WeChat login failed");
-        }
-      },
-      phoneRegister: async (phone, code, nickname) => {
-        const response = await smsApi.registerWithPhone(phone, code, nickname);
-        if (response.success && response.data) {
-          void apiClient.setToken(response.data.accessToken);
-          void apiClient.setRefreshToken(response.data.refreshToken);
-          set({
-            token: response.data.accessToken,
-            user: response.data.user as unknown as User,
-            isAuthenticated: true,
-          });
-        } else {
-          throw new Error(response.error?.message || "Phone registration failed");
-        }
-      },
-      setOnboardingCompleted: (onboardingCompleted) => set({ onboardingCompleted }),
-    }),
-    {
-      name: "auth-storage",
-      storage: createJSONStorage(() => secureStorageAdapter),
-      partialize: (state: AuthState): PersistedAuthState => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-        onboardingCompleted: state.onboardingCompleted,
-        isVip: state.isVip,
-      }),
-    } as const
-  )
-);
 
 interface ClothingAnalysis {
   category: string;
@@ -512,9 +340,9 @@ export const useHeartRecommendStore = create<HeartRecommendState>()(
 // ============================================================
 // Clear All Stores (used on logout / account deletion)
 // ============================================================
-export const clearAllStores = () => {
+export const clearAllStores = async () => {
   try {
-    useAuthStore.getState().logout();
+    await useAuthStore.getState().logout();
   } catch {}
   try {
     useAnalysisStore.getState().clearAnalysis();

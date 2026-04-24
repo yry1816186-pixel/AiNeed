@@ -21,7 +21,7 @@ export interface PODProvider {
   submitOrder(
     designData: Record<string, unknown>,
     template: { type: string; name: string },
-    shippingAddress: Record<string, string>,
+    shippingAddress: Record<string, string>
   ): Promise<PODOrderResult>;
 
   getOrderStatus(providerOrderId: string): Promise<PODOrderStatus>;

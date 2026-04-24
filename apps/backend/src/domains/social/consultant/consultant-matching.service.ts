@@ -6,10 +6,10 @@ import { ConsultantMatchRequestDto, MatchResultDto } from "./dto";
 
 /** 四维匹配权重配置 */
 const MATCH_WEIGHTS = {
-  profile: 0.30,
+  profile: 0.3,
   keywords: 0.25,
   specialty: 0.25,
-  location: 0.20,
+  location: 0.2,
 } as const;
 
 /** 匹配理由文案映射 */
@@ -111,18 +111,23 @@ export class ConsultantMatchingService {
    * 权重 30%
    */
   private calcProfileScore(
-    userProfile: { profile: Record<string, unknown> | null; styleProfiles: Array<Record<string, unknown>> } | null,
-    consultant: Record<string, unknown>,
+    userProfile: {
+      profile: Record<string, unknown> | null;
+      styleProfiles: Array<Record<string, unknown>>;
+    } | null,
+    consultant: Record<string, unknown>
   ): number {
-    if (!userProfile?.styleProfiles || userProfile.styleProfiles.length === 0) {return 0.5;}
+    if (!userProfile?.styleProfiles || userProfile.styleProfiles.length === 0) {
+      return 0.5;
+    }
     const specialties = (consultant.specialties as string[]) || [];
     // 收集用户所有活跃风格的关键词
-    const userKeywords = userProfile.styleProfiles.flatMap(
-      (sp) => (sp.keywords as string[]) || [],
-    );
-    if (userKeywords.length === 0) {return 0.5;}
+    const userKeywords = userProfile.styleProfiles.flatMap((sp) => (sp.keywords as string[]) || []);
+    if (userKeywords.length === 0) {
+      return 0.5;
+    }
     const overlap = userKeywords.filter((s: string) =>
-      specialties.some((sp: string) => sp.includes(s) || s.includes(sp)),
+      specialties.some((sp: string) => sp.includes(s) || s.includes(sp))
     );
     return overlap.length / Math.max(userKeywords.length, 1);
   }
@@ -131,13 +136,20 @@ export class ConsultantMatchingService {
    * 关键词维度评分：需求描述与顾问专长的匹配度
    * 权重 25%
    */
-  private calcKeywordScore(dto: ConsultantMatchRequestDto, consultant: Record<string, unknown>): number {
-    if (!dto.notes) {return 0.5;}
+  private calcKeywordScore(
+    dto: ConsultantMatchRequestDto,
+    consultant: Record<string, unknown>
+  ): number {
+    if (!dto.notes) {
+      return 0.5;
+    }
     const specialties = (consultant.specialties as string[]) || [];
     const keywords = dto.notes.split(/[,，\s]+/).filter(Boolean);
-    if (keywords.length === 0) {return 0.5;}
+    if (keywords.length === 0) {
+      return 0.5;
+    }
     const matches = keywords.filter((kw) =>
-      specialties.some((sp: string) => sp.includes(kw) || kw.includes(sp)),
+      specialties.some((sp: string) => sp.includes(kw) || kw.includes(sp))
     );
     return matches.length / Math.max(keywords.length, 1);
   }
@@ -146,12 +158,17 @@ export class ConsultantMatchingService {
    * 专长维度评分：服务类型与顾问专长的匹配度
    * 权重 25%
    */
-  private calcSpecialtyScore(dto: ConsultantMatchRequestDto, consultant: Record<string, unknown>): number {
+  private calcSpecialtyScore(
+    dto: ConsultantMatchRequestDto,
+    consultant: Record<string, unknown>
+  ): number {
     const specialties = (consultant.specialties as string[]) || [];
     const targetKeywords = SERVICE_TYPE_KEYWORDS[dto.serviceType] || [];
-    if (targetKeywords.length === 0) {return 0.5;}
+    if (targetKeywords.length === 0) {
+      return 0.5;
+    }
     const matches = targetKeywords.filter((kw) =>
-      specialties.some((sp: string) => sp.includes(kw)),
+      specialties.some((sp: string) => sp.includes(kw))
     );
     return matches.length / targetKeywords.length;
   }
@@ -161,11 +178,16 @@ export class ConsultantMatchingService {
    * 权重 20%
    */
   private calcLocationScore(
-    userProfile: { profile: Record<string, unknown> | null; styleProfiles: Array<Record<string, unknown>> } | null,
-    consultant: Record<string, unknown>,
+    userProfile: {
+      profile: Record<string, unknown> | null;
+      styleProfiles: Array<Record<string, unknown>>;
+    } | null,
+    consultant: Record<string, unknown>
   ): number {
     const userLocation = userProfile?.profile?.location;
-    if (!userLocation || !consultant.location) {return 0.5;}
+    if (!userLocation || !consultant.location) {
+      return 0.5;
+    }
     return userLocation === consultant.location ? 1.0 : 0.3;
   }
 
@@ -173,14 +195,29 @@ export class ConsultantMatchingService {
    * 根据各维度分数生成匹配理由
    * 最多返回3条理由
    */
-  private buildMatchReasons(scores: Record<string, number>, consultant: Record<string, unknown>): string[] {
+  private buildMatchReasons(
+    scores: Record<string, number>,
+    consultant: Record<string, unknown>
+  ): string[] {
     const reasons: string[] = [];
-    if ((scores.profile ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.profile);}
-    if ((scores.keywords ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.keywords);}
-    if ((scores.specialty ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.specialty);}
-    if ((scores.location ?? 0) >= 0.8) {reasons.push(MATCH_REASONS.location);}
-    if (Number(consultant.rating) >= 4.5) {reasons.push(MATCH_REASONS.topRated);}
-    if (reasons.length === 0) {reasons.push(MATCH_REASONS.specialty);}
+    if ((scores.profile ?? 0) >= 0.6) {
+      reasons.push(MATCH_REASONS.profile);
+    }
+    if ((scores.keywords ?? 0) >= 0.6) {
+      reasons.push(MATCH_REASONS.keywords);
+    }
+    if ((scores.specialty ?? 0) >= 0.6) {
+      reasons.push(MATCH_REASONS.specialty);
+    }
+    if ((scores.location ?? 0) >= 0.8) {
+      reasons.push(MATCH_REASONS.location);
+    }
+    if (Number(consultant.rating) >= 4.5) {
+      reasons.push(MATCH_REASONS.topRated);
+    }
+    if (reasons.length === 0) {
+      reasons.push(MATCH_REASONS.specialty);
+    }
     return reasons.slice(0, 3);
   }
 }

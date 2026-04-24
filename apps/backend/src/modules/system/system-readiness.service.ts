@@ -19,7 +19,7 @@ export class SystemReadinessService implements OnModuleInit {
     private prisma: PrismaService,
     private redis: RedisService,
     private storage: StorageService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -38,7 +38,9 @@ export class SystemReadinessService implements OnModuleInit {
 
     if (failed.length > 0) {
       const isProduction = this.configService.get<string>("NODE_ENV") === "production";
-      const summary = `System readiness check failed: ${failed.length}/${results.length} checks failed (${failed.map((f) => f.name).join(", ")})`;
+      const summary = `System readiness check failed: ${failed.length}/${
+        results.length
+      } checks failed (${failed.map((f) => f.name).join(", ")})`;
 
       if (isProduction) {
         this.logger.error(summary);
@@ -71,9 +73,7 @@ export class SystemReadinessService implements OnModuleInit {
       "JWT_SECRET",
     ];
 
-    const missing = requiredVars.filter(
-      (varName) => !this.configService.get<string>(varName),
-    );
+    const missing = requiredVars.filter((varName) => !this.configService.get<string>(varName));
 
     if (missing.length > 0) {
       return {
@@ -98,9 +98,7 @@ export class SystemReadinessService implements OnModuleInit {
       await Promise.race([
         this.prisma.$queryRaw`SELECT 1`,
         new Promise((_, reject) =>
-          controller.signal.addEventListener("abort", () =>
-            reject(new Error("Timeout after 3s")),
-          ),
+          controller.signal.addEventListener("abort", () => reject(new Error("Timeout after 3s")))
         ),
       ]);
       clearTimeout(timeout);
@@ -128,9 +126,7 @@ export class SystemReadinessService implements OnModuleInit {
       await Promise.race([
         client.ping(),
         new Promise((_, reject) =>
-          controller.signal.addEventListener("abort", () =>
-            reject(new Error("Timeout after 3s")),
-          ),
+          controller.signal.addEventListener("abort", () => reject(new Error("Timeout after 3s")))
         ),
       ]);
       clearTimeout(timeout);
@@ -170,9 +166,7 @@ export class SystemReadinessService implements OnModuleInit {
       await Promise.race([
         this.storage.getFileUrl("__readiness_check__", 1),
         new Promise((_, reject) =>
-          controller.signal.addEventListener("abort", () =>
-            reject(new Error("Timeout after 3s")),
-          ),
+          controller.signal.addEventListener("abort", () => reject(new Error("Timeout after 3s")))
         ),
       ]);
       clearTimeout(timeout);
@@ -193,10 +187,7 @@ export class SystemReadinessService implements OnModuleInit {
   }
 
   private async checkMLService(): Promise<ReadinessCheckResult> {
-    const mlServiceUrl = this.configService.get<string>(
-      "ML_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    const mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
 
     try {
       const controller = new AbortController();
@@ -224,7 +215,9 @@ export class SystemReadinessService implements OnModuleInit {
       return {
         name: "ML Service",
         passed: false,
-        message: `Unreachable at ${mlServiceUrl}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: `Unreachable at ${mlServiceUrl}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
       };
     }
   }

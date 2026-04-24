@@ -138,14 +138,14 @@
 
 ### 变更类型
 
-| 类型 | 说明 |
-|------|------|
-| Added | 新增功能 |
-| Changed | 功能变更 |
+| 类型       | 说明           |
+| ---------- | -------------- |
+| Added      | 新增功能       |
+| Changed    | 功能变更       |
 | Deprecated | 即将废弃的功能 |
-| Removed | 已移除的功能 |
-| Fixed | 问题修复 |
-| Security | 安全相关修复 |
+| Removed    | 已移除的功能   |
+| Fixed      | 问题修复       |
+| Security   | 安全相关修复   |
 
 ---
 
@@ -188,25 +188,25 @@
 
 #### Type 类型
 
-| 类型 | 说明 | 示例 |
-|------|------|------|
-| feat | 新功能 | feat(auth): 添加 OAuth 登录 |
-| fix | Bug 修复 | fix(api): 修复 Token 验证问题 |
-| docs | 文档更新 | docs: 更新 README |
-| style | 代码格式 | style: 格式化代码 |
-| refactor | 代码重构 | refactor: 重构推荐服务 |
-| test | 测试相关 | test: 添加单元测试 |
-| chore | 构建/工具 | chore: 更新依赖版本 |
+| 类型     | 说明      | 示例                          |
+| -------- | --------- | ----------------------------- |
+| feat     | 新功能    | feat(auth): 添加 OAuth 登录   |
+| fix      | Bug 修复  | fix(api): 修复 Token 验证问题 |
+| docs     | 文档更新  | docs: 更新 README             |
+| style    | 代码格式  | style: 格式化代码             |
+| refactor | 代码重构  | refactor: 重构推荐服务        |
+| test     | 测试相关  | test: 添加单元测试            |
+| chore    | 构建/工具 | chore: 更新依赖版本           |
 
 #### Scope 范围
 
-| 范围 | 说明 |
-|------|------|
-| auth | 认证模块 |
-| ai | AI 服务 |
-| api | API 接口 |
-| ui | 用户界面 |
-| db | 数据库 |
+| 范围   | 说明     |
+| ------ | -------- |
+| auth   | 认证模块 |
+| ai     | AI 服务  |
+| api    | API 接口 |
+| ui     | 用户界面 |
+| db     | 数据库   |
 | deploy | 部署相关 |
 
 ### 提交示例
@@ -242,4 +242,4 @@ git commit -m "refactor(recommendation): 优化推荐算法性能"
 
 ---
 
-*最后更新: 2024-03-12*
+_最后更新: 2024-03-12_

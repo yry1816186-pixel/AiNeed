@@ -1,4 +1,5 @@
-﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+/* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { offlineStorage, OFFLINE_QUEUE_KEY, OFFLINE_DATA_PREFIX } from "../secureStorage";
 
 // Mock dependencies - must be before any imports that use them

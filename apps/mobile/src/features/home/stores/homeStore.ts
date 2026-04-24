@@ -37,14 +37,14 @@ function calculateProfileCompletion(profile: UserProfile): number {
   let completion = 0;
 
   if (profile.gender) {
-    completion += 10;
-  }
-
-  if (profile.height && profile.weight) {
-    completion += 15;
+    completion += 5;
   }
 
   if (profile.bodyType) {
+    completion += 5;
+  }
+
+  if (profile.height && profile.weight) {
     completion += 15;
   }
 
@@ -110,7 +110,7 @@ export const useHomeStore = create<HomeState>()(
             isLoadingWeather: false,
           });
         } catch {
-          set({ error: '获取天气信息失败', isLoadingWeather: false });
+          set({ error: "获取天气信息失败", isLoadingWeather: false });
         }
       },
 
@@ -129,7 +129,7 @@ export const useHomeStore = create<HomeState>()(
             set({ isLoadingProfile: false });
           }
         } catch {
-          set({ error: '获取画像完成度失败', isLoadingProfile: false });
+          set({ error: "获取画像完成度失败", isLoadingProfile: false });
         }
       },
 

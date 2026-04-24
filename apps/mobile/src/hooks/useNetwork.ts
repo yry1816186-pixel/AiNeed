@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";
 import apiClient from "../services/api/client";

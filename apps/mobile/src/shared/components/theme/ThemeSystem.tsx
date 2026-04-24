@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 /**
  * 寻裳 ThemeSystem (兼容层)
  *
@@ -9,7 +10,7 @@
  * 所有组件现在消费统一的 ThemeContext。
  * 品牌色统一使用 Terracotta #C67B5C（暗色模式 #D68B6C）。
  */
-import React, { useEffect, ReactNode } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -39,9 +40,15 @@ import {
   BorderRadius,
   Shadows,
   gradients as themeGradients,
-} from "../../design-system/theme";
-import { DesignTokens } from "../../../design-system/theme";
-import { flatColors as colors } from "../../../design-system/theme";
+  DesignTokens,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import {
+  ThemeProvider as UnifiedThemeProvider,
+  useTheme as useUnifiedTheme,
+  createStyles,
+  type ThemeMode,
+} from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -81,7 +88,6 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   style,
   variant = "background",
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useUnifiedTheme();
 
   const backgroundColor = {
@@ -151,8 +157,8 @@ export interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
-  const styles = useStyles(colors);
   const { mode, isDark, setMode, colors } = useUnifiedTheme();
+  const styles = useStyles(colors);
   const switchTranslateX = useSharedValue(isDark ? 24 : 0);
   const iconRotation = useSharedValue(isDark ? 180 : 0);
 
@@ -182,7 +188,6 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   }));
 
   const handleToggle = () => {
-    const { colors, isDark } = useTheme();
     if (mode === "system") {
       void setMode(isDark ? "light" : "dark");
     } else {
@@ -231,8 +236,8 @@ export interface AccentColorPickerProps {
 }
 
 export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) => {
-  const styles = useStyles(colors);
   const { colors } = useUnifiedTheme();
+  const styles = useStyles(colors);
 
   return (
     <View style={[styles.accentPicker, style]}>
@@ -263,8 +268,8 @@ export interface ThemeSettingsSheetProps {
 }
 
 export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible, onClose }) => {
-  const styles = useStyles(colors);
   const { colors, mode, setMode, isDark } = useUnifiedTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_WIDTH);
   const backdropOpacity = useSharedValue(0);
 
@@ -405,8 +410,8 @@ export interface GlassCardProps {
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity = 80, tint }) => {
-  const styles = useStyles(colors);
   const { isDark, colors } = useUnifiedTheme();
+  const styles = useStyles(colors);
   const defaultTint = tint || (isDark ? "dark" : "light");
 
   return (

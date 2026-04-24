@@ -42,7 +42,7 @@ export class StyleQuizController {
   constructor(
     private readonly styleQuizService: StyleQuizService,
     private readonly questionSelector: QuestionSelectorService,
-    private readonly quizProgressService: QuizProgressService,
+    private readonly quizProgressService: QuizProgressService
   ) {}
 
   // ==================== 问卷 CRUD ====================
@@ -81,10 +81,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "问卷不存在" })
   @ApiParam({ name: "quizId", description: "问卷ID" })
-  async updateQuiz(
-    @Param("quizId") quizId: string,
-    @Body() dto: UpdateStyleQuizDto,
-  ) {
+  async updateQuiz(@Param("quizId") quizId: string, @Body() dto: UpdateStyleQuizDto) {
     return this.styleQuizService.updateQuiz(quizId, dto);
   }
 
@@ -114,10 +111,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "成功返回题目列表" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "quizId", description: "问卷ID" })
-  async getQuestions(
-    @Param("quizId") quizId: string,
-    @Query() query: QuizQuestionQueryDto,
-  ) {
+  async getQuestions(@Param("quizId") quizId: string, @Query() query: QuizQuestionQueryDto) {
     return this.styleQuizService.getQuestions(quizId, query);
   }
 
@@ -130,7 +124,7 @@ export class StyleQuizController {
   @ApiParam({ name: "questionId", description: "题目ID" })
   async updateQuestion(
     @Param("questionId") questionId: string,
-    @Body() dto: UpdateQuizQuestionDto,
+    @Body() dto: UpdateQuizQuestionDto
   ) {
     return this.styleQuizService.updateQuestion(questionId, dto);
   }
@@ -152,10 +146,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "提交成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async submitAnswer(
-    @Request() req: RequestWithUser,
-    @Body() dto: SubmitQuizAnswerDto,
-  ) {
+  async submitAnswer(@Request() req: RequestWithUser, @Body() dto: SubmitQuizAnswerDto) {
     return this.styleQuizService.submitAnswer(req.user.id, dto);
   }
 
@@ -164,10 +155,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "提交成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async batchSubmitAnswers(
-    @Request() req: RequestWithUser,
-    @Body() dto: BatchSubmitAnswersDto,
-  ) {
+  async batchSubmitAnswers(@Request() req: RequestWithUser, @Body() dto: BatchSubmitAnswersDto) {
     return this.styleQuizService.batchSubmitAnswers(req.user.id, dto);
   }
 
@@ -177,10 +165,7 @@ export class StyleQuizController {
   @ApiOperation({ summary: "获取测试结果列表" })
   @ApiResponse({ status: 200, description: "成功返回测试结果列表" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getQuizResults(
-    @Request() req: RequestWithUser,
-    @Query() query: QuizResultQueryDto,
-  ) {
+  async getQuizResults(@Request() req: RequestWithUser, @Query() query: QuizResultQueryDto) {
     return this.styleQuizService.getQuizResults(req.user.id, query);
   }
 
@@ -197,10 +182,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "提交成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async submitQuiz(
-    @Request() req: RequestWithUser,
-    @Body() dto: BatchSubmitAnswersDto,
-  ) {
+  async submitQuiz(@Request() req: RequestWithUser, @Body() dto: BatchSubmitAnswersDto) {
     return this.styleQuizService.batchSubmitAnswers(req.user.id, dto);
   }
 
@@ -218,10 +200,7 @@ export class StyleQuizController {
   @ApiOperation({ summary: "获取问卷题目（智能选题）" })
   @ApiResponse({ status: 200, description: "成功返回题目列表" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getQuizQuestions(
-    @Request() req: RequestWithUser,
-    @Query() query: GetQuizQuestionsDto,
-  ) {
+  async getQuizQuestions(@Request() req: RequestWithUser, @Query() query: GetQuizQuestionsDto) {
     return this.styleQuizService.getQuizQuestions(req.user.id, query.quizId);
   }
 
@@ -230,15 +209,12 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "保存成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async saveAnswer(
-    @Request() req: RequestWithUser,
-    @Body() dto: SaveAnswerDto,
-  ) {
+  async saveAnswer(@Request() req: RequestWithUser, @Body() dto: SaveAnswerDto) {
     return this.styleQuizService.saveAnswer(
       req.user.id,
       dto.questionId,
       dto.selectedImageIndex,
-      dto.duration,
+      dto.duration
     );
   }
 
@@ -247,10 +223,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "计算成功，返回测试结果" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async completeQuiz(
-    @Request() req: RequestWithUser,
-    @Body() dto: CompleteQuizDto,
-  ) {
+  async completeQuiz(@Request() req: RequestWithUser, @Body() dto: CompleteQuizDto) {
     return this.styleQuizService.calculateResult(req.user.id, dto.quizId);
   }
 
@@ -258,10 +231,7 @@ export class StyleQuizController {
   @ApiOperation({ summary: "获取测试进度" })
   @ApiResponse({ status: 200, description: "成功返回测试进度" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getQuizProgress(
-    @Request() req: RequestWithUser,
-    @Query() query: QuizProgressDto,
-  ) {
+  async getQuizProgress(@Request() req: RequestWithUser, @Query() query: QuizProgressDto) {
     return this.styleQuizService.getQuizProgress(req.user.id, query.quizId);
   }
 
@@ -272,10 +242,7 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "成功返回会话进度" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "quizId", description: "问卷ID" })
-  async getQuizSessionProgress(
-    @Request() req: RequestWithUser,
-    @Param("quizId") quizId: string,
-  ) {
+  async getQuizSessionProgress(@Request() req: RequestWithUser, @Param("quizId") quizId: string) {
     const progress = await this.quizProgressService.getProgress(req.user.id, quizId);
     return { data: progress };
   }
@@ -289,13 +256,13 @@ export class StyleQuizController {
   async saveQuizSessionProgress(
     @Request() req: RequestWithUser,
     @Param("quizId") quizId: string,
-    @Body() body: { questionIndex: number; answers: Record<string, string> },
+    @Body() body: { questionIndex: number; answers: Record<string, string> }
   ) {
     await this.quizProgressService.saveProgress(
       req.user.id,
       quizId,
       body.questionIndex,
-      body.answers,
+      body.answers
     );
     return { data: { saved: true } };
   }

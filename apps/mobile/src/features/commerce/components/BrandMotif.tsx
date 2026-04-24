@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from "../../../design-system/theme";
 
 interface BrandPatternProps {
   variant: "weave" | "wave" | "leaf";
@@ -104,11 +103,15 @@ export const BrandPattern: React.FC<BrandPatternProps> = ({ variant, style }) =>
     return items;
   }, [variant, config]);
 
-  const containerSize = variant === "weave"
-    ? { width: config.weave.spacing * 8, height: config.weave.spacing * 6 }
-    : variant === "wave"
-    ? { width: config.terracottaWave.wavelength * 6, height: config.terracottaWave.amplitude * 4 * 5 }
-    : { width: config.sageLeaf.spacing * 6, height: config.sageLeaf.spacing * 5 };
+  const containerSize =
+    variant === "weave"
+      ? { width: config.weave.spacing * 8, height: config.weave.spacing * 6 }
+      : variant === "wave"
+      ? {
+          width: config.terracottaWave.wavelength * 6,
+          height: config.terracottaWave.amplitude * 4 * 5,
+        }
+      : { width: config.sageLeaf.spacing * 6, height: config.sageLeaf.spacing * 5 };
 
   return (
     <View style={[styles.patternContainer, containerSize, style]} pointerEvents="none">
@@ -126,7 +129,9 @@ export const BrandDivider: React.FC<BrandDividerProps> = ({ style }) => {
 
   return (
     <View style={[styles.dividerContainer, style]}>
-      <View style={[styles.dividerLine, { backgroundColor: ornament.color, opacity: ornament.opacity }]} />
+      <View
+        style={[styles.dividerLine, { backgroundColor: ornament.color, opacity: ornament.opacity }]}
+      />
       <View
         style={[
           styles.dividerOrnament,
@@ -136,7 +141,9 @@ export const BrandDivider: React.FC<BrandDividerProps> = ({ style }) => {
           },
         ]}
       />
-      <View style={[styles.dividerLine, { backgroundColor: ornament.color, opacity: ornament.opacity }]} />
+      <View
+        style={[styles.dividerLine, { backgroundColor: ornament.color, opacity: ornament.opacity }]}
+      />
     </View>
   );
 };

@@ -1,10 +1,9 @@
-﻿import React from "react";
+import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Skeleton } from '../../../design-system/ui/Skeleton';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
-import { LoadingAnimations } from '../../../design-system/theme/tokens/animations';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Skeleton } from "../../../design-system/ui/Skeleton";
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
 
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const HORIZONTAL_PADDING = 20;
@@ -25,8 +24,18 @@ export const HomeSkeleton: React.FC = () => {
         <View style={styles.greetingRow}>
           <View style={styles.greetingTextCol}>
             <Skeleton width="60%" height={20} borderRadius={BorderRadius.sm} />
-            <Skeleton width="80%" height={14} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.sm}} />
-            <Skeleton width="40%" height={12} borderRadius={BorderRadius.sm} style={{ marginTop: DesignTokens.spacing['1.5']}} />
+            <Skeleton
+              width="80%"
+              height={14}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: Spacing.sm }}
+            />
+            <Skeleton
+              width="40%"
+              height={12}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: DesignTokens.spacing["1.5"] }}
+            />
           </View>
           <Skeleton width={64} height={64} borderRadius={BorderRadius.xl} />
         </View>
@@ -37,7 +46,12 @@ export const HomeSkeleton: React.FC = () => {
         {[0, 1, 2, 3, 4].map((i) => (
           <View key={i} style={styles.quickActionItem}>
             <Skeleton width={48} height={48} borderRadius={BorderRadius.xl} />
-            <Skeleton width={40} height={10} borderRadius={BorderRadius.sm} style={{ marginTop: DesignTokens.spacing['1.5']}} />
+            <Skeleton
+              width={40}
+              height={10}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: DesignTokens.spacing["1.5"] }}
+            />
           </View>
         ))}
       </View>
@@ -47,7 +61,7 @@ export const HomeSkeleton: React.FC = () => {
         width={CONTENT_WIDTH}
         height={48}
         borderRadius={BorderRadius.xl}
-        style={{ marginVertical: Spacing.md}}
+        style={{ marginVertical: Spacing.md }}
       />
 
       {/* Section header */}
@@ -62,7 +76,12 @@ export const HomeSkeleton: React.FC = () => {
           <Skeleton width={CONTENT_WIDTH} height={180} borderRadius={BorderRadius.lg} />
           <View style={styles.cardContent}>
             <Skeleton width="70%" height={14} borderRadius={BorderRadius.sm} />
-            <Skeleton width="50%" height={12} borderRadius={BorderRadius.sm} style={{ marginTop: DesignTokens.spacing['1.5']}} />
+            <Skeleton
+              width="50%"
+              height={12}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: DesignTokens.spacing["1.5"] }}
+            />
             <View style={styles.cardFooter}>
               <Skeleton width={80} height={20} borderRadius={BorderRadius.md} />
               <Skeleton width={60} height={14} borderRadius={BorderRadius.sm} />

@@ -16,10 +16,10 @@ export type AuthStackParamList = {
 };
 
 // ============================================================
-// Home Tab Stack (Phase 4 - 推荐引擎)
+// Today Tab Stack (replaces Home)
 // ============================================================
-export type HomeStackParamList = {
-  HomeFeed: undefined;
+export type TodayStackParamList = {
+  TodayMain: undefined;
   Search: undefined;
   Notifications: undefined;
   RecommendationDetail: { recommendationId: string };
@@ -28,6 +28,24 @@ export type HomeStackParamList = {
   OutfitDetail: { outfitId: string };
   Recommendations: undefined;
   RecommendationFeed: undefined;
+};
+
+// ============================================================
+// Discover Tab Stack (replaces Community + TryOn)
+// ============================================================
+export type DiscoverStackParamList = {
+  DiscoverMain: undefined;
+  CommunityFeed: undefined;
+  PostDetail: { postId: string };
+  PostCreate: undefined;
+  InfluencerProfile: { influencerId: string };
+  InspirationWardrobe: { userId?: string };
+  BloggerDashboard: undefined;
+  BloggerProfile: { bloggerId?: string };
+  BloggerProduct: { productId?: string };
+  VirtualTryOn: { clothingId?: string };
+  TryOnResult: { resultId: string };
+  TryOnHistory: undefined;
 };
 
 // ============================================================
@@ -100,14 +118,13 @@ export type ProfileStackParamList = {
 };
 
 // ============================================================
-// Main Tab Navigator (5 Tabs)
+// Main Tab Navigator (4 Tabs)
 // ============================================================
 export type MainTabParamList = {
-  Home: NavigatorScreenParams<HomeStackParamList>;
+  Today: NavigatorScreenParams<TodayStackParamList>;
+  Discover: NavigatorScreenParams<DiscoverStackParamList>;
   Stylist: NavigatorScreenParams<StylistStackParamList>;
-  TryOn: NavigatorScreenParams<TryOnStackParamList>;
-  Community: NavigatorScreenParams<CommunityStackParamList>;
-  Profile: NavigatorScreenParams<ProfileStackParamList>;
+  Me: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 // ============================================================
@@ -135,8 +152,12 @@ export type RootStackParamList = {
 export type AuthStackScreenProps<T extends keyof AuthStackParamList = keyof AuthStackParamList> =
   NativeStackScreenProps<AuthStackParamList, T>;
 
-export type HomeStackScreenProps<T extends keyof HomeStackParamList = keyof HomeStackParamList> =
-  NativeStackScreenProps<HomeStackParamList, T>;
+export type TodayStackScreenProps<T extends keyof TodayStackParamList = keyof TodayStackParamList> =
+  NativeStackScreenProps<TodayStackParamList, T>;
+
+export type DiscoverStackScreenProps<
+  T extends keyof DiscoverStackParamList = keyof DiscoverStackParamList
+> = NativeStackScreenProps<DiscoverStackParamList, T>;
 
 export type StylistStackScreenProps<
   T extends keyof StylistStackParamList = keyof StylistStackParamList
@@ -165,11 +186,10 @@ export { CompositeScreenProps };
 // Tab Route Labels
 // ============================================================
 export const TAB_LABELS: Record<keyof MainTabParamList, string> = {
-  Home: "首页",
+  Today: "今天",
+  Discover: "发现",
   Stylist: "造型师",
-  TryOn: "试衣",
-  Community: "社区",
-  Profile: "我的",
+  Me: "我的",
 };
 
 // ============================================================
@@ -291,35 +311,35 @@ export interface DeepLinkRouteConfig {
 export const DEEP_LINK_ROUTES: DeepLinkRouteConfig[] = [
   {
     pattern: "home",
-    tab: "Home",
-    stack: "HomeFeed",
+    tab: "Today",
+    stack: "TodayMain",
     paramsMapping: () => undefined,
     requiresAuth: false,
   },
   {
     pattern: "search",
-    tab: "Home",
+    tab: "Today",
     stack: "Search",
     paramsMapping: () => undefined,
     requiresAuth: false,
   },
   {
     pattern: "clothing/:id",
-    tab: "Home",
+    tab: "Today",
     stack: "Product",
     paramsMapping: (p) => ({ clothingId: p.id }),
     requiresAuth: false,
   },
   {
     pattern: "outfit/:id",
-    tab: "Home",
+    tab: "Today",
     stack: "OutfitDetail",
     paramsMapping: (p) => ({ outfitId: p.id }),
     requiresAuth: false,
   },
   {
     pattern: "recommendation/:id",
-    tab: "Home",
+    tab: "Today",
     stack: "RecommendationDetail",
     paramsMapping: (p) => ({ recommendationId: p.id }),
     requiresAuth: true,
@@ -347,133 +367,133 @@ export const DEEP_LINK_ROUTES: DeepLinkRouteConfig[] = [
   },
   {
     pattern: "tryon",
-    tab: "TryOn",
+    tab: "Discover",
     stack: "VirtualTryOn",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "tryon/result/:id",
-    tab: "TryOn",
+    tab: "Discover",
     stack: "TryOnResult",
     paramsMapping: (p) => ({ resultId: p.id }),
     requiresAuth: true,
   },
   {
     pattern: "tryon/history",
-    tab: "TryOn",
+    tab: "Discover",
     stack: "TryOnHistory",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "community",
-    tab: "Community",
+    tab: "Discover",
     stack: "CommunityFeed",
     paramsMapping: () => undefined,
     requiresAuth: false,
   },
   {
     pattern: "community/post/:id",
-    tab: "Community",
+    tab: "Discover",
     stack: "PostDetail",
     paramsMapping: (p) => ({ postId: p.id }),
     requiresAuth: false,
   },
   {
     pattern: "community/create",
-    tab: "Community",
+    tab: "Discover",
     stack: "PostCreate",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "influencer/:id",
-    tab: "Community",
+    tab: "Discover",
     stack: "InfluencerProfile",
     paramsMapping: (p) => ({ influencerId: p.id }),
     requiresAuth: true,
   },
   {
     pattern: "profile",
-    tab: "Profile",
+    tab: "Me",
     stack: "ProfileMain",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "profile/edit",
-    tab: "Profile",
+    tab: "Me",
     stack: "ProfileEdit",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "wardrobe",
-    tab: "Profile",
+    tab: "Me",
     stack: "Wardrobe",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "favorites",
-    tab: "Profile",
+    tab: "Me",
     stack: "Favorites",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "cart",
-    tab: "Profile",
+    tab: "Me",
     stack: "Cart",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "checkout",
-    tab: "Profile",
+    tab: "Me",
     stack: "Checkout",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "orders",
-    tab: "Profile",
+    tab: "Me",
     stack: "Orders",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "orders/:id",
-    tab: "Profile",
+    tab: "Me",
     stack: "OrderDetail",
     paramsMapping: (p) => ({ orderId: p.id }),
     requiresAuth: true,
   },
   {
     pattern: "advisors",
-    tab: "Profile",
+    tab: "Me",
     stack: "AdvisorList",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "advisor/:id",
-    tab: "Profile",
+    tab: "Me",
     stack: "AdvisorProfile",
     paramsMapping: (p) => ({ advisorId: p.id }),
     requiresAuth: true,
   },
   {
     pattern: "advisor/:id/book",
-    tab: "Profile",
+    tab: "Me",
     stack: "Booking",
     paramsMapping: (p) => ({ advisorId: p.id }),
     requiresAuth: true,
   },
   {
     pattern: "advisor/:id/chat",
-    tab: "Profile",
+    tab: "Me",
     stack: "Chat",
     paramsMapping: (p) => ({ advisorId: p.id }),
     requiresAuth: true,

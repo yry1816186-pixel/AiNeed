@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useRef, memo } from "react";
 import {
   View,
@@ -9,8 +10,8 @@ import {
   ViewStyle,
   ImageResizeMode,
 } from "react-native";
-import { Colors, BorderRadius } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { BorderRadius } from "../../../design-system/theme";
+import { createStyles } from "../../contexts/ThemeContext";
 import { flatColors as colors } from "../../../design-system/theme";
 
 interface ProgressiveImageProps {

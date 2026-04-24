@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
@@ -25,9 +15,7 @@ import { ShareTemplateService } from "./share-template.service";
 @UseGuards(JwtAuthGuard)
 @Controller("share-template")
 export class ShareTemplateController {
-  constructor(
-    private readonly shareTemplateService: ShareTemplateService,
-  ) {}
+  constructor(private readonly shareTemplateService: ShareTemplateService) {}
 
   @Post()
   @ApiOperation({ summary: "创建分享海报模板" })
@@ -65,7 +53,7 @@ export class ShareTemplateController {
   @ApiParam({ name: "templateId", description: "模板ID" })
   async updateTemplate(
     @Param("templateId") templateId: string,
-    @Body() dto: UpdateShareTemplateDto,
+    @Body() dto: UpdateShareTemplateDto
   ) {
     return this.shareTemplateService.updateTemplate(templateId, dto);
   }

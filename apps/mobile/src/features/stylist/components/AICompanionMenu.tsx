@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable, ScrollView } from "react-native";
 import Svg, { Path } from "react-native-svg";

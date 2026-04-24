@@ -20,10 +20,7 @@ describe("WechatService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        WechatService,
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [WechatService, { provide: ConfigService, useValue: mockConfigService }],
     }).compile();
 
     service = module.get<WechatService>(WechatService);
@@ -90,7 +87,9 @@ describe("WechatService", () => {
         json: () => Promise.resolve({ errcode: 40001, errmsg: "invalid token" }),
       });
 
-      await expect(service.getUserInfo("invalid-token", "test-openid")).rejects.toThrow(UnauthorizedException);
+      await expect(service.getUserInfo("invalid-token", "test-openid")).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
     it("微信返回成功时应返回用户信息", async () => {

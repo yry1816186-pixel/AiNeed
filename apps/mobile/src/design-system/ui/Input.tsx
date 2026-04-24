@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Input - UI layer re-export with extended theme tokens
  *
  * This file provides the UI-layer Input with additional theme tokens.

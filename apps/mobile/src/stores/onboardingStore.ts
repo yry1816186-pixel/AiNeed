@@ -5,11 +5,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export type OnboardingStep = "basicInfo" | "photo" | "styleTest" | "complete";
 
 export interface OnboardingFormData {
-  gender: "male" | "female" | "other" | null;
+  gender?: "male" | "female" | "other" | null;
   ageRange: "18-24" | "25-30" | "31-40" | "41-50" | "50+" | null;
   height: string;
   weight: string;
   photoUri: string | null;
+  bodyType?: string | null;
+  primaryScenarios?: string[];
+  styleExpression?: string[];
+  garmentPreference?: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
 }
 
 interface OnboardingState {

@@ -1,6 +1,5 @@
-import {
-  useInfiniteQuery as useTanStackInfiniteQuery,
-} from "@tanstack/react-query";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useInfiniteQuery as useTanStackInfiniteQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import apiClient from "../../services/api/client";
 import type { PaginatedResponse } from "../types";

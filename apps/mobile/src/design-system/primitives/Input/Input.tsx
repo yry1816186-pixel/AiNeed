@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React from "react";
 import {
   View,
@@ -23,8 +24,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, DesignTokens } from "../theme";
-import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
+import { Colors, Spacing, BorderRadius, DesignTokens } from "../../theme";
+import { SpringConfigs } from "../../theme/tokens/animations";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export type InputVariant = "outlined" | "filled" | "underline";

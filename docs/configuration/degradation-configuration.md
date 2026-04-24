@@ -59,43 +59,44 @@ The xuno application implements a service degradation strategy to maintain avail
 
 ### NestJS Backend (Circuit Breaker)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `AI_CIRCUIT_BREAKER_FAILURE_THRESHOLD` | `5` | Number of consecutive failures before opening the circuit |
-| `AI_CIRCUIT_BREAKER_SUCCESS_THRESHOLD` | `3` | Number of consecutive successes needed to close the circuit |
-| `AI_CIRCUIT_BREAKER_TIMEOUT` | `30000` | Time in ms before timing out a request |
-| `AI_CIRCUIT_BREAKER_VOLUME_THRESHOLD` | `10` | Minimum number of requests before calculating error percentage |
-| `AI_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE` | `50` | Error percentage threshold to open the circuit |
-| `AI_CIRCUIT_BREAKER_RESET_TIMEOUT` | `30000` | Time in ms before attempting to close an open circuit |
+| Variable                                        | Default | Description                                                    |
+| ----------------------------------------------- | ------- | -------------------------------------------------------------- |
+| `AI_CIRCUIT_BREAKER_FAILURE_THRESHOLD`          | `5`     | Number of consecutive failures before opening the circuit      |
+| `AI_CIRCUIT_BREAKER_SUCCESS_THRESHOLD`          | `3`     | Number of consecutive successes needed to close the circuit    |
+| `AI_CIRCUIT_BREAKER_TIMEOUT`                    | `30000` | Time in ms before timing out a request                         |
+| `AI_CIRCUIT_BREAKER_VOLUME_THRESHOLD`           | `10`    | Minimum number of requests before calculating error percentage |
+| `AI_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE` | `50`    | Error percentage threshold to open the circuit                 |
+| `AI_CIRCUIT_BREAKER_RESET_TIMEOUT`              | `30000` | Time in ms before attempting to close an open circuit          |
 
 ### AI Service Configuration
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `AI_STYLIST_API_KEY` | - | Primary API key for AI stylist LLM |
-| `AI_STYLIST_API_ENDPOINT` | - | LLM API endpoint URL |
-| `AI_STYLIST_MODEL` | `glm-5` | Model name to use |
-| `GLM_API_KEY` | - | Fallback: GLM API key |
-| `GLM_API_ENDPOINT` | - | Fallback: GLM API endpoint |
-| `GLM_MODEL` | - | Fallback: GLM model name |
-| `OPENAI_API_KEY` | - | Fallback: OpenAI API key |
-| `OPENAI_API_ENDPOINT` | `https://open.bigmodel.cn/api/paas/v4` | Fallback: OpenAI-compatible endpoint |
-| `OPENAI_MODEL` | - | Fallback: OpenAI model name |
+| Variable                  | Default                                | Description                          |
+| ------------------------- | -------------------------------------- | ------------------------------------ |
+| `AI_STYLIST_API_KEY`      | -                                      | Primary API key for AI stylist LLM   |
+| `AI_STYLIST_API_ENDPOINT` | -                                      | LLM API endpoint URL                 |
+| `AI_STYLIST_MODEL`        | `glm-5`                                | Model name to use                    |
+| `GLM_API_KEY`             | -                                      | Fallback: GLM API key                |
+| `GLM_API_ENDPOINT`        | -                                      | Fallback: GLM API endpoint           |
+| `GLM_MODEL`               | -                                      | Fallback: GLM model name             |
+| `OPENAI_API_KEY`          | -                                      | Fallback: OpenAI API key             |
+| `OPENAI_API_ENDPOINT`     | `https://open.bigmodel.cn/api/paas/v4` | Fallback: OpenAI-compatible endpoint |
+| `OPENAI_MODEL`            | -                                      | Fallback: OpenAI model name          |
 
 ### Python ML Services
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DEGRADATION_LATENCY_THRESHOLD_MS` | `3000` | Latency threshold in ms to trigger degraded mode |
-| `DEGRADATION_ERROR_RATE_THRESHOLD` | `0.2` | Error rate (0.0-1.0) to trigger degraded mode |
-| `DEGRADATION_RECOVERY_SECONDS` | `60` | Seconds to wait before attempting recovery |
-| `DEGRADATION_FALLBACK_CACHE_TTL` | `1800` | Seconds to cache fallback responses (30 min) |
+| Variable                           | Default | Description                                      |
+| ---------------------------------- | ------- | ------------------------------------------------ |
+| `DEGRADATION_LATENCY_THRESHOLD_MS` | `3000`  | Latency threshold in ms to trigger degraded mode |
+| `DEGRADATION_ERROR_RATE_THRESHOLD` | `0.2`   | Error rate (0.0-1.0) to trigger degraded mode    |
+| `DEGRADATION_RECOVERY_SECONDS`     | `60`    | Seconds to wait before attempting recovery       |
+| `DEGRADATION_FALLBACK_CACHE_TTL`   | `1800`  | Seconds to cache fallback responses (30 min)     |
 
 ## Service Levels
 
 ### FULL (Normal Operation)
 
 All AI services are available and responsive:
+
 - Real-time style analysis
 - Full precision recommendations
 - Virtual try-on processing
@@ -104,18 +105,21 @@ All AI services are available and responsive:
 ### DEGRADED
 
 Triggered when latency exceeds threshold or intermittent errors occur:
+
 - **Enabled**: Style analysis (cached models), basic recommendations
 - **Disabled**: High precision segmentation, advanced trend prediction, detailed aesthetic scoring
 
 ### MINIMAL
 
 Triggered when multiple services are failing:
+
 - **Enabled**: Basic recommendations from cache, rule-based suggestions
 - **Disabled**: Collaborative filtering, knowledge graph, advanced features
 
 ### OFFLINE
 
 Triggered when external services are completely unavailable:
+
 - **Enabled**: Local rule-based recommendations only
 - **Disabled**: All AI-powered features, virtual try-on, visual search
 

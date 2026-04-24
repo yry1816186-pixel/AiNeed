@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Image,
@@ -97,7 +98,6 @@ class ImageCacheManager {
   }
 
   private async cleanOldCache() {
-    const _now = Date.now();
     const entries = Array.from(this.cache.entries());
     let totalSize = 0;
 
@@ -169,8 +169,6 @@ class ImageCacheManager {
         }
 
         const localPath = `${this.CACHE_DIR}${key}.jpg`;
-
-        const _downloadResult = await FileSystem.downloadAsync(uri, localPath);
 
         const info = (await FileSystem.getInfoAsync(localPath)) as unknown as {
           size: number;

@@ -1,21 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-  Request,
-} from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
@@ -46,7 +30,7 @@ export class ConsultantController {
     private readonly consultantService: ConsultantService,
     private readonly consultantMatchingService: ConsultantMatchingService,
     private readonly availabilityService: ConsultantAvailabilityService,
-    private readonly reviewService: ConsultantReviewService,
+    private readonly reviewService: ConsultantReviewService
   ) {}
 
   // ==================== 顾问档案 ====================
@@ -58,10 +42,7 @@ export class ConsultantController {
   @ApiResponse({ status: 201, description: "创建成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async createProfile(
-    @Request() req: RequestWithUser,
-    @Body() dto: CreateConsultantProfileDto,
-  ) {
+  async createProfile(@Request() req: RequestWithUser, @Body() dto: CreateConsultantProfileDto) {
     return this.consultantService.createProfile(req.user.id, dto);
   }
 
@@ -103,7 +84,7 @@ export class ConsultantController {
   async updateProfile(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: UpdateConsultantProfileDto,
+    @Body() dto: UpdateConsultantProfileDto
   ) {
     return this.consultantService.updateProfile(req.user.id, id, dto);
   }
@@ -116,10 +97,7 @@ export class ConsultantController {
   @ApiOperation({ summary: "智能匹配顾问", description: "根据用户需求智能匹配最合适的造型顾问" })
   @ApiResponse({ status: 200, description: "返回匹配的顾问列表" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async matchConsultants(
-    @Request() req: RequestWithUser,
-    @Body() dto: ConsultantMatchRequestDto,
-  ) {
+  async matchConsultants(@Request() req: RequestWithUser, @Body() dto: ConsultantMatchRequestDto) {
     return this.consultantMatchingService.findMatches(req.user.id, dto);
   }
 
@@ -148,13 +126,9 @@ export class ConsultantController {
   async setAvailability(
     @Request() req: RequestWithUser,
     @Body() dto: BatchCreateAvailabilityDto,
-    @Query("consultantId") consultantId: string,
+    @Query("consultantId") consultantId: string
   ) {
-    return this.availabilityService.setAvailability(
-      consultantId,
-      req.user.id,
-      dto,
-    );
+    return this.availabilityService.setAvailability(consultantId, req.user.id, dto);
   }
 
   // ==================== 服务预约 ====================
@@ -166,10 +140,7 @@ export class ConsultantController {
   @ApiResponse({ status: 201, description: "预约成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async createBooking(
-    @Request() req: RequestWithUser,
-    @Body() dto: CreateServiceBookingDto,
-  ) {
+  async createBooking(@Request() req: RequestWithUser, @Body() dto: CreateServiceBookingDto) {
     return this.consultantService.createBooking(req.user.id, dto);
   }
 
@@ -179,10 +150,7 @@ export class ConsultantController {
   @ApiOperation({ summary: "获取我的预约列表", description: "分页获取当前用户的服务预约列表" })
   @ApiResponse({ status: 200, description: "成功返回预约列表" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getMyBookings(
-    @Request() req: RequestWithUser,
-    @Query() query: BookingQueryDto,
-  ) {
+  async getMyBookings(@Request() req: RequestWithUser, @Query() query: BookingQueryDto) {
     return this.consultantService.getBookingsByUser(req.user.id, query);
   }
 
@@ -194,10 +162,7 @@ export class ConsultantController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "预约不存在" })
   @ApiParam({ name: "id", description: "预约ID" })
-  async getBookingById(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async getBookingById(@Request() req: RequestWithUser, @Param("id") id: string) {
     return this.consultantService.getBookingById(req.user.id, id);
   }
 
@@ -213,7 +178,7 @@ export class ConsultantController {
   async updateBooking(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: UpdateServiceBookingDto,
+    @Body() dto: UpdateServiceBookingDto
   ) {
     return this.consultantService.updateBooking(req.user.id, id, dto);
   }
@@ -228,13 +193,9 @@ export class ConsultantController {
   async getConsultantBookings(
     @Request() req: RequestWithUser,
     @Param("consultantId") consultantId: string,
-    @Query() query: BookingQueryDto,
+    @Query() query: BookingQueryDto
   ) {
-    return this.consultantService.getBookingsByConsultant(
-      req.user.id,
-      consultantId,
-      query,
-    );
+    return this.consultantService.getBookingsByConsultant(req.user.id, consultantId, query);
   }
 
   // ==================== 分阶段付款 ====================
@@ -242,15 +203,15 @@ export class ConsultantController {
   @Post("bookings/:id/pay-deposit")
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "支付定金", description: "为预约支付30%定金，支付后预约状态变为confirmed" })
+  @ApiOperation({
+    summary: "支付定金",
+    description: "为预约支付30%定金，支付后预约状态变为confirmed",
+  })
   @ApiResponse({ status: 200, description: "返回支付信息" })
   @ApiResponse({ status: 400, description: "预约状态不允许支付" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "id", description: "预约ID" })
-  async payDeposit(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async payDeposit(@Request() req: RequestWithUser, @Param("id") id: string) {
     return this.consultantService.payDeposit(req.user.id, id);
   }
 
@@ -262,10 +223,7 @@ export class ConsultantController {
   @ApiResponse({ status: 400, description: "服务未完成或定金未支付" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "id", description: "预约ID" })
-  async payFinalPayment(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async payFinalPayment(@Request() req: RequestWithUser, @Param("id") id: string) {
     return this.consultantService.payFinalPayment(req.user.id, id);
   }
 
@@ -277,10 +235,7 @@ export class ConsultantController {
   @ApiOperation({ summary: "获取顾问收入", description: "获取顾问收入列表和汇总信息" })
   @ApiResponse({ status: 200, description: "成功返回收入信息" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getEarnings(
-    @Request() req: RequestWithUser,
-    @Query("consultantId") consultantId: string,
-  ) {
+  async getEarnings(@Request() req: RequestWithUser, @Query("consultantId") consultantId: string) {
     return this.consultantService.getEarnings(consultantId, req.user.id);
   }
 
@@ -291,20 +246,12 @@ export class ConsultantController {
   @ApiResponse({ status: 201, description: "提现申请已创建" })
   @ApiResponse({ status: 400, description: "可提现金额不足" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async requestWithdrawal(
-    @Request() req: RequestWithUser,
-    @Body() dto: RequestWithdrawalDto,
-  ) {
-    return this.consultantService.requestWithdrawal(
-      dto.consultantId,
-      req.user.id,
-      dto.amount,
-      {
-        bankName: dto.bankName,
-        bankAccount: dto.bankAccount,
-        accountHolder: dto.accountHolder,
-      },
-    );
+  async requestWithdrawal(@Request() req: RequestWithUser, @Body() dto: RequestWithdrawalDto) {
+    return this.consultantService.requestWithdrawal(dto.consultantId, req.user.id, dto.amount, {
+      bankName: dto.bankName,
+      bankAccount: dto.bankAccount,
+      accountHolder: dto.accountHolder,
+    });
   }
 
   // ==================== 评价体系 ====================
@@ -316,10 +263,7 @@ export class ConsultantController {
   @ApiResponse({ status: 201, description: "评价创建成功" })
   @ApiResponse({ status: 400, description: "预约未完成或已评价" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async createReview(
-    @Request() req: RequestWithUser,
-    @Body() dto: CreateReviewDto,
-  ) {
+  async createReview(@Request() req: RequestWithUser, @Body() dto: CreateReviewDto) {
     return this.reviewService.createReview(req.user.id, dto);
   }
 
@@ -331,7 +275,10 @@ export class ConsultantController {
   }
 
   @Get("rankings/:consultantId")
-  @ApiOperation({ summary: "获取顾问综合排名分数", description: "根据评分40%+订单数20%+回复速度20%+匹配度20%计算综合排名" })
+  @ApiOperation({
+    summary: "获取顾问综合排名分数",
+    description: "根据评分40%+订单数20%+回复速度20%+匹配度20%计算综合排名",
+  })
   @ApiResponse({ status: 200, description: "返回排名分数" })
   @ApiParam({ name: "consultantId", description: "顾问ID" })
   async getRanking(@Param("consultantId") consultantId: string) {
@@ -352,13 +299,16 @@ export class ConsultantController {
   async reviewProfile(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: { status: "active" | "rejected"; rejectReason?: string },
+    @Body() dto: { status: "active" | "rejected"; rejectReason?: string }
   ) {
     return this.consultantService.reviewProfile(req.user.id, id, dto);
   }
 
   @Get("profiles/:id/cases")
-  @ApiOperation({ summary: "获取顾问服务案例", description: "获取顾问的服务案例展示，含before/after对比图" })
+  @ApiOperation({
+    summary: "获取顾问服务案例",
+    description: "获取顾问的服务案例展示，含before/after对比图",
+  })
   @ApiResponse({ status: 200, description: "成功返回案例列表" })
   @ApiParam({ name: "id", description: "顾问档案ID" })
   async getConsultantCases(@Param("id") id: string) {

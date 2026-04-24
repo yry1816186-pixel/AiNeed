@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { DesignTokens } from "../../../../design-system/theme";
-import { Ionicons } from "../../../polyfills/expo-vector-icons";
-import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
+import { Ionicons } from "../../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../../polyfills/expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -11,8 +12,8 @@ import Animated, {
   FadeIn,
   SlideInUp,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
+
 import { flatColors as colors } from "../../../../design-system/theme";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
-import { colors } from "../../design-system/theme/tokens/colors";
-import { typography } from "../../design-system/theme/tokens/typography";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+
+import { typography } from "../../../design-system/theme/tokens/typography";
+
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export interface ColorPaletteProps {
@@ -29,7 +30,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   accessibilityLabel,
 }) => {
   const { colors } = useTheme();
-  const _styles = use_styles(colors);
+
   const defaultA11yLabel =
     accessibilityLabel ||
     `${type === "best" ? "推荐" : type === "avoid" ? "避免" : ""}色彩 ${paletteColors

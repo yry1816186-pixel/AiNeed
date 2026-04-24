@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -119,7 +119,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
         style={[styles.button, sizeConfig[size], disabled && styles.disabled]}
       >
         <LinearGradient
-          colors={gradientColors[variant] as [string, string]}
+          colors={gradientColors[variant]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}

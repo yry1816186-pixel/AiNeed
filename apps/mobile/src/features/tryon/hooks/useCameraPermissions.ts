@@ -10,7 +10,7 @@ interface UseCameraPermissionsResult {
   openSettings: () => Promise<void>;
 }
 
-const CAMERA_PERMISSION = "android.permission.CAMERA" as const;
+const CAMERA_PERMISSION = "android.permission.CAMERA";
 
 async function checkCameraPermission(): Promise<{
   status: PermissionStatus;
@@ -27,7 +27,7 @@ async function checkCameraPermission(): Promise<{
     }
     return { status: "undetermined", canAskAgain: true };
   } catch (e) {
-    console.error('Camera permission check failed:', e);
+    console.error("Camera permission check failed:", e);
     return { status: "undetermined", canAskAgain: true };
   }
 }
@@ -65,7 +65,7 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       setCanAskAgain(askable);
       return status;
     } catch (e) {
-      console.error('Camera permission request failed:', e);
+      console.error("Camera permission request failed:", e);
       setPermissionStatus("denied");
       setCanAskAgain(false);
       return "denied";
@@ -79,7 +79,7 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       try {
         await Linking.openURL("app-settings:");
       } catch (e) {
-        console.error('Failed to open app settings:', e);
+        console.error("Failed to open app settings:", e);
       }
     }
   }, []);

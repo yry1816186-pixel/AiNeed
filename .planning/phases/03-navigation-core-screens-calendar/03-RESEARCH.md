@@ -423,24 +423,16 @@ grep -rn '#[0-9a-fA-F]\{6\}' --include='*.tsx' --include='*.ts' src/ \
 | A4  | The `cart-storage` and `heart-recommend-storage` AsyncStorage keys in feature-local stores match the legacy keys exactly        | Common Pitfalls               | Users lose cart/heart data on migration                                  |
 | A5  | `src/stores/` contains no stores that are NOT already duplicated in feature directories (besides the 4 inline ones in index.ts) | Architecture                  | Some stores may be missed during deletion                                |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Are there any components outside src/ that import from stores/?**
-
-   - What we know: All imports found are within `apps/mobile/src/`
-   - What's unclear: Whether expo-router auto-generated files reference stores
-   - Recommendation: Grep project-wide before deletion
+   RESOLVED: All imports are within `apps/mobile/src/` only. No expo-router auto-generated files reference stores. Verified by full-project grep during research. Plan 01-T3 includes final verification before deletion.
 
 2. **Should borderRadius get a semantic alias instead of changing lg?**
-
-   - What we know: User wants buttons at 12px, current lg=10
-   - What's unclear: How many non-button components use `borderRadius.lg`
-   - Recommendation: Grep for `borderRadius.lg` usages first; if all are buttons, change the value; if mixed, add `borderRadius.button = 12`
+   RESOLVED: Plan 03-T1 Step 1 handles this — grep for all `borderRadius.lg` usages first. If ALL are button-related, change value to 12. If mixed, add semantic alias `borderRadius.button = 12` instead. Decision deferred to execution time based on grep results (Claude's Discretion per CONTEXT.md).
 
 3. **What is the import path for `deeplinkService.ts` that uses `../stores` (bare)?**
-   - What we know: `src/services/deeplinkService.ts` imports `useAuthStore` from `"../stores"` (bare, no /index)
-   - What's unclear: This bare import resolves to `src/stores/index.ts`
-   - Recommendation: Update to `../features/auth/stores`
+   RESOLVED: `../stores` (bare) resolves to `src/stores/index.ts`. Plan 01-T2 updates this to `"../features/auth/stores"`. A separate file `src/shared/services/deeplinkService.ts` already imports from `"../../features/auth/stores/authStore"` and needs no change.
 
 ## Environment Availability
 

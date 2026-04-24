@@ -10,9 +10,9 @@ import {
 } from "react-native";
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
-import { DesignTokens } from "../../../design-system/theme";
+
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */

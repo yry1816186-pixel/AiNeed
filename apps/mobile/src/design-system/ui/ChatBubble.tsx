@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import { Sparkle } from "phosphor-react-native";
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { SpringConfigs } from "../theme/tokens/animations";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 import {
+  Colors,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
@@ -16,47 +25,68 @@ interface ChatBubbleProps {
   isUser: boolean;
   timestamp?: string;
   showAvatar?: boolean;
+  /** Optional embedded content (e.g. OutfitResultBubble) */
+  children?: React.ReactNode;
 }
 
 /**
- * ChatBubble - ����һ�Ƚ�ˮ׼��������
+ * ChatBubble - Chat bubble component with directional spring entrance
  *
- * ����ص㣺
- * - �û���Ϣ��ɺ���۽��䱳�� + �Ҷ��� + ��ɫ����
- * - AI��Ϣ����ɫ��Ƭ + ����� + ��ɫ���� + С����ָʾ��
- * - AIͷ��֧�֣�����Բ�Σ�
- * - ʱ�����ʾ����ѡ��
- * - �볡���� (FadeInUp)
+ * Features:
+ * - User messages: brand gradient background + right alignment + spring from right
+ * - AI messages: white card + left alignment + spring from left + triangle indicator
+ * - AI avatar: brand gradient circle with Sparkle icon
+ * - Timestamp display (optional)
+ * - children prop for embedding rich content (e.g. outfit result cards)
+ * - Directional entrance: user → FadeInRight, AI → FadeInLeft
+ * - Scale spring: 0.95 → 1 with bouncy config
  */
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   message,
   isUser,
   timestamp,
   showAvatar = true,
+  children,
 }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+
+  // Scale spring entrance: 0.95 → 1
+  const scale = useSharedValue(0.95);
+  useEffect(() => {
+    scale.value = withSpring(1, SpringConfigs.bouncy);
+  }, [scale]);
+
+  const scaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // Directional entrance: user → right, AI → left
+  const entering = isUser
+    ? FadeInRight.duration(300).springify().damping(12).stiffness(180)
+    : FadeInLeft.duration(300).springify().damping(12).stiffness(180);
+
   return (
-    <Animated.View entering={FadeInUp.duration(300).springify()}>
+    <Animated.View entering={entering} style={scaleStyle}>
       <View style={[styles.container, !isUser && styles.aiContainer]}>
-        {/* AIͷ�� */}
+        {/* AI avatar */}
         {!isUser && showAvatar && (
           <LinearGradient
-            colors={[Colors.rose[400], Colors.sky[400]]}
+            colors={DesignTokens.gradients.brand as unknown as [string, string]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.avatar}
           >
-            <Ionicons name="sparkles" size={16} color={Colors.neutral.white} />
+            <Sparkle size={16} color={Colors.neutral.white} weight="fill" />
           </LinearGradient>
         )}
 
-        {/* �������� */}
+        {/* Message bubble */}
         <View style={[styles.bubble, isUser ? styles.userBubble : styles.aiBubble]}>
           {isUser ? (
-            // �û���Ϣ�����䱳��
+            // User message: brand gradient background
             <LinearGradient
-              colors={[Colors.primary[500], Colors.primary[600]]}
+              colors={DesignTokens.gradients.brand as unknown as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.userGradient}
@@ -65,9 +95,10 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               {timestamp && <Text style={styles.userTimestamp}>{timestamp}</Text>}
             </LinearGradient>
           ) : (
-            // AI��Ϣ����ɫ��Ƭ + С����
+            // AI message: white card + triangle indicator
             <>
               <Text style={styles.aiMessage}>{message}</Text>
+              {children}
               {timestamp && <Text style={styles.aiTimestamp}>{timestamp}</Text>}
               <View style={styles.triangle} />
             </>
@@ -99,7 +130,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: 4,
   },
 
-  // ������ʽ
+  // Bubble styles
   bubble: {
     borderRadius: ThemeBorderRadius["2xl"],
     overflow: "hidden",
@@ -115,7 +146,7 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.neutral[200],
   },
 
-  // �û���Ϣ��ʽ
+  // User message styles
   userGradient: {
     padding: 14,
     borderRadius: ThemeBorderRadius["2xl"],
@@ -133,7 +164,7 @@ const useStyles = createStyles((colors) => ({
     textAlign: "right",
   },
 
-  // AI��Ϣ��ʽ
+  // AI message styles
   aiMessage: {
     fontSize: ThemeTypography.sizes.base,
     color: colors.neutral[900],

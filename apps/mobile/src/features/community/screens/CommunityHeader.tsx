@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-
+import { Spacing, flatColors as staticColors } from "../../../design-system/theme";
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -34,7 +33,7 @@ function CommunityHeaderInner({
   onCategoryChange,
   showCategories = true,
 }: CommunityHeaderProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   return (
     <>
       <View style={s.header}>
@@ -94,10 +93,14 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     backgroundColor: staticColors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: staticColors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: staticColors.textPrimary,
+  },
   searchBtn: {
     width: 38,
     height: 38,
@@ -122,7 +125,11 @@ const s = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: staticColors.primary,
   },
-  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, fontWeight: "500" },
+  mainTabText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: staticColors.textSecondary,
+    fontWeight: "500",
+  },
   mainTabTextActive: { color: staticColors.primary, fontWeight: "700" },
   categoryScroll: { backgroundColor: staticColors.surface, maxHeight: 52 },
   categoryScrollContent: {
@@ -138,6 +145,10 @@ const s = StyleSheet.create({
     backgroundColor: staticColors.background,
   },
   categoryChipActive: { backgroundColor: staticColors.primary },
-  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, fontWeight: "500" },
+  categoryChipText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: staticColors.textSecondary,
+    fontWeight: "500",
+  },
   categoryChipTextActive: { color: staticColors.surface, fontWeight: "600" },
 });

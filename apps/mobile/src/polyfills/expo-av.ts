@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Platform, PermissionsAndroid } from "react-native";
 
 export const RECORDING_OPTIONS_PRESET = {

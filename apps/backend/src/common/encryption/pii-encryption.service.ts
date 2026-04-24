@@ -20,7 +20,7 @@ export class PIIEncryptionService implements OnModuleInit {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly encryptionService: EncryptionService,
+    private readonly encryptionService: EncryptionService
   ) {}
 
   onModuleInit() {

@@ -10,7 +10,7 @@ interface UseCameraPermissionsResult {
   openSettings: () => Promise<void>;
 }
 
-const CAMERA_PERMISSION = "android.permission.CAMERA" as const;
+const CAMERA_PERMISSION = "android.permission.CAMERA";
 
 async function checkCameraPermission(): Promise<{
   status: PermissionStatus;
@@ -56,8 +56,8 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
         result === PermissionsAndroid.RESULTS.GRANTED
           ? "granted"
           : result === PermissionsAndroid.RESULTS.DENIED
-            ? "denied"
-            : "denied";
+          ? "denied"
+          : "denied";
 
       const askable = result !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
 

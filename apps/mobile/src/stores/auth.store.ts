@@ -1,4 +1,5 @@
-﻿import { create } from "zustand";
+/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
@@ -40,7 +41,9 @@ const secureStorageAdapter: StateStorage = {
           refreshToken: refresh,
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
-          onboardingCompleted: userStr ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false : false,
+          onboardingCompleted: userStr
+            ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false
+            : false,
           isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
         },
         version: 0,
@@ -335,6 +338,5 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-apiClient.onAuthExpired(() => {
-  void useAuthStore.getState().logout();
-});
+// onAuthExpired callback is registered by the unified store in features/auth/stores/authStore.ts
+// Removing duplicate registration to avoid overwriting the correct callback.

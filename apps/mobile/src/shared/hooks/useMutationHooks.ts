@@ -4,11 +4,7 @@
  * 所有 mutation 在成功后自动 invalidate 相关查询，
  * 并对关键操作实现乐观更新（optimistic update）。
  */
-import {
-  useMutation,
-  useQueryClient,
-  type UseMutationOptions,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, type UseMutationOptions } from "@tanstack/react-query";
 
 import { cartApi, favoriteApi } from "../../services/api/commerce.api";
 import { profileApi } from "../../services/api/profile.api";
@@ -20,10 +16,7 @@ import { queryKeys } from "./useQueryHooks";
 import type { ApiResponse } from "../types";
 import type { CartItem } from "../../types/api";
 import type { ClothingItem } from "../../types/clothing";
-import type {
-  UserProfile,
-  UpdateProfileDto,
-} from "../../services/api/profile.api";
+import type { UserProfile, UpdateProfileDto } from "../../services/api/profile.api";
 import type { AiStylistSessionResponse } from "../../services/api/ai-stylist.api";
 
 // ---------------------------------------------------------------------------
@@ -49,12 +42,14 @@ function unwrap<T>(response: ApiResponse<T>): T {
  * 失败时回滚。
  */
 export function useAddToCart(
-  options?: Partial<UseMutationOptions<
-    CartItem,
-    Error,
-    { productId?: string; itemId?: string; color: string; size: string; quantity: number },
-    { previousCart: CartItem[] | undefined }
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      CartItem,
+      Error,
+      { productId?: string; itemId?: string; color: string; size: string; quantity: number },
+      { previousCart: CartItem[] | undefined }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -118,7 +113,9 @@ export function useAddToCart(
  * 乐观更新：立即从缓存中移除对应项
  */
 export function useRemoveFromCart(
-  options?: Partial<UseMutationOptions<void, Error, string, { previousCart: CartItem[] | undefined }>>,
+  options?: Partial<
+    UseMutationOptions<void, Error, string, { previousCart: CartItem[] | undefined }>
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -133,7 +130,7 @@ export function useRemoveFromCart(
       if (previousCart) {
         queryClient.setQueryData<CartItem[]>(
           queryKeys.cart.items(),
-          previousCart.filter((item) => item.id !== itemId),
+          previousCart.filter((item) => item.id !== itemId)
         );
       }
 
@@ -159,19 +156,27 @@ export function useRemoveFromCart(
  * 更新购物车项（数量、选中状态等）
  */
 export function useUpdateCartItem(
-  options?: Partial<UseMutationOptions<
-    CartItem,
-    Error,
-    { itemId: string; data: { quantity?: number; color?: string; size?: string; selected?: boolean } },
-    { previousCart: CartItem[] | undefined }
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      CartItem,
+      Error,
+      {
+        itemId: string;
+        data: { quantity?: number; color?: string; size?: string; selected?: boolean };
+      },
+      { previousCart: CartItem[] | undefined }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
   return useMutation<
     CartItem,
     Error,
-    { itemId: string; data: { quantity?: number; color?: string; size?: string; selected?: boolean } },
+    {
+      itemId: string;
+      data: { quantity?: number; color?: string; size?: string; selected?: boolean };
+    },
     { previousCart: CartItem[] | undefined }
   >({
     mutationFn: ({ itemId, data }) => cartApi.update(itemId, data).then(unwrap),
@@ -184,9 +189,7 @@ export function useUpdateCartItem(
       if (previousCart) {
         queryClient.setQueryData<CartItem[]>(
           queryKeys.cart.items(),
-          previousCart.map((item) =>
-            item.id === itemId ? { ...item, ...data } : item,
-          ),
+          previousCart.map((item) => (item.id === itemId ? { ...item, ...data } : item))
         );
       }
 
@@ -219,20 +222,36 @@ export function useUpdateCartItem(
  * 由于 favoriteApi.add / remove 返回 void，这里用 boolean 标识方向
  */
 export function useToggleFavorite(
-  options?: Partial<UseMutationOptions<void, Error, { itemId: string; isFavorite: boolean }, { previousFavorites: ClothingItem[] | undefined }>>,
+  options?: Partial<
+    UseMutationOptions<
+      void,
+      Error,
+      { itemId: string; isFavorite: boolean },
+      { previousFavorites: ClothingItem[] | undefined }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, { itemId: string; isFavorite: boolean }, { previousFavorites: ClothingItem[] | undefined }>({
+  return useMutation<
+    void,
+    Error,
+    { itemId: string; isFavorite: boolean },
+    { previousFavorites: ClothingItem[] | undefined }
+  >({
     mutationFn: async ({ itemId, isFavorite }) => {
       if (isFavorite) {
         // 当前已收藏 -> 取消
         const res = await favoriteApi.remove(itemId);
-        if (!res.success) { throw new Error(res.error?.message ?? "取消收藏失败"); }
+        if (!res.success) {
+          throw new Error(res.error?.message ?? "取消收藏失败");
+        }
       } else {
         // 当前未收藏 -> 添加
         const res = await favoriteApi.add(itemId);
-        if (!res.success) { throw new Error(res.error?.message ?? "收藏失败"); }
+        if (!res.success) {
+          throw new Error(res.error?.message ?? "收藏失败");
+        }
       }
     },
 
@@ -241,7 +260,7 @@ export function useToggleFavorite(
       await queryClient.cancelQueries({ queryKey: queryKeys.favorites.all });
 
       const previousFavorites = queryClient.getQueryData<ClothingItem[]>(
-        queryKeys.favorites.list(),
+        queryKeys.favorites.list()
       );
 
       // 乐观更新收藏列表
@@ -250,7 +269,7 @@ export function useToggleFavorite(
           // 取消收藏 -> 从列表移除
           queryClient.setQueryData<ClothingItem[]>(
             queryKeys.favorites.list(),
-            previousFavorites.filter((item) => item.id !== itemId),
+            previousFavorites.filter((item) => item.id !== itemId)
           );
         } else {
           // 添加收藏 -> 暂不追加（缺少完整 ClothingItem 信息）
@@ -286,11 +305,23 @@ export function useToggleFavorite(
  * 乐观更新：直接更新 profile 缓存
  */
 export function useUpdateProfile(
-  options?: Partial<UseMutationOptions<UserProfile, Error, UpdateProfileDto, { previousProfile: UserProfile | undefined }>>,
+  options?: Partial<
+    UseMutationOptions<
+      UserProfile,
+      Error,
+      UpdateProfileDto,
+      { previousProfile: UserProfile | undefined }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
-  return useMutation<UserProfile, Error, UpdateProfileDto, { previousProfile: UserProfile | undefined }>({
+  return useMutation<
+    UserProfile,
+    Error,
+    UpdateProfileDto,
+    { previousProfile: UserProfile | undefined }
+  >({
     mutationFn: (data: UpdateProfileDto) => profileApi.updateProfile(data).then(unwrap),
 
     onMutate: async (data) => {
@@ -332,11 +363,9 @@ export function useUpdateProfile(
  * 创建试衣任务
  */
 export function useCreateTryOn(
-  options?: Partial<UseMutationOptions<
-    { id: string; status: string },
-    Error,
-    { photoId: string; itemId: string }
-  >>,
+  options?: Partial<
+    UseMutationOptions<{ id: string; status: string }, Error, { photoId: string; itemId: string }>
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -354,9 +383,7 @@ export function useCreateTryOn(
 /**
  * 删除试衣记录
  */
-export function useDeleteTryOn(
-  options?: Partial<UseMutationOptions<void, Error, string>>,
-) {
+export function useDeleteTryOn(options?: Partial<UseMutationOptions<void, Error, string>>) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -378,11 +405,13 @@ export function useDeleteTryOn(
  * 创建 AI 造型师会话
  */
 export function useCreateAiStylistSession(
-  options?: Partial<UseMutationOptions<
-    AiStylistSessionResponse,
-    Error,
-    { entry?: string; goal?: string; context?: Record<string, unknown> }
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      AiStylistSessionResponse,
+      Error,
+      { entry?: string; goal?: string; context?: Record<string, unknown> }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -403,11 +432,13 @@ export function useCreateAiStylistSession(
  * 乐观更新：将用户消息追加到会话缓存
  */
 export function useSendAiStylistMessage(
-  options?: Partial<UseMutationOptions<
-    AiStylistSessionResponse,
-    Error,
-    { sessionId: string; message: string; latitude?: number; longitude?: number }
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      AiStylistSessionResponse,
+      Error,
+      { sessionId: string; message: string; latitude?: number; longitude?: number }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -435,11 +466,18 @@ export function useSendAiStylistMessage(
  * 成功后刷新推荐列表
  */
 export function useSubmitFeedback(
-  options?: Partial<UseMutationOptions<
-    { success: boolean; message: string },
-    Error,
-    { clothingId: string; action: "like" | "dislike" | "ignore"; recommendationId?: string; reason?: string }
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      { success: boolean; message: string },
+      Error,
+      {
+        clothingId: string;
+        action: "like" | "dislike" | "ignore";
+        recommendationId?: string;
+        reason?: string;
+      }
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 
@@ -459,11 +497,13 @@ export function useSubmitFeedback(
  * 批量提交推荐反馈
  */
 export function useSubmitBatchFeedback(
-  options?: Partial<UseMutationOptions<
-    { success: boolean; message: string },
-    Error,
-    Array<{ clothingId: string; action: "like" | "dislike" | "ignore"; recommendationId?: string }>
-  >>,
+  options?: Partial<
+    UseMutationOptions<
+      { success: boolean; message: string },
+      Error,
+      { clothingId: string; action: "like" | "dislike" | "ignore"; recommendationId?: string }[]
+    >
+  >
 ) {
   const queryClient = useQueryClient();
 

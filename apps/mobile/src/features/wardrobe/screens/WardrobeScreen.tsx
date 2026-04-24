@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   View,
   Text,
@@ -18,7 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { clothingApi } from "../../../services/api/clothing.api";
 import { outfitApi } from "../../../services/api/outfit.api";
 import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
@@ -88,8 +89,6 @@ export const WardrobeScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   useScreenTracking("Wardrobe");
   const t = useTranslation();
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
 
   const [stats, setStats] = useState<WardrobeStats>({
     clothingTotal: 0,

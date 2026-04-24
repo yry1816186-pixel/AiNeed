@@ -52,7 +52,7 @@ describe("EncryptionService", () => {
       const encrypted2 = service.encrypt(plaintext);
 
       expect(encrypted1).not.toBe(encrypted2);
-      
+
       expect(service.decrypt(encrypted1)).toBe(plaintext);
       expect(service.decrypt(encrypted2)).toBe(plaintext);
     });
@@ -61,7 +61,7 @@ describe("EncryptionService", () => {
       const plaintext = "";
       const encrypted = service.encrypt(plaintext);
       const decrypted = service.decrypt(encrypted);
-      
+
       expect(decrypted).toBe(plaintext);
     });
 
@@ -69,7 +69,7 @@ describe("EncryptionService", () => {
       const plaintext = "特殊字符 !@#$%^&*()_+-=[]{}|;':\",./<>?";
       const encrypted = service.encrypt(plaintext);
       const decrypted = service.decrypt(encrypted);
-      
+
       expect(decrypted).toBe(plaintext);
     });
 
@@ -88,7 +88,7 @@ describe("EncryptionService", () => {
     it("should hash a string and verify it", () => {
       const data = "data to hash";
       const hash = service.hash(data);
-      
+
       expect(hash).toBeDefined();
       expect(hash).toHaveLength(64);
       expect(service.verifyHash(data, hash)).toBe(true);
@@ -97,7 +97,7 @@ describe("EncryptionService", () => {
     it("should return false for incorrect hash", () => {
       const data = "data to hash";
       const hash = service.hash(data);
-      
+
       expect(service.verifyHash("wrong data", hash)).toBe(false);
     });
 
@@ -105,7 +105,7 @@ describe("EncryptionService", () => {
       const data = "same input";
       const hash1 = service.hash(data);
       const hash2 = service.hash(data);
-      
+
       expect(hash1).toBe(hash2);
     });
   });

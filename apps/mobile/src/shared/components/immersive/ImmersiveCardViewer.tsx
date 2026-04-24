@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   View,
@@ -31,7 +32,6 @@ import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const _AnimatedImage = AnimatedReanimated.createAnimatedComponent(Image);
 
 export interface OutfitItem {
   id: string;

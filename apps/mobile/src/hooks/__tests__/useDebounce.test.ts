@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-return */
+
 import { renderHook, act } from "@testing-library/react-native";
 import { useDebounce } from "../useDebounce";
 
@@ -19,7 +20,7 @@ describe("useDebounce", () => {
   it("should return new value after delay", () => {
     const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
       initialProps: { value: "initial", delay: 500 },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     rerender({ value: "updated", delay: 500 });

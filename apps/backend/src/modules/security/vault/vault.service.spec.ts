@@ -88,7 +88,7 @@ describe("VaultService", () => {
         expect.objectContaining({
           keyName: "test-key",
           version: 1,
-        }),
+        })
       );
     });
 
@@ -160,7 +160,7 @@ describe("VaultService", () => {
           headers: expect.objectContaining({
             "X-Vault-Token": "test-vault-token",
           }),
-        }),
+        })
       );
       expect(result).toEqual({ username: "admin", password: "secret" });
     });
@@ -212,7 +212,7 @@ describe("VaultService", () => {
           headers: expect.objectContaining({
             "X-Vault-Token": "test-vault-token",
           }),
-        }),
+        })
       );
 
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
@@ -220,7 +220,7 @@ describe("VaultService", () => {
         expect.objectContaining({
           keyName: "test-key",
           version: 3,
-        }),
+        })
       );
     });
 
@@ -234,7 +234,7 @@ describe("VaultService", () => {
       });
 
       await expect(service.rotateKey("test-key")).rejects.toThrow(
-        "Vault key rotation failed: 500 Internal Server Error",
+        "Vault key rotation failed: 500 Internal Server Error"
       );
     });
 

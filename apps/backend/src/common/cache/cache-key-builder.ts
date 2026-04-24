@@ -1,4 +1,4 @@
-import { REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from '../redis/redis.service';
+import { REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../redis/redis.service";
 
 export interface CacheKey {
   module: string;
@@ -25,37 +25,41 @@ export class CacheKeyBuilder {
     const built = CacheKeyBuilder.build(key);
     const slot = slotKey ?? key.id;
     const inner = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}${slot}`;
-    return `{${inner}}${REDIS_KEY_SEPARATOR}${CacheKeyBuilder.join(key.module, key.entity, key.id)}`;
+    return `{${inner}}${REDIS_KEY_SEPARATOR}${CacheKeyBuilder.join(
+      key.module,
+      key.entity,
+      key.id
+    )}`;
   }
 
   static userProfile(userId: string): string {
-    return CacheKeyBuilder.build({ module: 'user', entity: 'profile', id: userId });
+    return CacheKeyBuilder.build({ module: "user", entity: "profile", id: userId });
   }
 
   static styleProfile(userId: string): string {
-    return CacheKeyBuilder.build({ module: 'user', entity: 'style', id: userId });
+    return CacheKeyBuilder.build({ module: "user", entity: "style", id: userId });
   }
 
   static quizQuestions(quizId?: string): string {
-    return CacheKeyBuilder.build({ module: 'quiz', entity: 'questions', id: quizId ?? 'all' });
+    return CacheKeyBuilder.build({ module: "quiz", entity: "questions", id: quizId ?? "all" });
   }
 
   static recommendations(userId: string, context?: string): string {
     const id = context ? `${userId}:${context}` : userId;
-    return CacheKeyBuilder.build({ module: 'recommendation', entity: 'list', id });
+    return CacheKeyBuilder.build({ module: "recommendation", entity: "list", id });
   }
 
   static aiResult(userId: string, resultId: string): string {
-    return CacheKeyBuilder.build({ module: 'ai', entity: 'result', id: `${userId}:${resultId}` });
+    return CacheKeyBuilder.build({ module: "ai", entity: "result", id: `${userId}:${resultId}` });
   }
 
   static clothingItem(itemId: string): string {
-    return CacheKeyBuilder.build({ module: 'clothing', entity: 'item', id: itemId });
+    return CacheKeyBuilder.build({ module: "clothing", entity: "item", id: itemId });
   }
 
   static communityPosts(sortBy?: string, page?: number): string {
-    const id = `${sortBy ?? 'latest'}:${page ?? 1}`;
-    return CacheKeyBuilder.build({ module: 'community', entity: 'posts', id });
+    const id = `${sortBy ?? "latest"}:${page ?? 1}`;
+    return CacheKeyBuilder.build({ module: "community", entity: "posts", id });
   }
 
   static pattern(module: string, entity: string): string {

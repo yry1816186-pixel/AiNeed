@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Share, { ShareOptions } from "react-native-share";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -220,7 +220,7 @@ export function ShareToSocial({ platform, title, message, image, onSuccess }: Sh
       onPress={handleShare}
       activeOpacity={0.8}
     >
-      <Ionicons name={config.icon} size={20} color={colors.neutral[0]} />
+      <Ionicons name={config.icon} size={20} color={colors.neutral.white} />
       <Text style={styles.socialText}>{config.name}</Text>
     </TouchableOpacity>
   );
@@ -268,7 +268,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
     paddingVertical: Spacing[3],
     paddingHorizontal: Spacing[5],
-    backgroundColor: colors.neutral[0],
+    backgroundColor: colors.neutral.white,
     borderRadius: BorderRadius.full,
     gap: Spacing[2],
     ...Shadows.md,
@@ -289,7 +289,7 @@ const useStyles = createStyles((colors) => ({
   },
   socialText: {
     ...Typography.body.md,
-    color: colors.neutral[0],
+    color: colors.neutral.white,
     fontWeight: "600",
   },
 }));

@@ -49,6 +49,10 @@ class StylistChatResponse(BaseModel):
     session_id: str
     reply: str
     timestamp: str
+    quick_replies: List[str] = Field(default_factory=list, description="快速回复选项")
+    state: Optional[str] = Field(None, description="对话状态: GREET/CONTEXT/GENERATE/REFINE/ACTION/WRAP")
+    slots: Optional[Dict] = Field(None, description="当前已提取的slot信息")
+    outfits: Optional[List[Dict]] = Field(None, description="生成的搭配方案")
 
 
 class StylistBodyAnalysisRequest(BaseModel):

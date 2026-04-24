@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 export interface CompressImageOptions {
   maxWidth?: number;
@@ -16,18 +16,14 @@ export interface CompressImageOptions {
  * @param options.quality - JPEG quality from 0 to 1 (default 0.8)
  * @returns URI of the compressed image
  */
-export async function compressImage(
-  uri: string,
-  options?: CompressImageOptions
-): Promise<string> {
+export async function compressImage(uri: string, options?: CompressImageOptions): Promise<string> {
   const maxWidth = options?.maxWidth ?? 1920;
   const quality = options?.quality ?? 0.8;
 
-  const result = await manipulateAsync(
-    uri,
-    [{ resize: { width: maxWidth } }],
-    { compress: quality, format: SaveFormat.JPEG }
-  );
+  const result = await manipulateAsync(uri, [{ resize: { width: maxWidth } }], {
+    compress: quality,
+    format: SaveFormat.JPEG,
+  });
 
   return result.uri;
 }

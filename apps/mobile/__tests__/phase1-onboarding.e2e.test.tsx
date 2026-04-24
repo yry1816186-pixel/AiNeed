@@ -17,8 +17,14 @@
 
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-// @ts-expect-error - no type declarations for react-test-renderer
 import TestRenderer from "react-test-renderer";
+
+/* eslint-disable @typescript-eslint/no-explicit-any,
+   @typescript-eslint/no-unsafe-member-access,
+   @typescript-eslint/no-unsafe-call,
+   @typescript-eslint/no-unsafe-assignment,
+   @typescript-eslint/no-unsafe-return --
+   Test file uses react-test-renderer internals; `any` is acceptable here. */
 
 // ============================================================================
 // Component stubs for testing onboarding flow state machine
@@ -181,22 +187,22 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
     it("should start on BASIC_INFO step", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
       const step = renderer.root.findByProps({ testID: "current-step" });
-      expect(step.props.children).toBe("BASIC_INFO");
+      expect((step.props as any).children).toBe("BASIC_INFO");
     });
 
     it("should NOT allow proceeding without selecting gender and age", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
       const canProceed = renderer.root.findByProps({ testID: "can-proceed" });
-      expect(canProceed.props.children).toBe("false");
+      expect((canProceed.props as any).children).toBe("false");
     });
 
     it("should NOT allow proceeding with only gender selected", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       const canProceed = renderer.root.findByProps({ testID: "can-proceed" });
-      expect(canProceed.props.children).toBe("false");
+      expect((canProceed.props as any).children).toBe("false");
     });
 
     it("should NOT show skip button on BASIC_INFO step", () => {
@@ -204,10 +210,10 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       const basicInfoStep = renderer.root.findByProps({ testID: "basic-info-step" });
       // Verify no skip button exists within basic info step
       const skipButtons = basicInfoStep.findAllByType(TouchableOpacity).filter(
-        (btn: any) => {
+        (btn) => {
           try {
             const text = btn.findByType(Text);
-            return text.props.children === "跳过";
+            return (text.props as any).children === "跳过";
           } catch {
             return false;
           }
@@ -220,32 +226,32 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
 
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
 
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
 
       const canProceed = renderer.root.findByProps({ testID: "can-proceed" });
-      expect(canProceed.props.children).toBe("true");
+      expect((canProceed.props as any).children).toBe("true");
     });
 
     it("should advance to PHOTO step after selecting gender, age, and tapping next", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
 
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
 
       const step = renderer.root.findByProps({ testID: "current-step" });
-      expect(step.props.children).toBe("PHOTO");
+      expect((step.props as any).children).toBe("PHOTO");
     });
   });
 
@@ -258,13 +264,13 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
 
       // Navigate to PHOTO step
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
 
       const skipButton = renderer.root.findByProps({ testID: "skip-photo" });
@@ -276,22 +282,22 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
 
       // Navigate to PHOTO step
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
 
       // Skip photo
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-photo" }).props as any).onPress();
       });
 
       const step = renderer.root.findByProps({ testID: "current-step" });
-      expect(step.props.children).toBe("QUIZ");
+      expect((step.props as any).children).toBe("QUIZ");
     });
   });
 
@@ -304,16 +310,16 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
 
       // Navigate directly through to QUIZ step
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-photo" }).props as any).onPress();
       });
 
       const skipButton = renderer.root.findByProps({ testID: "skip-quiz" });
@@ -325,29 +331,29 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
 
       // Full shortest path: gender + age -> next -> skip photo -> skip quiz -> complete
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-photo" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-quiz" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-quiz" }).props as any).onPress();
       });
 
       const completeView = renderer.root.findByProps({ testID: "onboarding-complete" });
       expect(completeView).toBeDefined();
 
       const photoSkipped = renderer.root.findByProps({ testID: "photo-skipped" });
-      expect(photoSkipped.props.children).toBe("true");
+      expect((photoSkipped.props as any).children).toBe("true");
 
       const quizSkipped = renderer.root.findByProps({ testID: "quiz-skipped" });
-      expect(quizSkipped.props.children).toBe("true");
+      expect((quizSkipped.props as any).children).toBe("true");
     });
   });
 
@@ -359,37 +365,37 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
 
       // Verify starting state
-      expect(renderer.root.findByProps({ testID: "current-step" }).props.children).toBe("BASIC_INFO");
+      expect((renderer.root.findByProps({ testID: "current-step" }).props as any).children).toBe("BASIC_INFO");
 
       // Step 0: Select gender (required)
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
 
       // Step 0: Select age range (required)
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
 
       // Step 0: Proceed
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
 
       // Verify we moved to PHOTO
-      expect(renderer.root.findByProps({ testID: "current-step" }).props.children).toBe("PHOTO");
+      expect((renderer.root.findByProps({ testID: "current-step" }).props as any).children).toBe("PHOTO");
 
       // Step 1: Skip photo
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-photo" }).props as any).onPress();
       });
 
       // Verify we moved to QUIZ
-      expect(renderer.root.findByProps({ testID: "current-step" }).props.children).toBe("QUIZ");
+      expect((renderer.root.findByProps({ testID: "current-step" }).props as any).children).toBe("QUIZ");
 
       // Step 2: Skip quiz
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-quiz" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-quiz" }).props as any).onPress();
       });
 
       // Verify completion
@@ -403,26 +409,26 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       // Start: progress 1/3
       // React renders {number}/{number} as [number, "/", number]
       const getProgressText = () => {
-        const children = renderer.root.findByProps({ testID: "progress" }).props.children;
+        const children = (renderer.root.findByProps({ testID: "progress" }).props as any).children;
         return Array.isArray(children) ? children.join("") : children;
       };
       expect(getProgressText()).toBe("1/3");
 
       // After proceeding from BASIC_INFO: progress 2/3
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "gender-female" }).props.onPress();
+        (renderer.root.findByProps({ testID: "gender-female" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "age-25-30" }).props.onPress();
+        (renderer.root.findByProps({ testID: "age-25-30" }).props as any).onPress();
       });
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "next-button" }).props.onPress();
+        (renderer.root.findByProps({ testID: "next-button" }).props as any).onPress();
       });
       expect(getProgressText()).toBe("2/3");
 
       // After skipping PHOTO: progress 3/3
       TestRenderer.act(() => {
-        renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
+        (renderer.root.findByProps({ testID: "skip-photo" }).props as any).onPress();
       });
       expect(getProgressText()).toBe("3/3");
     });

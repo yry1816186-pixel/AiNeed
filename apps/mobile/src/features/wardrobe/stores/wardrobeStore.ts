@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -269,9 +270,9 @@ export const useWardrobeStore = create<WardrobeState>()(
         set({ isLoading: true, error: null });
         try {
           // TODO: 连接后端 GET /wardrobe/items API 后替换
-          set({ error: '功能开发中，敬请期待', isLoading: false });
+          set({ error: "功能开发中，敬请期待", isLoading: false });
         } catch {
-          set({ error: '获取衣橱列表失败，请稍后重试', isLoading: false });
+          set({ error: "获取衣橱列表失败，请稍后重试", isLoading: false });
         }
       },
 
@@ -279,9 +280,9 @@ export const useWardrobeStore = create<WardrobeState>()(
         set({ isLoading: true, error: null });
         try {
           // TODO: 连接后端 GET /wardrobe/outfits API 后替换
-          set({ error: '功能开发中，敬请期待', isLoading: false });
+          set({ error: "功能开发中，敬请期待", isLoading: false });
         } catch {
-          set({ error: '获取穿搭方案失败，请稍后重试', isLoading: false });
+          set({ error: "获取穿搭方案失败，请稍后重试", isLoading: false });
         }
       },
     }),

@@ -1,8 +1,8 @@
-declare module 'expo-image-manipulator' {
+declare module "expo-image-manipulator" {
   export enum SaveFormat {
-    JPEG = 'jpeg',
-    PNG = 'png',
-    WEBP = 'webp',
+    JPEG = "jpeg",
+    PNG = "png",
+    WEBP = "webp",
   }
 
   export interface Action {

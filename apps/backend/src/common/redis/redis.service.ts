@@ -1,6 +1,7 @@
+import { randomUUID } from "crypto";
+
 import { Injectable, Inject, OnModuleDestroy, Logger } from "@nestjs/common";
 import Redis from "ioredis";
-import { randomUUID } from "crypto";
 
 export const REDIS_CLIENT = "REDIS_CLIENT";
 
@@ -49,9 +50,7 @@ export class RedisKeyBuilder {
   }
 
   static analytics(metric: string, date?: string): string {
-    return date 
-      ? this.buildKey("analytics", metric, date)
-      : this.buildKey("analytics", metric);
+    return date ? this.buildKey("analytics", metric, date) : this.buildKey("analytics", metric);
   }
 }
 
@@ -149,7 +148,7 @@ export class RedisService implements OnModuleDestroy {
 
   async subscribe(
     channel: string,
-    callback: (message: string) => void,
+    callback: (message: string) => void
   ): Promise<() => Promise<void>> {
     const subscriber = this.redis.duplicate();
     this.subscribers.push(subscriber);
@@ -174,17 +173,15 @@ export class RedisService implements OnModuleDestroy {
       try {
         await subscriber.quit();
       } catch (e) {
-        this.logger.warn(`Failed to close subscriber: ${e instanceof Error ? e.message : String(e)}`);
+        this.logger.warn(
+          `Failed to close subscriber: ${e instanceof Error ? e.message : String(e)}`
+        );
       }
     }
     this.subscribers.length = 0;
   }
 
-  async acquireLock(
-    key: string,
-    ttlMs: number,
-    retries: number = 3,
-  ): Promise<string | null> {
+  async acquireLock(key: string, ttlMs: number, retries: number = 3): Promise<string | null> {
     const token = randomUUID();
     const baseDelayMs = 50;
     for (let i = 0; i < retries; i++) {

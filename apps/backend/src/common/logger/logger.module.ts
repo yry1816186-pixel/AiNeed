@@ -1,12 +1,12 @@
-import { AsyncLocalStorage } from 'async_hooks';
+import { AsyncLocalStorage } from "async_hooks";
 
-import { Module, Global, Provider, DynamicModule } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module, Global, Provider, DynamicModule } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
-import { TraceIdMiddleware } from './logger.middleware';
-import { PinoLoggerService, PinoChildLogger } from './logger.service';
+import { TraceIdMiddleware } from "./logger.middleware";
+import { PinoLoggerService, PinoChildLogger } from "./logger.service";
 
-export const PINO_ASYNC_LOCAL_STORAGE = 'PINO_ASYNC_LOCAL_STORAGE';
+export const PINO_ASYNC_LOCAL_STORAGE = "PINO_ASYNC_LOCAL_STORAGE";
 
 interface RequestContext {
   requestId: string;
@@ -31,7 +31,7 @@ export class LoggerModule {
       provide: PinoLoggerService,
       useFactory: (
         configService: ConfigService,
-        asyncLocalStorage: AsyncLocalStorage<RequestContext>,
+        asyncLocalStorage: AsyncLocalStorage<RequestContext>
       ) => {
         return new PinoLoggerService(configService, asyncLocalStorage);
       },
@@ -41,11 +41,7 @@ export class LoggerModule {
     return {
       module: LoggerModule,
       imports: [ConfigModule],
-      providers: [
-        asyncLocalStorageProvider,
-        pinoLoggerProvider,
-        TraceIdMiddleware,
-      ],
+      providers: [asyncLocalStorageProvider, pinoLoggerProvider, TraceIdMiddleware],
       exports: [PinoLoggerService, PinoChildLogger, TraceIdMiddleware],
       global: options.isGlobal !== false,
     };

@@ -5,9 +5,9 @@ import {
   Inject,
   OnModuleInit,
   OnModuleDestroy,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -17,19 +17,14 @@ import {
   OnGatewayInit,
   ConnectedSocket,
   MessageBody,
-} from '@nestjs/websockets';
-import Redis from 'ioredis';
-import { Server, Socket } from 'socket.io';
+} from "@nestjs/websockets";
+import Redis from "ioredis";
+import { Server, Socket } from "socket.io";
 
-import { REDIS_CLIENT } from '../../../common/redis/redis.service';
-import { TokenBlacklistService } from '../../../domains/identity/auth/services/token-blacklist.service';
-import {
-  PROFILE_EVENTS,
-  QUIZ_EVENTS,
-  NOTIFICATION_EVENTS,
-  COMMUNITY_EVENTS,
-} from '../events';
-import { EventBusService } from '../services/event-bus.service';
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
+import { TokenBlacklistService } from "../../../domains/identity/auth/services/token-blacklist.service";
+import { PROFILE_EVENTS, QUIZ_EVENTS, NOTIFICATION_EVENTS, COMMUNITY_EVENTS } from "../events";
+import { EventBusService } from "../services/event-bus.service";
 
 interface UserConnection {
   socketId: string;
@@ -39,11 +34,13 @@ interface UserConnection {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',').filter(Boolean) || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+    origin:
+      process.env.CORS_ORIGINS?.split(",").filter(Boolean) ||
+      (process.env.NODE_ENV === "production" ? [] : ["http://localhost:3000"]),
     credentials: true,
   },
-  namespace: '/ws/app',
-  transports: ['websocket', 'polling'],
+  namespace: "/ws/app",
+  transports: ["websocket", "polling"],
 })
 @UsePipes(new ValidationPipe())
 export class AppGateway
@@ -64,19 +61,19 @@ export class AppGateway
     private jwtService: JwtService,
     @Inject(REDIS_CLIENT) private redis: Redis,
     private eventBus: EventBusService,
-    private tokenBlacklistService: TokenBlacklistService,
+    private tokenBlacklistService: TokenBlacklistService
   ) {}
 
   onModuleInit() {
     const eventMappings: Array<{ eventType: string; wsEvent: string }> = [
-      { eventType: PROFILE_EVENTS.PROFILE_UPDATED, wsEvent: 'profile_updated' },
-      { eventType: PROFILE_EVENTS.ONBOARDING_COMPLETED, wsEvent: 'onboarding_completed' },
-      { eventType: QUIZ_EVENTS.QUIZ_PROGRESS_SAVED, wsEvent: 'quiz_progress_saved' },
-      { eventType: NOTIFICATION_EVENTS.NEW_NOTIFICATION, wsEvent: 'new_notification' },
-      { eventType: NOTIFICATION_EVENTS.NOTIFICATION_READ, wsEvent: 'notification_read' },
-      { eventType: COMMUNITY_EVENTS.NEW_POST, wsEvent: 'new_post' },
-      { eventType: COMMUNITY_EVENTS.NEW_COMMENT, wsEvent: 'new_comment' },
-      { eventType: COMMUNITY_EVENTS.NEW_LIKE, wsEvent: 'new_like' },
+      { eventType: PROFILE_EVENTS.PROFILE_UPDATED, wsEvent: "profile_updated" },
+      { eventType: PROFILE_EVENTS.ONBOARDING_COMPLETED, wsEvent: "onboarding_completed" },
+      { eventType: QUIZ_EVENTS.QUIZ_PROGRESS_SAVED, wsEvent: "quiz_progress_saved" },
+      { eventType: NOTIFICATION_EVENTS.NEW_NOTIFICATION, wsEvent: "new_notification" },
+      { eventType: NOTIFICATION_EVENTS.NOTIFICATION_READ, wsEvent: "notification_read" },
+      { eventType: COMMUNITY_EVENTS.NEW_POST, wsEvent: "new_post" },
+      { eventType: COMMUNITY_EVENTS.NEW_COMMENT, wsEvent: "new_comment" },
+      { eventType: COMMUNITY_EVENTS.NEW_LIKE, wsEvent: "new_like" },
     ];
 
     for (const mapping of eventMappings) {
@@ -90,7 +87,7 @@ export class AppGateway
       });
     }
 
-    this.logger.log('App WebSocket gateway initialized');
+    this.logger.log("App WebSocket gateway initialized");
   }
 
   onModuleDestroy() {
@@ -100,11 +97,11 @@ export class AppGateway
     this.eventUnsubscribers = [];
     this.connections.clear();
     this.userSocketMap.clear();
-    this.logger.log('App WebSocket gateway destroyed');
+    this.logger.log("App WebSocket gateway destroyed");
   }
 
   afterInit(server: Server) {
-    this.logger.log('App WebSocket server initialized');
+    this.logger.log("App WebSocket server initialized");
   }
 
   async handleConnection(client: Socket) {
@@ -112,7 +109,7 @@ export class AppGateway
       const userId = await this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Client ${client.id} rejected: no valid token`);
-        client.emit('error', { message: 'Authentication required' });
+        client.emit("error", { message: "Authentication required" });
         client.disconnect();
         return;
       }
@@ -134,13 +131,13 @@ export class AppGateway
 
       this.logger.log(`Client ${client.id} connected for user ${userId}`);
 
-      client.emit('connected', {
-        message: 'Connected to app events',
+      client.emit("connected", {
+        message: "Connected to app events",
         userId,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Connection error: ${message}`);
       client.disconnect();
     }
@@ -166,28 +163,22 @@ export class AppGateway
     }
   }
 
-  @SubscribeMessage('joinRoom')
-  async handleJoinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { room: string },
-  ) {
+  @SubscribeMessage("joinRoom")
+  async handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() data: { room: string }) {
     await client.join(data.room);
     this.logger.debug(`Client ${client.id} joined room: ${data.room}`);
-    client.emit('joinedRoom', { room: data.room });
+    client.emit("joinedRoom", { room: data.room });
   }
 
-  @SubscribeMessage('leaveRoom')
-  async handleLeaveRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { room: string },
-  ) {
+  @SubscribeMessage("leaveRoom")
+  async handleLeaveRoom(@ConnectedSocket() client: Socket, @MessageBody() data: { room: string }) {
     await client.leave(data.room);
     this.logger.debug(`Client ${client.id} left room: ${data.room}`);
   }
 
-  @SubscribeMessage('ping')
+  @SubscribeMessage("ping")
   handlePing(@ConnectedSocket() client: Socket) {
-    client.emit('pong', { timestamp: Date.now() });
+    client.emit("pong", { timestamp: Date.now() });
   }
 
   isUserOnline(userId: string): boolean {
@@ -221,9 +212,9 @@ export class AppGateway
 
   private async validateToken(token: string): Promise<string | null> {
     try {
-      const jwtSecret = this.configService.get<string>('JWT_SECRET');
+      const jwtSecret = this.configService.get<string>("JWT_SECRET");
       if (!jwtSecret) {
-        this.logger.error('JWT_SECRET is not configured');
+        this.logger.error("JWT_SECRET is not configured");
         return null;
       }
 
@@ -244,7 +235,7 @@ export class AppGateway
 
       return userId || null;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.debug(`Token validation failed: ${message}`);
       return null;
     }

@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useCallback, useMemo } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
+import { View, Text, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
-import { Colors, Spacing, Typography } from "../../../design-system/theme";
+import { Spacing, Typography } from "../../../design-system/theme";
 import { SkeletonScreen } from "./SkeletonScreen";
 import { ErrorState } from "./ErrorState";
 import { EmptyState } from "./EmptyState";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 import { flatColors as colors } from "../../../design-system/theme";
 
 export interface WaterfallItem {
@@ -68,7 +69,7 @@ export function WaterfallFlashList<T extends WaterfallItem>({
     if (!data?.pages) {
       return [];
     }
-    return data.pages.flat() as T[];
+    return data.pages.flat();
   }, [data?.pages]);
 
   const leftItems = useMemo(() => items.filter((item: T, i: number) => i % 2 === 0), [items]);

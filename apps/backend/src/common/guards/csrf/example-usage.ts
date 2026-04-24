@@ -5,10 +5,10 @@
  * Copy the patterns shown here to your own controllers.
  */
 
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from "@nestjs/common";
 
-import { CsrfGuard } from './csrf.guard';
-import { ExcludeCsrf } from './decorators/exclude-csrf.decorator';
+import { CsrfGuard } from "./csrf.guard";
+import { ExcludeCsrf } from "./decorators/exclude-csrf.decorator";
 
 /**
  * Example 1: Standard CRUD Controller with CSRF Protection
@@ -23,7 +23,7 @@ export class ExampleController {
    */
   @Get()
   findAll() {
-    return { message: 'This GET request generates a CSRF token in the response headers' };
+    return { message: "This GET request generates a CSRF token in the response headers" };
   }
 
   /**
@@ -32,22 +32,22 @@ export class ExampleController {
    */
   @Post()
   create(@Body() _createDto: unknown) {
-    return { message: 'This POST request requires valid CSRF token' };
+    return { message: "This POST request requires valid CSRF token" };
   }
 
   /**
    * PUT request - requires CSRF token
    */
-  @Put(':id')
-  update(@Param('id') id: string, @Body() _updateDto: unknown) {
+  @Put(":id")
+  update(@Param("id") id: string, @Body() _updateDto: unknown) {
     return { message: `This PUT request for ID ${id} requires valid CSRF token` };
   }
 
   /**
    * DELETE request - requires CSRF token
    */
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return { message: `This DELETE request for ID ${id} requires valid CSRF token` };
   }
 }
@@ -62,19 +62,19 @@ export class WebhookController {
    * Stripe webhook - excluded from CSRF protection
    * External services can't provide our CSRF tokens
    */
-  @Post('stripe')
+  @Post("stripe")
   @ExcludeCsrf()
   handleStripeWebhook(@Body() _webhook: unknown) {
-    return { message: 'This webhook does not require CSRF token' };
+    return { message: "This webhook does not require CSRF token" };
   }
 
   /**
    * Payment gateway callback - excluded
    */
-  @Post('payment-callback')
+  @Post("payment-callback")
   @ExcludeCsrf()
   handlePaymentCallback(@Body() _callback: unknown) {
-    return { message: 'This callback does not require CSRF token' };
+    return { message: "This callback does not require CSRF token" };
   }
 }
 
@@ -88,20 +88,20 @@ export class PublicController {
    * Public search endpoint - excluded from CSRF
    * Read-only operations can be excluded
    */
-  @Get('search')
+  @Get("search")
   @ExcludeCsrf()
   search(@Body() _searchDto: unknown) {
-    return { message: 'This search endpoint does not require CSRF token' };
+    return { message: "This search endpoint does not require CSRF token" };
   }
 
   /**
    * Contact form submission - requires CSRF
    * State-changing operations should have CSRF protection
    */
-  @Post('contact')
+  @Post("contact")
   @UseGuards(CsrfGuard)
   submitContactForm(@Body() _contactDto: unknown) {
-    return { message: 'This contact form requires valid CSRF token' };
+    return { message: "This contact form requires valid CSRF token" };
   }
 }
 
@@ -114,28 +114,28 @@ export class MixedController {
   /**
    * Public endpoint - no CSRF required
    */
-  @Get('info')
+  @Get("info")
   @ExcludeCsrf()
   getInfo() {
-    return { message: 'No CSRF required for this GET request' };
+    return { message: "No CSRF required for this GET request" };
   }
 
   /**
    * Protected endpoint - CSRF required
    */
-  @Post('subscribe')
+  @Post("subscribe")
   @UseGuards(CsrfGuard)
   subscribe(@Body() _subscribeDto: unknown) {
-    return { message: 'This subscription requires valid CSRF token' };
+    return { message: "This subscription requires valid CSRF token" };
   }
 
   /**
    * Admin endpoint - CSRF required
    */
-  @Put('admin/settings')
+  @Put("admin/settings")
   @UseGuards(CsrfGuard)
   updateSettings(@Body() _settings: unknown) {
-    return { message: 'This admin endpoint requires valid CSRF token' };
+    return { message: "This admin endpoint requires valid CSRF token" };
   }
 }
 

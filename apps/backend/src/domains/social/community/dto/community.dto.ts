@@ -45,7 +45,11 @@ export class CreatePostDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: "帖子分类", enum: PostCategory, example: PostCategory.OUTFIT_SHARE })
+  @ApiPropertyOptional({
+    description: "帖子分类",
+    enum: PostCategory,
+    example: PostCategory.OUTFIT_SHARE,
+  })
   @IsOptional()
   @IsEnum(PostCategory)
   category?: PostCategory;
@@ -92,7 +96,11 @@ export class UpdatePostDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: "帖子分类", enum: PostCategory, example: PostCategory.STYLE_TIPS })
+  @ApiPropertyOptional({
+    description: "帖子分类",
+    enum: PostCategory,
+    example: PostCategory.STYLE_TIPS,
+  })
   @IsOptional()
   @IsEnum(PostCategory)
   category?: PostCategory;
@@ -144,7 +152,10 @@ export class CreateCommentDto {
   @IsString()
   parentId?: string;
 
-  @ApiPropertyOptional({ description: "评论图片列表", example: ["https://example.com/comment-img.jpg"] })
+  @ApiPropertyOptional({
+    description: "评论图片列表",
+    example: ["https://example.com/comment-img.jpg"],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

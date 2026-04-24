@@ -25,11 +25,23 @@ type PrismaParams = {
 
 type PrismaNext = (params: PrismaParams) => Promise<unknown>;
 
-const WRITE_ACTIONS: Set<PrismaAction> = new Set(["create", "createMany", "update", "updateMany", "upsert"]);
-const READ_ACTIONS: Set<PrismaAction> = new Set(["findUnique", "findUniqueOrThrow", "findFirst", "findFirstOrThrow", "findMany"]);
+const WRITE_ACTIONS: Set<PrismaAction> = new Set([
+  "create",
+  "createMany",
+  "update",
+  "updateMany",
+  "upsert",
+]);
+const READ_ACTIONS: Set<PrismaAction> = new Set([
+  "findUnique",
+  "findUniqueOrThrow",
+  "findFirst",
+  "findFirstOrThrow",
+  "findMany",
+]);
 
 export function createPrismaEncryptionMiddleware(
-  piiEncryptionService: SecurityPIIEncryptionService,
+  piiEncryptionService: SecurityPIIEncryptionService
 ) {
   const logger = new Logger("PrismaEncryptionMiddleware");
 
@@ -57,7 +69,7 @@ export function createPrismaEncryptionMiddleware(
 async function encryptWriteParams(
   params: PrismaParams,
   service: SecurityPIIEncryptionService,
-  logger: Logger,
+  logger: Logger
 ): Promise<PrismaParams> {
   const fields = PII_FIELDS[params.model!];
   if (!fields) {
@@ -70,28 +82,57 @@ async function encryptWriteParams(
   if (encrypted.args.data) {
     encrypted.args = {
       ...encrypted.args,
-      data: await encryptDataObject(encrypted.args.data as Record<string, unknown>, fields, service, userId, logger),
+      data: await encryptDataObject(
+        encrypted.args.data as Record<string, unknown>,
+        fields,
+        service,
+        userId,
+        logger
+      ),
     };
   }
 
-  if (encrypted.args.where && (encrypted.action === "update" || encrypted.action === "updateMany" || encrypted.action === "upsert")) {
+  if (
+    encrypted.args.where &&
+    (encrypted.action === "update" ||
+      encrypted.action === "updateMany" ||
+      encrypted.action === "upsert")
+  ) {
     encrypted.args = {
       ...encrypted.args,
-      where: await encryptWhereClause(encrypted.args.where as Record<string, unknown>, fields, service, userId, logger),
+      where: await encryptWhereClause(
+        encrypted.args.where as Record<string, unknown>,
+        fields,
+        service,
+        userId,
+        logger
+      ),
     };
   }
 
   if (encrypted.action === "upsert" && encrypted.args.create) {
     encrypted.args = {
       ...encrypted.args,
-      create: await encryptDataObject(encrypted.args.create as Record<string, unknown>, fields, service, userId, logger),
+      create: await encryptDataObject(
+        encrypted.args.create as Record<string, unknown>,
+        fields,
+        service,
+        userId,
+        logger
+      ),
     };
   }
 
   if (encrypted.action === "upsert" && encrypted.args.update) {
     encrypted.args = {
       ...encrypted.args,
-      update: await encryptDataObject(encrypted.args.update as Record<string, unknown>, fields, service, userId, logger),
+      update: await encryptDataObject(
+        encrypted.args.update as Record<string, unknown>,
+        fields,
+        service,
+        userId,
+        logger
+      ),
     };
   }
 
@@ -103,7 +144,7 @@ async function encryptDataObject(
   fields: readonly string[],
   service: SecurityPIIEncryptionService,
   userId: string | undefined,
-  logger: Logger,
+  logger: Logger
 ): Promise<Record<string, unknown>> {
   const result = { ...data };
 
@@ -113,7 +154,11 @@ async function encryptDataObject(
       try {
         result[field] = await service.encryptField(value, userId);
       } catch (error) {
-        logger.error(`Auto-encrypt failed for field ${field}: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(
+          `Auto-encrypt failed for field ${field}: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
       }
     }
   }
@@ -126,7 +171,7 @@ async function encryptWhereClause(
   fields: readonly string[],
   service: SecurityPIIEncryptionService,
   userId: string | undefined,
-  logger: Logger,
+  logger: Logger
 ): Promise<Record<string, unknown>> {
   const result = { ...where };
 
@@ -136,12 +181,22 @@ async function encryptWhereClause(
       try {
         result[field] = await service.encryptField(value, userId);
       } catch (error) {
-        logger.error(`Auto-encrypt WHERE failed for field ${field}: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(
+          `Auto-encrypt WHERE failed for field ${field}: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
       }
     }
 
     if (value && typeof value === "object" && !service.isEncrypted(String(value))) {
-      result[field] = await encryptWhereOperator(value as Record<string, unknown>, field, service, userId, logger);
+      result[field] = await encryptWhereOperator(
+        value as Record<string, unknown>,
+        field,
+        service,
+        userId,
+        logger
+      );
     }
   }
 
@@ -153,7 +208,7 @@ async function encryptWhereOperator(
   field: string,
   service: SecurityPIIEncryptionService,
   userId: string | undefined,
-  logger: Logger,
+  logger: Logger
 ): Promise<Record<string, unknown>> {
   const result = { ...operator };
 
@@ -162,7 +217,11 @@ async function encryptWhereOperator(
       try {
         result[op] = await service.encryptField(val, userId);
       } catch (error) {
-        logger.error(`Auto-encrypt WHERE operator failed for ${field}.${op}: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(
+          `Auto-encrypt WHERE operator failed for ${field}.${op}: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
       }
     }
   }
@@ -174,7 +233,7 @@ async function decryptReadResult(
   result: unknown,
   model: string,
   service: SecurityPIIEncryptionService,
-  logger: Logger,
+  logger: Logger
 ): Promise<unknown> {
   if (Array.isArray(result)) {
     return Promise.all(result.map((item) => decryptSingleRecord(item, model, service, logger)));
@@ -191,7 +250,7 @@ async function decryptSingleRecord(
   record: Record<string, unknown>,
   model: string,
   service: SecurityPIIEncryptionService,
-  logger: Logger,
+  logger: Logger
 ): Promise<Record<string, unknown>> {
   const fields = PII_FIELDS[model];
   if (!fields) {
@@ -207,7 +266,11 @@ async function decryptSingleRecord(
       try {
         result[field] = await service.decryptField(value, userId);
       } catch (error) {
-        logger.error(`Auto-decrypt failed for ${model}.${field}: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(
+          `Auto-decrypt failed for ${model}.${field}: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
       }
     }
   }

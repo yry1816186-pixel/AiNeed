@@ -30,37 +30,35 @@ export class StorageService {
   private readonly minioClient: Minio.Client;
   private readonly bucket: string;
 
-  constructor(
-    private configService: ConfigService,
-    private userKeyService: UserKeyService,
-  ) {
+  constructor(private configService: ConfigService, private userKeyService: UserKeyService) {
     const accessKey = this.configService.get<string>("MINIO_ACCESS_KEY");
     const secretKey = this.configService.get<string>("MINIO_SECRET_KEY");
-    
+
     if (!accessKey || !secretKey) {
       throw new Error(
         "MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables are required. " +
-        "Please configure these in your .env file. " +
-        "See .env.example for reference."
+          "Please configure these in your .env file. " +
+          "See .env.example for reference."
       );
     }
-    
+
     const port = this.configService.get<string>("MINIO_PORT", "9000");
     const endpoint = this.configService.get<string>("MINIO_ENDPOINT");
     if (!endpoint) {
       throw new Error("MINIO_ENDPOINT environment variable is required");
     }
-    
+
     this.minioClient = new Minio.Client({
       endPoint: endpoint,
       port: parseInt(port, 10) || 9000,
-      useSSL:
-        this.configService.get<string>("MINIO_USE_SSL", "false") === "true",
+      useSSL: this.configService.get<string>("MINIO_USE_SSL", "false") === "true",
       accessKey,
       secretKey,
     });
     this.bucket = this.configService.get<string>("MINIO_BUCKET", "xuno");
-    this.logger.log(`StorageService initialized with endpoint: ${endpoint}, bucket: ${this.bucket}`);
+    this.logger.log(
+      `StorageService initialized with endpoint: ${endpoint}, bucket: ${this.bucket}`
+    );
     this.ensureBucket();
   }
 
@@ -79,18 +77,14 @@ export class StorageService {
 
   async uploadImage(
     file: MulterFile,
-    folder: string = "uploads",
+    folder: string = "uploads"
   ): Promise<{ url: string; thumbnailUrl?: string }> {
     const ext = file.originalname.split(".").pop() || "jpg";
     const filename = `${folder}/${uuidv4()}.${ext}`;
 
-    await this.minioClient.putObject(
-      this.bucket,
-      filename,
-      file.buffer,
-      file.size,
-      { "Content-Type": file.mimetype },
-    );
+    await this.minioClient.putObject(this.bucket, filename, file.buffer, file.size, {
+      "Content-Type": file.mimetype,
+    });
 
     const url = await this.getFileUrl(filename);
 
@@ -105,37 +99,30 @@ export class StorageService {
   async uploadBuffer(
     filename: string,
     buffer: Buffer,
-    contentType: string = 'application/octet-stream',
+    contentType: string = "application/octet-stream"
   ): Promise<void> {
-    await this.minioClient.putObject(
-      this.bucket,
-      filename,
-      buffer,
-      buffer.length,
-      { 'Content-Type': contentType },
-    );
+    await this.minioClient.putObject(this.bucket, filename, buffer, buffer.length, {
+      "Content-Type": contentType,
+    });
   }
 
   private async createThumbnail(
     file: MulterFile,
-    originalFilename: string,
+    originalFilename: string
   ): Promise<string | undefined> {
     try {
       const thumbnail = await sanitizeImage(sharp(file.buffer))
         .resize(300, 300, { fit: "cover" })
         .toBuffer();
 
-      const thumbnailFilename = originalFilename.replace(
-        /(\.\w+)$/,
-        "-thumbnail$1",
-      );
+      const thumbnailFilename = originalFilename.replace(/(\.\w+)$/, "-thumbnail$1");
 
       await this.minioClient.putObject(
         this.bucket,
         thumbnailFilename,
         thumbnail,
         thumbnail.length,
-        { "Content-Type": file.mimetype },
+        { "Content-Type": file.mimetype }
       );
 
       return await this.getFileUrl(thumbnailFilename);
@@ -156,15 +143,11 @@ export class StorageService {
   async uploadTemporary(
     filename: string,
     content: Buffer,
-    expiresIn: number = 7 * 24 * 60 * 60, // 默认 7 天
+    expiresIn: number = 7 * 24 * 60 * 60 // 默认 7 天
   ): Promise<string> {
-    await this.minioClient.putObject(
-      this.bucket,
-      filename,
-      content,
-      content.length,
-      { "Content-Type": "application/json" },
-    );
+    await this.minioClient.putObject(this.bucket, filename, content, content.length, {
+      "Content-Type": "application/json",
+    });
 
     return this.getFileUrl(filename, expiresIn);
   }
@@ -187,7 +170,12 @@ export class StorageService {
     } catch (error) {
       // 不是有效的 URL，记录并直接使用原始值作为文件名
       this.logger.debug(
-        `Input '${filenameOrUrl.substring(0, 50)}...' is not a valid URL, treating as filename. Error: ${error instanceof Error ? error.message : String(error)}`,
+        `Input '${filenameOrUrl.substring(
+          0,
+          50
+        )}...' is not a valid URL, treating as filename. Error: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 
@@ -208,16 +196,8 @@ export class StorageService {
     }
   }
 
-  async getFileUrl(
-    filename: string,
-    expiresIn: number = 86400,
-  ): Promise<string> {
-    return await this.minioClient.presignedUrl(
-      "GET",
-      this.bucket,
-      filename,
-      expiresIn,
-    );
+  async getFileUrl(filename: string, expiresIn: number = 86400): Promise<string> {
+    return await this.minioClient.presignedUrl("GET", this.bucket, filename, expiresIn);
   }
 
   /**
@@ -228,9 +208,7 @@ export class StorageService {
     await this.delete(filename);
   }
 
-  async fetchRemoteAsset(
-    url: string,
-  ): Promise<{
+  async fetchRemoteAsset(url: string): Promise<{
     body: Buffer;
     contentType: string;
     cacheControl: string;
@@ -243,10 +221,8 @@ export class StorageService {
 
     return {
       body: Buffer.from(await response.arrayBuffer()),
-      contentType:
-        response.headers.get("content-type") ?? "application/octet-stream",
-      cacheControl:
-        response.headers.get("cache-control") ?? "private, max-age=300",
+      contentType: response.headers.get("content-type") ?? "application/octet-stream",
+      cacheControl: response.headers.get("cache-control") ?? "private, max-age=300",
     };
   }
 
@@ -257,7 +233,7 @@ export class StorageService {
 
   async generateWatermarkedImage(
     imageUrl: string,
-    watermarkText: string = "寻裳 AI 试衣",
+    watermarkText: string = "寻裳 AI 试衣"
   ): Promise<string> {
     const asset = await this.fetchRemoteAsset(imageUrl);
     const imageBuffer = asset.body;
@@ -285,7 +261,7 @@ export class StorageService {
       filename,
       watermarkedBuffer,
       watermarkedBuffer.length,
-      { "Content-Type": "image/png" },
+      { "Content-Type": "image/png" }
     );
 
     return this.getFileUrl(filename);
@@ -302,12 +278,9 @@ export class StorageService {
   async uploadEncrypted(
     userId: string,
     file: MulterFile,
-    folder: string = "uploads",
+    folder: string = "uploads"
   ): Promise<{ url: string; thumbnailUrl?: string }> {
-    const encryptedBuffer = await this.userKeyService.encryptBufferForUser(
-      userId,
-      file.buffer,
-    );
+    const encryptedBuffer = await this.userKeyService.encryptBufferForUser(userId, file.buffer);
 
     const ext = file.originalname.split(".").pop() || "jpg";
     const filename = `${folder}/${uuidv4()}.${ext}.enc`;
@@ -321,7 +294,7 @@ export class StorageService {
         "Content-Type": "application/octet-stream",
         "X-Encrypted": "true",
         "X-Original-Content-Type": file.mimetype,
-      },
+      }
     );
 
     const url = await this.getFileUrl(filename);
@@ -334,10 +307,7 @@ export class StorageService {
     return { url, thumbnailUrl };
   }
 
-  async downloadEncrypted(
-    userId: string,
-    filenameOrUrl: string,
-  ): Promise<Buffer> {
+  async downloadEncrypted(userId: string, filenameOrUrl: string): Promise<Buffer> {
     const filename = this.extractFilename(filenameOrUrl);
     const dataStream = await this.minioClient.getObject(this.bucket, filename);
     const chunks: Buffer[] = [];

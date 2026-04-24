@@ -1,18 +1,12 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
+import { Request, Response } from "express";
 
 import {
   BusinessException,
   ValidationException,
   NotFoundException,
   ForbiddenException,
-} from '../exceptions';
+} from "../exceptions";
 
 interface JsonApiErrorSource {
   pointer?: string;
@@ -44,7 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private readonly isProduction: boolean;
 
   constructor() {
-    this.isProduction = process.env.NODE_ENV === 'production';
+    this.isProduction = process.env.NODE_ENV === "production";
   }
 
   catch(exception: HttpException, host: ArgumentsHost): void {
@@ -65,7 +59,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapExceptionToErrors(
     exception: HttpException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     if (exception instanceof ValidationException) {
       return this.mapValidationException(exception, requestId, timestamp);
@@ -89,7 +83,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapValidationException(
     exception: ValidationException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     return exception.errors.map((error) => {
       const meta: JsonApiErrorMeta = { timestamp };
@@ -103,7 +97,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       return {
         status: String(HttpStatus.UNPROCESSABLE_ENTITY),
         code: String(exception.code),
-        title: 'Unprocessable Entity',
+        title: "Unprocessable Entity",
         detail: error.message,
         source: { pointer: `/data/attributes/${error.field}` },
         meta,
@@ -114,7 +108,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapBusinessException(
     exception: BusinessException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     const meta: JsonApiErrorMeta = { timestamp };
     if (requestId) {
@@ -141,7 +135,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapNotFoundException(
     exception: NotFoundException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     const meta: JsonApiErrorMeta = { timestamp };
     if (requestId) {
@@ -154,8 +148,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return [
       {
         status: String(HttpStatus.NOT_FOUND),
-        code: 'RESOURCE_NOT_FOUND',
-        title: 'Not Found',
+        code: "RESOURCE_NOT_FOUND",
+        title: "Not Found",
         detail: exception.message,
         meta,
       },
@@ -165,7 +159,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapForbiddenException(
     exception: ForbiddenException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     const meta: JsonApiErrorMeta = { timestamp };
     if (requestId) {
@@ -178,8 +172,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return [
       {
         status: String(HttpStatus.FORBIDDEN),
-        code: 'FORBIDDEN',
-        title: 'Forbidden',
+        code: "FORBIDDEN",
+        title: "Forbidden",
         detail: exception.message,
         meta,
       },
@@ -189,7 +183,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private mapGenericHttpException(
     exception: HttpException,
     requestId: string | undefined,
-    timestamp: string,
+    timestamp: string
   ): JsonApiError[] {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
@@ -202,7 +196,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       meta.stack = exception.stack;
     }
 
-    if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+    if (typeof exceptionResponse === "object" && exceptionResponse !== null) {
       const responseObj = exceptionResponse as Record<string, unknown>;
 
       if (Array.isArray(responseObj.message)) {
@@ -212,7 +206,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
           return {
             status: String(status),
-            code: 'VALIDATION_ERROR',
+            code: "VALIDATION_ERROR",
             title: this.getStatusTitle(status),
             detail: msg,
             source: pointer ? { pointer } : undefined,
@@ -236,21 +230,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private getRequestId(request: Request): string | undefined {
-    return (request as Request & { requestId?: string }).requestId
-      || (request.headers['x-request-id'] as string | undefined);
+    return (
+      (request as Request & { requestId?: string }).requestId ||
+      (request.headers["x-request-id"] as string | undefined)
+    );
   }
 
-  private extractDetail(
-    exceptionResponse: string | object,
-    fallback: string,
-  ): string {
-    if (typeof exceptionResponse === 'string') {
+  private extractDetail(exceptionResponse: string | object, fallback: string): string {
+    if (typeof exceptionResponse === "string") {
       return exceptionResponse;
     }
 
-    if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+    if (typeof exceptionResponse === "object" && exceptionResponse !== null) {
       const responseObj = exceptionResponse as Record<string, unknown>;
-      if (typeof responseObj.message === 'string') {
+      if (typeof responseObj.message === "string") {
         return responseObj.message;
       }
     }
@@ -260,39 +253,39 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private getStatusTitle(status: number): string {
     const titles: Record<number, string> = {
-      [HttpStatus.BAD_REQUEST]: 'Bad Request',
-      [HttpStatus.UNAUTHORIZED]: 'Unauthorized',
-      [HttpStatus.FORBIDDEN]: 'Forbidden',
-      [HttpStatus.NOT_FOUND]: 'Not Found',
-      [HttpStatus.METHOD_NOT_ALLOWED]: 'Method Not Allowed',
-      [HttpStatus.CONFLICT]: 'Conflict',
-      [HttpStatus.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
-      [HttpStatus.TOO_MANY_REQUESTS]: 'Too Many Requests',
-      [HttpStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
-      [HttpStatus.BAD_GATEWAY]: 'Bad Gateway',
-      [HttpStatus.SERVICE_UNAVAILABLE]: 'Service Unavailable',
-      [HttpStatus.GATEWAY_TIMEOUT]: 'Gateway Timeout',
+      [HttpStatus.BAD_REQUEST]: "Bad Request",
+      [HttpStatus.UNAUTHORIZED]: "Unauthorized",
+      [HttpStatus.FORBIDDEN]: "Forbidden",
+      [HttpStatus.NOT_FOUND]: "Not Found",
+      [HttpStatus.METHOD_NOT_ALLOWED]: "Method Not Allowed",
+      [HttpStatus.CONFLICT]: "Conflict",
+      [HttpStatus.UNPROCESSABLE_ENTITY]: "Unprocessable Entity",
+      [HttpStatus.TOO_MANY_REQUESTS]: "Too Many Requests",
+      [HttpStatus.INTERNAL_SERVER_ERROR]: "Internal Server Error",
+      [HttpStatus.BAD_GATEWAY]: "Bad Gateway",
+      [HttpStatus.SERVICE_UNAVAILABLE]: "Service Unavailable",
+      [HttpStatus.GATEWAY_TIMEOUT]: "Gateway Timeout",
     };
 
-    return titles[status] || 'Error';
+    return titles[status] || "Error";
   }
 
   private getErrorCode(status: number): string {
     const codes: Record<number, string> = {
-      [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
-      [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
-      [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
-      [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
-      [HttpStatus.METHOD_NOT_ALLOWED]: 'METHOD_NOT_ALLOWED',
-      [HttpStatus.CONFLICT]: 'CONFLICT',
-      [HttpStatus.UNPROCESSABLE_ENTITY]: 'VALIDATION_ERROR',
-      [HttpStatus.TOO_MANY_REQUESTS]: 'RATE_LIMITED',
-      [HttpStatus.INTERNAL_SERVER_ERROR]: 'INTERNAL_ERROR',
-      [HttpStatus.BAD_GATEWAY]: 'BAD_GATEWAY',
-      [HttpStatus.SERVICE_UNAVAILABLE]: 'SERVICE_UNAVAILABLE',
-      [HttpStatus.GATEWAY_TIMEOUT]: 'GATEWAY_TIMEOUT',
+      [HttpStatus.BAD_REQUEST]: "BAD_REQUEST",
+      [HttpStatus.UNAUTHORIZED]: "UNAUTHORIZED",
+      [HttpStatus.FORBIDDEN]: "FORBIDDEN",
+      [HttpStatus.NOT_FOUND]: "NOT_FOUND",
+      [HttpStatus.METHOD_NOT_ALLOWED]: "METHOD_NOT_ALLOWED",
+      [HttpStatus.CONFLICT]: "CONFLICT",
+      [HttpStatus.UNPROCESSABLE_ENTITY]: "VALIDATION_ERROR",
+      [HttpStatus.TOO_MANY_REQUESTS]: "RATE_LIMITED",
+      [HttpStatus.INTERNAL_SERVER_ERROR]: "INTERNAL_ERROR",
+      [HttpStatus.BAD_GATEWAY]: "BAD_GATEWAY",
+      [HttpStatus.SERVICE_UNAVAILABLE]: "SERVICE_UNAVAILABLE",
+      [HttpStatus.GATEWAY_TIMEOUT]: "GATEWAY_TIMEOUT",
     };
 
-    return codes[status] || 'ERROR';
+    return codes[status] || "ERROR";
   }
 }

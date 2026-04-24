@@ -1,11 +1,11 @@
-import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
+import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import Redis from "ioredis";
 
-import { REDIS_CLIENT } from '../../../common/redis/redis.service';
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 
-const CHANNEL_PREFIX = 'ws:event:';
+const CHANNEL_PREFIX = "ws:event:";
 
 export interface EventEnvelope {
   type: string;
@@ -22,20 +22,20 @@ export class EventBusService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject(REDIS_CLIENT) private redis: Redis,
     private configService: ConfigService,
-    private eventEmitter: EventEmitter2,
+    private eventEmitter: EventEmitter2
   ) {}
 
   async onModuleInit() {
-    const redisUrl = this.configService.get<string>('REDIS_URL', 'redis://localhost:6379');
+    const redisUrl = this.configService.get<string>("REDIS_URL", "redis://localhost:6379");
     this.subscriber = new Redis(redisUrl);
 
     await this.subscriber.psubscribe(`${CHANNEL_PREFIX}*`);
 
-    this.subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
+    this.subscriber.on("pmessage", (_pattern: string, channel: string, message: string) => {
       this.handleRedisMessage(channel, message);
     });
 
-    this.logger.log('EventBus initialized with Redis pub/sub');
+    this.logger.log("EventBus initialized with Redis pub/sub");
   }
 
   async onModuleDestroy() {
@@ -43,10 +43,14 @@ export class EventBusService implements OnModuleInit, OnModuleDestroy {
       await this.subscriber.quit();
       this.subscriber = null;
     }
-    this.logger.log('EventBus destroyed');
+    this.logger.log("EventBus destroyed");
   }
 
-  async publish(eventType: string, userId: string, payload: Record<string, unknown>): Promise<void> {
+  async publish(
+    eventType: string,
+    userId: string,
+    payload: Record<string, unknown>
+  ): Promise<void> {
     const envelope: EventEnvelope = {
       type: eventType,
       userId,
@@ -71,7 +75,7 @@ export class EventBusService implements OnModuleInit, OnModuleDestroy {
       const envelope: EventEnvelope = JSON.parse(message);
       this.eventEmitter.emit(envelope.type, envelope);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to handle Redis message on ${channel}: ${errorMessage}`);
     }
   }

@@ -13,10 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 import { useBloggerStore } from "../stores/bloggerStore";
 import type { TrendMetric } from "../../../services/api/blogger.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -285,7 +282,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
@@ -320,7 +317,7 @@ const styles = StyleSheet.create({
   metricValue: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   metricLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -328,8 +325,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: 4 },
-  metricUp: { color: "colors.success" },
-  metricDown: { color: "colors.error" },
+  metricUp: { color: colors.success },
+  metricDown: { color: colors.error },
   loader: { paddingVertical: 24 },
   noData: {
     fontSize: DesignTokens.typography.sizes.base,

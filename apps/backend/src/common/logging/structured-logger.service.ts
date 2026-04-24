@@ -107,7 +107,7 @@ export class StructuredLoggerService implements LoggerService {
 
   constructor(
     private readonly configService: ConfigService,
-    asyncLocalStorage?: AsyncLocalStorage<RequestContext>,
+    asyncLocalStorage?: AsyncLocalStorage<RequestContext>
   ) {
     this.asyncLocalStorage = asyncLocalStorage || new AsyncLocalStorage<RequestContext>();
     this.isProduction = this.configService.get<string>("NODE_ENV") === "production";
@@ -138,7 +138,7 @@ export class StructuredLoggerService implements LoggerService {
     message: string,
     context: string,
     data?: Record<string, unknown>,
-    stack?: string,
+    stack?: string
   ): StructuredLogEntry {
     const requestContext = this.getRequestContext();
 
@@ -292,8 +292,14 @@ export class StructuredLoggerService implements LoggerService {
    */
   debug(message: string, context?: string, data?: Record<string, unknown>): void;
   debug(message: string, data?: Record<string, unknown>): void;
-  debug(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("debug")) {return;}
+  debug(
+    message: string,
+    contextOrData?: string | Record<string, unknown>,
+    data?: Record<string, unknown>
+  ): void {
+    if (!this.shouldLog("debug")) {
+      return;
+    }
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("debug", message, context, logData);
@@ -306,8 +312,14 @@ export class StructuredLoggerService implements LoggerService {
    */
   log(message: string, context?: string, data?: Record<string, unknown>): void;
   log(message: string, data?: Record<string, unknown>): void;
-  log(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("info")) {return;}
+  log(
+    message: string,
+    contextOrData?: string | Record<string, unknown>,
+    data?: Record<string, unknown>
+  ): void {
+    if (!this.shouldLog("info")) {
+      return;
+    }
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("info", message, context, logData);
@@ -320,8 +332,14 @@ export class StructuredLoggerService implements LoggerService {
    */
   warn(message: string, context?: string, data?: Record<string, unknown>): void;
   warn(message: string, data?: Record<string, unknown>): void;
-  warn(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("warn")) {return;}
+  warn(
+    message: string,
+    contextOrData?: string | Record<string, unknown>,
+    data?: Record<string, unknown>
+  ): void {
+    if (!this.shouldLog("warn")) {
+      return;
+    }
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("warn", message, context, logData);
@@ -333,8 +351,15 @@ export class StructuredLoggerService implements LoggerService {
    */
   error(message: string, trace?: string, context?: string, data?: Record<string, unknown>): void;
   error(message: string, data?: Record<string, unknown>): void;
-  error(message: string, traceOrData?: string | Record<string, unknown>, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("error")) {return;}
+  error(
+    message: string,
+    traceOrData?: string | Record<string, unknown>,
+    contextOrData?: string | Record<string, unknown>,
+    data?: Record<string, unknown>
+  ): void {
+    if (!this.shouldLog("error")) {
+      return;
+    }
 
     let trace: string | undefined;
     let context: string | undefined;
@@ -362,7 +387,7 @@ export class StructuredLoggerService implements LoggerService {
    */
   private parseArguments(
     contextOrData?: string | Record<string, unknown>,
-    data?: Record<string, unknown>,
+    data?: Record<string, unknown>
   ): { context: string; data?: Record<string, unknown> } {
     if (typeof contextOrData === "string") {
       return {
@@ -396,10 +421,7 @@ export class StructuredLoggerService implements LoggerService {
  * 带上下文的日志器
  */
 export class ContextualLogger {
-  constructor(
-    private readonly logger: StructuredLoggerService,
-    private readonly context: string,
-  ) {}
+  constructor(private readonly logger: StructuredLoggerService, private readonly context: string) {}
 
   debug(message: string, data?: Record<string, unknown>): void {
     this.logger.debug(message, this.context, data);

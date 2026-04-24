@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { Spacing, BorderRadius } from "../../../design-system/theme";
-import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
+import { SpringConfigs } from "../../../design-system/theme/tokens/animations";
 import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -40,7 +40,9 @@ function StageOneAnimation() {
   const hipGlow = useSharedValue(0);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      return;
+    }
 
     outlineOpacity.value = withTiming(1, { duration: 500 });
 
@@ -153,7 +155,9 @@ function StageTwoAnimation() {
   const shoesOpacity = useSharedValue(reducedMotion ? 1 : 0);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      return;
+    }
 
     topOpacity.value = withDelay(0, withTiming(1, { duration: 200 }));
     topX.value = withDelay(0, withSpring(0, SpringConfigs.bouncy));

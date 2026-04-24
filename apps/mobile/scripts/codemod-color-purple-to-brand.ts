@@ -33,31 +33,43 @@ const COLOR_MAP: Record<string, string> = {
   "#a78bfa": "DesignTokens.colors.brand.terracotta",
 };
 
-const RGBA_MAP: Array<{ pattern: RegExp; replacement: string }> = [
-  { pattern: /rgba\(\s*168\s*,\s*85\s*,\s*247\s*,\s*([\d.]+)\s*\)/g, replacement: "rgba(198, 123, 92, $1)" },
-  { pattern: /rgba\(\s*108\s*,\s*92\s*,\s*231\s*,\s*([\d.]+)\s*\)/g, replacement: "rgba(198, 123, 92, $1)" },
-  { pattern: /rgba\(\s*139\s*,\s*92\s*,\s*246\s*,\s*([\d.]+)\s*\)/g, replacement: "rgba(168, 101, 72, $1)" },
-  { pattern: /rgba\(\s*236\s*,\s*72\s*,\s*153\s*,\s*([\d.]+)\s*\)/g, replacement: "rgba(181, 160, 140, $1)" },
+const RGBA_MAP: { pattern: RegExp; replacement: string }[] = [
+  {
+    pattern: /rgba\(\s*168\s*,\s*85\s*,\s*247\s*,\s*([\d.]+)\s*\)/g,
+    replacement: "rgba(198, 123, 92, $1)",
+  },
+  {
+    pattern: /rgba\(\s*108\s*,\s*92\s*,\s*231\s*,\s*([\d.]+)\s*\)/g,
+    replacement: "rgba(198, 123, 92, $1)",
+  },
+  {
+    pattern: /rgba\(\s*139\s*,\s*92\s*,\s*246\s*,\s*([\d.]+)\s*\)/g,
+    replacement: "rgba(168, 101, 72, $1)",
+  },
+  {
+    pattern: /rgba\(\s*236\s*,\s*72\s*,\s*153\s*,\s*([\d.]+)\s*\)/g,
+    replacement: "rgba(181, 160, 140, $1)",
+  },
 ];
 
-const DESIGN_TOKENS_IMPORT = "import { DesignTokens } from \"../../design-system/theme/tokens/design-tokens\";";
-const DESIGN_TOKENS_IMPORT_ALT = "import { DesignTokens } from \"../design-system/theme/tokens/design-tokens\";";
-const DESIGN_TOKENS_IMPORT_ALT2 = "import { DesignTokens } from \"../../../design-system/theme/tokens/design-tokens\";";
-
 function shouldExclude(filePath: string): boolean {
-  return EXCLUDE_DIRS.some(dir => filePath.includes(dir));
+  return EXCLUDE_DIRS.some((dir) => filePath.includes(dir));
 }
 
 function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
   const results: string[] = [];
-  if (!fs.existsSync(dir)) return results;
+  if (!fs.existsSync(dir)) {
+    return results;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (shouldExclude(fullPath)) continue;
+    if (shouldExclude(fullPath)) {
+      continue;
+    }
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
-    } else if (ext.some(e => entry.name.endsWith(e))) {
+    } else if (ext.some((e) => entry.name.endsWith(e))) {
       results.push(fullPath);
     }
   }
@@ -69,7 +81,10 @@ function needsDesignTokensImport(content: string): boolean {
 }
 
 function getImportPath(filePath: string): string {
-  const rel = path.relative(path.dirname(filePath), path.join(SRC_DIR, "design-system", "theme", "tokens", "design-tokens.ts"));
+  const rel = path.relative(
+    path.dirname(filePath),
+    path.join(SRC_DIR, "design-system", "theme", "tokens", "design-tokens.ts")
+  );
   const normalized = rel.replace(/\\/g, "/").replace(/\.ts$/, "");
   return `import { DesignTokens } from "${normalized}";`;
 }

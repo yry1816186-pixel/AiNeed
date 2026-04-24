@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRecommendationFeedStore } from "../../features/home/stores/recommendationFeedStore";
 import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
 import type { FeedItem, FeedResult } from "../../services/api/recommendation-feed.api";

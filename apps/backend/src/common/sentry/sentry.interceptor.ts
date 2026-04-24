@@ -47,7 +47,7 @@ export class SentryInterceptor implements NestInterceptor {
             span.end();
           }
         },
-      }),
+      })
     );
   }
 }

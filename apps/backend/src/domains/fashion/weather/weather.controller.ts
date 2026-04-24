@@ -18,10 +18,7 @@ export class WeatherController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiQuery({ name: "lat", required: true, description: "纬度", type: Number })
   @ApiQuery({ name: "lon", required: true, description: "经度", type: Number })
-  async getWeatherByLocation(
-    @Query("lat") lat: string,
-    @Query("lon") lon: string,
-  ) {
+  async getWeatherByLocation(@Query("lat") lat: string, @Query("lon") lon: string) {
     const latitude = parseFloat(lat);
     const longitude = parseFloat(lon);
 
@@ -46,17 +43,19 @@ export class WeatherController {
   @ApiResponse({ status: 200, description: "成功返回推荐风格" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiQuery({ name: "temperature", required: true, description: "温度（摄氏度）", type: Number })
-  @ApiQuery({ name: "condition", required: true, description: "天气状况，如 晴、阴、雨", type: String })
+  @ApiQuery({
+    name: "condition",
+    required: true,
+    description: "天气状况，如 晴、阴、雨",
+    type: String,
+  })
   async getWeatherStyles(
     @Query("temperature") temp: string,
-    @Query("condition") condition: string,
+    @Query("condition") condition: string
   ) {
     const temperature = parseFloat(temp) || 22;
     return {
-      styles: this.weatherService.getWeatherBasedStyles(
-        temperature,
-        condition || "晴",
-      ),
+      styles: this.weatherService.getWeatherBasedStyles(temperature, condition || "晴"),
     };
   }
 }

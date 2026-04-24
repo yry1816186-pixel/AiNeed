@@ -1,4 +1,9 @@
-export { VaultService, type IVaultClient, type VaultSecret, type KeyRotationEvent } from "./vault/vault.service";
+export {
+  VaultService,
+  type IVaultClient,
+  type VaultSecret,
+  type KeyRotationEvent,
+} from "./vault/vault.service";
 
 export {
   SecurityPIIEncryptionService,
@@ -10,16 +15,9 @@ export { createPrismaEncryptionMiddleware } from "./encryption/prisma-encryption
 
 export { ContentFilterService } from "./content-filter/content-filter.service";
 
-export {
-  AiQuotaService,
-  type QuotaType,
-} from "./rate-limit/ai-quota.service";
+export { AiQuotaService, type QuotaType } from "./rate-limit/ai-quota.service";
 
-export {
-  AiQuotaGuard,
-  SetQuotaType,
-  QUOTA_TYPE_KEY,
-} from "./rate-limit/ai-quota.guard";
+export { AiQuotaGuard, SetQuotaType, QUOTA_TYPE_KEY } from "./rate-limit/ai-quota.guard";
 
 export {
   AiCircuitBreakerService,

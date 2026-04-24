@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Pressable } from "react-native";
+import { View, Text, Dimensions, Platform, StatusBar, Pressable } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 import {
@@ -22,15 +23,14 @@ import {
   FloatingElement,
   GlowText,
   MagneticButton,
-} from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
+} from "../../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 
 export interface SplashScreenProps {
   onFinish: () => void;
@@ -100,9 +100,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
     <View style={styles.splashContainer}>
       <LinearGradient
         colors={[
-          "colors.textPrimary",
-          "DesignTokens.colors.brand.slateDark",
-          "DesignTokens.colors.brand.slateDark",
+          colors.textPrimary,
+          DesignTokens.colors.brand.slateDark,
+          DesignTokens.colors.brand.slateDark,
           DesignTokens.colors.neutral[800],
         ]}
         locations={[0, 0.3, 0.7, 1]}
@@ -168,7 +168,7 @@ const ONBOARDING_DATA = [
     title: "虚拟试穿",
     subtitle: "AI虚拟试穿，足不出户体验万千穿搭",
     icon: "👗",
-    gradient: ["colors.warning", "colors.warning"],
+    gradient: [colors.warning, colors.warning],
   },
 ];
 
@@ -228,9 +228,9 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
     <View style={styles.onboardingContainer}>
       <LinearGradient
         colors={[
-          "colors.textPrimary",
-          "DesignTokens.colors.brand.slateDark",
-          "DesignTokens.colors.brand.slateDark",
+          colors.textPrimary,
+          DesignTokens.colors.brand.slateDark,
+          DesignTokens.colors.brand.slateDark,
         ]}
         style={styles.onboardingGradient}
       >
@@ -486,7 +486,7 @@ const ANALYSIS_CONFIG = {
     title: "虚拟试穿中",
     steps: ["处理人物图像", "分析服装属性", "生成试穿效果", "优化细节"],
     icon: "👗",
-    gradient: ["colors.warning", "colors.warning"],
+    gradient: [colors.warning, colors.warning],
   },
 };
 
@@ -631,9 +631,9 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
     <View style={styles.analysisContainer}>
       <LinearGradient
         colors={[
-          "colors.textPrimary",
-          "DesignTokens.colors.brand.slateDark",
-          "DesignTokens.colors.brand.slateDark",
+          colors.textPrimary,
+          DesignTokens.colors.brand.slateDark,
+          DesignTokens.colors.brand.slateDark,
         ]}
         style={styles.analysisGradient}
       >
@@ -734,9 +734,9 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
     <View style={styles.resultContainer}>
       <LinearGradient
         colors={[
-          "colors.textPrimary",
-          "DesignTokens.colors.brand.slateDark",
-          "DesignTokens.colors.brand.slateDark",
+          colors.textPrimary,
+          DesignTokens.colors.brand.slateDark,
+          DesignTokens.colors.brand.slateDark,
         ]}
         style={styles.resultGradient}
       >
@@ -913,7 +913,7 @@ const useStyles = createStyles((colors) => ({
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: "colors.textPrimary", // custom color
+    backgroundColor: colors.textPrimary, // custom color
   },
   cameraHeader: {
     flexDirection: "row",

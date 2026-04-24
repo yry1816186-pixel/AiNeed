@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { useQuizStore } from "../../features/style-quiz/stores/quizStore";
 import apiClient from "../../services/api/client";
 

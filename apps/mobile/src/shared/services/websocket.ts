@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { mobileRuntimeConfig } from '../../config/runtime';
+import { mobileRuntimeConfig } from "../../config/runtime";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
 import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../../types/chat";
 
@@ -42,7 +42,7 @@ class WebSocketService {
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch (error) {
-      console.error('WebSocket operation failed:', error);
+      console.error("WebSocket operation failed:", error);
       return;
     }
 
@@ -133,7 +133,7 @@ class WebSocketService {
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch (error) {
-      console.error('WebSocket operation failed:', error);
+      console.error("WebSocket operation failed:", error);
       return;
     }
     if (!token) {

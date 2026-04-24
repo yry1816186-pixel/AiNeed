@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await, react/display-name */
 // @ts-nocheck
 import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";

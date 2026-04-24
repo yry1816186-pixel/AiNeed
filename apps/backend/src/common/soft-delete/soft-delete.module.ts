@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { SoftDeleteService } from './soft-delete.service';
+import { SoftDeleteService } from "./soft-delete.service";
 
 @Module({
   providers: [SoftDeleteService],

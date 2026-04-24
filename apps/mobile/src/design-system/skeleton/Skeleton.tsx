@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
 import { View, StyleSheet, DimensionValue, ViewStyle } from "react-native";
 import {
@@ -152,7 +153,7 @@ export function SkeletonText({
   style?: ViewStyle;
 }) {
   const { colors } = useTheme();
-  const styles = useStyles(colors);
+
   return (
     <View style={style}>
       {Array.from({ length: lines }).map((_, index) => (

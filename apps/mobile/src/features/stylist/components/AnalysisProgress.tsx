@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {

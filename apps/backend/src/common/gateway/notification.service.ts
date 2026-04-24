@@ -7,11 +7,7 @@ import type { NotificationPayload } from "./notification.gateway";
 export class NotificationService {
   constructor(private notificationGateway: NotificationGateway) {}
 
-  async notifyTryOnComplete(
-    userId: string,
-    tryOnId: string,
-    resultImageUrl: string,
-  ) {
+  async notifyTryOnComplete(userId: string, tryOnId: string, resultImageUrl: string) {
     return this.notificationGateway.sendNotification(userId, {
       type: "try_on_complete",
       title: "试穿完成",
@@ -20,12 +16,7 @@ export class NotificationService {
     });
   }
 
-  async notifyTryOnProgress(
-    userId: string,
-    tryOnId: string,
-    progress: number,
-    stage: string,
-  ) {
+  async notifyTryOnProgress(userId: string, tryOnId: string, progress: number, stage: string) {
     return this.notificationGateway.sendNotification(userId, {
       type: "try_on_progress",
       title: "试衣进度更新",
@@ -43,12 +34,7 @@ export class NotificationService {
     });
   }
 
-  async notifyPriceDrop(
-    userId: string,
-    itemName: string,
-    originalPrice: number,
-    newPrice: number,
-  ) {
+  async notifyPriceDrop(userId: string, itemName: string, originalPrice: number, newPrice: number) {
     const discount = Math.round((1 - newPrice / originalPrice) * 100);
     return this.notificationGateway.sendNotification(userId, {
       type: "price_drop",
@@ -62,7 +48,7 @@ export class NotificationService {
     userId: string,
     requestId: string,
     status: string,
-    message: string,
+    message: string
   ) {
     return this.notificationGateway.sendNotification(userId, {
       type: "customization_update",
@@ -75,7 +61,7 @@ export class NotificationService {
   async notifySubscriptionUpdate(
     userId: string,
     type: "expired" | "renewed" | "upgraded" | "downgraded",
-    planName: string,
+    planName: string
   ) {
     const messages = {
       expired: `您的 ${planName} 会员已到期`,
@@ -91,12 +77,7 @@ export class NotificationService {
     });
   }
 
-  async notifyOrderUpdate(
-    userId: string,
-    orderNo: string,
-    status: string,
-    message: string,
-  ) {
+  async notifyOrderUpdate(userId: string, orderNo: string, status: string, message: string) {
     return this.notificationGateway.sendNotification(userId, {
       type: "order",
       title: "订单状态更新",
@@ -109,7 +90,7 @@ export class NotificationService {
     userId: string,
     type: "follow" | "like" | "comment",
     fromUserName: string,
-    content?: string,
+    content?: string
   ) {
     const messages = {
       follow: `${fromUserName} 关注了你`,
@@ -128,7 +109,7 @@ export class NotificationService {
     userId: string,
     title: string,
     message: string,
-    data?: Record<string, unknown>,
+    data?: Record<string, unknown>
   ) {
     return this.notificationGateway.sendNotification(userId, {
       type: "system",
@@ -138,10 +119,7 @@ export class NotificationService {
     });
   }
 
-  async sendCustomNotification(
-    userId: string,
-    notification: NotificationPayload,
-  ) {
+  async sendCustomNotification(userId: string, notification: NotificationPayload) {
     return this.notificationGateway.sendNotification(userId, notification);
   }
 

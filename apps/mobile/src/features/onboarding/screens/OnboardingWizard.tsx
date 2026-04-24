@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +20,7 @@ import {
   DesignTokens,
   flatColors as colors,
 } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { useOnboardingStore } from "../stores/onboardingStore";
 import type { OnboardingStep } from "../stores/onboardingStore";
 import { onboardingService } from "../services/onboardingService";
@@ -78,13 +79,13 @@ export const OnboardingWizard: React.FC = () => {
 
   const canProceed = useCallback((): boolean => {
     if (currentStep === "basicInfo") {
-      return formData.gender !== null && formData.ageRange !== null;
+      return formData.ageRange !== null;
     }
     if (currentStep === "styleTest") {
       return formData.styleAnswers.length === 3 && formData.styleAnswers.every(Boolean);
     }
     return true;
-  }, [currentStep, formData.gender, formData.ageRange, formData.styleAnswers]);
+  }, [currentStep, formData.ageRange, formData.styleAnswers]);
 
   const handleNext = useCallback(() => {
     if (!canProceed()) {

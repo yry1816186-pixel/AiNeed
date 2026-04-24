@@ -34,7 +34,6 @@ import { Request, Response } from "express";
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 
-
 import { StructuredLoggerService, RequestContext } from "./structured-logger.service";
 
 /**
@@ -59,7 +58,7 @@ export class RequestIdInterceptor implements NestInterceptor {
     @Optional()
     @Inject("ASYNC_LOCAL_STORAGE")
     private readonly asyncLocalStorage: AsyncLocalStorage<RequestContext>,
-    private readonly logger: StructuredLoggerService,
+    private readonly logger: StructuredLoggerService
   ) {
     // 如果没有注入AsyncLocalStorage，使用logger的实例
     if (!this.asyncLocalStorage) {
@@ -107,11 +106,14 @@ export class RequestIdInterceptor implements NestInterceptor {
           userAgent: request.headers["user-agent"]?.substring(0, 100),
         });
 
-        next.handle()
+        next
+          .handle()
           .pipe(
             tap({
               next: (data) => {
-                const duration = Date.now() - ((request as unknown as Record<symbol, number>)[REQUEST_START_TIME] || 0);
+                const duration =
+                  Date.now() -
+                  ((request as unknown as Record<symbol, number>)[REQUEST_START_TIME] || 0);
 
                 // 记录请求完成日志
                 this.logger.log("请求完成", "HttpRequest", {
@@ -125,7 +127,9 @@ export class RequestIdInterceptor implements NestInterceptor {
                 subscriber.complete();
               },
               error: (error) => {
-                const duration = Date.now() - ((request as unknown as Record<symbol, number>)[REQUEST_START_TIME] || 0);
+                const duration =
+                  Date.now() -
+                  ((request as unknown as Record<symbol, number>)[REQUEST_START_TIME] || 0);
 
                 // 记录请求错误日志
                 this.logger.error("请求失败", error.stack, "HttpRequest", {
@@ -138,7 +142,7 @@ export class RequestIdInterceptor implements NestInterceptor {
 
                 subscriber.error(error);
               },
-            }),
+            })
           )
           .subscribe();
       });

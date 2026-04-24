@@ -2,9 +2,9 @@
  * Exclude CSRF Decorator
  * Marks routes or controllers to be excluded from CSRF protection
  */
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from "@nestjs/common";
 
-export const EXCLUDE_CSRF_KEY = 'excludeCsrf';
+export const EXCLUDE_CSRF_KEY = "excludeCsrf";
 
 /**
  * Decorator to exclude a route or controller from CSRF protection

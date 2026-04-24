@@ -27,7 +27,7 @@ export class UserKeyService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     const key = this.configService.get<string>("ENCRYPTION_KEY");
     if (!key) {
@@ -148,7 +148,7 @@ export class UserKeyService {
       Buffer.from(salt, "hex"),
       PBKDF2_ITERATIONS,
       DEK_LENGTH,
-      "sha256",
+      "sha256"
     );
   }
 
@@ -183,11 +183,7 @@ export class UserKeyService {
     encrypted += cipher.final("hex");
     const authTag = cipher.getAuthTag();
 
-    const result = Buffer.concat([
-      iv,
-      authTag,
-      Buffer.from(encrypted, "hex"),
-    ]);
+    const result = Buffer.concat([iv, authTag, Buffer.from(encrypted, "hex")]);
 
     return `enc:${result.toString("base64")}`;
   }
@@ -211,12 +207,7 @@ export class UserKeyService {
     const encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
     const authTag = cipher.getAuthTag();
 
-    return Buffer.concat([
-      Buffer.from("ENC1", "ascii"),
-      iv,
-      authTag,
-      encrypted,
-    ]);
+    return Buffer.concat([Buffer.from("ENC1", "ascii"), iv, authTag, encrypted]);
   }
 
   private decryptBufferWithDek(dek: Buffer, encryptedBuffer: Buffer): Buffer {

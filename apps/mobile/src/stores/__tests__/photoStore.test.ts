@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { usePhotoStore } from "../../features/tryon/stores/photoStore";
 import { photosApi } from "../../services/api/photos.api";
 import apiClient from "../../services/api/client";

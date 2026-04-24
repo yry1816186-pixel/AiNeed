@@ -68,3 +68,51 @@ class BM25Retriever:
                 scores.append({"doc_id": doc.doc_id, "score": score, "content": doc.content, "metadata": doc.metadata})
         scores.sort(key=lambda x: x["score"], reverse=True)
         return scores[:top_k]
+
+    def add_documents(self, documents: List[Dict[str, Any]]):
+        bm25_docs = [
+            BM25Document(
+                doc_id=doc.get("id", ""),
+                content=doc.get("content", ""),
+                metadata={k: v for k, v in doc.items() if k not in ("id", "content")},
+            )
+            for doc in documents
+        ]
+        self.index(bm25_docs)
+
+    def save(self, path: str):
+        import pickle
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        data = {
+            "documents": [
+                {"doc_id": d.doc_id, "content": d.content, "metadata": d.metadata}
+                for d in self._documents
+            ],
+            "doc_freq": dict(self._doc_freq),
+            "avg_dl": self._avg_dl,
+            "config": {"k1": self.config.k1, "b": self.config.b},
+        }
+        with open(path, "wb") as f:
+            pickle.dump(data, f)
+        logger.info(f"BM25 index saved to {path}")
+
+    def load(self, path: str):
+        import pickle
+        with open(path, "rb") as f:
+            data = pickle.load(f)
+        self._documents = [
+            BM25Document(doc_id=d["doc_id"], content=d["content"], metadata=d.get("metadata", {}))
+            for d in data["documents"]
+        ]
+        self._doc_freq = Counter(data["doc_freq"])
+        self._avg_dl = data["avg_dl"]
+        for doc in self._documents:
+            self._tokenized[doc.doc_id] = self._tokenize(doc.content)
+        logger.info(f"BM25 index loaded from {path} ({len(self._documents)} docs)")
+
+    def get_stats(self) -> Dict[str, Any]:
+        return {
+            "total_documents": len(self._documents),
+            "avg_document_length": round(self._avg_dl, 1),
+            "vocabulary_size": len(self._doc_freq),
+        }

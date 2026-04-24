@@ -14,7 +14,10 @@ declare module "canvas" {
   }
 
   export function createCanvas(width: number, height: number): Canvas;
-  export function registerFont(src: string, fontFace: { family: string; weight?: string; style?: string }): void;
+  export function registerFont(
+    src: string,
+    fontFace: { family: string; weight?: string; style?: string }
+  ): void;
 
   export interface CanvasRenderingContext2D {
     fillStyle: string | CanvasGradient | CanvasPattern;
@@ -31,7 +34,14 @@ declare module "canvas" {
     closePath(): void;
     moveTo(x: number, y: number): void;
     lineTo(x: number, y: number): void;
-    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean): void;
+    arc(
+      x: number,
+      y: number,
+      radius: number,
+      startAngle: number,
+      endAngle: number,
+      counterclockwise?: boolean
+    ): void;
     arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
     rect(x: number, y: number, width: number, height: number): void;
     fill(): void;
@@ -44,7 +54,14 @@ declare module "canvas" {
     rotate(angle: number): void;
     translate(x: number, y: number): void;
     createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
-    createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;
+    createRadialGradient(
+      x0: number,
+      y0: number,
+      r0: number,
+      x1: number,
+      y1: number,
+      r1: number
+    ): CanvasGradient;
   }
 
   export interface TextMetrics {

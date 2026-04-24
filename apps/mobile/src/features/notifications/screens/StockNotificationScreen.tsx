@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,

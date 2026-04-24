@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
+import { View, Text, Modal, Pressable, ScrollView } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import type { PresetQuestion } from "../stores/aiStylistStore";
 import { flatColors as colors } from "../../../design-system/theme";

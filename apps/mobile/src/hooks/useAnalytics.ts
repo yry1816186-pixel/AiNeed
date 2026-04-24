@@ -19,8 +19,7 @@ export const AnalyticsEvents = {
   RECOMMENDATION_CLICK: "recommendation_click",
 } as const;
 
-export type AnalyticsEventName =
-  (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents];
+export type AnalyticsEventName = (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents];
 
 interface UseAnalyticsOptions {
   /** 自动在 mount 时发送 screen_view 事件 */
@@ -52,19 +51,13 @@ export function useAnalytics(options?: UseAnalyticsOptions) {
     }
   }, [screenName, screenParams]);
 
-  const track = useCallback(
-    (eventName: string, properties?: Record<string, unknown>) => {
-      analytics.track(eventName, properties);
-    },
-    []
-  );
+  const track = useCallback((eventName: string, properties?: Record<string, unknown>) => {
+    analytics.track(eventName, properties);
+  }, []);
 
-  const trackScreen = useCallback(
-    (name: string, params?: Record<string, unknown>) => {
-      analytics.trackScreen(name, params);
-    },
-    []
-  );
+  const trackScreen = useCallback((name: string, params?: Record<string, unknown>) => {
+    analytics.trackScreen(name, params);
+  }, []);
 
   return { track, trackScreen };
 }

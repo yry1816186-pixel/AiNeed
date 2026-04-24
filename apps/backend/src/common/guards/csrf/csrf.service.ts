@@ -2,17 +2,17 @@
  * CSRF Service
  * Handles CSRF token generation and validation
  */
-import { createHash, randomBytes, timingSafeEqual } from 'crypto';
+import { createHash, randomBytes, timingSafeEqual } from "crypto";
 
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 import {
   CSRF_COOKIE_NAME,
   CSRF_ERROR_MESSAGES,
   CSRF_HEADER_NAME,
   CSRF_SECRET_ENV,
-} from './csrf.constants';
+} from "./csrf.constants";
 
 @Injectable()
 export class CsrfService {
@@ -29,9 +29,9 @@ export class CsrfService {
     const timestamp = Date.now().toString();
     const tokenData = `${sessionId}:${timestamp}`;
 
-    const token = createHash('sha256')
+    const token = createHash("sha256")
       .update(tokenData + this.secret)
-      .digest('hex');
+      .digest("hex");
 
     return `${timestamp}:${token}`;
   }
@@ -44,7 +44,7 @@ export class CsrfService {
       return false;
     }
 
-    const [timestamp, hash] = token.split(':');
+    const [timestamp, hash] = token.split(":");
 
     if (!timestamp || !hash) {
       return false;
@@ -60,9 +60,9 @@ export class CsrfService {
 
     // Regenerate hash and compare (timing-safe to prevent timing attacks)
     const tokenData = `${sessionId}:${timestamp}`;
-    const expectedHash = createHash('sha256')
+    const expectedHash = createHash("sha256")
       .update(tokenData + this.secret)
-      .digest('hex');
+      .digest("hex");
 
     if (hash.length !== expectedHash.length) {
       return false;
@@ -75,7 +75,7 @@ export class CsrfService {
    * Generate a strong random secret
    */
   private generateSecret(): string {
-    return randomBytes(64).toString('hex');
+    return randomBytes(64).toString("hex");
   }
 
   /**

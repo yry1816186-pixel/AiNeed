@@ -12,9 +12,9 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-import { ProfileEventEmitter } from "../../src/domains/identity/profile/services/profile-event-emitter.service";
 import { ColorDerivationEngine } from "../../src/domains/fashion/style-assessment/quiz/services/color-derivation.service";
 import { QuizProgressService } from "../../src/domains/fashion/style-assessment/quiz/services/quiz-progress.service";
+import { ProfileEventEmitter } from "../../src/domains/identity/profile/services/profile-event-emitter.service";
 import {
   createRedisKeyTracker,
   RedisKeyTracker,

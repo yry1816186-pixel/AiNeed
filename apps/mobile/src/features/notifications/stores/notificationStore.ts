@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
 
 import {
@@ -109,7 +110,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         loading: false,
       });
     } catch (error) {
-      set({ error: '获取通知失败', loading: false });
+      set({ error: "获取通知失败", loading: false });
     }
   },
 
@@ -124,7 +125,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAsRead(id);
     } catch (error) {
-      set({ error: '标记已读失败' });
+      set({ error: "标记已读失败" });
     }
   },
 
@@ -141,7 +142,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAllAsRead();
     } catch (error) {
-      set({ error: '全部标记已读失败' });
+      set({ error: "全部标记已读失败" });
     }
   },
 
@@ -160,7 +161,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.deleteNotification(id);
     } catch (error) {
-      set({ error: '删除通知失败' });
+      set({ error: "删除通知失败" });
     }
   },
 
@@ -174,7 +175,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         set({ settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
       }
     } catch (error) {
-      set({ error: '获取通知设置失败', settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
+      set({ error: "获取通知设置失败", settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
     }
   },
 
@@ -187,7 +188,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.updateNotificationSettings(settings);
     } catch (error) {
-      set({ error: '更新通知设置失败', settings: currentSettings });
+      set({ error: "更新通知设置失败", settings: currentSettings });
     }
   },
 

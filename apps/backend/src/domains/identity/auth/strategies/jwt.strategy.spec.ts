@@ -60,7 +60,9 @@ describe("JwtStrategy", () => {
     it("should throw error when JWT_SECRET is not set", async () => {
       const noSecretConfig = {
         get: jest.fn((key: string) => {
-          if (key === "JWT_SECRET") {return undefined;}
+          if (key === "JWT_SECRET") {
+            return undefined;
+          }
           return undefined;
         }),
       };
@@ -72,7 +74,7 @@ describe("JwtStrategy", () => {
             { provide: ConfigService, useValue: noSecretConfig },
             { provide: TokenBlacklistService, useValue: mockTokenBlacklistService },
           ],
-        }).compile(),
+        }).compile()
       ).rejects.toThrow("JWT_SECRET environment variable is required");
     });
 

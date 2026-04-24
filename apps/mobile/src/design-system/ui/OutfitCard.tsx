@@ -1,101 +1,169 @@
-﻿import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import React, { useCallback } from "react";
+import { View, Text, Image, Pressable, Platform, StyleSheet, type ImageStyle } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import Animated, { FadeInUp } from "react-native-reanimated";
-
-// 引入主题令牌
-import {
-  Colors,
-  Typography as ThemeTypography,
-  Spacing as ThemeSpacing,
-  BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-} from "../../design-system/theme";
-
+import { Heart } from "phosphor-react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  FadeInUp,
+} from "react-native-reanimated";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { flatColors as colors } from "../theme";
+import { SpringConfigs } from "../theme/tokens/animations";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
-interface OutfitCardProps {
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export interface OutfitCardProps {
   id: string;
   image: string;
   title: string;
   subtitle?: string;
   tag?: string;
-  tagColor?: string;
+  matchScore?: number;
   price?: number;
   onPress: (id: string) => void;
   onFavorite?: (id: string) => void;
   isFavorite?: boolean;
+  index?: number;
 }
 
-/**
- * OutfitCard - 穿搭推荐卡片
- *
- * 设计特点：
- * - 大图展示 + 圆角设计
- * - 彩色标签系统（热门/推荐/新品）
- * - 收藏按钮（心形图标）
- * - 价格展示（可选）
- * - 入场动画 (FadeInUp)
- * - 季节色彩自适应：标签和高亮使用季节强调色
- */
+// ---------------------------------------------------------------------------
+// OutfitCard
+// ---------------------------------------------------------------------------
+
 export const OutfitCard: React.FC<OutfitCardProps> = ({
   id,
   image,
   title,
   subtitle,
   tag,
-  tagColor,
+  matchScore,
   price,
   onPress,
   onFavorite,
   isFavorite = false,
+  index = 0,
 }) => {
+  const { colors } = useTheme();
   const styles = useStyles(colors);
-  const { seasonAccent } = useTheme();
 
-  // 季节强调色优先，回退到品牌色
-  const accentColor = seasonAccent?.accent ?? colors.primary[500];
-  const resolvedTagColor = tagColor ?? accentColor;
+  // ---- press animation (scale + shadow elevation) ----
+  const pressScale = useSharedValue(1);
+  const pressElevation = useSharedValue(2);
+
+  const handlePressIn = useCallback(() => {
+    pressScale.value = withSpring(0.97, SpringConfigs.snappy);
+    pressElevation.value = withSpring(8, SpringConfigs.snappy);
+  }, [pressScale, pressElevation]);
+
+  const handlePressOut = useCallback(() => {
+    pressScale.value = withSpring(1, SpringConfigs.bouncy);
+    pressElevation.value = withSpring(2, SpringConfigs.bouncy);
+  }, [pressScale, pressElevation]);
+
+  const pressAnimatedStyle = useAnimatedStyle(() => {
+    const shadow = Platform.select({
+      ios: {
+        shadowOpacity: 0.06 + pressElevation.value * 0.012,
+        shadowRadius: pressElevation.value,
+        shadowOffset: { width: 0, height: pressElevation.value * 0.6 },
+      },
+      android: {
+        elevation: pressElevation.value,
+      },
+    });
+    return {
+      transform: [{ scale: pressScale.value }],
+      ...(shadow ?? {}),
+    };
+  });
+
+  // ---- heart bounce animation ----
+  const heartScale = useSharedValue(1);
+
+  const handleFavoritePress = useCallback(() => {
+    onFavorite?.(id);
+    heartScale.value = withSequence(
+      withSpring(1.4, SpringConfigs.bouncy),
+      withSpring(1, SpringConfigs.bouncy)
+    );
+  }, [onFavorite, id, heartScale]);
+
+  const heartAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value }],
+  }));
+
+  // ---- stagger entrance ----
+  const entering = FadeInUp.delay(index * 50)
+    .springify()
+    .damping(12)
+    .stiffness(180);
 
   return (
-    <Animated.View entering={FadeInUp.duration(400).springify()}>
-      <TouchableOpacity style={styles.card} onPress={() => onPress(id)} activeOpacity={0.8}>
-        {/* 图片容器 */}
+    <Animated.View entering={entering} style={pressAnimatedStyle}>
+      <Pressable
+        onPress={() => onPress(id)}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        accessibilityRole="button"
+        accessibilityLabel={title}
+        style={styles.card}
+      >
+        {/* Image with gradient overlay */}
         <View style={styles.imageContainer}>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: image }} style={styles.image as ImageStyle} />
+          <LinearGradient
+            colors={["transparent", "rgba(0, 0, 0, 0.5)"]}
+            start={{ x: 0, y: 0.4 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.gradientOverlay}
+          />
 
-          {/* 标签 - 使用季节强调色 */}
-          {tag && (
-            <LinearGradient
-              colors={[resolvedTagColor, resolvedTagColor]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[styles.tag]}
-            >
-              <Text style={styles.tagText}>{tag}</Text>
-            </LinearGradient>
+          {/* Match score badge */}
+          {matchScore !== undefined && (
+            <View style={styles.matchBadge}>
+              <Text style={styles.matchBadgeText}>{matchScore}%</Text>
+            </View>
           )}
 
-          {/* 收藏按钮 */}
+          {/* Tag pill */}
+          {tag && (
+            <View style={styles.tagPill}>
+              <Text style={styles.tagText} numberOfLines={1}>
+                {tag}
+              </Text>
+            </View>
+          )}
+
+          {/* Favorite button */}
           {onFavorite && (
-            <TouchableOpacity
+            <Pressable
+              onPress={handleFavoritePress}
+              hitSlop={8}
               style={styles.favoriteButton}
-              onPress={() => onFavorite(id)}
-              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={isFavorite ? "取消收藏" : "收藏"}
             >
-              <Ionicons
-                name={isFavorite ? "heart" : "heart-outline"}
-                size={20}
-                color={isFavorite ? accentColor : colors.surface}
-              />
-            </TouchableOpacity>
+              <Animated.View style={heartAnimatedStyle}>
+                <Heart
+                  size={20}
+                  weight={isFavorite ? "fill" : "regular"}
+                  color={
+                    isFavorite
+                      ? DesignTokens.colors.brand.terracotta
+                      : DesignTokens.colors.neutral.white
+                  }
+                />
+              </Animated.View>
+            </Pressable>
           )}
         </View>
 
-        {/* 信息区域 */}
+        {/* Info section */}
         <View style={styles.infoContainer}>
           <Text style={styles.title} numberOfLines={1}>
             {title}
@@ -105,79 +173,111 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
               {subtitle}
             </Text>
           )}
-
-          {/* 价格 - 使用季节强调色 */}
-          {price !== undefined && (
-            <Text style={[styles.price, { color: accentColor }]}>¥{price.toFixed(2)}</Text>
-          )}
+          {price !== undefined && <Text style={styles.price}>¥{price.toFixed(2)}</Text>}
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Animated.View>
   );
 };
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
+
 const useStyles = createStyles((colors) => ({
   card: {
-    width: 140,
-    marginRight: 16,
-    backgroundColor: Colors.neutral.white,
-    borderRadius: ThemeBorderRadius["2xl"],
+    width: 160,
+    borderRadius: DesignTokens.borderRadius.xl,
+    backgroundColor: colors.surface,
     overflow: "hidden",
-    ...ThemeShadows.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   imageContainer: {
+    width: "100%",
+    height: 200,
     position: "relative",
   },
   image: {
-    width: 140,
-    height: 180,
+    width: "100%",
+    height: "100%",
     resizeMode: "cover",
-    backgroundColor: colors.neutral[200],
+    backgroundColor: colors.backgroundTertiary,
   },
-  tag: {
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  matchBadge: {
     position: "absolute",
-    top: 10,
-    left: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: ThemeBorderRadius.xl,
+    top: DesignTokens.spacing[2],
+    left: DesignTokens.spacing[2],
+    width: 36,
+    height: 36,
+    borderRadius: DesignTokens.borderRadius.full,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  matchBadgeText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
+    color: DesignTokens.colors.neutral.white,
+    lineHeight: undefined,
+  },
+  tagPill: {
+    position: "absolute",
+    bottom: DesignTokens.spacing[2],
+    left: DesignTokens.spacing[2],
+    paddingHorizontal: DesignTokens.spacing[2],
+    paddingVertical: DesignTokens.spacing[1],
+    borderRadius: DesignTokens.borderRadius.md,
+    backgroundColor: `${DesignTokens.colors.brand.terracotta}26`, // 15% opacity ≈ hex 26
   },
   tagText: {
-    fontSize: ThemeTypography.sizes.xs,
-    fontWeight: ThemeTypography.fontWeights.bold,
-    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: DesignTokens.typography.fontWeights.semibold,
+    color: DesignTokens.colors.brand.terracotta,
   },
   favoriteButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: DesignTokens.spacing[2],
+    right: DesignTokens.spacing[2],
     width: 32,
     height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    borderRadius: DesignTokens.borderRadius.full,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
   infoContainer: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
   title: {
-    fontSize: ThemeTypography.sizes.base,
-    fontWeight: ThemeTypography.fontWeights.semibold,
-    color: colors.neutral[900],
-    textAlign: "center",
-    marginBottom: 4,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: DesignTokens.typography.fontWeights.semibold,
+    color: colors.textPrimary,
+    lineHeight: DesignTokens.typography.sizes.base * DesignTokens.typography.lineHeights.snug,
   },
   subtitle: {
-    fontSize: ThemeTypography.sizes.xs,
-    color: colors.neutral[500],
-    textAlign: "center",
-    marginBottom: 6,
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: colors.textTertiary,
+    marginTop: DesignTokens.spacing[1],
+    lineHeight: DesignTokens.typography.sizes.xs * DesignTokens.typography.lineHeights.normal,
   },
   price: {
-    fontSize: ThemeTypography.sizes.sm,
-    fontWeight: ThemeTypography.fontWeights.bold,
-    textAlign: "center",
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
+    color: DesignTokens.colors.brand.terracotta,
+    marginTop: DesignTokens.spacing[1],
   },
 }));
 

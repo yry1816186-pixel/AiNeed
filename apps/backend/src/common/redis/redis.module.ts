@@ -55,7 +55,7 @@ function createReconnectOnError(err: Error): boolean {
       provide: REDIS_CLIENT,
       useFactory: (configService: ConfigService) => {
         const redisUrl = configService.get<string>("REDIS_URL");
-        
+
         const poolOptions: RedisPoolOptions = {
           ...DEFAULT_POOL_OPTIONS,
           enableReadyCheck: DEFAULT_POOL_OPTIONS.enableReadyCheck ?? false,

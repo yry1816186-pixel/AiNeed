@@ -5,7 +5,7 @@
  */
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { View, StyleSheet, InteractionManager } from "react-native";
+import { View, StyleSheet, InteractionManager, ActivityIndicator, Text } from "react-native";
 import {
   handleError,
   ErrorCategory,
@@ -275,13 +275,26 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return children;
     }
 
+    // componentDidCatch hasn't fired yet — show minimal fallback to avoid crash cascade
+    if (!structuredError) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#666" />
+            <Text style={styles.loadingText}>正在处理错误...</Text>
+            {__DEV__ && error && <Text style={styles.loadingError}>{error.message}</Text>}
+          </View>
+        </View>
+      );
+    }
+
     // 如果提供了自定义 fallback
     if (fallback) {
       if (typeof fallback === "function") {
         return fallback({
           error: error!,
           errorInfo: errorInfo!,
-          structuredError: structuredError!,
+          structuredError,
           onRetry: this.handleRetry,
           onReset: this.handleReset,
           retryCount,
@@ -298,11 +311,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <ErrorFallback
           error={error!}
           errorInfo={errorInfo!}
-          structuredError={structuredError!}
+          structuredError={structuredError}
           onRetry={this.handleRetry}
           onReset={this.handleReset}
           onRecovery={this.getRecoveryHandler(
-            structuredError?.recoveryStrategy || RecoveryStrategy.RETRY
+            structuredError.recoveryStrategy || RecoveryStrategy.RETRY
           )}
           showDetails={showDetails}
           retryCount={retryCount}
@@ -321,6 +334,24 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
+  },
+  loadingError: {
+    marginTop: 12,
+    fontSize: 12,
+    color: "#e53935",
+    fontFamily: "monospace",
+    textAlign: "center",
   },
 });
 

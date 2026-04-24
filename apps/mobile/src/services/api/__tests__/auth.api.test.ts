@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/unbound-method */
 import apiClient from "../client";
 import { authApi, userApi } from "../auth.api";
 

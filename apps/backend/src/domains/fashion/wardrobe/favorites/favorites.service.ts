@@ -56,7 +56,7 @@ export class FavoritesService {
       page?: number;
       pageSize?: number;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(params);
 
@@ -79,26 +79,32 @@ export class FavoritesService {
       this.prisma.favorite.count({ where: { userId } }),
     ]);
 
-    const favoritesItems = items.map((f: { 
-      item: { 
-        id: string; 
-        name: string; 
-        description: string | null; 
-        category: string; 
-        colors: string[]; 
-        sizes: string[]; 
-        price: { toString(): string }; 
-        images: string[]; 
-        mainImage: string | null; 
-        brand: { id: string; name: string; logo: string | null } | null 
-      } | null 
-    }) => {
-      if (!f.item) {return null;}
-      return {
-        ...f.item,
-        price: parseFloat(f.item.price.toString()),
-      };
-    }).filter((item: unknown): item is NonNullable<typeof item> => item !== null);
+    const favoritesItems = items
+      .map(
+        (f: {
+          item: {
+            id: string;
+            name: string;
+            description: string | null;
+            category: string;
+            colors: string[];
+            sizes: string[];
+            price: { toString(): string };
+            images: string[];
+            mainImage: string | null;
+            brand: { id: string; name: string; logo: string | null } | null;
+          } | null;
+        }) => {
+          if (!f.item) {
+            return null;
+          }
+          return {
+            ...f.item,
+            price: parseFloat(f.item.price.toString()),
+          };
+        }
+      )
+      .filter((item: unknown): item is NonNullable<typeof item> => item !== null);
 
     return createPaginatedResponse(favoritesItems, total, page, pageSize);
   }

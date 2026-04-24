@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Dimensions, Platform, StatusBar } from "react-native";
-import { DesignTokens, darkTokens } from "./tokens/design-tokens";
+import { DesignTokens } from "./tokens/design-tokens";
 import type { FlatColors } from "./FlatColors";
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
@@ -24,10 +25,8 @@ export type { FlatColors } from "./FlatColors";
 
 type TokenSet = typeof DesignTokens;
 
-
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
-const _isAndroid = Platform.OS === "android";
 
 const neutralPalette = {
   0: DesignTokens.colors.neutral.white,
@@ -450,7 +449,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
       warmPrimary: "#C67C4E",
       warmAccent: "#E8A87C",
       warmSecondary: "#D4917A",
-    } as FlatColors['brand'],
+    } as FlatColors["brand"],
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,
@@ -509,11 +508,11 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     secondaryLight: "#A3B096",
     gradients: {
       ...DesignTokens.gradients,
-      warm: ['#C67C4E', '#E8A87C'],
-      cool: ['#4A90D9', '#7ED4AD'],
-      hero: ['#C67C4E', '#4A90D9'],
-      coralRose: ['#FF7F7F', '#FF6B6B'],
-      oceanMint: ['#4A90D9', '#7ED4AD'],
+      warm: ["#C67C4E", "#E8A87C"],
+      cool: ["#4A90D9", "#7ED4AD"],
+      hero: ["#C67C4E", "#4A90D9"],
+      coralRose: ["#FF7F7F", "#FF6B6B"],
+      oceanMint: ["#4A90D9", "#7ED4AD"],
     },
   };
 }

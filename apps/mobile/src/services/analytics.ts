@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import apiClient from "./api/client";
 
 interface AnalyticsEvent {

@@ -397,7 +397,7 @@ export interface BodyAnalysisResult {
   };
   recommendations?: {
     suitableStyles: string[];
-    avoidStyles: string[];
+    recommendStyles: string[];
     bodyTypeName: string;
     description: string;
   };

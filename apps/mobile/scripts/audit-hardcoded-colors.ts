@@ -1,17 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, curly */
 import fs from "fs";
 import path from "path";
 
 const SRC_DIR = path.join(__dirname, "..", "src");
-const EXCLUDE_DIRS = ["node_modules", ".expo", "dist", "coverage", "theme/tokens", "design-system/theme/tokens"];
+const EXCLUDE_DIRS = [
+  "node_modules",
+  ".expo",
+  "dist",
+  "coverage",
+  "theme/tokens",
+  "design-system/theme/tokens",
+];
 
 const COLOR_PROPS = [
-  "color", "backgroundColor", "borderColor", "borderBottomColor", "borderTopColor",
-  "borderLeftColor", "borderRightColor", "tintColor", "placeholderTextColor",
-  "underlineColorAndroid", "shadowColor", "overlayColor",
+  "color",
+  "backgroundColor",
+  "borderColor",
+  "borderBottomColor",
+  "borderTopColor",
+  "borderLeftColor",
+  "borderRightColor",
+  "tintColor",
+  "placeholderTextColor",
+  "underlineColorAndroid",
+  "shadowColor",
+  "overlayColor",
 ];
 
 function shouldExclude(filePath: string): boolean {
-  return EXCLUDE_DIRS.some(dir => filePath.includes(dir));
+  return EXCLUDE_DIRS.some((dir) => filePath.includes(dir));
 }
 
 function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
@@ -23,7 +40,7 @@ function getAllFiles(dir: string, ext = [".ts", ".tsx"]): string[] {
     if (shouldExclude(fullPath)) continue;
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
-    } else if (ext.some(e => entry.name.endsWith(e))) {
+    } else if (ext.some((e) => entry.name.endsWith(e))) {
       results.push(fullPath);
     }
   }
@@ -47,8 +64,19 @@ function inferPropertyFromLine(line: string): string {
 
 function auditColors() {
   const files = getAllFiles(SRC_DIR);
-  const byFile: Record<string, { count: number; values: Array<{ line: number; value: string; property: string; context: string }> }> = {};
-  const bySemanticContext: Record<string, string[]> = { text: [], background: [], border: [], other: [] };
+  const byFile: Record<
+    string,
+    {
+      count: number;
+      values: Array<{ line: number; value: string; property: string; context: string }>;
+    }
+  > = {};
+  const bySemanticContext: Record<string, string[]> = {
+    text: [],
+    background: [],
+    border: [],
+    other: [],
+  };
   let total = 0;
 
   const HEX_RE = /["'`]#([0-9a-fA-F]{3,8})["'`]/g;
@@ -57,7 +85,8 @@ function auditColors() {
   for (const file of files) {
     const content = fs.readFileSync(file, "utf-8");
     const lines = content.split("\n");
-    const fileMatches: Array<{ line: number; value: string; property: string; context: string }> = [];
+    const fileMatches: Array<{ line: number; value: string; property: string; context: string }> =
+      [];
 
     lines.forEach((rawLine, idx) => {
       const trimmed = rawLine.trim();

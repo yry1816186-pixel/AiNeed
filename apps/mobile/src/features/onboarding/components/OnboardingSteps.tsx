@@ -11,8 +11,8 @@ import {
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 

@@ -1,15 +1,19 @@
-const fs = require("fs");
-const path = require("path");
+import * as fs from "fs";
+import * as path from "path";
 
 const SRC_DIR = path.join(__dirname, "..", "src");
 
 function getAllFiles(dir: string, ext: string[] = [".ts", ".tsx"]): string[] {
   const results: string[] = [];
-  if (!fs.existsSync(dir)) return results;
+  if (!fs.existsSync(dir)) {
+    return results;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.name === "node_modules" || entry.name === ".expo") continue;
+    if (entry.name === "node_modules" || entry.name === ".expo") {
+      continue;
+    }
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
     } else if (ext.some((e: string) => entry.name.endsWith(e))) {
@@ -21,6 +25,7 @@ function getAllFiles(dir: string, ext: string[] = [".ts", ".tsx"]): string[] {
 
 function fixMismatchedQuotes(content: string): string {
   return content.replace(/from\s+'([^']*?)"/g, (match: string, p1: string) => {
+    void match;
     return `from '${p1}'`;
   });
 }

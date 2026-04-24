@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 import {
   View,

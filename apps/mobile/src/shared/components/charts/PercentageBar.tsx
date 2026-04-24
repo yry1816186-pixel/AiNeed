@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { colors } from "@/src/theme/tokens/colors";
 import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";

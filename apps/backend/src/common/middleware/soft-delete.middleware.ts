@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, NestMiddleware, Logger } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
 
 /**
  * Soft Delete Middleware
@@ -35,19 +35,17 @@ export class SoftDeleteMiddleware implements NestMiddleware {
     const { method, originalUrl } = req;
 
     // 只处理 DELETE 请求
-    if (method === 'DELETE') {
+    if (method === "DELETE") {
       // 检查是否是软删除实体的端点
-      const shouldSoftDelete = this.softDeletePatterns.some(pattern =>
-        pattern.test(req.path || originalUrl),
+      const shouldSoftDelete = this.softDeletePatterns.some((pattern) =>
+        pattern.test(req.path || originalUrl)
       );
 
       if (shouldSoftDelete) {
         // 设置软删除标志
         (req as unknown as Record<string, unknown>).softDelete = true;
 
-        this.logger.debug(
-          `Soft delete detected for ${method} ${originalUrl}`,
-        );
+        this.logger.debug(`Soft delete detected for ${method} ${originalUrl}`);
       }
     }
 

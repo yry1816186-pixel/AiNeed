@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import {
@@ -14,7 +15,7 @@ import {
   BorderRadius,
   flatColors as colors,
 } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoStepProps {

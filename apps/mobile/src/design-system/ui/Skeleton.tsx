@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Skeleton - UI layer re-export from skeleton/Skeleton
  *
  * @deprecated Use `skeleton/Skeleton` instead. This file re-exports

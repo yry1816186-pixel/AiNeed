@@ -1,13 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsOptional,
-  IsInt,
-  Min,
-  Max,
-  IsArray,
-  IsBoolean,
-} from "class-validator";
+import { IsString, IsOptional, IsInt, Min, Max, IsArray, IsBoolean } from "class-validator";
 
 export const REVIEW_TAGS = [
   "专业",

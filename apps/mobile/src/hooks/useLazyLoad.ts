@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState } from "react";
 
-
 interface UseLazyLoadOptions {
   /** How many items ahead of the viewport to preload */
   preloadThreshold?: number;

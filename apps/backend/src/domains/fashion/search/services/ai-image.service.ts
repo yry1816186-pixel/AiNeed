@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 
@@ -64,7 +60,7 @@ export class AIImageService {
   async analyzeImage(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     if (!this.provider) {
       this.logger.warn(
-        "AI image analysis provider is not configured, using local heuristic analysis",
+        "AI image analysis provider is not configured, using local heuristic analysis"
       );
       return this.analyzeLocally(imageBuffer);
     }
@@ -78,20 +74,16 @@ export class AIImageService {
         return this.analyzeWithBaidu(imageBuffer);
       default:
         this.logger.warn(
-          `Unsupported AI image analysis provider: ${this.provider}, using local heuristic analysis`,
+          `Unsupported AI image analysis provider: ${this.provider}, using local heuristic analysis`
         );
         return this.analyzeLocally(imageBuffer);
     }
   }
 
-  private async analyzeWithAliyun(
-    imageBuffer: Buffer,
-  ): Promise<AIAnalysisResult> {
+  private async analyzeWithAliyun(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     try {
       const accessKeyId = this.configService.get("ALIYUN_ACCESS_KEY_ID");
-      const accessKeySecret = this.configService.get(
-        "ALIYUN_ACCESS_KEY_SECRET",
-      );
+      const accessKeySecret = this.configService.get("ALIYUN_ACCESS_KEY_SECRET");
 
       if (!accessKeyId || !accessKeySecret) {
         this.logger.error("Aliyun credentials are missing for image analysis");
@@ -99,7 +91,7 @@ export class AIImageService {
           return this.analyzeWithMock(imageBuffer);
         }
         throw new ServiceUnavailableException(
-          "Aliyun image analysis credentials are not configured",
+          "Aliyun image analysis credentials are not configured"
         );
       }
 
@@ -119,35 +111,28 @@ export class AIImageService {
             username: accessKeyId,
             password: accessKeySecret,
           },
-        },
+        }
       );
 
       const data = response.data as AliyunAnalysisResponse;
       return {
         embedding: this.generateEmbeddingFromLabels(
-          (data.Data?.Styles || [])
-            .map((style) => style.Style)
-            .filter(Boolean) as string[],
+          (data.Data?.Styles || []).map((style) => style.Style).filter(Boolean) as string[]
         ),
-        labels:
-          (data.Data?.Styles?.map((style) => style.Style).filter(
-            Boolean,
-          ) as string[]) || [],
+        labels: (data.Data?.Styles?.map((style) => style.Style).filter(Boolean) as string[]) || [],
         colors: this.extractColorsFromResponse(data),
         style: data.Data?.Styles?.[0]?.Style,
         category: this.inferCategory(data.Data?.Styles || []),
       };
     } catch (error: unknown) {
       this.logger.error(
-        `Aliyun AI analysis failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Aliyun AI analysis failed: ${error instanceof Error ? error.message : String(error)}`
       );
       return this.handleLocalFallback("Aliyun image analysis failed", imageBuffer);
     }
   }
 
-  private async analyzeWithOpenAI(
-    imageBuffer: Buffer,
-  ): Promise<AIAnalysisResult> {
+  private async analyzeWithOpenAI(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     try {
       const apiKey = this.configService.get("OPENAI_API_KEY");
 
@@ -156,9 +141,7 @@ export class AIImageService {
         if (this.allowFallbacks) {
           return this.analyzeWithMock(imageBuffer);
         }
-        throw new ServiceUnavailableException(
-          "OpenAI image analysis key is not configured",
-        );
+        throw new ServiceUnavailableException("OpenAI image analysis key is not configured");
       }
 
       const base64Image = imageBuffer.toString("base64");
@@ -191,7 +174,7 @@ export class AIImageService {
             "Content-Type": "application/json",
             Authorization: `Bearer ${apiKey}`,
           },
-        },
+        }
       );
 
       const rawContent = response.data?.choices?.[0]?.message?.content;
@@ -210,15 +193,13 @@ export class AIImageService {
       };
     } catch (error: unknown) {
       this.logger.error(
-        `OpenAI analysis failed: ${error instanceof Error ? error.message : String(error)}`,
+        `OpenAI analysis failed: ${error instanceof Error ? error.message : String(error)}`
       );
       return this.handleLocalFallback("OpenAI image analysis failed", imageBuffer);
     }
   }
 
-  private async analyzeWithBaidu(
-    imageBuffer: Buffer,
-  ): Promise<AIAnalysisResult> {
+  private async analyzeWithBaidu(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     try {
       const apiKey = this.configService.get("BAIDU_API_KEY");
       const secretKey = this.configService.get("BAIDU_SECRET_KEY");
@@ -229,12 +210,12 @@ export class AIImageService {
           return this.analyzeWithMock(imageBuffer);
         }
         throw new ServiceUnavailableException(
-          "Baidu image analysis credentials are not configured",
+          "Baidu image analysis credentials are not configured"
         );
       }
 
       const tokenResponse = await axios.post(
-        `https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=${apiKey}&client_secret=${secretKey}`,
+        `https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=${apiKey}&client_secret=${secretKey}`
       );
 
       const accessToken = tokenResponse.data.access_token;
@@ -247,7 +228,7 @@ export class AIImageService {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-        },
+        }
       );
 
       const baiduData = response.data as BaiduAnalysisResponse;
@@ -265,7 +246,7 @@ export class AIImageService {
       };
     } catch (error: unknown) {
       this.logger.error(
-        `Baidu AI analysis failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Baidu AI analysis failed: ${error instanceof Error ? error.message : String(error)}`
       );
       return this.handleLocalFallback("Baidu image analysis failed", imageBuffer);
     }
@@ -273,7 +254,7 @@ export class AIImageService {
 
   private async handleLocalFallback(
     message: string,
-    imageBuffer: Buffer,
+    imageBuffer: Buffer
   ): Promise<AIAnalysisResult> {
     this.logger.warn(`${message}, falling back to local heuristic analysis`);
 
@@ -281,7 +262,9 @@ export class AIImageService {
       return await this.analyzeLocally(imageBuffer);
     } catch (localError: unknown) {
       this.logger.error(
-        `Local image analysis failed: ${localError instanceof Error ? localError.message : String(localError)}`,
+        `Local image analysis failed: ${
+          localError instanceof Error ? localError.message : String(localError)
+        }`
       );
 
       if (this.allowFallbacks) {
@@ -311,11 +294,13 @@ export class AIImageService {
       Math.round(dominant.g ?? meanRgb[1]),
       Math.round(dominant.b ?? meanRgb[2]),
     ] as [number, number, number];
-    const shadowRgb = dominantRgb.map((channel) =>
-      Math.max(0, Math.round(channel * 0.7)),
-    ) as [number, number, number];
+    const shadowRgb = dominantRgb.map((channel) => Math.max(0, Math.round(channel * 0.7))) as [
+      number,
+      number,
+      number
+    ];
     const highlightRgb = dominantRgb.map((channel) =>
-      Math.min(255, Math.round(channel * 1.18 + 12)),
+      Math.min(255, Math.round(channel * 1.18 + 12))
     ) as [number, number, number];
 
     const brightness = this.calculateLuminance(dominantRgb);
@@ -330,10 +315,8 @@ export class AIImageService {
       new Set([
         this.mapRgbToColorName(dominantRgb),
         this.mapRgbToColorName(meanRgb),
-        this.mapRgbToColorName(
-          brightness < 95 ? highlightRgb : shadowRgb,
-        ),
-      ]),
+        this.mapRgbToColorName(brightness < 95 ? highlightRgb : shadowRgb),
+      ])
     ).slice(0, 3);
     const style = this.inferLocalStyle({ brightness, saturation, contrast });
     const category = this.inferLocalCategory({ aspectRatio, brightness, saturation });
@@ -348,9 +331,7 @@ export class AIImageService {
     };
   }
 
-  private async analyzeWithMock(
-    imageBuffer: Buffer,
-  ): Promise<AIAnalysisResult> {
+  private async analyzeWithMock(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     const crypto = await import("crypto");
     const hash = crypto.createHash("md5").update(imageBuffer).digest("hex");
     const hashNum = parseInt(hash.substring(0, 8), 16);
@@ -365,14 +346,7 @@ export class AIImageService {
       "minimalist",
       "bohemian",
     ];
-    const categories = [
-      "tops",
-      "bottoms",
-      "dresses",
-      "outerwear",
-      "accessories",
-      "shoes",
-    ];
+    const categories = ["tops", "bottoms", "dresses", "outerwear", "accessories", "shoes"];
     const colorPalette = [
       "black",
       "white",
@@ -395,8 +369,7 @@ export class AIImageService {
 
     const labels = labelSets[hashNum % labelSets.length] ?? [];
     const primaryColor = colorPalette[hashNum % colorPalette.length] ?? "black";
-    const secondaryColor =
-      colorPalette[(hashNum + 3) % colorPalette.length] ?? primaryColor;
+    const secondaryColor = colorPalette[(hashNum + 3) % colorPalette.length] ?? primaryColor;
     const style = styles[hashNum % styles.length] ?? "casual";
     const category = categories[hashNum % categories.length] ?? "tops";
 
@@ -456,9 +429,7 @@ export class AIImageService {
     for (const candidate of this.localColorPalette) {
       const [cr, cg, cb] = candidate.rgb;
       const distance = Math.sqrt(
-        Math.pow(rgb[0] - cr, 2) +
-          Math.pow(rgb[1] - cg, 2) +
-          Math.pow(rgb[2] - cb, 2),
+        Math.pow(rgb[0] - cr, 2) + Math.pow(rgb[1] - cg, 2) + Math.pow(rgb[2] - cb, 2)
       );
 
       if (distance < bestDistance) {
@@ -568,40 +539,44 @@ export class AIImageService {
 
   private extractColorsFromResponse(data: AliyunAnalysisResponse): string[] {
     if (data.Data?.Colors) {
-      return data.Data.Colors.map((color) => color.ColorName).filter(
-        Boolean,
-      ) as string[];
+      return data.Data.Colors.map((color) => color.ColorName).filter(Boolean) as string[];
     }
     return [];
   }
 
   private extractColorsFromBaiduResponse(data: BaiduAnalysisResponse): string[] {
     if (Array.isArray(data.color_result)) {
-      return (
-        data.color_result
-          ?.map((color) => color.color_name)
-          .filter(Boolean) || []
-      ) as string[];
+      return (data.color_result?.map((color) => color.color_name).filter(Boolean) ||
+        []) as string[];
     }
 
     return [];
   }
 
   private inferCategory(styles: AliyunStyleItem[]): string {
-    if (!styles || styles.length === 0) {return "tops";}
+    if (!styles || styles.length === 0) {
+      return "tops";
+    }
     const styleStr = styles
       .map((s) => s.Style || "")
       .join(" ")
       .toLowerCase();
 
-    if (styleStr.includes("dress")) {return "dresses";}
-    if (styleStr.includes("jacket") || styleStr.includes("coat"))
-      {return "outerwear";}
-    if (styleStr.includes("pants") || styleStr.includes("skirt"))
-      {return "bottoms";}
-    if (styleStr.includes("shoes") || styleStr.includes("boot")) {return "shoes";}
-    if (styleStr.includes("bag") || styleStr.includes("accessory"))
-      {return "accessories";}
+    if (styleStr.includes("dress")) {
+      return "dresses";
+    }
+    if (styleStr.includes("jacket") || styleStr.includes("coat")) {
+      return "outerwear";
+    }
+    if (styleStr.includes("pants") || styleStr.includes("skirt")) {
+      return "bottoms";
+    }
+    if (styleStr.includes("shoes") || styleStr.includes("boot")) {
+      return "shoes";
+    }
+    if (styleStr.includes("bag") || styleStr.includes("accessory")) {
+      return "accessories";
+    }
 
     return "tops";
   }
@@ -609,27 +584,21 @@ export class AIImageService {
   private inferCategoryFromLabels(labels: string[]): string {
     const labelStr = labels.join(" ").toLowerCase();
 
-    if (labelStr.includes("dress")) {return "dresses";}
-    if (labelStr.includes("jacket") || labelStr.includes("coat"))
-      {return "outerwear";}
-    if (
-      labelStr.includes("pants") ||
-      labelStr.includes("skirt") ||
-      labelStr.includes("jeans")
-    )
-      {return "bottoms";}
-    if (
-      labelStr.includes("shoes") ||
-      labelStr.includes("boot") ||
-      labelStr.includes("sneaker")
-    )
-      {return "shoes";}
-    if (
-      labelStr.includes("bag") ||
-      labelStr.includes("watch") ||
-      labelStr.includes("accessory")
-    )
-      {return "accessories";}
+    if (labelStr.includes("dress")) {
+      return "dresses";
+    }
+    if (labelStr.includes("jacket") || labelStr.includes("coat")) {
+      return "outerwear";
+    }
+    if (labelStr.includes("pants") || labelStr.includes("skirt") || labelStr.includes("jeans")) {
+      return "bottoms";
+    }
+    if (labelStr.includes("shoes") || labelStr.includes("boot") || labelStr.includes("sneaker")) {
+      return "shoes";
+    }
+    if (labelStr.includes("bag") || labelStr.includes("watch") || labelStr.includes("accessory")) {
+      return "accessories";
+    }
 
     return "tops";
   }

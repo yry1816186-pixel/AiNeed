@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +14,7 @@ import { pickImageSecurely } from "../../../utils/imagePicker";
 import { useCameraPermissions } from "../hooks/useCameraPermissions";
 import { useReferenceLines } from "../../../hooks/useReferenceLines";
 import { usePhotoStore } from "../stores/photoStore";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { ReferenceLineOverlay } from "./components/ReferenceLineOverlay";
 import AlignmentGuide from "./components/AlignmentGuide";

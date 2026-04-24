@@ -1,11 +1,11 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from "fs";
+import * as path from "path";
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
-type SensitivityLevel = 'strict' | 'moderate' | 'loose';
+type SensitivityLevel = "strict" | "moderate" | "loose";
 
 interface FilterResult {
   passed: boolean;
@@ -27,31 +27,31 @@ export class ContentFilterService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {
     this.sensitivity = this.configService.get<SensitivityLevel>(
-      'CONTENT_FILTER_SENSITIVITY',
-      'moderate',
+      "CONTENT_FILTER_SENSITIVITY",
+      "moderate"
     );
 
-    const keywordsFile = path.join(__dirname, 'banned-keywords.txt');
+    const keywordsFile = path.join(__dirname, "banned-keywords.txt");
     try {
-      const raw = fs.readFileSync(keywordsFile, 'utf-8');
+      const raw = fs.readFileSync(keywordsFile, "utf-8");
       this.keywords = raw
-        .split('\n')
+        .split("\n")
         .map((line) => line.trim())
-        .filter((line) => line.length > 0 && !line.startsWith('#'));
+        .filter((line) => line.length > 0 && !line.startsWith("#"));
 
       const ratio = SENSITIVITY_KEYWORD_RATIO[this.sensitivity];
       const cutoff = Math.ceil(this.keywords.length * ratio);
       this.keywords = this.keywords.slice(0, cutoff);
 
-      this.logger.log(
-        `Loaded ${this.keywords.length} keywords (sensitivity: ${this.sensitivity})`,
-      );
+      this.logger.log(`Loaded ${this.keywords.length} keywords (sensitivity: ${this.sensitivity})`);
     } catch (error) {
       this.logger.warn(
-        `Failed to load banned-keywords.txt: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to load banned-keywords.txt: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
   }
@@ -62,10 +62,8 @@ export class ContentFilterService {
     const sanitizedContent = this.replaceMatches(content, matchedKeywords);
 
     if (!passed) {
-      this.logger.warn(
-        `Content blocked: ${matchedKeywords.length} keyword(s) matched`,
-      );
-      this.eventEmitter.emit('content.filtered', {
+      this.logger.warn(`Content blocked: ${matchedKeywords.length} keyword(s) matched`);
+      this.eventEmitter.emit("content.filtered", {
         matchedCount: matchedKeywords.length,
         sensitivity: this.sensitivity,
         timestamp: new Date().toISOString(),
@@ -100,13 +98,13 @@ export class ContentFilterService {
   private replaceMatches(content: string, keywords: string[]): string {
     let result = content;
     for (const keyword of keywords) {
-      const pattern = new RegExp(this.escapeRegex(keyword), 'gi');
-      result = result.replace(pattern, '*'.repeat(keyword.length));
+      const pattern = new RegExp(this.escapeRegex(keyword), "gi");
+      result = result.replace(pattern, "*".repeat(keyword.length));
     }
     return result;
   }
 
   private escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 }

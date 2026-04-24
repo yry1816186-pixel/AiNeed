@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Platform } from "react-native";
 
 export const EncodingType = {
@@ -43,7 +44,10 @@ export async function writeAsStringAsync(
   console.warn("FileSystem.writeAsStringAsync is a stub - not fully implemented");
 }
 
-export async function deleteAsync(_uri: string, _options?: { idempotent?: boolean }): Promise<void> {
+export async function deleteAsync(
+  _uri: string,
+  _options?: { idempotent?: boolean }
+): Promise<void> {
   console.warn("FileSystem.deleteAsync is a stub - not fully implemented");
 }
 

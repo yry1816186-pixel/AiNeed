@@ -7,6 +7,7 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: string;
+  backendState?: string;
 }
 
 interface AiStylistChatState {
