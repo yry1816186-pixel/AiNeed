@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -44,8 +43,7 @@ describe("AliyunSmsService", () => {
 
   it("should fallback to dev mode when not configured", async () => {
     mockConfigService.get.mockReturnValue(undefined);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const devService = new AliyunSmsService({ get: () => undefined } as any);
+    const devService = new AliyunSmsService({ get: () => undefined } as unknown as ConfigService);
     await expect(devService.sendCode("13800138000", "123456")).resolves.not.toThrow();
   });
 });

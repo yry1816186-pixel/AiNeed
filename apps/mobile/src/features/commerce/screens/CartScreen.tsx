@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
+import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
@@ -79,7 +80,15 @@ export const CartScreenComponent: React.FC = () => {
             size: item.size,
             quantity: item.quantity,
             selected: item.selected ?? false,
-          })) as any
+          })) as {
+            id: string;
+            item: ClothingItem;
+            color: string;
+            size: string;
+            quantity: number;
+            originalPrice?: number;
+            selected: boolean;
+          }[]
         );
         setSelectedIds(selected);
       }
@@ -1006,10 +1015,10 @@ const CartScreen = withErrorBoundary(CartScreenComponent, {
   screenName: "CartScreen",
   maxRetries: 3,
   onError: (error, errorInfo, structuredError) => {
-    console.error("[CartScreen] Error:", structuredError);
+    logger.error("[CartScreen] Error:", structuredError);
   },
   onReset: () => {
-    console.error("[CartScreen] Error boundary reset");
+    logger.error("[CartScreen] Error boundary reset");
   },
 });
 

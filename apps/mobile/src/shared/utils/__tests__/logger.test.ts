@@ -1,4 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires */
+
+declare global {
+  var __DEV__: boolean;
+}
+
 describe("logger", () => {
   let consoleLogSpy: jest.SpyInstance;
   let consoleWarnSpy: jest.SpyInstance;
@@ -26,9 +31,8 @@ describe("logger", () => {
     let logger: typeof import("../logger").logger;
 
     beforeEach(() => {
-      (global as any).__DEV__ = true;
+      global.__DEV__ = true;
       jest.resetModules();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       logger = require("../logger").logger;
     });
 
@@ -67,15 +71,13 @@ describe("logger", () => {
     let logger: typeof import("../logger").logger;
 
     beforeEach(() => {
-      (global as any).__DEV__ = false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      global.__DEV__ = false;
       jest.resetModules();
       logger = require("../logger").logger;
     });
 
     afterEach(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (global as any).__DEV__ = true;
+      global.__DEV__ = true;
     });
 
     it("should not output log messages", () => {

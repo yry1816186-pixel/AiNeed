@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useState, memo } from "react";
 import {
   View,
@@ -45,7 +46,7 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(item.id)} activeOpacity={0.7}>
       {item.imageUri ? (
-        <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image as any} />
+        <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image} />
       ) : (
         <View style={styles.placeholder}>
           <Ionicons name="shirt-outline" size={40} color={colors.textTertiary} />
@@ -77,8 +78,8 @@ export const FavoritesScreen: React.FC = () => {
   const navigation = useNavigation<NavProp>();
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-  const authLoading = useAuthStore((state: any) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const authLoading = useAuthStore((state) => state.isLoading);
   const t = useTranslation();
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,7 +121,7 @@ export const FavoritesScreen: React.FC = () => {
       await favoriteApi.remove(id);
       setItems((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
-      console.error("Favorites operation failed:", error);
+      logger.error("Favorites operation failed:", error);
       Alert.alert("操作失败", "取消收藏失败，请重试");
     }
   }, []);

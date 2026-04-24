@@ -140,7 +140,7 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     top: 6,
     right: 6,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

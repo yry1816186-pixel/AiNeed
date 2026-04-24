@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -254,7 +255,7 @@ export const SearchScreen: React.FC = () => {
       setHistory([]);
     } catch (error) {
       // keep UI stable even if clear history fails
-      console.error("Failed to clear search history:", error);
+      logger.error("Failed to clear search history:", error);
     }
   }, []);
 
@@ -491,7 +492,7 @@ export const SearchScreen: React.FC = () => {
         selectedPriceRange={selectedPriceRange}
         selectedSizes={selectedSizes}
         hasActiveFilters={hasActiveFilters}
-        setSelectedCategory={(cat: any) => {
+        setSelectedCategory={(cat: ClothingCategory | null) => {
           setSelectedCategory(cat);
           if (cat) {
             void clothingEnhancementApi.getSubcategories(cat).then((res) => {
@@ -512,7 +513,7 @@ export const SearchScreen: React.FC = () => {
 
       <CategoryNavigation
         selectedCategory={selectedCategory}
-        onSelectCategory={(cat: any) => {
+        onSelectCategory={(cat: ClothingCategory) => {
           setSelectedCategory(cat as ClothingCategory | null);
           if (cat) {
             void clothingEnhancementApi.getSubcategories(cat).then((res) => {
@@ -543,7 +544,7 @@ export const SearchScreen: React.FC = () => {
       <FilterTags
         filterOptions={filterOptions}
         activeFilters={activeFilterDimensions}
-        onApplyFilter={(dimension: any, value: any) => {
+        onApplyFilter={(dimension: string, value: string) => {
           setActiveFilterDimensions((prev) => ({
             ...prev,
             [dimension]: value,

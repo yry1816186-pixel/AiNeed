@@ -506,7 +506,7 @@ export class CloudCommunicationService implements OnModuleInit, OnModuleDestroy 
   async batchSubmitTasks(
     tasks: Array<{
       type: CloudTask["type"];
-      payload: Record<string, any>;
+      payload: Record<string, unknown>;
       priority?: CloudTask["priority"];
     }>
   ): Promise<string[]> {
@@ -520,8 +520,8 @@ export class CloudCommunicationService implements OnModuleInit, OnModuleDestroy 
     return taskIds;
   }
 
-  async getBatchResults(taskIds: string[], timeout: number = 60000): Promise<Map<string, any>> {
-    const results = new Map<string, any>();
+  async getBatchResults(taskIds: string[], timeout: number = 60000): Promise<Map<string, unknown>> {
+    const results = new Map<string, unknown>();
     const startTime = Date.now();
 
     while (Date.now() - startTime < timeout) {

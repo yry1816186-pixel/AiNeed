@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -38,8 +37,7 @@ describe("WechatService", () => {
     const emptyConfig = {
       get: jest.fn((key: string, defaultValue?: string) => defaultValue ?? ""),
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const emptyService = new WechatService(emptyConfig as any);
+    const emptyService = new WechatService(emptyConfig as unknown as ConfigService);
     await expect(emptyService.getAccessToken("test-code")).rejects.toThrow(UnauthorizedException);
   });
 

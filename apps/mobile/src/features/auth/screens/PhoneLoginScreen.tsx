@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
-// @ts-nocheck
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,

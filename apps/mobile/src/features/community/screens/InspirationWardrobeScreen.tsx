@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -65,7 +66,7 @@ export const InspirationWardrobeScreen: React.FC = () => {
       }
     } catch (error) {
       // Collections non-critical
-      console.error("Failed to load collections:", error);
+      logger.error("Failed to load collections:", error);
     }
   }, [selectedCollection]);
 

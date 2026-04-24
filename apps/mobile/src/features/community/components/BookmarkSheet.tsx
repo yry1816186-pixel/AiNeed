@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { communityApi } from "../../services/api/community.api";
 import { theme } from "../../../design-system/theme";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
@@ -65,7 +65,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
       }
     } catch (error) {
       // Bookmark loading failure is non-critical
-      console.error("Bookmark operation failed:", error);
+      logger.error("Bookmark operation failed:", error);
     } finally {
       setLoading(false);
     }

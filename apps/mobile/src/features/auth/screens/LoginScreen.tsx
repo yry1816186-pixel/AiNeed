@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/require-await */
 
 import React, { useState, useCallback, useEffect } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
+  type ViewStyle,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,7 +45,7 @@ const AnimatedTouchableOpacity = AnimatedReanimated.createAnimatedComponent(Touc
 const FadeIn: React.FC<{
   delay: number;
   children: React.ReactNode;
-  style?: any;
+  style?: ViewStyle;
   distance?: number;
 }> = ({ delay, children, style, distance = 22 }) => {
   const opacity = useSharedValue(0);
@@ -71,7 +72,7 @@ const ScaleButton: React.FC<{
   onPress: () => void;
   disabled?: boolean;
   children: React.ReactNode;
-  style?: any;
+  style?: ViewStyle;
   accessibilityLabel?: string;
 }> = ({ onPress, disabled, children, style, accessibilityLabel }) => {
   const scale = useSharedValue(1);

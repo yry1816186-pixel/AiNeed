@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
+import { logger } from "../../shared/utils/logger";
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
@@ -137,7 +138,7 @@ class ApiClient {
           config.headers.Authorization = `Bearer ${this.token}`;
         }
         if (__DEV__) {
-          console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+          logger.debug(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
         }
         return config;
       },
@@ -151,7 +152,7 @@ class ApiClient {
           (response as unknown as Record<string, unknown>).__requestId = requestId;
         }
         if (__DEV__) {
-          console.log(`[API] ${response.status} ${response.config.url}`);
+          logger.debug(`[API] ${response.status} ${response.config.url}`);
         }
         return response;
       },
@@ -216,7 +217,7 @@ class ApiClient {
     try {
       this.token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch (e) {
-      console.error("Failed to load token:", e);
+      logger.error("Failed to load token:", e);
     }
   }
 

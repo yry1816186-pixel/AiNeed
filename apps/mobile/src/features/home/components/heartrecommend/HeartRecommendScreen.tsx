@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../../shared/utils/logger";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -74,7 +75,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
         setShowPreferenceSetup(true);
       }
     } catch (error) {
-      console.error("Check preferences error:", error);
+      logger.error("Check preferences error:", error);
       setShowPreferenceSetup(true);
     }
   };
@@ -95,7 +96,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
         setIsUsingMockData(true);
       }
     } catch (error) {
-      console.error("Load recommendations error:", error);
+      logger.error("Load recommendations error:", error);
       setProducts(generateMockProducts());
       setIsUsingMockData(true);
     } finally {
@@ -224,7 +225,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
         });
         setStats((prev) => ({ ...prev, cartAdded: prev.cartAdded + 1 }));
       } catch (error) {
-        console.error("Add to cart error:", error);
+        logger.error("Add to cart error:", error);
         setStats((prev) => ({ ...prev, cartAdded: prev.cartAdded + 1 }));
       }
     }

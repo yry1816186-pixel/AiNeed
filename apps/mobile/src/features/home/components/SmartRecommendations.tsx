@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
-// @ts-nocheck
 import React, { useEffect } from "react";
 import {
   View,
@@ -523,32 +521,32 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     body_shape: {
       icon: "body-outline",
       color: colors.success, // custom color
-      bgColor: "rgba(16, 185, 129, 0.1)",
+      bgColor: DesignTokens.colors.semantic.successLight,
     },
     color_harmony: {
       icon: "color-palette",
       color: DesignTokens.colors.brand.camel, // custom color
-      bgColor: "rgba(181, 160, 140, 0.1)",
+      bgColor: DesignTokens.colors.brand.camelLight,
     },
     trending: {
       icon: "trending-up",
       color: colors.warning, // custom color
-      bgColor: "rgba(245, 158, 11, 0.1)",
+      bgColor: DesignTokens.colors.semantic.warningLight,
     },
     seasonal: {
       icon: "sunny",
       color: colors.info, // custom color
-      bgColor: "rgba(59, 130, 246, 0.1)",
+      bgColor: DesignTokens.colors.semantic.infoLight,
     },
     price: {
       icon: "pricetag",
       color: colors.success, // custom color
-      bgColor: "rgba(16, 185, 129, 0.1)",
+      bgColor: DesignTokens.colors.semantic.successLight,
     },
     brand: {
       icon: "ribbon",
       color: colors.primaryDark, // custom color
-      bgColor: "rgba(168, 101, 72, 0.1)",
+      bgColor: DesignTokens.colors.brand.terracottaLight,
     },
   };
 
@@ -781,7 +779,7 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     top: 8,
     right: 8,
-    backgroundColor: "rgba(102, 126, 234, 0.9)",
+    backgroundColor: DesignTokens.colors.brand.slate,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,

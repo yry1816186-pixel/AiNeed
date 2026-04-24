@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars */
-// @ts-nocheck
 import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -66,7 +64,7 @@ const STATE_CONFIG = {
     gradientFlow: [
       DesignTokens.colors.brand.slate,
       "colors.textTertiary",
-      "#B8C5D1",
+      DesignTokens.colors.semantic.slateMist,
       DesignTokens.colors.brand.slate,
     ] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
@@ -79,7 +77,7 @@ const STATE_CONFIG = {
     gradientFlow: [
       colors.warning,
       "DesignTokens.colors.brand.camel",
-      "#F5D89A",
+      DesignTokens.colors.semantic.goldenGlow,
       colors.warning,
     ] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
@@ -89,12 +87,12 @@ const STATE_CONFIG = {
   },
   responding: {
     gradient: [colors.success, "colors.secondary"] as [string, string],
-    gradientFlow: [colors.success, "colors.secondary", "#9DC4B5", colors.success] as [
-      string,
-      string,
-      string,
-      string
-    ], // custom color
+    gradientFlow: [
+      colors.success,
+      "colors.secondary",
+      DesignTokens.colors.semantic.sageMist,
+      colors.success,
+    ] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: colors.success,
     particleColor: "colors.secondary", // custom color

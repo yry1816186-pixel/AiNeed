@@ -24,7 +24,7 @@ interface CustomSliderProps {
   minimumTrackTintColor?: string;
   maximumTrackTintColor?: string;
   thumbTintColor?: string;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export const CustomSlider: React.FC<CustomSliderProps> = ({

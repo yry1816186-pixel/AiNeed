@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { logger } from "../../../shared/utils/logger";
 import apiClient from "../../../services/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { compressImage } from "../../../utils/imageCompressor";
@@ -305,7 +306,7 @@ async function loadLocalSearchHistory(): Promise<string[]> {
       ? parsed.filter((entry): entry is string => typeof entry === "string")
       : [];
   } catch (error) {
-    console.error("Commerce API request failed:", error);
+    logger.error("Commerce API request failed:", error);
     return [];
   }
 }

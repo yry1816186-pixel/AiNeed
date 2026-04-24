@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises */
+import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -72,7 +73,7 @@ export const QuizResultScreen: React.FC = () => {
       });
     } catch (error) {
       // Share failed
-      console.error("Share failed:", error);
+      logger.error("Share failed:", error);
     }
   }, [styleTags]);
 

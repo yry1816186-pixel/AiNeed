@@ -91,7 +91,7 @@ export class VisualSearchService {
     );
 
     // 按相似度排序并返回 top N
-    scoredItems.sort((a: any, b: any) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a, b) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit).map((item) => ({
       id: item.id,
@@ -150,7 +150,7 @@ export class VisualSearchService {
         },
       },
       take: limit,
-    }) as Promise<ClothingItemCandidate[]>;
+    }) as unknown as Promise<ClothingItemCandidate[]>;
   }
 
   private async calculateSimilarity(
@@ -324,6 +324,8 @@ export class VisualSearchService {
       return [];
     }
 
+    const typedItem = item as unknown as ClothingItemCandidate;
+
     // 基于商品属性查找相似商品
     const similarItems = await this.prisma.clothingItem.findMany({
       where: {
@@ -344,7 +346,7 @@ export class VisualSearchService {
     });
 
     // 计算相似度
-    const scoredItems = similarItems.map((similar: any) => {
+    const scoredItems = (similarItems as unknown as ClothingItemCandidate[]).map((similar) => {
       let score = 50;
 
       // 同品牌加成
@@ -354,8 +356,8 @@ export class VisualSearchService {
 
       // 颜色匹配
       if (item.colors && similar.colors) {
-        const commonColors = item.colors.filter((c: any) =>
-          similar.colors.some((sc: any) => sc.toLowerCase().includes(c.toLowerCase()))
+        const commonColors = item.colors.filter((c: string) =>
+          similar.colors.some((sc: string) => sc.toLowerCase().includes(c.toLowerCase()))
         );
         score += commonColors.length * 10;
       }
@@ -384,16 +386,19 @@ export class VisualSearchService {
         updatedAt: similar.updatedAt,
         brand: similar.brand,
         similarityScore: Math.min(score, 100),
-        matchReasons: this.generateSimilarItemReasons(item, similar),
+        matchReasons: this.generateSimilarItemReasons(typedItem, similar),
       };
     });
 
-    scoredItems.sort((a: any, b: any) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a, b) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit);
   }
 
-  private generateSimilarItemReasons(original: any, similar: any): string[] {
+  private generateSimilarItemReasons(
+    original: ClothingItemCandidate,
+    similar: ClothingItemCandidate
+  ): string[] {
     const reasons: string[] = ["相似款式"];
 
     if (original.brandId === similar.brandId && similar.brand) {
@@ -401,8 +406,8 @@ export class VisualSearchService {
     }
 
     if (original.colors && similar.colors) {
-      const commonColors = original.colors.filter((c: any) =>
-        similar.colors.some((sc: any) => sc.toLowerCase().includes(c.toLowerCase()))
+      const commonColors = original.colors.filter((c: string) =>
+        similar.colors.some((sc: string) => sc.toLowerCase().includes(c.toLowerCase()))
       );
       if (commonColors.length > 0) {
         reasons.push(`相同${commonColors[0] ?? ""}色系`);

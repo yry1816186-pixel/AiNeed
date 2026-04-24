@@ -1,7 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-return */
 
 import { renderHook, act } from "@testing-library/react-native";
 import { useDebounce } from "../useDebounce";
+
+interface DebounceProps {
+  value: string;
+  delay: number;
+}
 
 describe("useDebounce", () => {
   beforeEach(() => {
@@ -18,10 +23,12 @@ describe("useDebounce", () => {
   });
 
   it("should return new value after delay", () => {
-    const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
-      initialProps: { value: "initial", delay: 500 },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    });
+    const { result, rerender } = renderHook(
+      ({ value, delay }: DebounceProps) => useDebounce(value, delay),
+      {
+        initialProps: { value: "initial", delay: 500 },
+      }
+    );
 
     rerender({ value: "updated", delay: 500 });
 
@@ -36,10 +43,12 @@ describe("useDebounce", () => {
   });
 
   it("should only take the last value on rapid changes", () => {
-    const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      initialProps: { value: "a", delay: 300 },
-    });
+    const { result, rerender } = renderHook(
+      ({ value, delay }: DebounceProps) => useDebounce(value, delay),
+      {
+        initialProps: { value: "a", delay: 300 },
+      }
+    );
 
     // Rapidly change values
     rerender({ value: "b", delay: 300 });
@@ -66,8 +75,7 @@ describe("useDebounce", () => {
 
   it("should cancel timer on cleanup", () => {
     const { result, rerender, unmount } = renderHook(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ({ value, delay }: any) => useDebounce(value, delay),
+      ({ value, delay }: DebounceProps) => useDebounce(value, delay),
       { initialProps: { value: "start", delay: 500 } }
     );
 

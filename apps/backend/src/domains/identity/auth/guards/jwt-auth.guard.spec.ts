@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Observable } from "rxjs";
@@ -137,12 +136,8 @@ describe("JwtAuthGuard", () => {
 
       // Mock super.canActivate
       jest
-        .spyOn(
-          Object.getPrototypeOf(Object.getPrototypeOf(guard)),
-          "canActivate"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        )
-        .mockReturnValue(true as any);
+        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(guard)), "canActivate")
+        .mockReturnValue(true as unknown as Observable<boolean>);
 
       const result = guard.canActivate(context);
 

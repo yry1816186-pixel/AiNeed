@@ -3,6 +3,8 @@
  * 搜索模块类型定义 - 消除 any 类型，提供类型安全
  */
 
+import { Prisma } from "@prisma/client";
+
 import { ClothingCategory } from "../../../../types/prisma-enums";
 
 // ============================================================================
@@ -13,7 +15,7 @@ import { ClothingCategory } from "../../../../types/prisma-enums";
  * 服装商品搜索 Where 条件
  * 用于 searchItems 和相关查询
  */
-export type ClothingItemWhereInput = any;
+export type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;
 
 /**
  * 服装商品价格范围条件
@@ -40,7 +42,7 @@ export interface SearchWhereBuilderInput {
 /**
  * 服装商品排序选项
  */
-export type ClothingItemOrderByWithRelationInput = any;
+export type ClothingItemOrderByWithRelationInput = Prisma.ClothingItemOrderByWithRelationInput;
 
 /**
  * 排序方式枚举
@@ -129,33 +131,9 @@ export function isClothingAttributes(value: unknown): value is ClothingAttribute
 /**
  * 带品牌信息的服装商品
  */
-export interface ClothingItemWithBrand {
-  id: string;
-  name: string;
-  description: string | null;
-  category: string;
-  subcategory: string | null;
-  colors: string[];
-  sizes: string[];
-  tags: string[];
-  price: any;
-  originalPrice: any | null;
-  currency: string;
-  images: string[];
-  mainImage: string | null;
-  attributes: any | null;
-  isActive: boolean;
-  viewCount: number;
-  likeCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  brandId: string | null;
-  brand: {
-    id: string;
-    name: string;
-    logo: string | null;
-  } | null;
-}
+export type ClothingItemWithBrand = Prisma.ClothingItemGetPayload<{
+  include: { brand: { select: { id: true; name: true; logo: true } } };
+}>;
 
 /**
  * 带相似度分数的搜索结果项
@@ -298,7 +276,9 @@ export function buildOrderByClause(sortBy: SortByOption): ClothingItemOrderByWit
 /**
  * 安全获取服装属性
  */
-export function getClothingAttributes(attributes: any | null): ClothingAttributes | null {
+export function getClothingAttributes(
+  attributes: Prisma.JsonValue | null
+): ClothingAttributes | null {
   if (attributes === null || attributes === undefined) {
     return null;
   }

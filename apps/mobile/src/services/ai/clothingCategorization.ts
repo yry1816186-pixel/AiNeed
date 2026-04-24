@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { logger } from "../../shared/utils/logger";
 import { apiClient } from "../api/client";
 import { ClothingCategory, ClothingStyle, Season, Occasion } from "../../types/clothing";
 
@@ -82,7 +83,7 @@ class ClothingCategorizationService {
       const response = await apiClient.upload<CategorizationResult>("/ai/categorize", formData);
 
       if (!response.success || !response.data) {
-        console.error("Categorization failed:", response.error);
+        logger.error("Categorization failed:", response.error);
         return this.getDefaultResult();
       }
 
@@ -100,7 +101,7 @@ class ClothingCategorizationService {
         brand: parsed.brand,
       };
     } catch (error) {
-      console.error("Categorization failed:", error);
+      logger.error("Categorization failed:", error);
       return this.getDefaultResult();
     }
   }

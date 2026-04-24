@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../../shared/utils/logger";
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../../../services/api/community.api";
@@ -36,7 +37,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         onFollowChange?.(newFollowing);
       }
     } catch (error) {
-      console.error("Follow operation failed:", error);
+      logger.error("Follow operation failed:", error);
     } finally {
       setLoading(false);
     }

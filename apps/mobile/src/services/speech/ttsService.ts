@@ -1,8 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Audio } from "@/src/polyfills/expo-av";
 
-// Device TTS (react-native-tts) -- optional, may not be installed
-let Tts: any = null;
+interface TtsInterface {
+  setDefaultLanguage: (lang: string) => Promise<void>;
+  setDefaultRate: (rate: number) => Promise<void>;
+  setDefaultPitch: (pitch: number) => Promise<void>;
+  stop: () => Promise<void>;
+  speak: (text: string) => Promise<void>;
+}
+
+let Tts: TtsInterface | null = null;
 
 try {
   Tts = require("react-native-tts").default;

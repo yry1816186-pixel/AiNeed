@@ -35,9 +35,9 @@ export interface SeasonBadgeProps {
 const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
   primary: { bg: Colors.primary[100], text: Colors.primary[700] },
   secondary: { bg: Colors.sage[100], text: Colors.sage[700] },
-  success: { bg: Colors.semantic.successLight, text: "#1B7A3D" },
-  warning: { bg: Colors.semantic.warningLight, text: "#8B6914" },
-  error: { bg: Colors.semantic.errorLight, text: "#A12525" },
+  success: { bg: Colors.semantic.successLight, text: Colors.semantic.successDark },
+  warning: { bg: Colors.semantic.warningLight, text: Colors.semantic.warningDark },
+  error: { bg: Colors.semantic.errorLight, text: Colors.semantic.errorDark },
   neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
   gold: { bg: Colors.amber[100], text: Colors.amber[700] },
   season: { bg: Colors.neutral[50], text: Colors.primary[500] },

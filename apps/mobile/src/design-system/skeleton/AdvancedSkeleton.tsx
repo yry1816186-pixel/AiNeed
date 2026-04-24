@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
+import { View, StyleSheet, type ViewStyle } from "react-native";
 import { ShimmerSkeleton } from "../../shared/components/animations/ShimmerSkeleton";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 
@@ -137,7 +137,7 @@ export const ChatBubbleSkeleton: React.FC<ChatBubbleSkeletonProps> = ({
       height={48}
       borderRadius={16}
       duration={animate ? undefined : 0}
-      style={[styles.chatBubble, isUser ? styles.chatBubbleUser : undefined] as any}
+      style={[styles.chatBubble, isUser ? styles.chatBubbleUser : undefined] as ViewStyle[]}
     />
   </View>
 );
@@ -164,7 +164,7 @@ export const GridSkeleton: React.FC<GridSkeletonProps> = ({
               height={undefined as unknown as number}
               borderRadius={12}
               duration={animate ? undefined : 0}
-              style={StyleSheet.absoluteFillObject as any}
+              style={StyleSheet.absoluteFillObject as ViewStyle}
             />
           </View>
           {/* Title line */}

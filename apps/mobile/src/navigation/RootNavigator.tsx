@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useRef } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 import type { MainTabParamList, RootStackParamList, GuardType } from "./types";
 import { TAB_LABELS, GUARDED_ROUTES } from "./types";
@@ -20,6 +21,8 @@ import { navigateAuth, navigateProfile, navigationRef } from "./navigationServic
 
 import { AnimatedTabBar } from "../shared/components/AnimatedTabBar";
 import { CommonActions } from "@react-navigation/native";
+import { OfflineBanner } from "../shared/components/states";
+import { useNetwork } from "../shared/hooks/useNetwork";
 
 // ============================================================
 // Main Tab Navigator (4 Tabs: Today / Discover / Stylist / Me)
@@ -32,7 +35,7 @@ export function MainTabNavigator() {
 
   return (
     <Tab.Navigator
-      tabBar={(props: any) => <AnimatedTabBar {...props} />}
+      tabBar={(props: BottomTabBarProps) => <AnimatedTabBar {...props} />}
       screenOptions={{
         headerShown: false,
       }}
@@ -191,6 +194,7 @@ export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
   const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
   const lastGuardedRouteRef = useRef<string | null>(null);
   const prevAuthRef = useRef(isAuthenticated);
+  const { isOffline, syncOfflineRequests } = useNetwork();
 
   // When auth state changes, reset the root stack to the correct screen
   useEffect(() => {
@@ -252,15 +256,18 @@ export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
   }, [isAuthenticated, onboardingCompleted]);
 
   return (
-    <RootStack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={isAuthenticated ? "MainTabs" : "Auth"}
-      screenListeners={{
-        state: handleStateChange,
-      }}
-    >
-      <RootStack.Screen name="Auth" component={AuthNavigator} />
-      <RootStack.Screen name="MainTabs" component={MainTabNavigator} />
-    </RootStack.Navigator>
+    <>
+      <OfflineBanner visible={isOffline} onRetry={() => void syncOfflineRequests()} />
+      <RootStack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={isAuthenticated ? "MainTabs" : "Auth"}
+        screenListeners={{
+          state: handleStateChange,
+        }}
+      >
+        <RootStack.Screen name="Auth" component={AuthNavigator} />
+        <RootStack.Screen name="MainTabs" component={MainTabNavigator} />
+      </RootStack.Navigator>
+    </>
   );
 }

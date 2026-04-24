@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises */
+import { logger } from "../utils/logger";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";
 import apiClient from "../../services/api/client";
@@ -53,7 +54,7 @@ async function checkNetworkConnection(): Promise<NetworkState> {
       isConnectionExpensive: false,
     };
   } catch (error) {
-    console.error("Network status check failed:", error);
+    logger.error("Network status check failed:", error);
     return {
       isConnected: false,
       isInternetReachable: false,
@@ -134,7 +135,7 @@ export function useNetwork(): UseNetworkResult {
             await offlineStorage.incrementRetries(request.id);
           }
         } catch (error) {
-          console.error(`Failed to sync request ${request.id}:`, error);
+          logger.error(`Failed to sync request ${request.id}:`, error);
           await offlineStorage.incrementRetries(request.id);
         }
       }
@@ -175,7 +176,7 @@ export function useOfflineQueue() {
         try {
           return await operation();
         } catch (error) {
-          console.error("Operation failed, queuing for offline:", error);
+          logger.error("Operation failed, queuing for offline:", error);
           await queueOfflineRequest(offlineAction);
           return null;
         }

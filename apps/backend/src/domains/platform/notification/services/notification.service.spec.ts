@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { NotificationService as WebSocketNotificationService } from "../../../../common/gateway/notification.service";
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { NotificationType } from "../../../../types/prisma-enums";
 
 import { NotificationTemplateService } from "./notification-template.service";
 import { NotificationService, CreateNotificationDto } from "./notification.service";
@@ -42,8 +42,7 @@ describe("NotificationService", () => {
   const mockNotification = {
     id: "notification-id",
     userId: "user-id",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type: "system_update" as any,
+    type: "system_update" as NotificationType,
     title: "Test Notification",
     content: "This is a test notification",
     isRead: false,
@@ -84,8 +83,7 @@ describe("NotificationService", () => {
 
   describe("send", () => {
     const createDto: CreateNotificationDto = {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      type: "system_update" as any,
+      type: "system_update" as NotificationType,
       title: "Test Notification",
       content: "This is a test notification",
     };
@@ -107,8 +105,7 @@ describe("NotificationService", () => {
 
   describe("sendBatch", () => {
     const createDto: CreateNotificationDto = {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      type: "system_update" as any,
+      type: "system_update" as NotificationType,
       title: "Batch Notification",
       content: "This is a batch notification",
     };
@@ -240,8 +237,7 @@ describe("NotificationService", () => {
       const result = await service.getUserSettings("user-id");
 
       expect(result?.userId).toBe("user-id");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((result?.email as any)?.marketing).toBe(true);
+      expect((result?.email as { marketing: boolean } | null)?.marketing).toBe(true);
     });
   });
 
@@ -270,8 +266,7 @@ describe("NotificationService", () => {
         email: { marketing: false, transactional: true },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((result.email as any).marketing).toBe(false);
+      expect((result.email as { marketing: boolean }).marketing).toBe(false);
     });
   });
 
@@ -296,8 +291,7 @@ describe("NotificationService", () => {
   describe("sendToUser 别名方法", () => {
     it("应该调用 send 方法", async () => {
       const createDto: CreateNotificationDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "Test",
         content: "Content",
       };
@@ -318,8 +312,7 @@ describe("NotificationService", () => {
   describe("WebSocket 推送", () => {
     it("应该成功通过 WebSocket 推送通知", async () => {
       const createDto: CreateNotificationDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "try_on_completed" as any,
+        type: "try_on_completed" as NotificationType,
         title: "试衣完成",
         content: "您的虚拟试衣已完成",
       };
@@ -342,8 +335,7 @@ describe("NotificationService", () => {
 
     it("应该在 WebSocket 推送失败时静默处理", async () => {
       const createDto: CreateNotificationDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "Test",
         content: "Content",
       };
@@ -377,14 +369,12 @@ describe("NotificationService", () => {
       for (const mapping of typeMappings) {
         mockPrismaService.notification.create.mockResolvedValue({
           ...mockNotification,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          type: mapping.db as any,
+          type: mapping.db as NotificationType,
         });
         mockWebSocketNotificationService.sendCustomNotification.mockClear();
 
         await service.send("user-id", {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          type: mapping.db as any,
+          type: mapping.db as NotificationType,
           title: "Test",
           content: "Content",
         });
@@ -402,8 +392,7 @@ describe("NotificationService", () => {
   describe("通知数据完整性", () => {
     it("应该包含目标信息", async () => {
       const createDto: CreateNotificationDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "try_on_completed" as any,
+        type: "try_on_completed" as NotificationType,
         title: "试衣完成",
         content: "内容",
         targetType: "clothing",
@@ -435,8 +424,7 @@ describe("NotificationService", () => {
       mockPrismaService.notification.createMany.mockResolvedValue({ count: 100 });
 
       const result = await service.sendBatch(userIds, {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "系统公告",
         content: "重要通知",
       });
@@ -454,8 +442,7 @@ describe("NotificationService", () => {
       mockPrismaService.notification.createMany.mockResolvedValue({ count: 0 });
 
       const result = await service.sendBatch([], {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "Test",
         content: "Content",
       });
@@ -552,10 +539,8 @@ describe("NotificationService", () => {
         email: { marketing: false, transactional: true },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((result.email as any).marketing).toBe(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((result.push as any).recommendation).toBe(true);
+      expect((result.email as { marketing: boolean }).marketing).toBe(false);
+      expect((result.push as { recommendation: boolean }).recommendation).toBe(true);
     });
   });
 

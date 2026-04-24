@@ -86,7 +86,7 @@ export class DialogContextDto {
   turnCount: number = 0;
 
   @ApiPropertyOptional({ description: "生成的穿搭方案" })
-  generatedOutfits?: any[];
+  generatedOutfits?: Record<string, unknown>[];
 
   @ApiPropertyOptional({ description: "跨session偏好记忆" })
   preferenceMemory?: Record<string, string>;
@@ -109,7 +109,7 @@ export class DialogChatResponseDto {
   reply!: string;
 
   @ApiPropertyOptional({ description: "穿搭方案" })
-  outfits?: any[];
+  outfits?: Record<string, unknown>[];
 
   @ApiProperty({ description: "快速回复选项", type: [String] })
   quickReplies!: string[];

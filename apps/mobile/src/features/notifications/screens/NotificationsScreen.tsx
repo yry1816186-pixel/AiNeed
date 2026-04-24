@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
-// @ts-nocheck
 import React, { useCallback, useEffect } from "react";
 import {
   View,
@@ -24,6 +22,7 @@ import type { RootStackParamList } from "../../../types/navigation";
 import type { NotificationItem } from "../../../services/api/notification.api";
 import { wsService } from "../../../services/websocket";
 import { flatColors as colors } from "../../../design-system/theme";
+import { navigateHome } from "../../../navigation/navigationService";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -282,7 +281,13 @@ export const NotificationsScreen: React.FC = () => {
         >
           <Ionicons name="notifications-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyText}>{t.notifications.noNotifications}</Text>
-          <Text style={styles.emptySubtext}>Pull to refresh</Text>
+          <Text style={styles.emptySubtext}>下拉刷新</Text>
+          <TouchableOpacity
+            style={styles.emptyActionButton}
+            onPress={() => navigateHome("TodayMain")}
+          >
+            <Text style={styles.emptyActionText}>浏览推荐</Text>
+          </TouchableOpacity>
         </ScrollView>
       ) : (
         <ScrollView
@@ -463,6 +468,18 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
     marginTop: 8,
+  },
+  emptyActionButton: {
+    marginTop: 20,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 24,
+    backgroundColor: colors.primary,
+  },
+  emptyActionText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
   },
   endText: {
     textAlign: "center",

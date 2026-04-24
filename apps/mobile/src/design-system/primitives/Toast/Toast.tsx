@@ -206,7 +206,7 @@ const useStyles = createStyles((colors) => ({
   message: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.sm,
-    fontWeight: "500" as any,
+    fontWeight: DesignTokens.typography.fontWeights.medium,
     color: colors.textPrimary,
     lineHeight: 20,
   },

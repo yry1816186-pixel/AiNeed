@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -105,7 +106,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error("Follow operation failed:", error);
+      logger.error("Follow operation failed:", error);
     } finally {
       setFollowLoading(false);
     }

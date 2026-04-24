@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -81,10 +80,8 @@ describe("WechatAuthStrategy", () => {
         get: jest.fn((key: string, defaultValue?: string) => defaultValue ?? ""),
       };
       const emptyStrategy = new WechatAuthStrategy(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        wechatService as any,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        emptyConfig as any
+        wechatService as unknown as WechatService,
+        emptyConfig as unknown as ConfigService
       );
 
       await expect(emptyStrategy.exchangeCodeForToken("test-code")).rejects.toThrow(

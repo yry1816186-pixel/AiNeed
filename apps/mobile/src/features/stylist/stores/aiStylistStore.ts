@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 import {
   aiStylistApi,
@@ -264,7 +265,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       }
     } catch (error) {
       // silent fail
-      console.error("AI Stylist operation failed:", error);
+      logger.error("AI Stylist operation failed:", error);
     }
   },
 

@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { Prisma } from "@prisma/client";
 import {
   PaginatedResponse,
   createPaginatedResponse,
@@ -65,10 +66,10 @@ export class StyleQuizService {
     });
   }
 
-  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<any>> {
+  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<Record<string, unknown>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: any = {};
+    const where: Prisma.StyleQuizWhereInput = {};
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
     }
@@ -166,7 +167,7 @@ export class StyleQuizService {
   }
 
   async getQuestions(quizId: string, query: QuizQuestionQueryDto) {
-    const where: any = { quizId };
+    const where: Prisma.QuizQuestionWhereInput = { quizId };
 
     if (query.dimension) {
       where.dimension = query.dimension;
@@ -323,10 +324,13 @@ export class StyleQuizService {
 
   // ==================== 测试结果 ====================
 
-  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<any>> {
+  async getQuizResults(
+    userId: string,
+    query: QuizResultQueryDto
+  ): Promise<PaginatedResponse<Record<string, unknown>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: any = { userId };
+    const where: Prisma.StyleQuizResultWhereInput = { userId };
 
     if (query.quizId) {
       where.quizId = query.quizId;

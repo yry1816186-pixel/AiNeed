@@ -123,14 +123,13 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
   });
 });
 
-/**
- * 创建带有软删除扩展的 Prisma 客户端
- *
- * 注意: $extends 的参数类型在 @prisma/client 中未完整导出，
- * 使用 any 是当前唯一可行的方案（已知的 Prisma 类型系统限制）
- */
-export function createSoftDeletePrismaClient<T extends { $extends: (extension: any) => any }>(
-  prisma: T
-): ReturnType<T["$extends"]> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaExtension = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaExtendedClient = any;
+
+export function createSoftDeletePrismaClient<
+  T extends { $extends: (extension: PrismaExtension) => PrismaExtendedClient }
+>(prisma: T): ReturnType<T["$extends"]> {
   return prisma.$extends(softDeleteExtension);
 }

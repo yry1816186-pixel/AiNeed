@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
-// @ts-nocheck
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
+import { navigateStylist } from "../../../navigation/navigationService";
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -147,7 +146,13 @@ export const SessionCalendarScreen: React.FC = () => {
       <ScrollView style={styles.sessionList} contentContainerStyle={styles.sessionListContent}>
         {selectedDate && archivedSessions.length === 0 && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No outfits for this date</Text>
+            <Text style={styles.emptyText}>这天还没有搭配方案</Text>
+            <TouchableOpacity
+              style={styles.emptyAction}
+              onPress={() => navigateStylist("AIStylist")}
+            >
+              <Text style={styles.emptyActionText}>让伊伊搭一套</Text>
+            </TouchableOpacity>
           </View>
         )}
         {archivedSessions.map((session) => (
@@ -265,6 +270,18 @@ const styles = StyleSheet.create({
   },
   emptyState: { alignItems: "center", paddingVertical: 24 },
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
+  emptyAction: {
+    marginTop: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
+  },
+  emptyActionText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "600",
+    color: colors.surface,
+  },
 });
 
 export default SessionCalendarScreen;

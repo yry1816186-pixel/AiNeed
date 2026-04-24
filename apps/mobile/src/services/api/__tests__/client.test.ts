@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, @typescript-eslint/unbound-method, no-irregular-whitespace */
-import { AxiosError, AxiosHeaders } from "axios";
+/* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars, @typescript-eslint/unbound-method, no-irregular-whitespace */
+import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 
 import { apiClient } from "../client";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
@@ -68,14 +68,14 @@ function _createAxiosError(
       url: url || "/test",
       method: "get",
       headers: new AxiosHeaders(),
-    } as any,
+    } as InternalAxiosRequestConfig,
     null,
     {
       status,
       data,
       statusText: "Error",
       headers: {},
-      config: {} as any,
+      config: {} as InternalAxiosRequestConfig,
     }
   );
   return error;

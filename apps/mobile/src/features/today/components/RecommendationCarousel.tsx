@@ -1,87 +1,29 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import React from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { recommendationsApi, type RecommendedItem } from "../../../services/api/tryon.api";
+import type { RecommendedItem } from "../../../services/api/tryon.api";
 
-/** @mock fallback when API is unavailable */
-const MOCK_OUTFITS: RecommendedItem[] = [
-  {
-    id: "1",
-    name: "商务精英",
-    category: "商务",
-    mainImage: "",
-    price: 0,
-    matchReasons: ["适合你的体型和面试场景"],
-  },
-  {
-    id: "2",
-    name: "休闲时尚",
-    category: "日常",
-    mainImage: "",
-    price: 0,
-    matchReasons: ["日常百搭单品"],
-  },
-  {
-    id: "3",
-    name: "运动活力",
-    category: "运动",
-    mainImage: "",
-    price: 0,
-    matchReasons: ["适合运动场景"],
-  },
-];
+interface RecommendationCarouselProps {
+  items?: RecommendedItem[];
+}
 
-export function RecommendationCarousel() {
+export function RecommendationCarousel({ items }: RecommendationCarouselProps) {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
-  const [outfits, setOutfits] = useState<RecommendedItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFromApi, setIsFromApi] = useState(false);
-
-  const fetchRecommendations = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await recommendationsApi.getPersonalized({ limit: 6 });
-      if (response.success && response.data && response.data.length > 0) {
-        setOutfits(response.data);
-        setIsFromApi(true);
-      } else {
-        setOutfits(MOCK_OUTFITS);
-        setIsFromApi(false);
-      }
-    } catch {
-      setOutfits(MOCK_OUTFITS);
-      setIsFromApi(false);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchRecommendations();
-  }, [fetchRecommendations]);
-
-  if (isLoading) {
-    return (
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>伊伊推荐</Text>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
-      </View>
-    );
+  if (!items || items.length === 0) {
+    return null;
   }
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>伊伊推荐{!isFromApi ? "（预览）" : ""}</Text>
+      <Text style={styles.sectionTitle}>伊伊推荐</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.carousel}
       >
-        {outfits.map((outfit) => (
+        {items.map((outfit) => (
           <TouchableOpacity key={outfit.id} style={styles.outfitCard} activeOpacity={0.7}>
             <View style={styles.outfitImage}>
               <Text style={styles.outfitImagePlaceholder}>{outfit.name[0]}</Text>

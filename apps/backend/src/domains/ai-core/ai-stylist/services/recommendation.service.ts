@@ -344,7 +344,7 @@ export class AiStylistRecommendationService {
         outfit.items.length > 0 &&
         outfits.findIndex(
           (candidate) =>
-            candidate.items.map((item: any) => item.itemId).join(",") ===
+            candidate.items.map((item: StylistOutfitItem) => item.itemId).join(",") ===
             outfit.items.map((item) => item.itemId).join(",")
         ) === index
     );
@@ -540,7 +540,7 @@ export class AiStylistRecommendationService {
           })
         : [];
       const dbItemMap = new Map(
-        dbItems.map((item: { id: string; [key: string]: any }) => [item.id, item])
+        dbItems.map((item: { id: string; [key: string]: unknown }) => [item.id, item])
       );
 
       const items: StylistOutfitItem[] = (mlResult.items || []).map(

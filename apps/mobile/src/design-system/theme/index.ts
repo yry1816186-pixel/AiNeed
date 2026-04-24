@@ -60,7 +60,30 @@ const gradientPalettes = {
 export const Colors = {
   brand: DesignTokens.colors.brand,
   neutral: neutralPalette,
-  semantic: DesignTokens.colors.semantic,
+  semantic: {
+    ...DesignTokens.colors.semantic,
+    successDark: DesignTokens.colors.semantic.successDark,
+    warningDark: DesignTokens.colors.semantic.warningDark,
+    errorDark: DesignTokens.colors.semantic.errorDark,
+    like: DesignTokens.colors.semantic.like,
+    bookmark: DesignTokens.colors.semantic.bookmark,
+    chartGood: DesignTokens.colors.semantic.chartGood,
+    chartMedium: DesignTokens.colors.semantic.chartMedium,
+    chartPoor: DesignTokens.colors.semantic.chartPoor,
+    chartGrid: DesignTokens.colors.semantic.chartGrid,
+    skeletonBase: DesignTokens.colors.semantic.skeletonBase,
+    warmBlush: DesignTokens.colors.semantic.warmBlush,
+    slateMist: DesignTokens.colors.semantic.slateMist,
+    goldenGlow: DesignTokens.colors.semantic.goldenGlow,
+    sageMist: DesignTokens.colors.semantic.sageMist,
+    yellow: DesignTokens.colors.semantic.yellow,
+    brown: DesignTokens.colors.semantic.brown,
+    wechat: DesignTokens.colors.semantic.wechat,
+    weibo: DesignTokens.colors.semantic.weibo,
+    qq: DesignTokens.colors.semantic.qq,
+    mutedSage: DesignTokens.colors.semantic.mutedSage,
+    fashion: DesignTokens.colors.fashion,
+  },
 
   primary: {
     50: "#FDF8F5",
@@ -451,7 +474,30 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
       warmSecondary: "#D4917A",
     } as FlatColors["brand"],
     neutral: base.neutral,
-    semantic: base.semantic,
+    semantic: {
+      ...base.semantic,
+      successDark: base.semantic.successDark,
+      warningDark: base.semantic.warningDark,
+      errorDark: base.semantic.errorDark,
+      like: base.semantic.like,
+      bookmark: base.semantic.bookmark,
+      chartGood: base.semantic.chartGood,
+      chartMedium: base.semantic.chartMedium,
+      chartPoor: base.semantic.chartPoor,
+      chartGrid: base.semantic.chartGrid,
+      skeletonBase: base.semantic.skeletonBase,
+      warmBlush: base.semantic.warmBlush,
+      slateMist: base.semantic.slateMist,
+      goldenGlow: base.semantic.goldenGlow,
+      sageMist: base.semantic.sageMist,
+      yellow: base.semantic.yellow,
+      brown: base.semantic.brown,
+      wechat: base.semantic.wechat,
+      weibo: base.semantic.weibo,
+      qq: base.semantic.qq,
+      mutedSage: base.semantic.mutedSage,
+      fashion: base.fashion,
+    },
     backgrounds: base.backgrounds,
     text: base.text,
     borders: base.borders,
@@ -518,6 +564,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
 }
 
 export const flatColors = buildFlatThemeColors(DesignTokens.colors);
+export const darkFlatColors = buildFlatThemeColors(darkTokens.colors);
 export { flatColors as colors };
 
 export const themeColors = {

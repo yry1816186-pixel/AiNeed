@@ -43,7 +43,7 @@ import {
 } from "./dto/community.dto";
 
 const imageFileFilter = (
-  _req: any,
+  _req: Request,
   file: Express.Multer.File,
   callback: (error: Error | null, acceptFile: boolean) => void
 ) => {

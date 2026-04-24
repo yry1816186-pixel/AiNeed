@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { ExecutionContext, HttpException, HttpStatus } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -35,7 +35,7 @@ describe("AiQuotaGuard", () => {
       getHandler: () => jest.fn(),
       getClass: () => jest.fn(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    } as unknown as ExecutionContext;
   };
 
   beforeEach(async () => {

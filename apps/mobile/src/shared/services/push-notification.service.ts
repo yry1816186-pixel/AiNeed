@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-var-requires, @typescript-eslint/require-await */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-var-requires, @typescript-eslint/require-await */
+import { logger } from "../utils/logger";
 import { Platform } from "react-native";
 import { notificationApi } from "../../services/api/notification.api";
 import { secureStorage } from "../utils/secureStorage";
@@ -32,7 +33,7 @@ class PushNotificationService {
 
       this.initialized = true;
     } catch (error) {
-      console.warn("[PushNotification] Initialize failed:", error);
+      logger.warn("[PushNotification] Initialize failed:", error);
     }
   }
 
@@ -68,7 +69,7 @@ class PushNotificationService {
       // Android: permissions are granted by default for push notifications
       return true;
     } catch (error) {
-      console.warn("[PushNotification] Permission request failed:", error);
+      logger.warn("[PushNotification] Permission request failed:", error);
       return false;
     }
   }
@@ -92,7 +93,7 @@ class PushNotificationService {
       // If no Firebase, return null (push not available in dev)
       return null;
     } catch (error) {
-      console.warn("[PushNotification] Get token failed:", error);
+      logger.warn("[PushNotification] Get token failed:", error);
       return null;
     }
   }
@@ -105,7 +106,7 @@ class PushNotificationService {
       const platform = Platform.OS === "ios" ? "ios" : "android";
       await notificationApi.registerDeviceToken(token, platform);
     } catch (error) {
-      console.warn("[PushNotification] Backend registration failed:", error);
+      logger.warn("[PushNotification] Backend registration failed:", error);
     }
   }
 
@@ -120,7 +121,7 @@ class PushNotificationService {
     try {
       await notificationApi.deregisterDeviceToken(this.token);
     } catch (error) {
-      console.warn("[PushNotification] Backend deregistration failed:", error);
+      logger.warn("[PushNotification] Backend deregistration failed:", error);
     } finally {
       this.token = null;
       await secureStorage.deleteItem(PUSH_TOKEN_KEY);
@@ -153,7 +154,7 @@ class PushNotificationService {
         });
       }
     } catch (error) {
-      console.warn("[PushNotification] onMessage setup failed:", error);
+      logger.warn("[PushNotification] onMessage setup failed:", error);
     }
     return () => {};
   }
@@ -205,7 +206,7 @@ class PushNotificationService {
         return unsub1;
       }
     } catch (error) {
-      console.warn("[PushNotification] onNotificationOpened setup failed:", error);
+      logger.warn("[PushNotification] onNotificationOpened setup failed:", error);
     }
     return () => {};
   }

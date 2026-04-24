@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -13,10 +12,40 @@ describe("PrivacyService", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let prisma: PrismaService;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mockPrisma: any = {};
-
-  Object.assign(mockPrisma, {
+  const mockPrisma: {
+    userConsent: {
+      findMany: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+      upsert: jest.Mock;
+      deleteMany: jest.Mock;
+    };
+    dataExportRequest: {
+      create: jest.Mock;
+      findUnique: jest.Mock;
+      findFirst: jest.Mock;
+      update: jest.Mock;
+    };
+    dataDeletionRequest: {
+      create: jest.Mock;
+      findUnique: jest.Mock;
+      findFirst: jest.Mock;
+      update: jest.Mock;
+      updateMany: jest.Mock;
+    };
+    user: { findUnique: jest.Mock; update: jest.Mock };
+    userProfile: { findUnique: jest.Mock };
+    userPhoto: { findMany: jest.Mock; deleteMany: jest.Mock };
+    userBehaviorEvent: { findMany: jest.Mock; deleteMany: jest.Mock };
+    userPreferenceWeight: { findMany: jest.Mock; deleteMany: jest.Mock };
+    userSession: { deleteMany: jest.Mock };
+    notification: { findMany: jest.Mock; deleteMany: jest.Mock };
+    virtualTryOn: { findMany: jest.Mock; deleteMany: jest.Mock };
+    favorite: { findMany: jest.Mock; deleteMany: jest.Mock };
+    customizationRequest: { findMany: jest.Mock };
+    userSubscription: { findMany: jest.Mock };
+    $transaction: jest.Mock;
+  } = {
     userConsent: {
       findMany: jest.fn(),
       create: jest.fn(),
@@ -78,15 +107,14 @@ describe("PrivacyService", () => {
       findMany: jest.fn(),
     },
     $transaction: jest.fn(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (callbacks: any[] | ((tx: typeof mockPrisma) => unknown)) => {
+      (callbacks: Promise<unknown>[] | ((tx: typeof mockPrisma) => unknown)): unknown => {
         if (Array.isArray(callbacks)) {
           return Promise.all(callbacks);
         }
         return callbacks(mockPrisma);
       }
     ),
-  });
+  };
 
   const mockStorage = {
     uploadTemporary: jest.fn(),

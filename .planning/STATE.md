@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: executing
+stopped_at: Phase 5 planning complete (4 plans created)
+last_updated: "2026-04-24T22:18:31.160Z"
+last_activity: 2026-04-24 -- Phase 05 execution started
+progress:
+  total_phases: 10
+  completed_phases: 4
+  total_plans: 20
+  completed_plans: 16
+  percent: 80
+---
+
 # Project State
 
 ## Project Reference
@@ -5,15 +21,15 @@
 See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 
 **Core value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
-**Current focus:** Phase 4 complete (Yiyi Agent + Voice + Onboarding + Studio). Ready for Phase 5 (E2E Integration + Competition Demo).
+**Current focus:** Phase 05 — e2e-integration-competition-demo
 **Authoritative source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md (42 frozen decisions, 10 dimensions)
 
 ## Current Position
 
-Phase: 5 of 10 (E2E Integration + Competition Demo)
-Plan: 0 of ? planned
-Status: Phase 4 complete, ready for Phase 5 planning
-Last activity: 2026-04-25 -- Phase 4 complete: 7/7 plans executed, 9/9 must-haves verified, 5 human tests pending
+Phase: 05 (e2e-integration-competition-demo) — EXECUTING
+Plan: 1 of 4
+Status: Executing Phase 05
+Last activity: 2026-04-24 -- Phase 05 execution started
 
 Progress: [#########.] 80%
 
@@ -102,6 +118,26 @@ None yet.
 - GLM-4-Flash free tier is not guaranteed -- fallback to Qianwen + local Qwen needed
 - 48h Sprint realistic success rate: clean demo 30-40%, usable demo 60-70%
 
+## Risk Registry (§6 — reviewed each phase)
+
+| #   | Risk                                                       | Prob   | Impact | Mitigation                                                                | Status | Last Review |
+| --- | ---------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------- | ------ | ----------- |
+| R1  | GLM-4-Flash free tier cancelled                            | 中     | 致命   | Qwen fallback + local Qwen quantized model                                | 开放   | 2026-04-25  |
+| R2  | FashionCLIP gender bias → recommendation discrimination    | 高     | 高     | Phase 6 upgrade FashionSigLIP + diversity constraints                     | 开放   | 2026-04-25  |
+| R3  | Edge-TTS latency >3s breaks voice experience               | 中     | 高     | Pre-cache common voice + local TTS fallback; NO BENCHMARK YET             | 开放   | 2026-04-25  |
+| R4  | Competition demo crashes (crash/white screen)              | **高** | 致命   | E2E automated tests + demo script + fallback plan; 5 human tests PENDING  | 开放   | 2026-04-25  |
+| R5  | Software copyright not submitted before June               | **中** | 高     | Phase 5 starts copyright application simultaneously                       | 开放   | 2026-04-25  |
+| R6  | Cold start CTR <3%                                         | 中     | 高     | Degraded template fallback + onboarding data inflow; NO SEED USERS        | 开放   | 2026-04-25  |
+| R7  | Mobile TypeScript compilation errors not zeroed            | 高     | 高     | Phase 5 priority: tsc --noEmit, fix per file                              | 开放   | 2026-04-25  |
+| R8  | Dev .env files contain hardcoded secrets                   | 中     | 高     | Rotate JWT_SECRET/REDIS_PASSWORD/MINIO_SECRET_KEY; .gitignore verified    | 开放   | 2026-04-25  |
+| R9  | Competition timeline risk (<8 weeks to school competition) | 高     | 致命   | Phase 5 MUST produce demo video + PPT; copyright in parallel              | 开放   | 2026-04-25  |
+| R10 | Demo environment dependency (network/hardware)             | 中     | 致命   | Local Docker full-stack + offline degradation + demo rehearsal            | 开放   | 2026-04-25  |
+| R11 | GLM-4-Flash rate limit during demo                         | 中     | 致命   | Pre-cache recommendations + demo script fixed path + Qwen fallback        | 开放   | 2026-04-25  |
+| R12 | Zero seed users                                            | 高     | 高     | 5-10 person beta + simulated behavior data + survey feedback              | 开放   | 2026-04-25  |
+| R13 | Dependency version lock (reanimated/screens)               | 低     | 中     | Lock versions maintained; evaluate upgrade post-Phase 6                   | 开放   | 2026-04-25  |
+| R14 | Data privacy compliance gaps (PIPL)                        | 中     | 高     | Phase 5 minimum: privacy policy + user agreement + data collection notice | 开放   | 2026-04-25  |
+| R15 | Phase 4 human verification items all pending               | 高     | 高     | Phase 5 Day 1: execute 5 human verification items                         | 开放   | 2026-04-25  |
+
 ## Deferred Items
 
 Items acknowledged and carried forward:
@@ -118,6 +154,6 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-25
-Stopped at: Phase 4 complete (7/7 plans), ready for Phase 5 planning
-Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-VERIFICATION.md
+Last session: 2026-04-25T22:30:00.000Z
+Stopped at: Phase 5 planning complete (4 plans created)
+Resume file: .planning/phases/05-e2e-integration-competition-demo/05-01-PLAN.md

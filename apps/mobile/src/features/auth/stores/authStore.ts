@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+﻿/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -301,7 +302,7 @@ export const useAuthStore = create<AuthState>()(
           await apiClient.clearAuth();
         } catch (error) {
           // ignore clear errors during logout
-          console.error("Auth cleanup failed:", error);
+          logger.error("Auth cleanup failed:", error);
         }
         const { clearAllStores } = await import("../../../shared/stores/clearAllStores");
         clearAllStores();
@@ -402,7 +403,7 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           // non-blocking
-          console.error("Auth operation failed:", error);
+          logger.error("Auth operation failed:", error);
         }
       },
 
@@ -414,7 +415,7 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           // non-blocking
-          console.error("Auth operation failed:", error);
+          logger.error("Auth operation failed:", error);
         }
       },
 

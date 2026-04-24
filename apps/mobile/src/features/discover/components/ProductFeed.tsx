@@ -3,51 +3,19 @@ import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from "react
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { recommendationsApi, type RecommendedItem } from "../../../services/api/tryon.api";
 import { ProductFeedCard } from "./ProductFeedCard";
+import { EmptyState } from "../../../shared/components/states";
 
-/** @mock fallback when API is unavailable */
-const MOCK_PRODUCTS: RecommendedItem[] = [
-  {
-    id: "1",
-    name: "经典修身西装",
-    category: "商务",
-    mainImage: "",
-    price: 899,
-    matchReasons: ["适合你的体型和面试场景"],
-  },
-  {
-    id: "2",
-    name: "丝质衬衫",
-    category: "休闲",
-    mainImage: "",
-    price: 399,
-    matchReasons: ["搭配你的肤色，提升气质"],
-  },
-  {
-    id: "3",
-    name: "羊毛大衣",
-    category: "外套",
-    mainImage: "",
-    price: 1299,
-    matchReasons: ["换季必备，百搭单品"],
-  },
-  {
-    id: "4",
-    name: "休闲运动鞋",
-    category: "鞋履",
-    mainImage: "",
-    price: 599,
-    matchReasons: ["日常舒适之选"],
-  },
-];
+interface ProductFeedProps {
+  onBrowseWardrobe?: () => void;
+}
 
-export function ProductFeed() {
+export function ProductFeed({ onBrowseWardrobe }: ProductFeedProps) {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
   const [products, setProducts] = useState<RecommendedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isFromApi, setIsFromApi] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async (isRefresh = false) => {
@@ -62,17 +30,14 @@ export function ProductFeed() {
       const response = await recommendationsApi.getDiscover(20);
       if (response.success && response.data && response.data.length > 0) {
         setProducts(response.data);
-        setIsFromApi(true);
       } else {
-        setProducts(MOCK_PRODUCTS);
-        setIsFromApi(false);
+        setProducts([]);
         if (!response.success) {
           setError(response.error?.message ?? "加载失败");
         }
       }
     } catch {
-      setProducts(MOCK_PRODUCTS);
-      setIsFromApi(false);
+      setProducts([]);
       setError("网络错误");
     } finally {
       setIsLoading(false);
@@ -99,10 +64,36 @@ export function ProductFeed() {
     );
   }
 
+  if (error && products.length === 0) {
+    return (
+      <View style={styles.section}>
+        <EmptyState
+          illustration="search"
+          title="加载失败"
+          message={error}
+          actionLabel="重试"
+          onAction={() => fetchProducts()}
+        />
+      </View>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <View style={styles.section}>
+        <EmptyState
+          illustration="search"
+          title="还没有发现好物，去衣橱看看？"
+          actionLabel="浏览衣橱"
+          onAction={onBrowseWardrobe}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>推荐商品{!isFromApi ? "（预览）" : ""}</Text>
-      {error && !isFromApi && <Text style={styles.errorText}>{error}，显示示例数据</Text>}
+      <Text style={styles.sectionTitle}>推荐商品</Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={

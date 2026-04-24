@@ -161,8 +161,8 @@ export class CustomizationService {
     }
 
     const layerCount = design.layers.length;
-    const hasTextLayers = design.layers.some((l: any) => l.type === "text");
-    const imageCount = design.layers.filter((l: any) => l.type === "image").length;
+    const hasTextLayers = design.layers.some((l: { type: string }) => l.type === "text");
+    const imageCount = design.layers.filter((l: { type: string }) => l.type === "image").length;
 
     const pricing = pricingEngine.calculatePrice({
       templateType: design.template.type,
@@ -304,7 +304,7 @@ export class CustomizationService {
     page: number = 1,
     limit: number = 10
   ) {
-    const where: any = { userId };
+    const where: Prisma.CustomizationRequestWhereInput = { userId };
     if (status) {
       where.status = status;
     }

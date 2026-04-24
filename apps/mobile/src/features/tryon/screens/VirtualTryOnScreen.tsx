@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, import/no-unresolved */
-// @ts-nocheck
-import React from "react";
+﻿import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
@@ -8,7 +6,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
-import { logger } from "../../../utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useFeatureFlags } from "../../../shared/contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../../../constants/feature-flags";

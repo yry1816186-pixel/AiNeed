@@ -281,7 +281,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <View style={styles.container}>
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#666" />
+            <ActivityIndicator size="large" color={DesignTokens.colors.neutral[500]} />
             <Text style={styles.loadingText}>正在处理错误...</Text>
             {__DEV__ && error && <Text style={styles.loadingError}>{error.message}</Text>}
           </View>
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#666",
+    color: DesignTokens.colors.neutral[500],
   },
   loadingError: {
     marginTop: 12,

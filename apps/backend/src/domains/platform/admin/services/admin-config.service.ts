@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { Prisma } from "@prisma/client";
 
 import { AdminAuditService } from "./admin-audit.service";
 
@@ -47,13 +48,13 @@ export class AdminConfigService {
     const result = await this.prisma.systemConfig.upsert({
       where: { key },
       update: {
-        value: value as any,
+        value: value as Prisma.InputJsonValue,
         description: description ?? undefined,
         updatedBy: userId,
       },
       create: {
         key,
-        value: value as any,
+        value: value as Prisma.InputJsonValue,
         description: description ?? undefined,
         updatedBy: userId,
       },

@@ -8,10 +8,8 @@ describe("EmailService", () => {
   let configService: ConfigService;
 
   const mockConfigService = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    get: jest.fn((key: string, defaultValue?: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const config: Record<string, any> = {
+    get: jest.fn((key: string, defaultValue?: unknown) => {
+      const config: Record<string, unknown> = {
         SMTP_HOST: undefined, // 不配置 SMTP，使用模拟模式
         SMTP_PORT: 587,
         SMTP_USER: undefined,

@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /**
  * Tests for the API client error handling module
  * Tests pure functions from error.ts that have no React Native dependencies
  */
 
-import { AxiosError } from "axios";
+import { AxiosError, type AxiosResponse } from "axios";
 import type { ApiError } from "../../types/api";
 import {
   AppError,
@@ -86,7 +86,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Unauthorized", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 401,
       data: { message: "Token expired" },
-    } as any);
+    } as AxiosResponse<ApiError>);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.UNAUTHORIZED);
@@ -97,7 +97,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Forbidden", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 403,
       data: {},
-    } as any);
+    } as AxiosResponse<ApiError>);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.FORBIDDEN);
@@ -107,21 +107,19 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Not Found", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 404,
       data: {},
-    } as any);
+    } as AxiosResponse<ApiError>);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.NOT_FOUND);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   });
 
   it("should classify 422 as VALIDATION_ERROR", () => {
     const axiosError = new AxiosError("Validation", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 422,
       data: { message: "Invalid input" },
-    } as any);
+    } as AxiosResponse<ApiError>);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(result.code).toBe(AppErrorCode.VALIDATION_ERROR);
     expect(result.message).toBe("Invalid input");
   });
@@ -135,7 +133,7 @@ describe("classifyAxiosError", () => {
       {
         status: 429,
         data: {},
-      } as any
+      } as AxiosResponse<ApiError>
     );
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
@@ -151,8 +149,7 @@ describe("classifyAxiosError", () => {
       {
         status: 500,
         data: {},
-      } as any
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as AxiosResponse<ApiError>
     );
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
@@ -163,8 +160,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Conflict", "ERR_BAD_REQUEST", undefined, undefined, {
       status: 409,
       data: { message: "Resource conflict" },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    } as AxiosResponse<ApiError>);
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.BUSINESS_ERROR);

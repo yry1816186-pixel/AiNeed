@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+import { logger } from "../logger";
 import { Platform } from "react-native";
 import { Sentry } from "../../services/sentry";
 
@@ -84,7 +85,7 @@ export function validateCertificate(serverCert: string, domain: string): boolean
         return false;
       }
       if (__DEV__) {
-        console.warn(
+        logger.warn(
           `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`
         );
         return true;
@@ -101,7 +102,7 @@ export function validateCertificate(serverCert: string, domain: string): boolean
         return false;
       }
       if (__DEV__) {
-        console.warn(
+        logger.warn(
           `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`
         );
         return true;

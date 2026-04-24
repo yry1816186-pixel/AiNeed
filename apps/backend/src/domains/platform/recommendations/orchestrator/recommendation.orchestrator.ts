@@ -1196,10 +1196,23 @@ export class RecommendationOrchestrator {
 
     const effectiveExpId = experimentId ?? results[0]?.experimentId ?? this.generateExperimentId();
 
+    const firstBreakdown = results[0]?.breakdown;
+
     return {
       items,
       outfit,
       explanation: batchExplanation,
+      breakdown: firstBreakdown
+        ? {
+            totalCandidates: firstBreakdown.totalCandidates,
+            afterSceneFilter: firstBreakdown.afterSceneFilter,
+            afterSizeFilter: firstBreakdown.afterSizeFilter,
+            afterBudgetFilter: firstBreakdown.afterBudgetFilter,
+            afterStyleFilter: 0,
+            afterWardrobeFilter: 0,
+            finalCount: items.length,
+          }
+        : undefined,
       experimentId: effectiveExpId,
       degraded: isDegraded ?? false,
     };

@@ -31,11 +31,11 @@ interface SceneCarouselProps {
 }
 
 const PLACEHOLDER_COLORS: [string, string][] = [
-  ["#FF6B6B", "#FF8E8E"],
-  ["#B8E0D2", "#9AD0BC"],
-  ["#F0C987", "#E0B876"],
-  ["#7B8FA2", "#6A7E92"],
-  ["#D4C7E0", "#B8A9CC"],
+  [DesignTokens.colors.colorSeasons.spring.colors[0], DesignTokens.colors.brand.terracottaLight],
+  [DesignTokens.colors.brand.sageLight, DesignTokens.colors.brand.sage],
+  [DesignTokens.colors.brand.camelLight, DesignTokens.colors.brand.camel],
+  [DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark],
+  [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slate],
 ];
 
 const cardStyles = StyleSheet.create({
@@ -68,7 +68,7 @@ const cardStyles = StyleSheet.create({
     padding: DesignTokens.spacing[3],
   },
   sceneTag: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: DesignTokens.colors.borders.light,
     paddingHorizontal: DesignTokens.spacing["2.5"],
     paddingVertical: DesignTokens.spacing["0.5"],
     borderRadius: DesignTokens.borderRadius.full,
@@ -143,9 +143,12 @@ const SceneCardItem = memo(({ card, colorPair, onPress }: SceneCardItemProps) =>
           end={{ x: 1, y: 1 }}
           style={cardStyles.cardImage}
         >
-          <Ionicons name="shirt-outline" size={40} color="rgba(255,255,255,0.5)" />
+          <Ionicons name="shirt-outline" size={40} color={DesignTokens.colors.text.inverse} />
         </LinearGradient>
-        <LinearGradient colors={["transparent", "rgba(0,0,0,0.7)"]} style={cardStyles.cardOverlay}>
+        <LinearGradient
+          colors={["transparent", DesignTokens.colors.backgrounds.overlay]}
+          style={cardStyles.cardOverlay}
+        >
           <View style={cardStyles.sceneTag}>
             <Text style={cardStyles.sceneText}>{card.scene}</Text>
           </View>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -471,8 +470,7 @@ describe("PaymentService", () => {
     });
 
     it("应该处理不支持的支付提供商", async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const invalidDto = { ...createPaymentDto, provider: "invalid" as any };
+      const invalidDto = { ...createPaymentDto, provider: "invalid" as PaymentProvider };
 
       await expect(service.createPayment(userId, invalidDto)).rejects.toThrow(
         "Unsupported payment provider"

@@ -1,3 +1,4 @@
+﻿import { logger } from "../shared/utils/logger";
 import { useEffect, useRef, useCallback, useState } from "react";
 import { InteractionManager } from "react-native";
 
@@ -61,7 +62,7 @@ class PerformanceMonitor {
     this.scheduleNextFrame();
 
     if (this.config.enableLogging) {
-      console.log("[PerformanceMonitor] Started monitoring");
+      logger.debug("[PerformanceMonitor] Started monitoring");
     }
   }
 
@@ -74,7 +75,7 @@ class PerformanceMonitor {
     }
 
     if (this.config.enableLogging) {
-      console.log("[PerformanceMonitor] Stopped monitoring");
+      logger.debug("[PerformanceMonitor] Stopped monitoring");
     }
   }
 
@@ -109,7 +110,7 @@ class PerformanceMonitor {
       this.droppedFrameCount++;
 
       if (this.config.enableLogging) {
-        console.warn(`[PerformanceMonitor] Dropped frame detected: ${fps.toFixed(1)} FPS`);
+        logger.warn(`[PerformanceMonitor] Dropped frame detected: ${fps.toFixed(1)} FPS`);
       }
     }
 
@@ -373,14 +374,14 @@ export function logPerformanceMetrics(metrics: FrameTiming, label?: string) {
   const prefix = label ? `[${label}]` : "[Performance]";
 
   if (__DEV__) {
-    console.log(
+    logger.debug(
       `${prefix} FPS: ${metrics.averageFPS.toFixed(1)} ` +
         `(min: ${metrics.minFPS.toFixed(1)}, max: ${metrics.maxFPS.toFixed(1)})`
     );
   }
 
   if (metrics.droppedFrames > 0) {
-    console.warn(
+    logger.warn(
       `${prefix} Dropped frames: ${metrics.droppedFrames} ` +
         `(${metrics.droppedFramePercentage.toFixed(1)}%)`
     );
@@ -393,7 +394,7 @@ export function measureRenderTime<T>(name: string, renderFunction: () => T): T {
   const endTime = performance.now();
 
   if (__DEV__) {
-    console.log(`[RenderTime] ${name}: ${(endTime - startTime).toFixed(2)}ms`);
+    logger.debug(`[RenderTime] ${name}: ${(endTime - startTime).toFixed(2)}ms`);
   }
 
   return result;

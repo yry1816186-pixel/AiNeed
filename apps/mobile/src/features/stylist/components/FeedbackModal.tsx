@@ -145,7 +145,11 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit,
 };
 
 const useStyles = createStyles((colors) => ({
-  overlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
+  overlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
+  },
   modalContent: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,

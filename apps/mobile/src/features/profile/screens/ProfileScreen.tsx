@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, import/no-unresolved */
-// @ts-nocheck
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -70,7 +69,7 @@ export const ProfileScreenComponent: React.FC = () => {
       }
     } catch (error) {
       // Stats fetch failed
-      console.error("Failed to load profile stats:", error);
+      logger.error("Failed to load profile stats:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -616,10 +615,10 @@ const ProfileScreen = withErrorBoundary(ProfileScreenComponent, {
   screenName: "ProfileScreen",
   maxRetries: 3,
   onError: (error, errorInfo, structuredError) => {
-    console.error("[ProfileScreen] Error:", structuredError);
+    logger.error("[ProfileScreen] Error:", structuredError);
   },
   onReset: () => {
-    console.error("[ProfileScreen] Error boundary reset");
+    logger.error("[ProfileScreen] Error boundary reset");
   },
 });
 

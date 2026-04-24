@@ -20,7 +20,29 @@ type GradientColors = TokenSet["gradients"] & {
 export interface FlatColors {
   brand: BrandColors;
   neutral: TokenSet["colors"]["neutral"];
-  semantic: TokenSet["colors"]["semantic"];
+  semantic: TokenSet["colors"]["semantic"] & {
+    successDark: string;
+    warningDark: string;
+    errorDark: string;
+    like: string;
+    bookmark: string;
+    chartGood: string;
+    chartMedium: string;
+    chartPoor: string;
+    chartGrid: string;
+    skeletonBase: string;
+    warmBlush: string;
+    slateMist: string;
+    goldenGlow: string;
+    sageMist: string;
+    yellow: string;
+    brown: string;
+    wechat: string;
+    weibo: string;
+    qq: string;
+    mutedSage: string;
+    fashion: TokenSet["colors"]["fashion"];
+  };
   backgrounds: TokenSet["colors"]["backgrounds"];
   text: TokenSet["colors"]["text"];
   borders: TokenSet["colors"]["borders"];

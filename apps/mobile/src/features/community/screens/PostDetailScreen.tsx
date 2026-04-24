@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
@@ -434,7 +433,7 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isLiked ? "heart" : "heart-outline"}
               size={22}
-              color={post.isLiked ? "#FF4757" : theme.colors.textSecondary} // custom color
+              color={post.isLiked ? DesignTokens.colors.semantic.like : theme.colors.textSecondary}
             />
             <Text style={[styles.actionCount, post.isLiked && styles.actionCountLiked]}>
               {post.likesCount}
@@ -448,7 +447,11 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isBookmarked ? "bookmark" : "bookmark-outline"}
               size={22}
-              color={post.isBookmarked ? "#F1C40F" : theme.colors.textSecondary} // custom color
+              color={
+                post.isBookmarked
+                  ? DesignTokens.colors.semantic.bookmark
+                  : theme.colors.textSecondary
+              }
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
@@ -537,7 +540,7 @@ const useStyles = createStyles((colors) => ({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#F1C40F", // custom color
+    backgroundColor: DesignTokens.colors.semantic.bookmark,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -589,7 +592,7 @@ const useStyles = createStyles((colors) => ({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.4)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
   },
   dotActive: {
     backgroundColor: colors.surface,
@@ -750,7 +753,7 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: 8,
   },
   actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  actionCountLiked: { color: "#FF4757" }, // custom color
+  actionCountLiked: { color: DesignTokens.colors.semantic.like },
 }));
 
 export default PostDetailScreen;

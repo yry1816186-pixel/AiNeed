@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars */
-// @ts-nocheck
 import React, { useState, useCallback, useEffect, memo } from "react";
 import {
   View,
@@ -17,10 +15,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { recommendationsApi, type RecommendedItem } from "../../../services/api/tryon.api";
 import { useAuthStore } from "../../auth/stores";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import {
-  flatColors as colors,
-  DesignTokens,
-} from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 
 import { ImageWithPlaceholder } from "../../../shared/components/common/ImageWithPlaceholder";
 

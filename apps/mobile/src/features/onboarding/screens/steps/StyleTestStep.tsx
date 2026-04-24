@@ -176,7 +176,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({
                       ]}
                     >
                       <Ionicons
-                        name={option.icon as any}
+                        name={option.icon as keyof typeof Ionicons.glyphMap}
                         size={26}
                         color={isSelected ? colors.surface : colors.textSecondary}
                       />

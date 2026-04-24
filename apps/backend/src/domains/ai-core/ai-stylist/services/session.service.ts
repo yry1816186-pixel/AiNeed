@@ -163,7 +163,7 @@ export class AiStylistSessionService {
     });
 
     const sessions = records
-      .map((record: any) => {
+      .map((record: { id: string; payload: unknown; updatedAt: Date }) => {
         try {
           const session = record.payload as unknown as StylistSession;
           return {
@@ -182,7 +182,7 @@ export class AiStylistSessionService {
           return null;
         }
       })
-      .filter((s: any): s is NonNullable<typeof s> => s !== null);
+      .filter((s): s is NonNullable<typeof s> => s !== null);
 
     return { sessions, total };
   }

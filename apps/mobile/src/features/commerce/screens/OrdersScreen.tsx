@@ -330,6 +330,12 @@ export const OrdersScreen: React.FC = () => {
               <Ionicons name="bag-handle-outline" size={64} color={colors.textTertiary} />
               <Text style={styles.emptyTitle}>还没有订单</Text>
               <Text style={styles.emptySubtitle}>先去看看推荐的穿搭和单品吧。</Text>
+              <TouchableOpacity
+                style={styles.emptyActionButton}
+                onPress={() => navigateHome("TodayMain")}
+              >
+                <Text style={styles.emptyActionText}>去逛逛</Text>
+              </TouchableOpacity>
             </View>
           }
           refreshControl={
@@ -470,6 +476,18 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",
     color: colors.textSecondary,
+  },
+  emptyActionButton: {
+    marginTop: 20,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 24,
+    backgroundColor: colors.primary,
+  },
+  emptyActionText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
   },
   orderCard: {
     marginTop: 16,

@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-var-requires */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-var-requires */
+import { logger } from "../../../shared/utils/logger";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -29,7 +30,7 @@ export const SharePosterScreen: React.FC = () => {
   const viewShotRef = useRef<View>(null);
   const { profile, colorAnalysis, loadProfile, loadColorAnalysis } = useProfileStore();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const user = useAuthStore((s: any) => s.user) as { email?: string } | null;
+  const user = useAuthStore((s) => s.user) as { email?: string } | null;
   const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +40,7 @@ export const SharePosterScreen: React.FC = () => {
         await Promise.all([loadProfile(), loadColorAnalysis()]);
       } catch (error) {
         // Continue with whatever data loaded
-        console.error("Failed to load share data:", error);
+        logger.error("Failed to load share data:", error);
       } finally {
         setIsLoading(false);
       }

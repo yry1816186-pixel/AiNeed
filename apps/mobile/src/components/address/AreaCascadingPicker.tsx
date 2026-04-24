@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
   },
   container: {
     maxHeight: "60%",
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: DesignTokens.colors.neutral[200],
   },
   title: {
     fontSize: 16,

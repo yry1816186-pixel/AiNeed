@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises */
+import { logger } from "../../../shared/utils/logger";
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -108,7 +109,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       });
       setShowQualityFeedback(true);
     } catch (e) {
-      console.error("Camera operation failed:", e);
+      logger.error("Camera operation failed:", e);
       setQualityResult({
         score: 0,
         isAcceptable: false,
@@ -155,7 +156,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       });
       setShowQualityFeedback(true);
     } catch (e) {
-      console.error("Camera operation failed:", e);
+      logger.error("Camera operation failed:", e);
     }
   }, [setCapturedImage, setQualityResult, setShowQualityFeedback]);
 

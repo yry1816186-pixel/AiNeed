@@ -17,6 +17,7 @@ import { profileApi } from "../../services/api/profile.api";
 import { tryOnApi, recommendationsApi } from "../../services/api/tryon.api";
 import { aiStylistApi } from "../../services/api/ai-stylist.api";
 import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
+import { weatherApi } from "../../services/api/weather.api";
 
 import type { ApiResponse, PaginatedResponse, SearchFilters } from "../types";
 import type { ClothingItem, ClothingFilter, ClothingSortOptions } from "../../types/clothing";
@@ -26,7 +27,12 @@ import type {
   BodyAnalysisReport,
   ColorAnalysisReport,
 } from "../../services/api/profile.api";
-import type { TryOnResult, RecommendedItem } from "../../services/api/tryon.api";
+import type {
+  TryOnResult,
+  RecommendedItem,
+  RecommendationOutput,
+} from "../../services/api/tryon.api";
+import type { WeatherInfo } from "../../services/api/weather.api";
 import type {
   AiStylistSessionResponse,
   AiStylistSuggestionResponse,
@@ -414,6 +420,37 @@ export function useTryOnDailyQuota(
     queryFn: () => tryOnApi.getDailyQuota().then(unwrap),
     staleTime: 1 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    ...options,
+  });
+}
+
+export function useTodayRecommendations(options?: Partial<UseQueryOptions<RecommendationOutput>>) {
+  return useQuery({
+    queryKey: queryKeys.recommendations.personalized({ limit: 3 }),
+    queryFn: () => recommendationsApi.getPersonalizedOutput({ limit: 3 }).then(unwrap),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    ...options,
+  });
+}
+
+export function useWeather(options?: Partial<UseQueryOptions<WeatherInfo>>) {
+  return useQuery({
+    queryKey: ["weather", "current"] as const,
+    queryFn: () => weatherApi.getCurrent().then(unwrap),
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    ...options,
+  });
+}
+
+export function useDiscoverFeed(options?: Partial<UseQueryOptions<FeedResult>>) {
+  return useQuery({
+    queryKey: queryKeys.recommendations.feed({ pageSize: 20 }),
+    queryFn: () => recommendationFeedApi.getFeed({ pageSize: 20 }).then((r) => r),
+    staleTime: 2 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
     ...options,
   });
 }

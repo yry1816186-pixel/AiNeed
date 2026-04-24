@@ -62,8 +62,27 @@ describe("StyleQuizService", () => {
     emitProfileUpdated: jest.fn().mockResolvedValue(undefined),
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mockPrismaService: any = {
+  const mockPrismaService: {
+    user: { findUnique: jest.Mock };
+    styleQuiz: { findUnique: jest.Mock; findFirst: jest.Mock };
+    quizQuestion: { findMany: jest.Mock; findUnique: jest.Mock; count: jest.Mock };
+    quizAnswer: {
+      create: jest.Mock;
+      findMany: jest.Mock;
+      findFirst: jest.Mock;
+      update: jest.Mock;
+      count: jest.Mock;
+    };
+    styleQuizResult: {
+      create: jest.Mock;
+      findMany: jest.Mock;
+      findFirst: jest.Mock;
+      updateMany: jest.Mock;
+      count: jest.Mock;
+    };
+    userProfile: { upsert: jest.Mock };
+    $transaction: jest.Mock;
+  } = {
     user: {
       findUnique: jest.fn(),
     },
@@ -93,8 +112,9 @@ describe("StyleQuizService", () => {
     userProfile: {
       upsert: jest.fn(),
     },
-    $transaction: jest.fn((fn: (prisma: typeof mockPrismaService) => Promise<unknown>) =>
-      fn(mockPrismaService)
+    $transaction: jest.fn(
+      (fn: (prisma: typeof mockPrismaService) => Promise<unknown>) =>
+        fn(mockPrismaService) as unknown
     ),
   };
 

@@ -232,38 +232,38 @@
 
 ## Traceability
 
-| Requirement             | Phase           | Status   |
-| ----------------------- | --------------- | -------- | ---------- |
-| FND-01 ~ FND-05         | Phase 1         | Pending  |
-| GND-01 ~ GND-05         | Phase 1         | Pending  |
-| REC-01 ~ REC-06         | Phase 2         | Pending  |
-| NAV-01 ~ NAV-05         | Phase 3         | Pending  |
-| TOD-01 ~ TOD-05         | Phase 3         | Pending  |
-| DIS-01 ~ DIS-04         | Phase 3         | Pending  |
-| YIYI-01 ~ YIYI-07       | Phase 4         | Pending  |
-| VOI-01 ~ VOI-03         | Phase 4         | Pending  |
-| WKS-01 ~ WKS-04         | Phase 4         | Pending  |
-| ONB-01 ~ ONB-03, ONB-05 | Phase 4 Plan 03 | Complete | 2026-04-24 |
-| RUL-01 ~ RUL-03         | Phase 4         | Pending  |
-| VIS-01 ~ VIS-04         | Phase 1,3,5     | Pending  |
-| CAL-01 ~ CAL-02         | Phase 3         | Pending  |
-| CUR-01 ~ CUR-02         | Phase 2         | Pending  |
-| ETH-01 ~ ETH-02         | Phase 4         | Pending  |
-| MOD-01 ~ MOD-04         | Phase 6         | Pending  |
-| FLY-01 ~ FLY-04         | Phase 7         | Pending  |
-| PHO-01 ~ PHO-02         | Phase 8         | Pending  |
-| CAL-03 ~ CAL-05         | Phase 7         | Pending  |
-| MINI-01 ~ MINI-02       | Phase 8         | Pending  |
-| SOC-01 ~ SOC-02         | Phase 9         | Pending  |
-| RAD-01 ~ RAD-04         | Phase 6-7       | Pending  |
-| DAT-01 ~ DAT-05         | Phase 6         | Pending  |
-| CMP-01 ~ CMP-05         | Phase 6         | Pending  |
-| SEC-01 ~ SEC-04         | Phase 6         | Pending  |
-| MON-01 ~ MON-04         | Phase 9         | Pending  |
-| PRD-01 ~ PRD-05         | Phase 10        | Pending  |
-| CMP-06 ~ CMP-09         | Phase 5+        | Pending  |
+| Requirement       | Phase       | Status   | Notes                                                                                                                |
+| ----------------- | ----------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| FND-01 ~ FND-05   | Phase 1     | Complete | Phase 1 VERIFICATION missing; FND-01 (TS errors) partially done (audit 2026-04-25: backend 0 errors, mobile unknown) |
+| GND-01 ~ GND-05   | Phase 1     | Complete | Gender demotion executed in Phase 1 Plan 03                                                                          |
+| REC-01 ~ REC-06   | Phase 2     | Complete | Phase 2 VERIFICATION: 7/7 must-haves SATISFIED                                                                       |
+| CUR-01 ~ CUR-02   | Phase 2     | Complete | Phase 2 VERIFICATION: SATISFIED                                                                                      |
+| NAV-01 ~ NAV-05   | Phase 3     | Complete | Phase 3 VERIFICATION missing; navigation refactored                                                                  |
+| TOD-01 ~ TOD-05   | Phase 3     | Partial  | UI components exist but TodayScreen data is hardcoded (audit 2026-04-25)                                             |
+| DIS-01 ~ DIS-04   | Phase 3     | Complete | DiscoverScreen exists; DIS-01 empty state missing                                                                    |
+| CAL-01 ~ CAL-02   | Phase 3     | Complete | Calendar exists; CAL-01 empty state in English                                                                       |
+| YIYI-01 ~ YIYI-07 | Phase 4     | Complete | Phase 4 VERIFICATION: 9/9 must-haves SATISFIED; YIYI-07 preference memory implemented                                |
+| VOI-01 ~ VOI-03   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED                                                                                      |
+| WKS-01 ~ WKS-04   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; WKS-01/03 partially (no real studios)                                               |
+| ONB-01 ~ ONB-05   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; ONB-04 implemented in Plan 06                                                       |
+| RUL-01 ~ RUL-03   | Phase 4     | Complete | FashionRuleLoader + 7 JSON rule files + 264+ rules                                                                   |
+| ETH-01 ~ ETH-02   | Phase 4     | Complete | BODY_POSITIVE_PROMPT in dialog_engine.py; audit found body-positive.filter.ts MISSING                                |
+| VIS-01 ~ VIS-04   | Phase 1,3,5 | Partial  | VIS-01: 84 hardcoded colors remain; VIS-04: deferred to Phase 5                                                      |
+| MOD-01 ~ MOD-04   | Phase 6     | Pending  |                                                                                                                      |
+| FLY-01 ~ FLY-04   | Phase 7     | Pending  |                                                                                                                      |
+| PHO-01 ~ PHO-02   | Phase 8     | Pending  |                                                                                                                      |
+| CAL-03 ~ CAL-05   | Phase 7     | Pending  |                                                                                                                      |
+| MINI-01 ~ MINI-02 | Phase 8     | Pending  |                                                                                                                      |
+| SOC-01 ~ SOC-02   | Phase 9     | Pending  |                                                                                                                      |
+| RAD-01 ~ RAD-04   | Phase 6-7   | Pending  |                                                                                                                      |
+| DAT-01 ~ DAT-05   | Phase 6     | Pending  |                                                                                                                      |
+| CMP-01 ~ CMP-05   | Phase 6     | Pending  |                                                                                                                      |
+| SEC-01 ~ SEC-04   | Phase 6     | Pending  |                                                                                                                      |
+| MON-01 ~ MON-04   | Phase 9     | Pending  |                                                                                                                      |
+| PRD-01 ~ PRD-05   | Phase 10    | Pending  |                                                                                                                      |
+| CMP-06 ~ CMP-09   | Phase 5+    | Pending  |                                                                                                                      |
 
 ---
 
 _Requirements re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
-_Traceability updated: 2026-04-22_
+_Traceability updated: 2026-04-25 (audit-driven update)_

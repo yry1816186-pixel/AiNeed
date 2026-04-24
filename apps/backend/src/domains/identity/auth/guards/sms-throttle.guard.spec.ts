@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ExecutionContext } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
 
@@ -35,7 +34,7 @@ describe("SmsThrottleGuard", () => {
 
     const context = createMockContext("13800138000");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await guard.canActivate(context as any);
+    const result = await guard.canActivate(context as unknown as ExecutionContext);
 
     expect(result).toBe(true);
     expect(mockRedisService.exists).toHaveBeenCalledWith("sms:throttle:13800138000");
@@ -45,17 +44,21 @@ describe("SmsThrottleGuard", () => {
     mockRedisService.exists.mockResolvedValue(true);
 
     const context = createMockContext("13800138000");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await expect(guard.canActivate(context as any)).rejects.toThrow(BadRequestException);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await expect(guard.canActivate(context as any)).rejects.toThrow("发送过于频繁，请60秒后再试");
+    await expect(guard.canActivate(context as unknown as ExecutionContext)).rejects.toThrow(
+      BadRequestException
+    );
+    await expect(guard.canActivate(context as unknown as ExecutionContext)).rejects.toThrow(
+      "发送过于频繁，请60秒后再试"
+    );
   });
 
   it("缺少手机号时应抛出异常", async () => {
     const context = createMockContext();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await expect(guard.canActivate(context as any)).rejects.toThrow(BadRequestException);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await expect(guard.canActivate(context as any)).rejects.toThrow("手机号不能为空");
+    await expect(guard.canActivate(context as unknown as ExecutionContext)).rejects.toThrow(
+      BadRequestException
+    );
+    await expect(guard.canActivate(context as unknown as ExecutionContext)).rejects.toThrow(
+      "手机号不能为空"
+    );
   });
 });

@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -142,7 +143,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
       }
     } catch (error) {
       // Collections loading failure is non-critical
-      console.error("Failed to load collections:", error);
+      logger.error("Failed to load collections:", error);
     }
   }, []);
 

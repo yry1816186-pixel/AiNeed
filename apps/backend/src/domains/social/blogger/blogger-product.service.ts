@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { Prisma } from "@prisma/client";
 import { NotificationType } from "../../../types/prisma-enums";
 import { NotificationService } from "../../platform/notification/services/notification.service";
 
@@ -78,7 +79,7 @@ export class BloggerProductService {
       throw new ForbiddenException("You can only update your own products");
     }
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (dto.title !== undefined) {
       updateData.title = dto.title;
     }
@@ -121,7 +122,7 @@ export class BloggerProductService {
   }
 
   async getProducts(query: BloggerProductQueryDto) {
-    const where: any = {};
+    const where: Prisma.BloggerProductWhereInput = {};
 
     if (query.bloggerId) {
       where.bloggerId = query.bloggerId;

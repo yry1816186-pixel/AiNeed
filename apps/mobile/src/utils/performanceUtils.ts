@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 性能优化工具集
  *
  * 包含：
@@ -8,6 +8,7 @@
  * - 性能监控
  */
 
+import { logger } from "../shared/utils/logger";
 import { InteractionManager } from "react-native";
 import FastImage from "react-native-fast-image";
 
@@ -19,9 +20,9 @@ import FastImage from "react-native-fast-image";
  */
 export function preloadImages(urls: string[]): void {
   const sources = urls.map((uri) => ({ uri }));
-  // @ts-expect-error - FastImage.preload may not exist in some versions
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  FastImage.preload(sources);
+  if (typeof FastImage.preload === "function") {
+    FastImage.preload(sources);
+  }
 }
 
 /**
@@ -105,7 +106,7 @@ export class PerformanceTimer {
     const duration = Date.now() - this.startTime;
     if (__DEV__) {
       // eslint-disable-next-line no-console
-      console.log(`[Performance] ${this.name}: ${duration}ms`);
+      logger.debug(`[Performance] ${this.name}: ${duration}ms`);
     }
     return duration;
   }

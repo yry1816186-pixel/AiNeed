@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import { createWithEqualityFn } from "zustand/traditional";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { shallow } from "zustand/shallow";
@@ -238,7 +239,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
           await styleQuizApi.saveProgress(quizId, newQuestionIndex, newAnswers);
         } catch (error) {
           // Progress save failure is non-blocking
-          console.error("Quiz progress operation failed:", error);
+          logger.error("Quiz progress operation failed:", error);
         }
       },
 
@@ -281,7 +282,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
           }
         } catch (error) {
           // If progress load fails, keep existing local progress
-          console.error("Quiz progress operation failed:", error);
+          logger.error("Quiz progress operation failed:", error);
         }
       },
     }),

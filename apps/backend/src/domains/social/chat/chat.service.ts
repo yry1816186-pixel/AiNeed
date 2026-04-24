@@ -6,6 +6,8 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 
+import { Prisma } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import {
@@ -126,7 +128,7 @@ export class ChatService {
     ]);
 
     return {
-      data: rooms.map((room: any) => ({
+      data: rooms.map((room: Record<string, unknown> & { _count: { messages: number } }) => ({
         ...room,
         unreadCount: room._count.messages,
       })),
@@ -235,7 +237,7 @@ export class ChatService {
     }
 
     // 创建消息并更新聊天室最后消息信息
-    return this.prisma.$transaction(async (tx: any) => {
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const message = await tx.chatMessage.create({
         data: {
           roomId: dto.roomId,

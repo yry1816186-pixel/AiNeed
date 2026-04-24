@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, import/no-unresolved, react-hooks/rules-of-hooks */
-// @ts-nocheck
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { AISizeBadge } from "./AISizeBadge";
@@ -51,7 +50,7 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
       await stockNotificationApi.subscribe(itemId, color, targetSize);
     } catch (error) {
       // silent fail for now
-      console.error("SKU selection failed:", error);
+      logger.error("SKU selection failed:", error);
     }
   };
 
@@ -161,7 +160,7 @@ const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
   },
   sheet: {
     backgroundColor: colors.surface,

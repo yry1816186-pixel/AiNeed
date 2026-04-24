@@ -65,7 +65,7 @@ const useStyles = createStyles((themeColors) =>
     },
     outfitCardSelected: {
       borderColor: DesignTokens.colors.brand.terracotta,
-      backgroundColor: "rgba(198, 123, 92, 0.08)",
+      backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     },
     outfitImagePlaceholder: {
       height: 140,

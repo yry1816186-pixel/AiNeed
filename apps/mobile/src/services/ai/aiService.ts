@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import { logger } from "../../shared/utils/logger";
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
 import { OutfitRecommendationResult, SimilarItemResult } from "../../types/api";
 import type { FormDataValue } from "../../types";
@@ -29,7 +30,7 @@ class AIService {
       });
       return response.ok;
     } catch (error) {
-      console.error("Health check failed:", error);
+      logger.error("Health check failed:", error);
       return false;
     }
   }

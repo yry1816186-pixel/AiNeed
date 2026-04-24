@@ -236,14 +236,20 @@ export class AiAnalysisService {
 
     try {
       const response = await this.makeAliyunRequest("/viapi/face/analysis", params);
-      return response.Data?.FaceAttributes || {};
+      return (
+        ((response.Data as Record<string, unknown> | undefined)
+          ?.FaceAttributes as AliyunFaceAnalysisResult) || {}
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Face analysis API failed: ${message}`);
     }
   }
 
-  private async makeAliyunRequest(path: string, params: Record<string, string>): Promise<any> {
+  private async makeAliyunRequest(
+    path: string,
+    params: Record<string, string>
+  ): Promise<Record<string, unknown>> {
     const method = "POST";
     const host = `viapi.${this.region}.aliyuncs.com`;
 

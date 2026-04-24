@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import { logger } from "../shared/utils/logger";
 import React, {
   createContext,
   useContext,
@@ -1159,7 +1160,7 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
         }
       }
     } catch (error) {
-      console.warn("Failed to load saved language:", error);
+      logger.warn("Failed to load saved language:", error);
     }
   };
 
@@ -1197,7 +1198,7 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
       await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, code);
       setLanguageState(code);
     } catch (error) {
-      console.warn("Failed to save language:", error);
+      logger.warn("Failed to save language:", error);
     }
   }, []);
 

@@ -530,7 +530,7 @@ export class SubscriptionService {
           displayName: plan.displayName,
           price: plan.price,
           currency: plan.currency,
-          features: plan.features as any,
+          features: plan.features as Prisma.InputJsonValue,
           isActive: plan.isActive,
           sortOrder: plan.sortOrder,
         },

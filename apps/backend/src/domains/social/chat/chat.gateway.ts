@@ -28,7 +28,7 @@ import {
   ChatMessageCreatedPayload,
   ChatMessageReadPayload,
 } from "../../../modules/ws/events";
-import { EventBusService } from "../../../modules/ws/services/event-bus.service";
+import { EventEnvelope, EventBusService } from "../../../modules/ws/services/event-bus.service";
 
 import { ChatService } from "./chat.service";
 import { SenderTypeDto, MessageTypeDto } from "./dto";
@@ -74,11 +74,11 @@ export class ChatGateway
     const eventMappings = [
       {
         eventType: CHAT_EVENTS.MESSAGE_CREATED,
-        handler: (envelope: any) => this.handleMessageCreated(envelope),
+        handler: (envelope: EventEnvelope) => this.handleMessageCreated(envelope),
       },
       {
         eventType: CHAT_EVENTS.MESSAGE_READ,
-        handler: (envelope: any) => this.handleMessageRead(envelope),
+        handler: (envelope: EventEnvelope) => this.handleMessageRead(envelope),
       },
     ];
 
@@ -303,14 +303,16 @@ export class ChatGateway
     }
   }
 
-  private async handleMessageCreated(envelope: { payload: ChatMessageCreatedPayload }) {
-    const { roomId } = envelope.payload;
-    this.server.to(`chat:room:${roomId}`).emit("chat:message", envelope.payload);
+  private async handleMessageCreated(envelope: EventEnvelope) {
+    const payload = envelope.payload as unknown as ChatMessageCreatedPayload;
+    const { roomId } = payload;
+    this.server.to(`chat:room:${roomId}`).emit("chat:message", payload);
   }
 
-  private async handleMessageRead(envelope: { payload: ChatMessageReadPayload }) {
-    const { roomId } = envelope.payload;
-    this.server.to(`chat:room:${roomId}`).emit("chat:read", envelope.payload);
+  private async handleMessageRead(envelope: EventEnvelope) {
+    const payload = envelope.payload as unknown as ChatMessageReadPayload;
+    const { roomId } = payload;
+    this.server.to(`chat:room:${roomId}`).emit("chat:read", payload);
   }
 
   private extractUserId(client: Socket): string | null {

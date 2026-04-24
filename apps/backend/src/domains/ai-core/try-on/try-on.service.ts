@@ -378,7 +378,7 @@ export class TryOnService {
     dateTo?: string
   ) {
     const skip = (page - 1) * limit;
-    const where: any = { userId };
+    const where: Prisma.VirtualTryOnWhereInput = { userId };
     if (status) {
       where.status = status;
     }
@@ -421,9 +421,7 @@ export class TryOnService {
       this.prisma.virtualTryOn.count({ where }),
     ]);
 
-    const itemsWithDataUri = await Promise.all(
-      items.map((item: any) => this.attachResultDataUri(item))
-    );
+    const itemsWithDataUri = await Promise.all(items.map((item) => this.attachResultDataUri(item)));
 
     return {
       items: itemsWithDataUri,

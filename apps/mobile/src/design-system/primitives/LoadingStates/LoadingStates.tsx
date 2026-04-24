@@ -174,7 +174,7 @@ export function SkeletonProductGrid() {
 const useStyles = createStyles((colors) => ({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,

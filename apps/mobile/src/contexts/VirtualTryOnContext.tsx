@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+import { logger } from "../shared/utils/logger";
 import React, {
   createContext,
   useContext,
@@ -87,7 +88,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
         dispatch({ type: "SET_HISTORY", payload: history });
       }
     } catch (error) {
-      console.error("Failed to load VTO history:", error);
+      logger.error("Failed to load VTO history:", error);
       dispatch({ type: "SET_ERROR", payload: "加载试衣历史失败" });
     }
   };

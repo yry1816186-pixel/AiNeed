@@ -35,12 +35,36 @@ const STYLE_OPTIONS: StyleOption[] = [
 ];
 
 const OUTFIT_OPTIONS: OutfitOption[] = [
-  { id: "casual_weekend", label: "休闲周末", gradient: ["#E8D5B7", "#C4956A"] },
-  { id: "professional", label: "职场精英", gradient: ["#7B8FA2", "#5F6F7F"] },
-  { id: "romantic_date", label: "浪漫约会", gradient: ["#D4917A", "#C67B5C"] },
-  { id: "street_trend", label: "街头潮流", gradient: ["#2D3436", "#636E72"] },
-  { id: "vacation", label: "度假风情", gradient: ["#8B9A7D", "#A3B096"] },
-  { id: "sporty", label: "运动活力", gradient: ["#E17055", "#C44536"] },
+  {
+    id: "casual_weekend",
+    label: "休闲周末",
+    gradient: [DesignTokens.colors.brand.camelLight, DesignTokens.colors.xuno.warmCamel],
+  },
+  {
+    id: "professional",
+    label: "职场精英",
+    gradient: [DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark],
+  },
+  {
+    id: "romantic_date",
+    label: "浪漫约会",
+    gradient: [DesignTokens.colors.brand.terracottaLight, DesignTokens.colors.brand.terracotta],
+  },
+  {
+    id: "street_trend",
+    label: "街头潮流",
+    gradient: [DesignTokens.colors.xuno.charcoal, DesignTokens.colors.neutral[500]],
+  },
+  {
+    id: "vacation",
+    label: "度假风情",
+    gradient: [DesignTokens.colors.brand.sage, DesignTokens.colors.brand.sageLight],
+  },
+  {
+    id: "sporty",
+    label: "运动活力",
+    gradient: [DesignTokens.colors.xuno.warmOrange, DesignTokens.colors.semantic.error],
+  },
 ];
 
 const REQUIRED_OUTFIT_SELECTIONS = 2;
@@ -232,7 +256,7 @@ const useStyles = createStyles((themeColors) =>
     },
     styleCardSelected: {
       borderColor: DesignTokens.colors.brand.terracotta,
-      backgroundColor: "rgba(198, 123, 92, 0.08)",
+      backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     },
     styleContent: {
       flex: 1,
@@ -295,7 +319,7 @@ const useStyles = createStyles((themeColors) =>
       fontSize: DesignTokens.typography.sizes.base,
       fontWeight: "600",
       color: colors.surface,
-      textShadowColor: "rgba(0,0,0,0.3)",
+      textShadowColor: DesignTokens.colors.backgrounds.overlay,
       textShadowOffset: { width: 0, height: 1 },
       textShadowRadius: 2,
     },

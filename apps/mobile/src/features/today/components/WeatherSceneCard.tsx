@@ -10,9 +10,10 @@ import Animated, {
   withTiming,
   interpolate,
 } from "react-native-reanimated";
-import { Sun } from "phosphor-react-native";
+import { Sun, Cloud, CloudRain, CloudSnow, Lightning, SunHorizon } from "phosphor-react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
 
 interface WeatherData {
   temp: number;
@@ -26,7 +27,7 @@ interface SceneData {
 }
 
 interface WeatherSceneCardProps {
-  weather: WeatherData;
+  weather?: WeatherData;
   scene: SceneData;
   onPress?: () => void;
 }
@@ -75,6 +76,51 @@ export function WeatherSceneCard({ weather, scene, onPress }: WeatherSceneCardPr
     onPress?.();
   }, [onPress]);
 
+  const renderWeatherIcon = () => {
+    const iconKey = weather?.icon?.toLowerCase() || "sun";
+    const iconColor = DesignTokens.colors.neutral.white;
+    switch (iconKey) {
+      case "cloud":
+      case "cloudy":
+        return <Cloud size={24} color={iconColor} weight="fill" />;
+      case "rain":
+      case "drizzle":
+        return <CloudRain size={24} color={iconColor} weight="fill" />;
+      case "snow":
+        return <CloudSnow size={24} color={iconColor} weight="fill" />;
+      case "thunderstorm":
+      case "lightning":
+        return <Lightning size={24} color={iconColor} weight="fill" />;
+      case "sunrise":
+      case "sunset":
+        return <SunHorizon size={24} color={iconColor} weight="fill" />;
+      default:
+        return <Sun size={24} color={iconColor} weight="fill" />;
+    }
+  };
+
+  if (!weather) {
+    return (
+      <Pressable onPress={handlePress} accessibilityRole="button" accessibilityLabel={scene.title}>
+        <View style={styles.card}>
+          <LinearGradient
+            colors={GRADIENT_COLORS}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.content}>
+            <View style={styles.weatherRow}>
+              <ShimmerSkeleton width={100} height={20} />
+            </View>
+            <Text style={styles.sceneTitle}>{scene.title}</Text>
+            <Text style={styles.sceneDescription}>{scene.description}</Text>
+          </View>
+        </View>
+      </Pressable>
+    );
+  }
+
   return (
     <Pressable onPress={handlePress} accessibilityRole="button" accessibilityLabel={scene.title}>
       <Animated.View style={[styles.card, animatedStyle]}>
@@ -86,7 +132,7 @@ export function WeatherSceneCard({ weather, scene, onPress }: WeatherSceneCardPr
         />
         <View style={styles.content}>
           <View style={styles.weatherRow}>
-            <Sun size={24} color={DesignTokens.colors.neutral.white} weight="fill" />
+            {renderWeatherIcon()}
             <Text style={styles.weatherText}>
               {weather.temp}°C {weather.condition}
             </Text>

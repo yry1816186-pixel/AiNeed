@@ -1,3 +1,4 @@
+﻿import { logger } from "../shared/utils/logger";
 /* eslint-disable @typescript-eslint/require-await */
 export async function requestPermissionsAsync(): Promise<{ status: string }> {
   return { status: "granted" };
@@ -8,7 +9,7 @@ export async function getPermissionsAsync(): Promise<{ status: string }> {
 }
 
 export async function saveToLibraryAsync(_uri: string): Promise<void> {
-  console.warn("expo-media-library.saveToLibraryAsync is a stub");
+  logger.warn("expo-media-library.saveToLibraryAsync is a stub");
 }
 
 export async function getAssetsAsync(_options?: {

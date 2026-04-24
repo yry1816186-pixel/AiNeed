@@ -1,3 +1,4 @@
+import { logger } from "../../shared/utils/logger";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Share, { ShareOptions } from "react-native-share";
@@ -11,6 +12,7 @@ import {
   Typography,
   Shadows,
 } from "../../design-system/theme";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { createStyles } from "../../shared/contexts/ThemeContext";
 
 interface ShareButtonProps {
@@ -107,7 +109,7 @@ export function ShareProduct({ product, variant = "button" }: ShareProductProps)
       await Share.open(shareOptions);
     } catch (error) {
       if ((error as Error).message !== "User did not share") {
-        console.error("Share error:", error);
+        logger.error("Share error:", error);
       }
     }
   };
@@ -152,7 +154,7 @@ export function ShareOutfit({ outfit }: ShareOutfitProps) {
       await Share.open(shareOptions);
     } catch (error) {
       if ((error as Error).message !== "User did not share") {
-        console.error("Share error:", error);
+        logger.error("Share error:", error);
       }
     }
   };
@@ -198,17 +200,17 @@ export function ShareToSocial({ platform, title, message, image, onSuccess }: Sh
     wechat: {
       name: "微信",
       icon: "chatbubble-ellipses-outline" as keyof typeof Ionicons.glyphMap,
-      color: "#07C160",
+      color: DesignTokens.colors.semantic.wechat,
     },
     weibo: {
       name: "微博",
       icon: "globe-outline" as keyof typeof Ionicons.glyphMap,
-      color: "#E6162D",
+      color: DesignTokens.colors.semantic.weibo,
     },
     qq: {
       name: "QQ",
       icon: "chatbubbles-outline" as keyof typeof Ionicons.glyphMap,
-      color: "#12B7F5",
+      color: DesignTokens.colors.semantic.qq,
     },
   };
 

@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/require-await */
+﻿/* eslint-disable @typescript-eslint/require-await */
+import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 
 import { couponApi, type UserCoupon } from "../../../services/api/commerce.api";
@@ -30,7 +31,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
         set({ availableCoupons: response.data });
       }
     } catch (error) {
-      console.error("Failed to fetch user coupons:", error);
+      logger.error("Failed to fetch user coupons:", error);
     } finally {
       set({ isLoading: false });
     }
@@ -51,7 +52,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
         set({ validationResult: { valid: false, discount: 0 } });
       }
     } catch (error) {
-      console.error("Failed to validate coupon:", error);
+      logger.error("Failed to validate coupon:", error);
       set({ validationResult: { valid: false, discount: 0 } });
     } finally {
       set({ isLoading: false });
@@ -74,7 +75,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
         }));
       }
     } catch (error) {
-      console.error("Failed to apply coupon:", error);
+      logger.error("Failed to apply coupon:", error);
     } finally {
       set({ isLoading: false });
     }

@@ -62,12 +62,12 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
 
 function getScoreColor(value: number): string {
   if (value >= 80) {
-    return "#4CAF50";
+    return DesignTokens.colors.semantic.chartGood;
   }
   if (value >= 60) {
-    return "#FF9800";
+    return DesignTokens.colors.semantic.chartMedium;
   }
-  return "#F44336";
+  return DesignTokens.colors.semantic.chartPoor;
 }
 
 // Animated SVG components via Reanimated
@@ -280,7 +280,7 @@ export const MatchRadarChart: React.FC<MatchRadarChartProps> = ({
                 key={`grid-${i}`}
                 points={pts}
                 fill="none"
-                stroke="#E0E0E0"
+                stroke={DesignTokens.colors.semantic.chartGrid}
                 strokeWidth={i === gridLevels.length - 1 ? 1.5 : 0.5}
               />
             ))}
@@ -293,7 +293,7 @@ export const MatchRadarChart: React.FC<MatchRadarChartProps> = ({
                 y1={line.y1}
                 x2={line.x2}
                 y2={line.y2}
-                stroke="#E0E0E0"
+                stroke={DesignTokens.colors.semantic.chartGrid}
                 strokeWidth={0.5}
               />
             ))}

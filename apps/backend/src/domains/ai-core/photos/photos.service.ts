@@ -129,7 +129,7 @@ export class PhotosService {
 
     // 批量处理所有 thumbnailDataUri，并行请求
     const photosWithDataUri = await Promise.all(
-      photos.map(async (photo: any) => {
+      photos.map(async (photo) => {
         const previewAssetUrl = photo.thumbnailUrl ?? photo.url;
 
         if (!previewAssetUrl) {
@@ -424,7 +424,7 @@ export class PhotosService {
 
     await this.prisma.userPhoto.updateMany({
       where: {
-        id: { in: stuckPhotos.map((p: any) => p.id) },
+        id: { in: stuckPhotos.map((p: { id: string }) => p.id) },
       },
       data: {
         analysisStatus: AnalysisStatus.pending,

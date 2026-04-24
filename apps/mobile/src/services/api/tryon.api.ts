@@ -116,6 +116,37 @@ export interface RecommendedItem {
   score?: number;
   matchReasons?: string[];
   externalUrl?: string;
+  explanation?: string;
+}
+
+export interface RecommendationExplanation {
+  why: string;
+  alternative: string;
+  nextAction: string;
+  confidence: number;
+}
+
+export interface RecommendationBreakdown {
+  totalCandidates: number;
+  afterSceneFilter: number;
+  afterSizeFilter: number;
+  afterBudgetFilter: number;
+  afterStyleFilter: number;
+  afterWardrobeFilter: number;
+  finalCount: number;
+}
+
+export interface RecommendationOutput {
+  items: RecommendedItem[];
+  outfit?: {
+    name: string;
+    description: string;
+    items: RecommendedItem[];
+  };
+  explanation: RecommendationExplanation;
+  breakdown?: RecommendationBreakdown;
+  experimentId?: string;
+  degraded?: boolean;
 }
 
 interface RecommendationBrand {
@@ -264,6 +295,33 @@ export const recommendationsApi = {
       "RECOMMENDATIONS_UNAVAILABLE",
       "Failed to load recommendations"
     );
+  },
+
+  async getPersonalizedOutput(params?: {
+    category?: string;
+    occasion?: string;
+    season?: string;
+    bodyType?: string;
+    styleExpression?: string;
+    primaryScenarios?: string[];
+    limit?: number;
+  }): Promise<ApiResponse<RecommendationOutput>> {
+    const response = await apiClient.get<RecommendationOutput>("/recommendations", params);
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        error: response.error ?? {
+          code: "RECOMMENDATIONS_UNAVAILABLE",
+          message: "Failed to load recommendations",
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
   },
 
   async getAdvanced(params?: {

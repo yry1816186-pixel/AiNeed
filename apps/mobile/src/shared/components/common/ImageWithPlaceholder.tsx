@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+﻿/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+import { logger } from "../../utils/logger";
 import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 import {
   View,
@@ -212,7 +213,7 @@ export interface ImageWithPlaceholderProps
  *   style={{ width: 300, height: 200 }}
  *   enableRetry
  *   maxRetryCount={3}
- *   onRetry={() => console.log('Retrying...')}
+ *   onRetry={() => logger.debug('Retrying...')}
  * />
  * ```
  */

@@ -169,7 +169,7 @@ const useStyles = createStyles((themeColors) =>
     },
     cardSelected: {
       borderColor: DesignTokens.colors.brand.terracotta,
-      backgroundColor: "rgba(198, 123, 92, 0.08)",
+      backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     },
     cardDisabled: {
       opacity: 0.4,

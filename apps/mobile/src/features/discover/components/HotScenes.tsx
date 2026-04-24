@@ -2,18 +2,28 @@ import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
-const SCENES = [
-  { id: "1", name: "面试", icon: "💼" },
-  { id: "2", name: "约会", icon: "💕" },
-  { id: "3", name: "旅行", icon: "✈️" },
-  { id: "4", name: "换季", icon: "🍂" },
-  { id: "5", name: "运动", icon: "🏃" },
-  { id: "6", name: "聚会", icon: "🎉" },
-];
+const SCENE_ICONS: Record<string, string> = {
+  面试: "💼",
+  约会: "💕",
+  旅行: "✈️",
+  换季: "🍂",
+  运动: "🏃",
+  聚会: "🎉",
+  通勤: "🏢",
+  街头: "🎨",
+  度假: "🏖️",
+  派对: "🥂",
+};
 
-export function HotScenes() {
+interface HotScenesProps {
+  scenes?: string[];
+}
+
+export function HotScenes({ scenes }: HotScenesProps) {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+
+  const displayScenes = scenes && scenes.length > 0 ? scenes : ["通勤", "约会", "运动"];
 
   return (
     <View style={styles.section}>
@@ -23,10 +33,10 @@ export function HotScenes() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scenesRow}
       >
-        {SCENES.map((scene) => (
-          <TouchableOpacity key={scene.id} style={styles.sceneChip}>
-            <Text style={styles.sceneIcon}>{scene.icon}</Text>
-            <Text style={styles.sceneName}>{scene.name}</Text>
+        {displayScenes.map((sceneName, index) => (
+          <TouchableOpacity key={sceneName} style={styles.sceneChip}>
+            <Text style={styles.sceneIcon}>{SCENE_ICONS[sceneName] || "👗"}</Text>
+            <Text style={styles.sceneName}>{sceneName}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

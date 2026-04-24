@@ -43,7 +43,7 @@ export class AdminCommunityController {
   async listPosts(@Query() query: AdminPostQueryDto) {
     const { page = 1, pageSize = 20, status, moderationStatus } = query;
 
-    const where: any = { isDeleted: false };
+    const where: Prisma.CommunityPostWhereInput = { isDeleted: false };
 
     if (moderationStatus) {
       where.moderationStatus = moderationStatus;
@@ -163,7 +163,7 @@ export class AdminCommunityController {
   async listReports(@Query() query: AdminReportQueryDto) {
     const { page = 1, pageSize = 20, status, contentType } = query;
 
-    const where: any = {};
+    const where: Prisma.ContentReportWhereInput = {};
 
     if (status) {
       where.status = status;

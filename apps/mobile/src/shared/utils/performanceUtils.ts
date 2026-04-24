@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-call */
 /**
  * 性能优化工具集
  *
@@ -9,6 +9,7 @@
  * - 性能监控
  */
 
+import { logger } from "./logger";
 import { InteractionManager } from "react-native";
 import FastImage from "react-native-fast-image";
 
@@ -20,8 +21,9 @@ import FastImage from "react-native-fast-image";
  */
 export function preloadImages(urls: string[]): void {
   const sources = urls.map((uri) => ({ uri }));
-  // @ts-expect-error - FastImage.preload 可能不存在于某些版本
-  FastImage.preload(sources);
+  if (typeof FastImage.preload === "function") {
+    FastImage.preload(sources);
+  }
 }
 
 /**
@@ -104,7 +106,7 @@ export class PerformanceTimer {
   end(): number {
     const duration = Date.now() - this.startTime;
     if (__DEV__) {
-      console.log(`[Performance] ${this.name}: ${duration}ms`);
+      logger.debug(`[Performance] ${this.name}: ${duration}ms`);
     }
     return duration;
   }

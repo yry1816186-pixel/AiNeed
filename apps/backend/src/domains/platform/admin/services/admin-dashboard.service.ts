@@ -80,7 +80,10 @@ export class AdminDashboardService {
       }),
     ]);
 
-    const safeAmount = (agg: any): number => Number(agg?._sum?.totalAmount ?? 0);
+    const safeAmount = (agg: { _sum?: { totalAmount?: unknown } }): number => {
+      const val = agg?._sum?.totalAmount;
+      return val !== null && val !== undefined ? Number(val) : 0;
+    };
 
     return {
       users: {

@@ -96,27 +96,45 @@ export const CheckoutScreen: React.FC = () => {
           ? cartResponse.data.filter((item) => item.selected)
           : [];
       const selectedFromStore = items
-        .filter((item: any) => item.selected)
-        .map((item: any) => ({
-          id: item.id,
-          productId: item.item?.id ?? "",
-          name: item.item?.name ?? "",
-          color: item.color,
-          size: item.size,
-          quantity: item.quantity,
-          price: item.item?.price ?? 0,
-        }));
+        .filter((item: { selected: boolean }) => item.selected)
+        .map(
+          (item: {
+            id: string;
+            item?: { id?: string; name?: string; price?: number };
+            color: string;
+            size: string;
+            quantity: number;
+          }) => ({
+            id: item.id,
+            productId: item.item?.id ?? "",
+            name: item.item?.name ?? "",
+            color: item.color,
+            size: item.size,
+            quantity: item.quantity,
+            price: item.item?.price ?? 0,
+          })
+        );
 
       setCartItems(
-        (selectedFromApi.length > 0 ? selectedFromApi : selectedFromStore).map((item: any) => ({
-          id: item.id,
-          productId: item.productId,
-          name: item.name,
-          color: item.color,
-          size: item.size,
-          quantity: item.quantity,
-          price: item.price,
-        }))
+        (selectedFromApi.length > 0 ? selectedFromApi : selectedFromStore).map(
+          (item: {
+            id: string;
+            productId: string;
+            name: string;
+            color: string;
+            size: string;
+            quantity: number;
+            price: number;
+          }) => ({
+            id: item.id,
+            productId: item.productId,
+            name: item.name,
+            color: item.color,
+            size: item.size,
+            quantity: item.quantity,
+            price: item.price,
+          })
+        )
       );
 
       if (addressResponse.success && addressResponse.data) {
@@ -135,16 +153,24 @@ export const CheckoutScreen: React.FC = () => {
     } catch {
       setCartItems(
         items
-          .filter((item: any) => item.selected)
-          .map((item: any) => ({
-            id: item.id,
-            productId: item.item?.id ?? "",
-            name: item.item?.name ?? "",
-            color: item.color,
-            size: item.size,
-            quantity: item.quantity,
-            price: item.item?.price ?? 0,
-          }))
+          .filter((item: { selected: boolean }) => item.selected)
+          .map(
+            (item: {
+              id: string;
+              item?: { id?: string; name?: string; price?: number };
+              color: string;
+              size: string;
+              quantity: number;
+            }) => ({
+              id: item.id,
+              productId: item.item?.id ?? "",
+              name: item.item?.name ?? "",
+              color: item.color,
+              size: item.size,
+              quantity: item.quantity,
+              price: item.item?.price ?? 0,
+            })
+          )
       );
       setAddresses([]);
       setSelectedAddress(null);
@@ -597,7 +623,7 @@ export const CheckoutScreen: React.FC = () => {
                 <TouchableOpacity
                   style={styles.primaryButton}
                   onPress={() =>
-                    (navigation as any).navigate("MainTabs", {
+                    navigation.navigate("MainTabs", {
                       screen: "Profile",
                       params: { screen: "Orders" },
                     })
@@ -608,7 +634,7 @@ export const CheckoutScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButtonWide}
-                  onPress={() => (navigation as any).navigate("MainTabs", { screen: "Home" })}
+                  onPress={() => navigation.navigate("MainTabs", { screen: "Home" })}
                   accessibilityLabel={t.checkout.backToHome}
                 >
                   <Text style={styles.secondaryText}>{t.checkout.backToHome}</Text>

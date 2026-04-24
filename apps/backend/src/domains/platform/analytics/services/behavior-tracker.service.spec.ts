@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -83,8 +82,7 @@ describe("BehaviorTrackerService", () => {
   describe("track", () => {
     it("应该成功追踪事件（匿名用户）", async () => {
       const event: TrackEventDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventType: "page_view" as any,
+        eventType: "page_view" as TrackEventDto["eventType"],
         sessionId: "session-123",
         category: "page",
         action: "view",
@@ -103,8 +101,7 @@ describe("BehaviorTrackerService", () => {
       });
 
       const event: TrackEventDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventType: "item_view" as any,
+        eventType: "item_view" as TrackEventDto["eventType"],
         userId: "user-123",
         sessionId: "session-123",
         category: "clothing",
@@ -125,8 +122,7 @@ describe("BehaviorTrackerService", () => {
       });
 
       const event: TrackEventDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventType: "item_view" as any,
+        eventType: "item_view" as TrackEventDto["eventType"],
         userId: "user-123",
         sessionId: "session-123",
         category: "clothing",
@@ -142,8 +138,7 @@ describe("BehaviorTrackerService", () => {
 
     it("应该更新热门商品统计", async () => {
       const event: TrackEventDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventType: "item_view" as any,
+        eventType: "item_view" as TrackEventDto["eventType"],
         sessionId: "session-123",
         category: "clothing",
         action: "view",
@@ -158,8 +153,7 @@ describe("BehaviorTrackerService", () => {
 
     it("应该更新热门搜索统计", async () => {
       const event: TrackEventDto = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventType: "search" as any,
+        eventType: "search" as TrackEventDto["eventType"],
         sessionId: "session-123",
         category: "search",
         action: "query",

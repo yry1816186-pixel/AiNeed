@@ -2,6 +2,7 @@ import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
+import { Socket } from "socket.io";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CHAT_EVENTS } from "../../../modules/ws/events";
@@ -11,8 +12,7 @@ import { ChatGateway } from "./chat.gateway";
 import { ChatService } from "./chat.service";
 import { SenderTypeDto, MessageTypeDto } from "./dto";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createMockSocket(overrides: any = {}): any {
+function createMockSocket(overrides: Record<string, unknown> = {}): Socket {
   const rooms = new Set<string>();
   return {
     id: `socket-${Math.random().toString(36).slice(2, 9)}`,
@@ -28,7 +28,7 @@ function createMockSocket(overrides: any = {}): any {
       return Promise.resolve();
     }),
     ...overrides,
-  };
+  } as unknown as Socket;
 }
 
 describe("ChatGateway", () => {
@@ -112,8 +112,7 @@ describe("ChatGateway", () => {
       to: jest.fn().mockReturnValue({
         emit: jest.fn(),
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    } as unknown as typeof gateway.server;
   });
 
   it("should be defined", () => {

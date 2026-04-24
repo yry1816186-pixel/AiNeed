@@ -1,4 +1,5 @@
-import { apiClient } from "../api/client";
+﻿import { apiClient } from "../api/client";
+import { logger } from "../../shared/utils/logger";
 
 interface BackgroundRemovalResult {
   imageUri: string;
@@ -41,7 +42,7 @@ class BackgroundRemovalService {
         success: true,
       };
     } catch (error) {
-      console.error("Background removal failed:", error);
+      logger.error("Background removal failed:", error);
       return {
         imageUri,
         originalUri: imageUri,

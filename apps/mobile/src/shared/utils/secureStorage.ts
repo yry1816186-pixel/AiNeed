@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+import { logger } from "./logger";
 import EncryptedStorage from "react-native-encrypted-storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
@@ -14,7 +15,7 @@ const initSecureStore = (): void => {
       SecureStore = require("react-native-encrypted-storage").default;
     } catch (e) {
       isInsecureFallback = true;
-      console.error(
+      logger.error(
         "[SECURITY] react-native-encrypted-storage not available. " +
           "Falling back to AsyncStorage (plaintext). Sensitive data will NOT be encrypted. " +
           "Ensure react-native-encrypted-storage is properly linked before shipping this build."
@@ -44,7 +45,7 @@ export const secureStorage = {
           "Ensure react-native-encrypted-storage is properly linked before building for release."
       );
     }
-    console.error(
+    logger.error(
       `[SECURITY] Storing sensitive data "${key}" in plaintext via AsyncStorage. ` +
         "Install react-native-encrypted-storage for encrypted storage."
     );

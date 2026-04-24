@@ -131,7 +131,12 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "earth",
     label: "大地色",
-    colors: ["colors.secondary", DesignTokens.colors.brand.camel, "colors.primaryDark", "#6E7A62"],
+    colors: [
+      "colors.secondary",
+      DesignTokens.colors.brand.camel,
+      "colors.primaryDark",
+      DesignTokens.colors.semantic.mutedSage,
+    ],
     description: "自然沉稳，低调内敛",
   },
   {

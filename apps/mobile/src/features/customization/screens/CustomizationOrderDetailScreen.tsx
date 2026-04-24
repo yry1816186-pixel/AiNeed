@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -83,7 +83,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
         setOrder(response.data as unknown as OrderDetail);
       }
     } catch (error) {
-      console.error("Failed to load order detail:", error);
+      logger.error("Failed to load order detail:", error);
     } finally {
       setIsLoading(false);
     }

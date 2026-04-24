@@ -11,7 +11,8 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { CreateReviewDto, ReviewQueryDto } from "./dto";
 
-const asJson = (value: unknown): any => value as any;
+const asJson = (value: unknown): Prisma.InputJsonValue =>
+  JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 
 const RANKING_WEIGHTS = {
   rating: 0.4,
@@ -74,12 +75,12 @@ export class ConsultantReviewService {
   async getReviews(query: ReviewQueryDto) {
     const { consultantId, page = 1, pageSize = 20, sortBy = "latest" } = query;
 
-    const where: any = {};
+    const where: Prisma.ConsultantReviewWhereInput = {};
     if (consultantId) {
       where.consultantId = consultantId;
     }
 
-    let orderBy: any;
+    let orderBy: Prisma.ConsultantReviewOrderByWithRelationInput;
     switch (sortBy) {
       case "highest":
         orderBy = { rating: "desc" };

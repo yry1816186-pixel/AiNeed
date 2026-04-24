@@ -553,19 +553,25 @@ export interface RecommendationOutputItem {
  * 推荐输出接口（REC-04, REC-06）
  * @description 推荐系统的标准化输出结构
  */
+export interface RecommendationBreakdown {
+  totalCandidates: number;
+  afterSceneFilter: number;
+  afterSizeFilter: number;
+  afterBudgetFilter: number;
+  afterStyleFilter: number;
+  afterWardrobeFilter: number;
+  finalCount: number;
+}
+
 export interface RecommendationOutput {
-  /** 推荐商品列表 */
   items: RecommendationOutputItem[];
-  /** 搭配建议（可选） */
   outfit?: {
     name: string;
     description: string;
     items: RecommendationOutputItem[];
   };
-  /** 推荐解释 */
   explanation: RecommendationExplanationDetail;
-  /** A/B实验ID（REC-06） */
+  breakdown?: RecommendationBreakdown;
   experimentId?: string;
-  /** 降级标记 */
   degraded?: boolean;
 }

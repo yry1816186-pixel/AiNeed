@@ -372,7 +372,7 @@ export class BehaviorTrackerService {
       ]);
 
     // Map Prisma results to include default trend field
-    const preferences: UserPreferenceWeightItem[] = preferencesRaw.map((p: any) => ({
+    const preferences: UserPreferenceWeightItem[] = preferencesRaw.map((p) => ({
       category: p.category,
       key: p.key,
       weight: Number(p.weight),

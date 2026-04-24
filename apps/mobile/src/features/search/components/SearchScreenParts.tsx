@@ -495,7 +495,11 @@ interface SearchResultListProps {
   isRefreshing: boolean;
   onRefresh: () => void;
   onItemPress: (item: ClothingItem) => void;
-  emptyContent: React.ReactElement | React.ComponentType<any> | null | undefined;
+  emptyContent:
+    | React.ReactElement
+    | React.ComponentType<Record<string, unknown>>
+    | null
+    | undefined;
 }
 
 export const SearchResultList: React.FC<SearchResultListProps> = React.memo(

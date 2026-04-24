@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+import { logger } from "../logger";
 import { Platform } from "react-native";
 import { Sentry } from "../../services/sentry";
 
@@ -103,13 +104,13 @@ async function checkIOSJailbreak(): Promise<{ detected: boolean; checks: string[
       });
     }
   } catch (error) {
-    console.error("Device integrity check failed:", error);
+    logger.error("Device integrity check failed:", error);
     checks.push("filesystem_check_mock");
 
     // Mock: In production, a native module would use NSFileManager.fileExistsAtPath
     // to check IOS_JAILBREAK_PATHS. JS layer cannot access the filesystem directly.
     if (__DEV__) {
-      console.warn(
+      logger.warn(
         "[Device-Integrity] react-native-jailbreak-detection not available. " +
           "Install the native module for production jailbreak detection."
       );
@@ -142,7 +143,7 @@ async function checkAndroidRoot(): Promise<{ detected: boolean; checks: string[]
       });
     }
   } catch (error) {
-    console.error("Device integrity check failed:", error);
+    logger.error("Device integrity check failed:", error);
     checks.push("su_binary_check_mock");
 
     // Mock: In production, a native module would check for su binary existence
@@ -163,7 +164,7 @@ async function checkAndroidRoot(): Promise<{ detected: boolean; checks: string[]
     // by attempting to write a test file.
 
     if (__DEV__) {
-      console.warn(
+      logger.warn(
         "[Device-Integrity] react-native-root-detection not available. " +
           "Install the native module for production root detection."
       );
@@ -191,7 +192,7 @@ async function checkAppTampered(): Promise<{ detected: boolean; checks: string[]
       });
     }
   } catch (error) {
-    console.error("Device integrity check failed:", error);
+    logger.error("Device integrity check failed:", error);
     checks.push("signature_check_mock");
 
     // Mock: In production, a native module would verify the APK/IPA signature
@@ -208,7 +209,7 @@ async function checkAppTampered(): Promise<{ detected: boolean; checks: string[]
     // files (DEX, SO, assets) and compare against known-good values.
 
     if (__DEV__) {
-      console.warn(
+      logger.warn(
         "[Device-Integrity] react-native-tamper-detection not available. " +
           "Install the native module for production tamper detection."
       );

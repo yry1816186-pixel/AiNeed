@@ -8,6 +8,12 @@ import { AdminCommunityController } from "../../platform/admin/admin-community.c
 
 import { CommunityController } from "./community.controller";
 import { CommunityService } from "./community.service";
+import { CommunityPostService } from "./community-post.service";
+import { CommunityCommentService } from "./community-comment.service";
+import { CommunityLikeService } from "./community-like.service";
+import { CommunitySocialService } from "./community-social.service";
+import { CommunityTrendingService } from "./community-trending.service";
+import { CommunityFeedService } from "./community-feed.service";
 import { ContentModerationProcessor } from "./content-moderation.processor";
 import { ContentModerationService, CONTENT_MODERATION_QUEUE } from "./content-moderation.service";
 
@@ -19,7 +25,17 @@ import { ContentModerationService, CONTENT_MODERATION_QUEUE } from "./content-mo
     BullModule.registerQueue({ name: CONTENT_MODERATION_QUEUE }),
   ],
   controllers: [CommunityController, AdminCommunityController],
-  providers: [CommunityService, ContentModerationService, ContentModerationProcessor],
+  providers: [
+    CommunityService,
+    CommunityPostService,
+    CommunityCommentService,
+    CommunityLikeService,
+    CommunitySocialService,
+    CommunityTrendingService,
+    CommunityFeedService,
+    ContentModerationService,
+    ContentModerationProcessor,
+  ],
   exports: [CommunityService, ContentModerationService],
 })
 export class CommunityModule {}

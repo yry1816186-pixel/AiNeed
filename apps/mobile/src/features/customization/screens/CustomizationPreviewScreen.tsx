@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -29,7 +28,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
   const [printSide, setPrintSide] = useState<"front" | "back" | "both">("front");
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [_designData, setDesignData] = useState<any>(null);
+  const [_designData, setDesignData] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     void loadDesign();

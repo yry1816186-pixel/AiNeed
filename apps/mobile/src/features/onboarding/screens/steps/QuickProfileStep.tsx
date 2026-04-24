@@ -306,7 +306,7 @@ const useStyles = createStyles((themeColors) =>
     },
     radioCardSelected: {
       borderColor: DesignTokens.colors.brand.terracotta,
-      backgroundColor: "rgba(198, 123, 92, 0.08)",
+      backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     },
     radioLabel: {
       fontSize: DesignTokens.typography.sizes.base,

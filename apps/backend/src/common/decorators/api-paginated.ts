@@ -3,7 +3,7 @@ import { ApiExtraModels, ApiOkResponse, ApiQuery, getSchemaPath } from "@nestjs/
 
 import { PaginatedMetaDto, PaginatedResponseDto } from "../dto/paginated-response.dto";
 
-export function ApiPaginated(model: () => new (...args: any[]) => any) {
+export function ApiPaginated(model: () => new (...args: unknown[]) => unknown) {
   return applyDecorators(
     ApiExtraModels(model, PaginatedResponseDto, PaginatedMetaDto),
     ApiOkResponse({

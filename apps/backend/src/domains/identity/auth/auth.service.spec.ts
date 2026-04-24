@@ -66,8 +66,18 @@ describe("AuthService", () => {
   let configService: ConfigService;
   let redisService: RedisService;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mockPrismaService: Record<string, any> = {
+  const mockPrismaService: {
+    user: { findUnique: jest.Mock; findFirst: jest.Mock; create: jest.Mock; update: jest.Mock };
+    userProfile: { create: jest.Mock };
+    userConsent: { createMany: jest.Mock };
+    refreshToken: {
+      create: jest.Mock;
+      findMany: jest.Mock;
+      delete: jest.Mock;
+      deleteMany: jest.Mock;
+    };
+    $transaction: jest.Mock;
+  } = {
     user: {
       findUnique: jest.fn(),
       findFirst: jest.fn(),
@@ -86,8 +96,9 @@ describe("AuthService", () => {
       delete: jest.fn(),
       deleteMany: jest.fn(),
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $transaction: jest.fn((fn: any) => fn(mockPrismaService)),
+    $transaction: jest.fn(
+      (fn: (tx: typeof mockPrismaService) => unknown) => fn(mockPrismaService) as unknown
+    ),
   };
 
   const mockJwtService = {

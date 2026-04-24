@@ -1,3 +1,4 @@
+﻿import { logger } from "../shared/utils/logger";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Image,
@@ -51,7 +52,7 @@ class ImageCacheManager {
       }
       await this.loadCacheIndex();
     } catch (error) {
-      console.warn("ImageCacheManager init failed:", error);
+      logger.warn("ImageCacheManager init failed:", error);
     }
   }
 
@@ -65,7 +66,7 @@ class ImageCacheManager {
         this.cache = new Map(Object.entries(data));
       }
     } catch (error) {
-      console.warn("Failed to load cache index:", error);
+      logger.warn("Failed to load cache index:", error);
     }
   }
 
@@ -75,7 +76,7 @@ class ImageCacheManager {
       const data = Object.fromEntries(this.cache);
       await FileSystem.writeAsStringAsync(indexFile, JSON.stringify(data));
     } catch (error) {
-      console.warn("Failed to save cache index:", error);
+      logger.warn("Failed to save cache index:", error);
     }
   }
 
@@ -110,7 +111,7 @@ class ImageCacheManager {
           totalSize -= entry.size;
           this.cache.delete(key);
         } catch (error) {
-          console.warn("Failed to delete cache file:", error);
+          logger.warn("Failed to delete cache file:", error);
         }
       }
 
@@ -180,7 +181,7 @@ class ImageCacheManager {
 
         return localPath;
       } catch (error) {
-        console.warn("Failed to download image:", error);
+        logger.warn("Failed to download image:", error);
         return uri;
       } finally {
         this.pendingDownloads.delete(key);
@@ -197,7 +198,7 @@ class ImageCacheManager {
       this.cache.clear();
       await this.initCache();
     } catch (error) {
-      console.warn("Failed to clear cache:", error);
+      logger.warn("Failed to clear cache:", error);
     }
   }
 

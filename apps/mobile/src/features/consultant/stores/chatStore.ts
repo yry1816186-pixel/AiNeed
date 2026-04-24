@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 import { chatApi } from "../../../services/api/chat.api";
 import type {
@@ -102,7 +103,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       await chatApi.markAsRead(roomId, lastMessageId);
     } catch (error) {
       // Silently fail read receipts
-      console.error("Chat operation failed:", error);
+      logger.error("Chat operation failed:", error);
     }
   },
 

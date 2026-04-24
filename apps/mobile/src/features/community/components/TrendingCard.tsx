@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -41,7 +42,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
       }
     } catch (err) {
       // Trending is supplementary content
-      console.error("Failed to load trending:", err);
+      logger.error("Failed to load trending:", err);
     } finally {
       setLoading(false);
     }

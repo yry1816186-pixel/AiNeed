@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../../shared/utils/logger";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -250,7 +251,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
 
       onComplete();
     } catch (error) {
-      console.error("Save preferences error:", error);
+      logger.error("Save preferences error:", error);
       onComplete();
     } finally {
       setLoading(false);

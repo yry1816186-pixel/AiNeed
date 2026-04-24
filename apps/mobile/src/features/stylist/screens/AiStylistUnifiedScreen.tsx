@@ -622,7 +622,7 @@ const AnimatedMessageBubble: React.FC<{
             <Ionicons name="sparkles" size={12} color={colors.surface} />
           </View>
           <View style={s.assistantBubbleContent}>
-            <TypewriterMessage text={msg.content} speed={40} textStyle={[s.assistantText] as any} />
+            <TypewriterMessage text={msg.content} speed={40} textStyle={[s.assistantText]} />
             {outfitPlan && (
               <InlineOutfitCard
                 plan={outfitPlan}
@@ -850,7 +850,13 @@ export const AiStylistUnifiedScreen: React.FC = () => {
 
   /** Process dialog response: handle quickReplies, try-on action, studio signal */
   const processDialogResponse = useCallback(
-    (result: any) => {
+    (result: {
+      quickReplies?: unknown;
+      studioSignal?: string;
+      assistantMessage?: string;
+      tryOnSignal?: string;
+      outfitData?: unknown;
+    }) => {
       // Handle quick replies from backend
       if (result.quickReplies && Array.isArray(result.quickReplies)) {
         setQuickReplies(result.quickReplies as string[]);

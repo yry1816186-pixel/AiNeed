@@ -288,7 +288,7 @@ export class AgentToolsService {
   // Tool 2: Search Clothing
   async searchClothing(input: SearchClothingInput): Promise<ClothingSearchResult> {
     const { query, filters = {}, limit = 20, offset = 0 } = input;
-    const where: any = { isActive: true };
+    const where: Prisma.ClothingItemWhereInput = { isActive: true };
     if (filters.category) {
       where.category = filters.category;
     }
@@ -311,7 +311,7 @@ export class AgentToolsService {
     ]);
 
     // Transform Prisma result to ClothingItemBasic[]
-    const clothingItems: ClothingItemBasic[] = items.map((item: any) => ({
+    const clothingItems: ClothingItemBasic[] = items.map((item) => ({
       id: item.id,
       name: item.name,
       category: item.category,

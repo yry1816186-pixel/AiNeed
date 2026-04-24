@@ -126,7 +126,11 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing[1],
     borderRadius: BorderRadius.sm,
   },
-  badgeValue: { ...Typography.styles.caption, color: "#1B7A3D", fontWeight: "700" },
+  badgeValue: {
+    ...Typography.styles.caption,
+    color: DesignTokens.colors.semantic.successDark,
+    fontWeight: "700",
+  },
   badgeCount: { ...Typography.styles.caption, color: colors.neutral[500] },
 }));
 

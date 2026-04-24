@@ -448,7 +448,9 @@ export class SizeRecommendationService {
       return { size: null };
     }
 
-    const sizes = refundRequests.flatMap((r: any) => r.order.items.map((i: any) => i.size));
+    const sizes = refundRequests.flatMap((r) =>
+      r.order.items.map((i: { size: string | null }) => i.size)
+    );
     if (sizes.length === 0) {
       return { size: null };
     }

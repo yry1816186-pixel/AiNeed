@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
-// @ts-nocheck
+﻿import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -157,7 +156,7 @@ export const SettingsScreen: React.FC = () => {
             await authApi.logout();
           } catch (error) {
             // Continue regardless
-            console.error("Settings operation failed:", error);
+            logger.error("Settings operation failed:", error);
           }
           void logout();
           navigation.reset({ index: 0, routes: [{ name: "Login" }] });

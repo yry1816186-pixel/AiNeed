@@ -1,5 +1,7 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 
+import { Prisma } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
 
@@ -200,7 +202,7 @@ export class CouponService {
    * Uses atomic operation for usedCount increment to prevent overselling.
    */
   async useCoupon(userCouponId: string, orderId: string): Promise<void> {
-    await this.prisma.$transaction(async (tx: any) => {
+    await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const userCoupon = await tx.userCoupon.findUnique({
         where: { id: userCouponId },
       });

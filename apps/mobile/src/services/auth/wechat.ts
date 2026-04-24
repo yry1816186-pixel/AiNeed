@@ -1,3 +1,4 @@
+﻿import { logger } from "../../shared/utils/logger";
 import { Platform, Linking, Alert } from "react-native";
 import apiClient from "../api/client";
 import { ApiResponse } from "../../types";
@@ -51,7 +52,7 @@ async function authorize(): Promise<WechatAuthResult | null> {
   }
 
   if (!WECHAT_APP_ID) {
-    console.warn("WeChat App ID not configured. Using mock auth for development.");
+    logger.warn("WeChat App ID not configured. Using mock auth for development.");
     return mockAuthorize();
   }
 
@@ -136,7 +137,7 @@ async function shareToWechat(options: {
     return false;
   }
 
-  console.error("Share to WeChat failed:", options);
+  logger.error("Share to WeChat failed:", options);
   return true;
 }
 

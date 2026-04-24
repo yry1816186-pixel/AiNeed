@@ -4,6 +4,10 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { ConsultantMatchRequestDto, MatchResultDto } from "./dto";
 
+type ConsultantWithRelations = Awaited<
+  ReturnType<PrismaService["consultantProfile"]["findMany"]>
+>[number];
+
 /** 四维匹配权重配置 */
 const MATCH_WEIGHTS = {
   profile: 0.3,
@@ -57,7 +61,7 @@ export class ConsultantMatchingService {
 
     const userProfile = await this.getUserProfile(userId);
 
-    const scored = consultants.map((consultant: any) => {
+    const scored = consultants.map((consultant: ConsultantWithRelations) => {
       const scores = {
         profile: this.calcProfileScore(userProfile, consultant),
         keywords: this.calcKeywordScore(dto, consultant),
@@ -86,7 +90,7 @@ export class ConsultantMatchingService {
       } as MatchResultDto;
     });
 
-    scored.sort((a: any, b: any) => b.matchPercentage - a.matchPercentage);
+    scored.sort((a, b) => b.matchPercentage - a.matchPercentage);
     return scored.slice(0, 5);
   }
 

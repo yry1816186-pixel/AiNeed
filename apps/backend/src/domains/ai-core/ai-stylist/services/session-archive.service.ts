@@ -107,17 +107,25 @@ export class SessionArchiveService {
       orderBy: { createdAt: "desc" },
     });
 
-    return sessions.map((s: any): ArchivedSession => {
-      const payload = s.payload as Record<string, unknown> | null;
-      const goalValue = payload ? payload.goal : undefined;
-      return {
-        id: s.id,
-        status: s.status,
-        goal: typeof goalValue === "string" ? goalValue : undefined,
-        hasOutfitPlan: !!payload?.result,
-        createdAt: s.createdAt.toISOString(),
-        updatedAt: s.updatedAt.toISOString(),
-      };
-    });
+    return sessions.map(
+      (s: {
+        id: string;
+        status: string;
+        payload: unknown;
+        createdAt: Date;
+        updatedAt: Date;
+      }): ArchivedSession => {
+        const payload = s.payload as Record<string, unknown> | null;
+        const goalValue = payload ? payload.goal : undefined;
+        return {
+          id: s.id,
+          status: s.status,
+          goal: typeof goalValue === "string" ? goalValue : undefined,
+          hasOutfitPlan: !!payload?.result,
+          createdAt: s.createdAt.toISOString(),
+          updatedAt: s.updatedAt.toISOString(),
+        };
+      }
+    );
   }
 }

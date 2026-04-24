@@ -10,9 +10,10 @@ import Animated, {
   Extrapolation,
 } from "react-native-reanimated";
 
-// Warm gray base, white shimmer -- brand-aligned, no theme dependency
-const BASE_COLOR = "#F0E8E4";
-const SHIMMER_COLOR = "rgba(255, 255, 255, 0.4)";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+
+const BASE_COLOR = DesignTokens.colors.semantic.skeletonBase;
+const SHIMMER_COLOR = DesignTokens.colors.borders.light;
 
 export interface ShimmerSkeletonProps {
   /** Width of the skeleton rectangle */

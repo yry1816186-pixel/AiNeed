@@ -1,3 +1,4 @@
+﻿import { logger } from "../utils/logger";
 import { io, Socket } from "socket.io-client";
 import { mobileRuntimeConfig } from "../../config/runtime";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
@@ -42,7 +43,7 @@ class WebSocketService {
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch (error) {
-      console.error("WebSocket operation failed:", error);
+      logger.error("WebSocket operation failed:", error);
       return;
     }
 
@@ -133,7 +134,7 @@ class WebSocketService {
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch (error) {
-      console.error("WebSocket operation failed:", error);
+      logger.error("WebSocket operation failed:", error);
       return;
     }
     if (!token) {

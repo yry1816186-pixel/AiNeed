@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -47,10 +46,8 @@ describe("UsersService", () => {
   };
 
   const mockPiiEncryptionService = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    encryptPII: jest.fn((model: string, data: any) => data),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    decryptPII: jest.fn((model: string, data: any) => data),
+    encryptPII: jest.fn((model: string, data: Record<string, unknown>) => data),
+    decryptPII: jest.fn((model: string, data: Record<string, unknown>) => data),
     isEncrypted: jest.fn(() => false),
   };
 

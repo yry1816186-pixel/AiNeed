@@ -3,6 +3,7 @@ import { Injectable, Logger, NotFoundException, Inject } from "@nestjs/common";
 import { Queue } from "bullmq";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { Prisma } from "@prisma/client";
 import { RedisService, RedisKeyBuilder } from "../../../common/redis/redis.service";
 
 import { CreateFeatureFlagDto } from "./dto/create-flag.dto";
@@ -104,13 +105,13 @@ export class FeatureFlagService {
       updateData.type = data.type;
     }
     if (data.value !== undefined) {
-      updateData.value = data.value as any;
+      updateData.value = data.value as Prisma.InputJsonValue;
     }
     if (data.enabled !== undefined) {
       updateData.enabled = data.enabled;
     }
     if (data.rules !== undefined) {
-      updateData.rules = data.rules as any;
+      updateData.rules = data.rules as Prisma.InputJsonValue;
     }
 
     const flag = await this.prisma.featureFlag.update({

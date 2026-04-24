@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unused-vars */
-// @ts-nocheck
-/**
+﻿/**
  * @deprecated Use ThemeProvider from shared/contexts/ThemeContext instead.
  * This file will be removed in a future version.
  */
+import { logger } from "../shared/utils/logger";
 import React, {
   createContext,
   useContext,
@@ -15,7 +14,11 @@ import React, {
 } from "react";
 import { useColorScheme, Appearance, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens, darkTokens } from "../design-system/theme";
+import {
+  flatColors as lightFlatColorsImport,
+  darkFlatColors as darkFlatColorsImport,
+} from "../design-system/theme";
 import type { DesignTokensType, DarkTokensType } from "../design-system/theme/tokens/design-tokens";
 import {
   seasonAccentColors,
@@ -33,56 +36,8 @@ type TokenSet = typeof DesignTokens;
 
 export type { FlatColors };
 
-function buildFlatColors(base: TokenSet["colors"]): FlatColors {
-  return {
-    brand: base.brand,
-    neutral: base.neutral,
-    semantic: base.semantic,
-    backgrounds: base.backgrounds,
-    text: base.text,
-    borders: base.borders,
-    colorSeasons: base.colorSeasons,
-    surface: base.backgrounds.primary,
-    surfaceSecondary: base.backgrounds.secondary,
-    surfaceTertiary: base.backgrounds.tertiary,
-    surfaceElevated: base.backgrounds.elevated,
-    textPrimary: base.text.primary,
-    textSecondary: base.text.secondary,
-    textTertiary: base.text.tertiary,
-    textInverse: base.text.inverse,
-    textBrand: base.text.brand,
-    border: base.borders.default,
-    borderLight: base.borders.light,
-    borderStrong: base.borders.strong,
-    borderBrand: base.borders.brand,
-    primary: base.brand.terracotta,
-    primaryLight: base.brand.terracottaLight,
-    primaryDark: base.brand.terracottaDark,
-    subtleBg: base.backgrounds.tertiary,
-    gold: "#D4A853",
-    placeholderBg: base.neutral[200],
-    overlay: base.backgrounds.overlay,
-    background: base.backgrounds.primary,
-    backgroundSecondary: base.backgrounds.secondary,
-    backgroundTertiary: base.backgrounds.tertiary,
-    error: base.semantic.error,
-    errorLight: base.semantic.errorLight,
-    success: base.semantic.success,
-    successLight: base.semantic.successLight,
-    warning: base.semantic.warning,
-    warningLight: base.semantic.warningLight,
-    info: base.semantic.info,
-    infoLight: base.semantic.infoLight,
-    divider: base.borders.light,
-    cartLight: "#FFF5F0",
-    purple: colors.primaryDark,
-    amber: colors.warning,
-    secondary: base.brand.sage,
-  };
-}
-
-const lightFlatColors = buildFlatColors(DesignTokens.colors);
-const darkFlatColors = buildFlatColors(darkTokens.colors);
+const lightFlatColors = lightFlatColorsImport;
+const darkFlatColors = darkFlatColorsImport;
 
 export interface ThemeContextType {
   theme: ResolvedTheme;
@@ -135,7 +90,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           setColorSeasonState(savedSeason as ColorSeason);
         }
       } catch (e) {
-        console.error("Failed to load theme:", e);
+        logger.error("Failed to load theme:", e);
       } finally {
         setIsReady(true);
       }
@@ -161,7 +116,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
     } catch (e) {
-      console.error("Failed to save theme:", e);
+      logger.error("Failed to save theme:", e);
     }
   }, []);
 
@@ -179,7 +134,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         await AsyncStorage.removeItem(SEASON_STORAGE_KEY);
       }
     } catch (e) {
-      console.error("Failed to reset theme:", e);
+      logger.error("Failed to reset theme:", e);
     }
   }, []);
 

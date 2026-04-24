@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+import { logger } from "../../../shared/utils/logger";
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -131,7 +132,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
   // React to voice recognition errors
   useEffect(() => {
     if (voiceError) {
-      console.error("Voice recognition error:", voiceError);
+      logger.error("Voice recognition error:", voiceError);
       setIsVoiceMode(false);
       setState("idle");
     }
@@ -188,7 +189,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         setPosition(JSON.parse(savedPosition));
       }
     } catch (error) {
-      console.warn("Failed to load companion position:", error);
+      logger.warn("Failed to load companion position:", error);
     }
   };
 
@@ -196,7 +197,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     try {
       await AsyncStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify({ x, y }));
     } catch (error) {
-      console.warn("Failed to save companion position:", error);
+      logger.warn("Failed to save companion position:", error);
     }
   };
 
@@ -215,7 +216,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         }
       }
     } catch (error) {
-      console.warn("Failed to load session:", error);
+      logger.warn("Failed to load session:", error);
     }
   };
 
@@ -229,7 +230,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         })
       );
     } catch (error) {
-      console.warn("Failed to save session:", error);
+      logger.warn("Failed to save session:", error);
     }
   };
 
@@ -237,7 +238,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     try {
       await AsyncStorage.removeItem(SESSION_STORAGE_KEY);
     } catch (error) {
-      console.warn("Failed to clear session:", error);
+      logger.warn("Failed to clear session:", error);
     }
   };
 
@@ -366,7 +367,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
               setMessages((prev) => [...prev, statusMessage]);
             }
           } catch (error) {
-            console.error("Polling error:", error);
+            logger.error("Polling error:", error);
             useAiStylistStore.getState().setError("AI 助手连接中断，正在重试...");
           }
         }, POLL_INTERVAL);
@@ -457,7 +458,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           setState("idle");
         }, 1000);
       } catch (error) {
-        console.error("AI companion sendMessage failed:", error);
+        logger.error("AI companion sendMessage failed:", error);
 
         const errorMessage: ExtendedChatMessage = {
           id: `error-${Date.now()}`,
@@ -508,7 +509,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             void saveSession(newSessionId);
           }
         } catch (error) {
-          console.error("Failed to create session for photo upload:", error);
+          logger.error("Failed to create session for photo upload:", error);
           return;
         }
       }
@@ -588,7 +589,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           }
         }
       } catch (error) {
-        console.error("Failed to upload photo:", error);
+        logger.error("Failed to upload photo:", error);
         const errorMessage: ExtendedChatMessage = {
           id: `error-${Date.now()}`,
           role: "assistant",
@@ -641,7 +642,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           setState("idle");
         }, 1000);
       } catch (error) {
-        console.error("Failed to select preference:", error);
+        logger.error("Failed to select preference:", error);
         setState("idle");
       }
     },
@@ -686,7 +687,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         setState("idle");
       }, 1000);
     } catch (error) {
-      console.error("Failed to generate outfit:", error);
+      logger.error("Failed to generate outfit:", error);
       const errorMessage: ExtendedChatMessage = {
         id: `error-${Date.now()}`,
         role: "assistant",
@@ -753,7 +754,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
   const startVoiceInput = useCallback(async () => {
     if (!enableVoiceInput || !isVoiceAvailable) {
-      console.warn("Voice input is not available");
+      logger.warn("Voice input is not available");
       return;
     }
 
@@ -761,7 +762,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       setShowHint(false);
       await startListening();
     } catch (error) {
-      console.error("Failed to start voice input:", error);
+      logger.error("Failed to start voice input:", error);
       useAiStylistStore.getState().setError("语音输入启动失败");
     }
   }, [enableVoiceInput, isVoiceAvailable, startListening]);

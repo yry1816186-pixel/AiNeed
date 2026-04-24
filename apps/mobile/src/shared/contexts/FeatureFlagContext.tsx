@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { logger } from "../utils/logger";
 import React, {
   createContext,
   useContext,
@@ -90,7 +91,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       // ignore storage errors
-      console.error("Feature flag storage error:", error);
+      logger.error("Feature flag storage error:", error);
     }
   }, []);
 
@@ -99,7 +100,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
     } catch (error) {
       // ignore storage errors
-      console.error("Feature flag storage error:", error);
+      logger.error("Feature flag storage error:", error);
     }
   }, []);
 

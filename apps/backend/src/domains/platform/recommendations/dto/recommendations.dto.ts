@@ -282,3 +282,26 @@ export class FeedResponseDto {
   @ApiProperty({ description: "是否有更多" })
   hasMore!: boolean;
 }
+
+export class RecommendationBreakdownDto {
+  @ApiProperty({ description: "初始候选数量" })
+  totalCandidates!: number;
+
+  @ApiProperty({ description: "场景筛选后数量" })
+  afterSceneFilter!: number;
+
+  @ApiProperty({ description: "尺码筛选后数量" })
+  afterSizeFilter!: number;
+
+  @ApiProperty({ description: "预算筛选后数量" })
+  afterBudgetFilter!: number;
+
+  @ApiProperty({ description: "风格筛选后数量" })
+  afterStyleFilter!: number;
+
+  @ApiProperty({ description: "衣橱去重后数量" })
+  afterWardrobeFilter!: number;
+
+  @ApiProperty({ description: "最终推荐数量" })
+  finalCount!: number;
+}

@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { logger } from "../shared/utils/logger";
 import {
   useNavigation,
   StackActions,
@@ -160,11 +161,11 @@ export function setNavigationRef(ref: NavigationRef) {
 function getNav(): NavigationRef | null {
   const ref = _navigationRef || (navigationRef as unknown as NavigationRef | null);
   if (!ref) {
-    console.warn("expo-router.router: Navigation not ready yet.");
+    logger.warn("expo-router.router: Navigation not ready yet.");
     return null;
   }
   if ("isReady" in ref && typeof ref.isReady === "function" && !ref.isReady()) {
-    console.warn("expo-router.router: Navigation not ready yet.");
+    logger.warn("expo-router.router: Navigation not ready yet.");
     return null;
   }
   return ref;

@@ -1,3 +1,4 @@
+﻿import { logger } from "../../../shared/utils/logger";
 import { useState, useEffect, useCallback } from "react";
 import { PermissionsAndroid, Linking, Platform } from "react-native";
 
@@ -27,7 +28,7 @@ async function checkCameraPermission(): Promise<{
     }
     return { status: "undetermined", canAskAgain: true };
   } catch (e) {
-    console.error("Camera permission check failed:", e);
+    logger.error("Camera permission check failed:", e);
     return { status: "undetermined", canAskAgain: true };
   }
 }
@@ -65,7 +66,7 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       setCanAskAgain(askable);
       return status;
     } catch (e) {
-      console.error("Camera permission request failed:", e);
+      logger.error("Camera permission request failed:", e);
       setPermissionStatus("denied");
       setCanAskAgain(false);
       return "denied";
@@ -79,7 +80,7 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       try {
         await Linking.openURL("app-settings:");
       } catch (e) {
-        console.error("Failed to open app settings:", e);
+        logger.error("Failed to open app settings:", e);
       }
     }
   }, []);

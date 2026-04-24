@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: DesignTokens.colors.borders.default,
     alignItems: "center",
     justifyContent: "center",
   },

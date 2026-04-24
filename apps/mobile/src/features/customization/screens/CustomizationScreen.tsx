@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+﻿import { logger } from "../../../shared/utils/logger";
+import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -112,7 +109,7 @@ export const CustomizationScreen: React.FC = () => {
         setRequests(response.data.items);
       }
     } catch (error) {
-      console.error("Customization operation failed:", error);
+      logger.error("Customization operation failed:", error);
     } finally {
       setIsLoadingRequests(false);
     }

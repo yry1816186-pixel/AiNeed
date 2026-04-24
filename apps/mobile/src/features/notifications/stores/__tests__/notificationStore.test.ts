@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await, @typescript-eslint/unbound-method */
-// @ts-nocheck
 import { useNotificationStore } from "../notificationStore";
 
 jest.mock("../../../../services/api/notification.api", () => ({

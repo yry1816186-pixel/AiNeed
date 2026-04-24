@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 /**
  * 离线缓存服务 - 用于比赛演示的离线模式支持
  *
@@ -97,7 +97,7 @@ class OfflineCacheService {
       }
       logger.info("[OfflineCache] 初始化完成");
     } catch (error) {
-      console.error("[OfflineCache] 初始化失败:", error);
+      logger.error("[OfflineCache] 初始化失败:", error);
     }
   }
 
@@ -157,7 +157,7 @@ class OfflineCacheService {
 
     // 检查是否过期
     if (Date.now() - entry.timestamp > CACHE_EXPIRY_MS) {
-      console.warn("[OfflineCache] Demo 数据已过期");
+      logger.warn("[OfflineCache] Demo 数据已过期");
       return null; // 返回 null 让调用方决定是否使用
     }
 
@@ -273,7 +273,7 @@ class OfflineCacheService {
       this.memoryCache.set(key, entry);
       return entry;
     } catch (error) {
-      console.error(`[OfflineCache] 加载 ${key} 失败:`, error);
+      logger.error(`[OfflineCache] 加载 ${key} 失败:`, error);
       return null;
     }
   }

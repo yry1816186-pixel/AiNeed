@@ -138,7 +138,7 @@ export class StockNotificationService {
 
     this.eventEmitter.emit("STOCK_RESTOCKED", {
       itemId,
-      notifiedUserIds: subscriptions.map((s: any) => s.userId),
+      notifiedUserIds: subscriptions.map((s) => s.userId),
       count: subscriptions.length,
     });
 

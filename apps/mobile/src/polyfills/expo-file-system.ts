@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/require-await */
+﻿/* eslint-disable @typescript-eslint/require-await */
 import { Platform } from "react-native";
+import { logger } from "../shared/utils/logger";
 
 export const EncodingType = {
   UTF8: "utf8",
@@ -41,21 +42,21 @@ export async function writeAsStringAsync(
   _content: string,
   _options?: { encoding?: string }
 ): Promise<void> {
-  console.warn("FileSystem.writeAsStringAsync is a stub - not fully implemented");
+  logger.warn("FileSystem.writeAsStringAsync is a stub - not fully implemented");
 }
 
 export async function deleteAsync(
   _uri: string,
   _options?: { idempotent?: boolean }
 ): Promise<void> {
-  console.warn("FileSystem.deleteAsync is a stub - not fully implemented");
+  logger.warn("FileSystem.deleteAsync is a stub - not fully implemented");
 }
 
 export async function makeDirectoryAsync(
   _uri: string,
   _options?: { intermediates?: boolean }
 ): Promise<void> {
-  console.warn("FileSystem.makeDirectoryAsync is a stub - not fully implemented");
+  logger.warn("FileSystem.makeDirectoryAsync is a stub - not fully implemented");
 }
 
 export async function getInfoAsync(
@@ -68,12 +69,12 @@ export async function downloadAsync(
   uri: string,
   fileUri: string
 ): Promise<{ uri: string; status: number }> {
-  console.warn("FileSystem.downloadAsync is a stub - not fully implemented");
+  logger.warn("FileSystem.downloadAsync is a stub - not fully implemented");
   return { uri: fileUri, status: 200 };
 }
 
 export async function copyAsync(options: { from: string; to: string }): Promise<string> {
-  console.warn("FileSystem.copyAsync is a stub - not fully implemented");
+  logger.warn("FileSystem.copyAsync is a stub - not fully implemented");
   return options.to;
 }
 

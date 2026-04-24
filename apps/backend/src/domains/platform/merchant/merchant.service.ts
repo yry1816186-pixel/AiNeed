@@ -325,11 +325,14 @@ export class MerchantService {
     });
 
     // 统计各类事件
-    const stats = behaviorEvents.reduce((acc: Record<string, number>, event: any) => {
-      const type = event.eventType;
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const stats = behaviorEvents.reduce(
+      (acc: Record<string, number>, event: { eventType: string }) => {
+        const type = event.eventType;
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const totalViews = stats["item_view"] ?? 0;
     const totalAddToCart = stats["add_to_cart"] ?? 0;
@@ -359,9 +362,15 @@ export class MerchantService {
     });
 
     return {
-      totalViews: products.reduce((sum: number, p: any) => sum + (p.viewCount || 0), 0),
+      totalViews: products.reduce(
+        (sum: number, p: { viewCount: number }) => sum + (p.viewCount || 0),
+        0
+      ),
       totalTryOns: tryOnCount,
-      totalFavorites: products.reduce((sum: number, p: any) => sum + (p.likeCount || 0), 0),
+      totalFavorites: products.reduce(
+        (sum: number, p: { likeCount: number }) => sum + (p.likeCount || 0),
+        0
+      ),
     };
   }
 

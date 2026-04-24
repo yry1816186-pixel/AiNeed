@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 /**
  * 离线缓存服务 - 用于比赛演示的离线模式支持
  *
@@ -25,6 +25,7 @@ interface Brand {
 // ==================== 常量定义 ====================
 
 const OFFLINE_CACHE_PREFIX = "demo_offline_";
+const USER_CACHE_PREFIX = "user_";
 const CACHE_KEYS = {
   FULL_DEMO_DATA: `${OFFLINE_CACHE_PREFIX}full_demo`,
   CLOTHING: `${OFFLINE_CACHE_PREFIX}clothing`,
@@ -33,6 +34,10 @@ const CACHE_KEYS = {
   CONVERSATIONS: `${OFFLINE_CACHE_PREFIX}conversations`,
   LAST_SYNC_TIME: `${OFFLINE_CACHE_PREFIX}last_sync`,
   DEMO_MODE_ENABLED: `${OFFLINE_CACHE_PREFIX}mode_enabled`,
+  USER_WARDROBE: `${USER_CACHE_PREFIX}wardrobe`,
+  USER_CALENDAR: `${USER_CACHE_PREFIX}calendar`,
+  USER_RECOMMENDATIONS: `${USER_CACHE_PREFIX}recommendations`,
+  USER_PROFILE: `${USER_CACHE_PREFIX}profile`,
 };
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24小时过期
@@ -97,7 +102,7 @@ class OfflineCacheService {
       }
       logger.info("[OfflineCache] 初始化完成");
     } catch (error) {
-      console.error("[OfflineCache] 初始化失败:", error);
+      logger.error("[OfflineCache] 初始化失败:", error);
     }
   }
 
@@ -157,7 +162,7 @@ class OfflineCacheService {
 
     // 检查是否过期
     if (Date.now() - entry.timestamp > CACHE_EXPIRY_MS) {
-      console.warn("[OfflineCache] Demo 数据已过期");
+      logger.warn("[OfflineCache] Demo 数据已过期");
       return null; // 返回 null 让调用方决定是否使用
     }
 
@@ -259,6 +264,70 @@ class OfflineCacheService {
     logger.info(`[OfflineCache] 已清除 ${demoKeys.length} 个缓存项`);
   }
 
+  async cacheWardrobe(items: ClothingItem[]): Promise<void> {
+    await AsyncStorage.setItem(
+      CACHE_KEYS.USER_WARDROBE,
+      JSON.stringify({ data: items, timestamp: Date.now() })
+    );
+    logger.info(`[OfflineCache] 用户衣橱已缓存 (${items.length} 件)`);
+  }
+
+  async getCachedWardrobe(): Promise<ClothingItem[] | null> {
+    const raw = await AsyncStorage.getItem(CACHE_KEYS.USER_WARDROBE);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_EXPIRY_MS) return null;
+    return parsed.data as ClothingItem[];
+  }
+
+  async cacheCalendar(data: Record<string, unknown>[]): Promise<void> {
+    await AsyncStorage.setItem(
+      CACHE_KEYS.USER_CALENDAR,
+      JSON.stringify({ data, timestamp: Date.now() })
+    );
+    logger.info(`[OfflineCache] 用户日历已缓存 (${data.length} 条)`);
+  }
+
+  async getCachedCalendar(): Promise<Record<string, unknown>[] | null> {
+    const raw = await AsyncStorage.getItem(CACHE_KEYS.USER_CALENDAR);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_EXPIRY_MS) return null;
+    return parsed.data as Record<string, unknown>[];
+  }
+
+  async cacheRecommendations(items: PostCardData[]): Promise<void> {
+    await AsyncStorage.setItem(
+      CACHE_KEYS.USER_RECOMMENDATIONS,
+      JSON.stringify({ data: items, timestamp: Date.now() })
+    );
+    logger.info(`[OfflineCache] 用户推荐已缓存 (${items.length} 条)`);
+  }
+
+  async getCachedRecommendations(): Promise<PostCardData[] | null> {
+    const raw = await AsyncStorage.getItem(CACHE_KEYS.USER_RECOMMENDATIONS);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_EXPIRY_MS) return null;
+    return parsed.data as PostCardData[];
+  }
+
+  async cacheUserProfile(profile: User): Promise<void> {
+    await AsyncStorage.setItem(
+      CACHE_KEYS.USER_PROFILE,
+      JSON.stringify({ data: profile, timestamp: Date.now() })
+    );
+    logger.info("[OfflineCache] 用户画像已缓存");
+  }
+
+  async getCachedUserProfile(): Promise<User | null> {
+    const raw = await AsyncStorage.getItem(CACHE_KEYS.USER_PROFILE);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_EXPIRY_MS) return null;
+    return parsed.data as User;
+  }
+
   /**
    * 预加载指定 key 到内存
    */
@@ -273,7 +342,7 @@ class OfflineCacheService {
       this.memoryCache.set(key, entry);
       return entry;
     } catch (error) {
-      console.error(`[OfflineCache] 加载 ${key} 失败:`, error);
+      logger.error(`[OfflineCache] 加载 ${key} 失败:`, error);
       return null;
     }
   }

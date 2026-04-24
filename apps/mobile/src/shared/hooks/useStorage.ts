@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { logger } from "../utils/logger";
 import { useState, useCallback, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -17,7 +18,7 @@ export function useStorage<T>(
           setStoredValue(JSON.parse(item));
         }
       } catch (error) {
-        console.error(`Error loading ${key} from storage:`, error);
+        logger.error(`Error loading ${key} from storage:`, error);
       } finally {
         setLoading(false);
       }
@@ -32,7 +33,7 @@ export function useStorage<T>(
         setStoredValue(valueToStore);
         await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
       } catch (error) {
-        console.error(`Error saving ${key} to storage:`, error);
+        logger.error(`Error saving ${key} to storage:`, error);
       }
     },
     [key, storedValue]

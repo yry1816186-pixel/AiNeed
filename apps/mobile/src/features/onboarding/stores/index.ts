@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/require-await */
+﻿/* eslint-disable @typescript-eslint/require-await */
+import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 
 import {
@@ -107,7 +108,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         loading: false,
       });
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      logger.error("Failed to fetch notifications:", error);
       set({ loading: false });
     }
   },
@@ -124,7 +125,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAsRead(id);
     } catch (error) {
-      console.error("Failed to mark as read:", error);
+      logger.error("Failed to mark as read:", error);
     }
   },
 
@@ -141,7 +142,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAllAsRead();
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      logger.error("Failed to mark all as read:", error);
     }
   },
 
@@ -161,7 +162,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.deleteNotification(id);
     } catch (error) {
-      console.error("Failed to delete notification:", error);
+      logger.error("Failed to delete notification:", error);
     }
   },
 
@@ -175,7 +176,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         set({ settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
       }
     } catch (error) {
-      console.error("Failed to fetch notification settings:", error);
+      logger.error("Failed to fetch notification settings:", error);
       set({ settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
     }
   },
@@ -190,7 +191,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.updateNotificationSettings(settings);
     } catch (error) {
-      console.error("Failed to update notification settings:", error);
+      logger.error("Failed to update notification settings:", error);
       // Revert on failure
       set({ settings: currentSettings });
     }

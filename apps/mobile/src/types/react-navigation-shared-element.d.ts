@@ -4,7 +4,7 @@ declare module "react-navigation-shared-element" {
   export interface SharedElementProps {
     id: string;
     children?: React.ReactNode;
-    style?: any;
+    style?: import("react-native").ViewStyle;
   }
 
   export const SharedElement: ComponentType<SharedElementProps>;
