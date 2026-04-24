@@ -39,20 +39,18 @@ interface OperationArgs {
  * - CommunityPost (社区帖子)
  * - PostComment (评论)
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const softDeleteExtension = Prisma.defineExtension((client) => {
   return client.$extends({
     query: {
       $allModels: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async $allOperations({
           args,
           query,
           model,
           operation,
         }: {
-          args: any;
-          query: (args: any) => Promise<any>;
+          args: Record<string, unknown>;
+          query: (args: Record<string, unknown>) => Promise<unknown>;
           model: string;
           operation: string;
         }) {
@@ -64,7 +62,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
 
           // 如果是软删除模型且是查询操作，自动添加 isDeleted: false 过滤
           if (softDeleteModels.includes(model) && filterOperations.includes(operation)) {
-            const currentWhere = args.where || {};
+            const currentWhere = (args.where as Record<string, unknown>) || {};
 
             // 处理 findFirst, findMany, count, aggregate 等
             if (!("isDeleted" in currentWhere)) {
@@ -131,7 +129,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
  * 注意: $extends 的参数类型在 @prisma/client 中未完整导出，
  * 使用 any 是当前唯一可行的方案（已知的 Prisma 类型系统限制）
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma $extends type constraint requires any
 export function createSoftDeletePrismaClient<T extends { $extends: (extension: any) => any }>(
   prisma: T
 ): ReturnType<T["$extends"]> {

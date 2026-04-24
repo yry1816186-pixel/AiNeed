@@ -16,8 +16,7 @@ export class CacheInterceptor implements NestInterceptor {
 
   constructor(private readonly cacheService: CacheService, private readonly reflector: Reflector) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
     const method = request.method.toUpperCase();
 

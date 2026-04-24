@@ -92,8 +92,10 @@ export async function paginate<T>(
   }
 
   // 并行执行查询和计数
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const modelDelegate = prisma[model] as any;
+  const modelDelegate = prisma[model] as unknown as {
+    findMany: (args: Record<string, unknown>) => Promise<T[]>;
+    count: (args: { where: Record<string, unknown> }) => Promise<number>;
+  };
   const [items, total] = await Promise.all([
     modelDelegate.findMany(findManyOptions),
     modelDelegate.count({ where }),

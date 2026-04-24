@@ -1,13 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Injectable, Logger } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
 
 /**
  * Prisma 客户端接口（支持动态模型访问）
+ * Dynamic model access via string index requires any due to Prisma's type system.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface PrismaClientWithModels extends PrismaClient {
-  [model: string]: any;
-}
+type PrismaClientWithModels = PrismaClient & Record<string, any>;
 
 /**
  * Soft Delete Service
@@ -26,11 +25,7 @@ export class SoftDeleteService {
    * @param id 记录ID
    * @returns 是否成功删除
    */
-  async softDelete(
-    prisma: PrismaClientWithModels,
-    model: string,
-    id: string,
-  ): Promise<boolean> {
+  async softDelete(prisma: PrismaClientWithModels, model: string, id: string): Promise<boolean> {
     try {
       const result = await prisma[model].update({
         where: { id },
@@ -43,9 +38,7 @@ export class SoftDeleteService {
       this.logger.log(`Soft deleted ${model} with id: ${id}`);
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to soft delete ${model} with id ${id}: ${error}`,
-      );
+      this.logger.error(`Failed to soft delete ${model} with id ${id}: ${error}`);
       return false;
     }
   }
@@ -60,7 +53,7 @@ export class SoftDeleteService {
   async softDeleteMany(
     prisma: PrismaClientWithModels,
     model: string,
-    ids: string[],
+    ids: string[]
   ): Promise<number> {
     try {
       const result = await prisma[model].updateMany({
@@ -76,9 +69,7 @@ export class SoftDeleteService {
       this.logger.log(`Soft deleted ${result.count} ${model} records`);
       return result.count;
     } catch (error) {
-      this.logger.error(
-        `Failed to soft delete multiple ${model} records: ${error}`,
-      );
+      this.logger.error(`Failed to soft delete multiple ${model} records: ${error}`);
       return 0;
     }
   }
@@ -90,11 +81,7 @@ export class SoftDeleteService {
    * @param id 记录ID
    * @returns 是否成功恢复
    */
-  async restore(
-    prisma: PrismaClientWithModels,
-    model: string,
-    id: string,
-  ): Promise<boolean> {
+  async restore(prisma: PrismaClientWithModels, model: string, id: string): Promise<boolean> {
     try {
       const result = await prisma[model].update({
         where: { id },
@@ -107,9 +94,7 @@ export class SoftDeleteService {
       this.logger.log(`Restored ${model} with id: ${id}`);
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to restore ${model} with id ${id}: ${error}`,
-      );
+      this.logger.error(`Failed to restore ${model} with id ${id}: ${error}`);
       return false;
     }
   }
@@ -121,11 +106,7 @@ export class SoftDeleteService {
    * @param ids 记录ID数组
    * @returns 成功恢复的数量
    */
-  async restoreMany(
-    prisma: PrismaClientWithModels,
-    model: string,
-    ids: string[],
-  ): Promise<number> {
+  async restoreMany(prisma: PrismaClientWithModels, model: string, ids: string[]): Promise<number> {
     try {
       const result = await prisma[model].updateMany({
         where: {
@@ -141,9 +122,7 @@ export class SoftDeleteService {
       this.logger.log(`Restored ${result.count} ${model} records`);
       return result.count;
     } catch (error) {
-      this.logger.error(
-        `Failed to restore multiple ${model} records: ${error}`,
-      );
+      this.logger.error(`Failed to restore multiple ${model} records: ${error}`);
       return 0;
     }
   }
@@ -158,7 +137,7 @@ export class SoftDeleteService {
   async permanentDeleteOld(
     prisma: PrismaClientWithModels,
     model: string,
-    daysBefore: number = 30,
+    daysBefore: number = 30
   ): Promise<number> {
     try {
       const cutoffDate = new Date();
@@ -173,14 +152,10 @@ export class SoftDeleteService {
         },
       });
 
-      this.logger.log(
-        `Permanently deleted ${result.count} old ${model} records`,
-      );
+      this.logger.log(`Permanently deleted ${result.count} old ${model} records`);
       return result.count;
     } catch (error) {
-      this.logger.error(
-        `Failed to permanently delete old ${model} records: ${error}`,
-      );
+      this.logger.error(`Failed to permanently delete old ${model} records: ${error}`);
       return 0;
     }
   }

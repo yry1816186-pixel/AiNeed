@@ -25,10 +25,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
  * - 使用 PgBouncer 时: connection_limit=50&pgbouncer=true
  */
 @Injectable()
-export class PrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
   private isConnected = false;
   private reconnectAttempts = 0;
@@ -56,11 +53,14 @@ export class PrismaService
 
     // 监听慢查询 (阈值通过 SLOW_QUERY_THRESHOLD_MS 环境变量配置，默认 500ms)
     const slowQueryThreshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS) || 500;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this as any).$on("query", (e: { duration: number; query: string }) => {
+    void (
+      this as unknown as {
+        $on: (event: string, callback: (e: { duration: number; query: string }) => void) => void;
+      }
+    ).$on("query", (e: { duration: number; query: string }) => {
       if (e.duration > slowQueryThreshold) {
         this.logger.warn(
-          `Slow Prisma query detected (${e.duration}ms): ${e.query.substring(0, 200)}...`,
+          `Slow Prisma query detected (${e.duration}ms): ${e.query.substring(0, 200)}...`
         );
       }
     });
@@ -91,7 +91,7 @@ export class PrismaService
         this.reconnectAttempts++;
         const errorMessage = error instanceof Error ? error.message : String(error);
         this.logger.error(
-          `Failed to connect to database (attempt ${this.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS}): ${errorMessage}`,
+          `Failed to connect to database (attempt ${this.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS}): ${errorMessage}`
         );
 
         if (this.reconnectAttempts < this.MAX_RECONNECT_ATTEMPTS) {
@@ -164,7 +164,9 @@ export class PrismaService
 
     if (sequences.length > 0) {
       const resetStatements = sequences
-        .map((row: { sequencename: string }) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`)
+        .map(
+          (row: { sequencename: string }) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`
+        )
         .join("\n");
       await this.$executeRawUnsafe(resetStatements);
     }

@@ -1,23 +1,21 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { Request } from 'express';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
+import { Request } from "express";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
-import { ImageSizeName, DEFAULT_SIZES } from '../utils/image-sizes';
+import { ImageSizeName, DEFAULT_SIZES } from "../utils/image-sizes";
 
 const ACCEPT_SIZE_MAP: Record<string, ImageSizeName> = {
-  'image/thumbnail': 'thumbnail',
-  'image/small': 'small',
-  'image/medium': 'medium',
-  'image/large': 'large',
-  'image/original': 'original',
+  "image/thumbnail": "thumbnail",
+  "image/small": "small",
+  "image/medium": "medium",
+  "image/large": "large",
+  "image/original": "original",
 };
 
 @Injectable()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+export class ImageResponseInterceptor<T> implements NestInterceptor<T, unknown> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
     const requestedSize = this.resolveRequestedSize(request);
 
@@ -44,17 +42,17 @@ export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
           recommendedSize: this.getRecommendedSize(request),
           availableSizes: Object.keys(urls) as ImageSizeName[],
         };
-      }),
+      })
     );
   }
 
   private resolveRequestedSize(request: Request): ImageSizeName | null {
-    const sizeParam = request.query['size'] as string;
+    const sizeParam = request.query["size"] as string;
     if (sizeParam && DEFAULT_SIZES.includes(sizeParam as ImageSizeName)) {
       return sizeParam as ImageSizeName;
     }
 
-    const accept = request.headers['accept'] as string;
+    const accept = request.headers["accept"] as string;
     if (accept) {
       for (const [mimeType, size] of Object.entries(ACCEPT_SIZE_MAP)) {
         if (accept.includes(mimeType)) {
@@ -67,15 +65,23 @@ export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
   }
 
   private getRecommendedSize(request: Request): ImageSizeName {
-    const viewportWidth = request.headers['x-viewport-width'];
+    const viewportWidth = request.headers["x-viewport-width"];
     if (viewportWidth) {
       const width = parseInt(viewportWidth as string, 10);
-      if (width <= 200) {return 'thumbnail';}
-      if (width <= 400) {return 'small';}
-      if (width <= 800) {return 'medium';}
-      if (width <= 1200) {return 'large';}
-      return 'original';
+      if (width <= 200) {
+        return "thumbnail";
+      }
+      if (width <= 400) {
+        return "small";
+      }
+      if (width <= 800) {
+        return "medium";
+      }
+      if (width <= 1200) {
+        return "large";
+      }
+      return "original";
     }
-    return 'medium';
+    return "medium";
   }
 }

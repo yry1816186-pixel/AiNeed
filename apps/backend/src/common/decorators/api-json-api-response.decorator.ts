@@ -4,19 +4,19 @@ import { ApiExtraModels, ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
 export class JsonApiDataDto {
   id!: string;
   type!: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attributes!: Record<string, any>;
+  attributes!: Record<string, unknown>;
 }
 
 export class JsonApiResponseDto {
   data!: JsonApiDataDto | JsonApiDataDto[];
   included?: JsonApiDataDto[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const ApiJsonApiResponse = <TModel extends Type<any>>(model: TModel, options?: { isArray?: boolean }) => {
+export const ApiJsonApiResponse = <TModel extends Type<unknown>>(
+  model: TModel,
+  options?: { isArray?: boolean }
+) => {
   return applyDecorators(
     ApiExtraModels(JsonApiResponseDto, model),
     ApiOkResponse({
@@ -33,6 +33,6 @@ export const ApiJsonApiResponse = <TModel extends Type<any>>(model: TModel, opti
           },
         ],
       },
-    }),
+    })
   );
 };
