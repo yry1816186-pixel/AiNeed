@@ -4,6 +4,8 @@ import * as path from "path";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+
 export interface RuleScoredItem {
   itemId: string;
   ruleScore: number;
@@ -137,7 +139,7 @@ export class RuleEngineService implements OnModuleInit {
   private trendRules: Record<string, unknown> = {};
   private rulesLoaded = false;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService, private prismaService: PrismaService) {}
 
   async onModuleInit() {
     await this.loadAllRules();
@@ -649,5 +651,98 @@ export class RuleEngineService implements OnModuleInit {
 
   getTrendRules(): Record<string, unknown> {
     return this.trendRules;
+  }
+
+  /**
+   * Produce degraded recommendations when the AI pipeline is unavailable.
+   * Uses weather + season + scene templates to generate hardcoded outfit suggestions.
+   * Returns pre-built recommendations with explanations.
+   */
+  async getDegradedRecommendations(params: {
+    season?: string;
+    occasion?: string;
+    weather?: string;
+    limit?: number;
+  }): Promise<
+    Array<{
+      itemId: string;
+      score: number;
+      reason: string;
+      strategy: string;
+      explanation: { why: string; alternative: string; nextAction: string; confidence: number };
+    }>
+  > {
+    const limit = params.limit || 10;
+    const season = params.season || "spring";
+    const occasion = params.occasion || "daily";
+
+    // Season -> hardcoded outfit template categories
+    const seasonTemplates: Record<string, string[]> = {
+      spring: ["tops", "bottoms", "outerwear"],
+      summer: ["tops", "bottoms"],
+      autumn: ["tops", "bottoms", "outerwear"],
+      winter: ["outerwear", "tops", "bottoms"],
+    };
+
+    // Occasion -> style filter
+    const occasionStyles: Record<string, string[]> = {
+      interview: ["formal", "classic", "business"],
+      date: ["elegant", "romantic"],
+      daily: ["casual", "smart-casual"],
+      work: ["business", "smart-casual"],
+      party: ["trendy", "elegant"],
+      workout: ["sporty", "athletic"],
+      travel: ["casual", "comfortable"],
+    };
+
+    const categories = seasonTemplates[season] || seasonTemplates["spring"];
+    const styles = occasionStyles[occasion] || occasionStyles["daily"];
+
+    // Fetch popular items matching categories and styles
+    const items = await this.prismaService.clothingItem.findMany({
+      where: {
+        isActive: true,
+        OR: [{ tags: { hasSome: styles } }, { tags: { hasSome: categories } }],
+      },
+      orderBy: { viewCount: "desc" },
+      take: limit,
+      select: { id: true, viewCount: true },
+    });
+
+    if (items.length === 0) {
+      // Fallback to all popular items if no category/style match
+      const fallbackItems = await this.prismaService.clothingItem.findMany({
+        where: { isActive: true },
+        orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
+        take: limit,
+        select: { id: true },
+      });
+
+      return fallbackItems.map((item, index) => ({
+        itemId: item.id,
+        score: 50 + (fallbackItems.length - index),
+        reason: `热门推荐（${season}/${occasion}）`,
+        strategy: "degraded",
+        explanation: {
+          why: "为你推荐的热门单品",
+          alternative: "可以浏览更多分类",
+          nextAction: "查看详情",
+          confidence: 0.4,
+        },
+      }));
+    }
+
+    return items.map((item, index) => ({
+      itemId: item.id,
+      score: 60 + Math.min(items.length - index, 20),
+      reason: `适合${season}季节${occasion}场合`,
+      strategy: "degraded",
+      explanation: {
+        why: `基于${season}季节和${occasion}场景的推荐`,
+        alternative: "可以尝试更多风格",
+        nextAction: "查看详情",
+        confidence: 0.5,
+      },
+    }));
   }
 }

@@ -206,35 +206,44 @@ export class RecommendationOrchestrator {
       where: { userId },
     });
 
-    const allItems = await this.fetchAllCandidates(options?.category);
-    const totalCandidates = allItems.length;
+    try {
+      const allItems = await this.fetchAllCandidates(options?.category);
+      const totalCandidates = allItems.length;
 
-    const sceneFiltered = this.filterByScene(allItems, scene);
-    const afterSceneFilter = sceneFiltered.length;
+      const sceneFiltered = this.filterByScene(allItems, scene);
+      const afterSceneFilter = sceneFiltered.length;
 
-    const sizeFiltered = this.filterBySize(sceneFiltered, profile);
-    const afterSizeFilter = sizeFiltered.length;
+      const sizeFiltered = this.filterBySize(sceneFiltered, profile);
+      const afterSizeFilter = sizeFiltered.length;
 
-    const budgetFiltered = this.filterByBudget(sizeFiltered, profile, options);
-    const afterBudgetFilter = budgetFiltered.length;
+      const budgetFiltered = this.filterByBudget(sizeFiltered, profile, options);
+      const afterBudgetFilter = budgetFiltered.length;
 
-    const ruleScored = await this.scoreByRules(budgetFiltered, profile, context);
-    const vectorScored = await this.scoreByVector(ruleScored, profile, context);
-    const finalScored = await this.applyPreferenceLearning(vectorScored, userId);
+      const ruleScored = await this.scoreByRules(budgetFiltered, profile, context);
+      const vectorScored = await this.scoreByVector(ruleScored, profile, context);
+      const finalScored = await this.applyPreferenceLearning(vectorScored, userId);
 
-    const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
+      const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
 
-    const experimentId = this.generateExperimentId();
+      const experimentId = this.generateExperimentId();
 
-    return fused.map((sc) =>
-      this.toRecommendationResult(sc, {
-        totalCandidates,
-        afterSceneFilter,
-        afterSizeFilter,
-        afterBudgetFilter,
-        experimentId,
-      })
-    );
+      return fused.map((sc) =>
+        this.toRecommendationResult(sc, {
+          totalCandidates,
+          afterSceneFilter,
+          afterSizeFilter,
+          afterBudgetFilter,
+          experimentId,
+        })
+      );
+    } catch (error) {
+      this.logger.warn(
+        `AI pipeline unavailable, falling back to rule engine: ${
+          error instanceof Error ? error.message : "unknown error"
+        }`
+      );
+      return this.degradedPipeline(request);
+    }
   }
 
   async getOutfitRecommendations(
@@ -1038,6 +1047,46 @@ export class RecommendationOrchestrator {
 
   private generateExperimentId(): string {
     return `exp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  private async degradedPipeline(request: RecommendationRequest): Promise<RecommendationResult[]> {
+    const { context, options } = request;
+    const limit = options?.limit || 20;
+
+    const degradedRecs = await this.ruleEngine.getDegradedRecommendations({
+      season: context?.season,
+      occasion: context?.occasion,
+      weather: context?.weather,
+      limit,
+    });
+
+    const experimentId = this.generateExperimentId();
+
+    return degradedRecs.map((rec) => ({
+      item: {
+        id: rec.itemId,
+        name: "",
+        price: 0,
+        category: "",
+        images: [],
+        brand: null,
+      },
+      score: rec.score,
+      sources: ["degraded-rule-engine"],
+      reasons: [rec.reason],
+      experimentId,
+      explanation: rec.explanation,
+      breakdown: {
+        totalCandidates: degradedRecs.length,
+        afterSceneFilter: degradedRecs.length,
+        afterSizeFilter: degradedRecs.length,
+        afterBudgetFilter: degradedRecs.length,
+        ruleScore: rec.score,
+        vectorScore: 0,
+        preferenceScore: 0,
+        finalScore: rec.score,
+      },
+    }));
   }
 
   private async isColdStartUser(userId: string): Promise<boolean> {
