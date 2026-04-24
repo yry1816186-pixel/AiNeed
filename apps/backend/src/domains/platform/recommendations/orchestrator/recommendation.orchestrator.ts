@@ -4,6 +4,11 @@ import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.constants";
 import { CacheService } from "../../../../modules/cache/cache.service";
 import { ClothingCategory } from "../../../../types/prisma-enums";
+import {
+  RecommendationOutput,
+  RecommendationOutputItem,
+  RecommendationExplanationDetail,
+} from "../types/recommendation.types";
 import { AdvancedRecommendationService } from "../services/advanced-recommendation.service";
 import {
   BehaviorTrackingService,
@@ -171,7 +176,7 @@ export class RecommendationOrchestrator {
     @Optional() private readonly featureFlagService: FeatureFlagService | null
   ) {}
 
-  async getRecommendations(request: RecommendationRequest): Promise<RecommendationResult[]> {
+  async getRecommendations(request: RecommendationRequest): Promise<RecommendationOutput> {
     const { userId, context, options } = request;
     const limit = options?.limit || 20;
 
@@ -183,7 +188,7 @@ export class RecommendationOrchestrator {
       limit,
     });
 
-    return this.cacheService
+    const results = await this.cacheService
       .getOrSet(
         cacheKey,
         async () => {
@@ -198,6 +203,11 @@ export class RecommendationOrchestrator {
         CACHE_TTL.OUTFIT_RECOMMENDATIONS
       )
       .then((result) => result ?? []);
+
+    // Detect if results came from degraded pipeline
+    const isDegraded =
+      results.length > 0 && results.some((r) => r.sources?.includes("degraded-rule-engine"));
+    return this.toRecommendationOutput(results, context, isDegraded);
   }
 
   async recommend(request: RecommendationRequest): Promise<RecommendationResult[]> {
@@ -259,7 +269,7 @@ export class RecommendationOrchestrator {
     userId: string,
     baseItemId: string,
     options?: { occasion?: string; limit?: number }
-  ): Promise<OutfitRecommendation> {
+  ): Promise<RecommendationOutput> {
     this.logger.log(`Getting outfit recommendations for user ${userId}, base item ${baseItemId}`);
 
     const occasion = options?.occasion;
@@ -297,20 +307,25 @@ export class RecommendationOrchestrator {
         reasons: item.matchReasons || [],
       }));
 
-    return {
-      tops: result.tops ? mapItems(result.tops as OutfitItem[]) : undefined,
-      bottoms: result.bottoms ? mapItems(result.bottoms as OutfitItem[]) : undefined,
-      accessories: result.accessories ? mapItems(result.accessories as OutfitItem[]) : undefined,
-      footwear:
-        "footwear" in result && result.footwear
-          ? mapItems(result.footwear as OutfitItem[])
-          : undefined,
-      outerwear:
-        "outerwear" in result && result.outerwear
-          ? mapItems(result.outerwear as OutfitItem[])
-          : undefined,
-      overallScore: result.overallScore,
+    // Flatten category-grouped results into a single list
+    const allResults: RecommendationResult[] = [
+      ...(result.tops ? mapItems(result.tops as OutfitItem[]) : []),
+      ...(result.bottoms ? mapItems(result.bottoms as OutfitItem[]) : []),
+      ...(result.accessories ? mapItems(result.accessories as OutfitItem[]) : []),
+      ...("footwear" in result && result.footwear ? mapItems(result.footwear as OutfitItem[]) : []),
+      ...("outerwear" in result && result.outerwear
+        ? mapItems(result.outerwear as OutfitItem[])
+        : []),
+    ];
+
+    const { experimentId } = await this.assignExperimentVariant(userId);
+    const output = this.toRecommendationOutput(allResults, { occasion }, false, experimentId);
+    output.outfit = {
+      name: `${occasion ?? "日常"}完整搭配`,
+      description: `基于选中商品的搭配推荐，综合评分 ${result.overallScore.toFixed(1)}`,
+      items: output.items,
     };
+    return output;
   }
 
   async explainRecommendation(
@@ -459,9 +474,9 @@ export class RecommendationOrchestrator {
     }
   }
 
-  async getTrendingRecommendations(limit: number = 20): Promise<RecommendationResult[]> {
+  async getTrendingRecommendations(limit: number = 20): Promise<RecommendationOutput> {
     const scoredItems = await this.advancedRecommendation.getTrendingRecommendations(limit);
-    return scoredItems.map((item) => ({
+    const results: RecommendationResult[] = scoredItems.map((item) => ({
       item: {
         id: item.id,
         name: item.name,
@@ -474,43 +489,50 @@ export class RecommendationOrchestrator {
       sources: ["trending"],
       reasons: item.matchReasons,
     }));
+
+    const experimentId = this.generateExperimentId();
+    return this.toRecommendationOutput(results, undefined, false, experimentId);
   }
 
-  async getDailyOutfitRecommendation(userId: string): Promise<{
-    items: RecommendationResult[];
-    outfitName: string;
-    description: string;
-  }> {
+  async getDailyOutfitRecommendation(userId: string): Promise<RecommendationOutput> {
     const result = await this.advancedRecommendation.getDailyOutfitRecommendation(userId);
-    return {
-      items: result.items.map((item) => ({
-        item: {
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          category: String(item.category),
-          images: item.images,
-          brand: item.brand,
-        },
-        score: item.score,
-        sources: ["daily-outfit"],
-        reasons: item.matchReasons,
-      })),
-      outfitName: result.outfitName,
+    const results: RecommendationResult[] = result.items.map((item) => ({
+      item: {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        category: String(item.category),
+        images: item.images,
+        brand: item.brand,
+      },
+      score: item.score,
+      sources: ["daily-outfit"],
+      reasons: item.matchReasons,
+    }));
+
+    const { experimentId } = await this.assignExperimentVariant(userId);
+
+    const output = this.toRecommendationOutput(results, { season: undefined }, false, experimentId);
+    // Override outfit with the advanced service's naming
+    output.outfit = {
+      name: result.outfitName,
       description: result.description,
+      items: output.items,
     };
+    return output;
   }
 
   async getOccasionRecommendations(
     userId: string,
     occasion: string,
     limit: number = 10
-  ): Promise<RecommendationResult[]> {
-    return this.recommend({
+  ): Promise<RecommendationOutput> {
+    const results = await this.recommend({
       userId,
       context: { occasion },
       options: { limit },
     });
+    return this.toRecommendationOutput(results, { occasion });
   }
 
   async getStyleGuide(userId: string): Promise<{
@@ -1060,6 +1082,69 @@ export class RecommendationOrchestrator {
     };
   }
 
+  /**
+   * Convert internal RecommendationResult[] to standardized RecommendationOutput.
+   * Ensures every output has items, explanation, and experimentId.
+   */
+  private toRecommendationOutput(
+    results: RecommendationResult[],
+    context?: { occasion?: string; season?: string; weather?: string },
+    isDegraded?: boolean,
+    experimentId?: string
+  ): RecommendationOutput {
+    const items: RecommendationOutputItem[] = results.map((r) => ({
+      id: r.item.id,
+      name: r.item.name,
+      imageUrl: r.item.images?.[0] ?? "",
+      category: r.item.category,
+      price: r.item.price,
+      score: r.score,
+      explanation: r.explanation ?? {
+        why: "为你推荐",
+        alternative: "可以浏览更多分类",
+        nextAction: "查看详情",
+        confidence: 0.5,
+      },
+    }));
+
+    // Auto-group into outfit if items span 3+ categories
+    let outfit: RecommendationOutput["outfit"];
+    const uniqueCategories = new Set(items.map((i) => i.category));
+    if (uniqueCategories.size >= 3) {
+      const occasionLabel = context?.occasion ?? "日常";
+      outfit = {
+        name: `${occasionLabel}搭配方案`,
+        description: `为你精选${context?.season ?? "当季"}${occasionLabel}场景的全套搭配`,
+        items,
+      };
+    }
+
+    // Use first item's explanation as batch explanation, add ensemble context
+    const firstExplanation = results[0]?.explanation ?? {
+      why: "为你推荐",
+      alternative: "可以浏览更多分类",
+      nextAction: "查看详情",
+      confidence: 0.5,
+    };
+
+    const batchExplanation: RecommendationExplanationDetail = {
+      why: firstExplanation.why,
+      alternative: firstExplanation.alternative,
+      nextAction: firstExplanation.nextAction,
+      confidence: firstExplanation.confidence,
+    };
+
+    const effectiveExpId = experimentId ?? results[0]?.experimentId ?? this.generateExperimentId();
+
+    return {
+      items,
+      outfit,
+      explanation: batchExplanation,
+      experimentId: effectiveExpId,
+      degraded: isDegraded ?? false,
+    };
+  }
+
   private generateExperimentId(): string {
     return `exp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   }
@@ -1164,7 +1249,9 @@ export class RecommendationOrchestrator {
       const complementaryResults: RecommendationResult[] = [];
 
       for (const rec of bridgeRecs) {
-        if (existingIds.has(rec.itemId)) {continue;}
+        if (existingIds.has(rec.itemId)) {
+          continue;
+        }
         existingIds.add(rec.itemId);
 
         const item = await this.prisma.clothingItem.findUnique({
@@ -1172,7 +1259,9 @@ export class RecommendationOrchestrator {
           include: { brand: { select: { id: true, name: true, logo: true } } },
         });
 
-        if (!item) {continue;}
+        if (!item) {
+          continue;
+        }
 
         complementaryResults.push({
           item: {

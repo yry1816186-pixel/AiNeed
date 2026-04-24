@@ -176,7 +176,7 @@ export class RecommendationsController {
     @Query("season") season?: string,
     @Query("limit") limit?: string
   ) {
-    const results = await this.orchestrator.getRecommendations({
+    return this.orchestrator.getRecommendations({
       userId,
       context: { occasion, season },
       options: {
@@ -184,7 +184,6 @@ export class RecommendationsController {
         category,
       },
     });
-    return { items: results, total: results.length };
   }
 
   @UseGuards(JwtAuthGuard)

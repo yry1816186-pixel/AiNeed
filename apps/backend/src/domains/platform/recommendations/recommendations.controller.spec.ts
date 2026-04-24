@@ -83,12 +83,17 @@ describe("RecommendationsController", () => {
 
   describe("getRecommendations", () => {
     it("should return recommendations for user", async () => {
-      mockOrchestrator.getRecommendations.mockResolvedValue([{ id: "item-1", name: "Test" }]);
+      mockOrchestrator.getRecommendations.mockResolvedValue({
+        items: [{ id: "item-1", name: "Test" }],
+        explanation: { why: "test", alternative: "test", nextAction: "test", confidence: 0.8 },
+        experimentId: "exp-test",
+        degraded: false,
+      });
 
       const result = await controller.getRecommendations("user-1");
 
       expect(result.items).toHaveLength(1);
-      expect(result.total).toBe(1);
+      expect(result.experimentId).toBe("exp-test");
     });
 
     it("should pass filter options to orchestrator", async () => {
