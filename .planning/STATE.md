@@ -11,19 +11,19 @@ See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 ## Current Position
 
 Phase: 4 of 10 (Yiyi Agent + Voice + Onboarding + Studio)
-Plan: 1 of 7 executed in current phase
+Plan: 2 of 7 executed in current phase
 Status: In Progress
-Last activity: 2026-04-24 -- Plan 04-01 completed: DialogEngine core extension with states, personality, rules, signals
+Last activity: 2026-04-24 -- Plan 04-02 completed: NestJS dialog forwarding + TTS + Yiyi prompt
 
-Progress: [#####.....] 43%
+Progress: [######....] 46%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 10 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 1)
+- Total plans completed: 11 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 2)
 - Average duration: ~22min
-- Total execution time: ~3h 53min
+- Total execution time: ~4h 2min
 
 **By Phase:**
 
@@ -32,7 +32,7 @@ Progress: [#####.....] 43%
 | 1     | 3     | ~110m | ~37min   |
 | 2     | 3     | ~51m  | ~17min   |
 | 3     | 3     | 55m   | 18m      |
-| 4     | 1     | 17m   | 17m      |
+| 4     | 2     | 26m   | 13m      |
 
 **Recent Trend:**
 
@@ -81,6 +81,7 @@ Critical decisions affecting current work:
 ### Phase 4 In Progress
 
 - **Plan 01**: DialogEngine core extension -- SCENE/DIRECT/CHAT states, interview flow (company/position/budget), YIYI_PERSONALITY_PROMPT, FashionRuleLoader (7 JSON files), StudioSignalDetector (5 signals), 50 pytest tests (17min, 4 commits)
+- **Plan 02**: NestJS dialog forwarding + TTS + Yiyi prompt -- DialogState enum parity (SCENE/DIRECT/CHAT), EdgeTTSService gateway, POST /tts endpoint, Yiyi personality system prompt, deprecated advanceState/updateSlots, Python /dialog/process forwarding (9min, 2 commits)
 
 ### Pending Todos
 
@@ -113,5 +114,5 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-04-24
-Stopped at: Completed 04-01-PLAN.md (DialogEngine Core Extension)
-Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-01-SUMMARY.md
+Stopped at: Completed 04-02-PLAN.md (NestJS Dialog Forwarding + TTS + Yiyi Prompt)
+Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-02-SUMMARY.md
