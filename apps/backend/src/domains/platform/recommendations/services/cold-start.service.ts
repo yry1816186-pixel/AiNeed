@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -26,41 +25,49 @@ export interface UserProfile {
   stylePreferences?: string[];
   priceRange?: { min: number; max: number };
   colorPreferences?: string[];
+  bodyType?: string;
+  styleExpression?: string[];
+  garmentPreference?: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
+  primaryScenarios?: string[];
 }
 
 @Injectable()
 export class ColdStartService {
   private readonly logger = new Logger(ColdStartService.name);
 
-  private readonly demographicRules = {
-    male: {
-      young: {
-        styles: ["casual", "streetwear"],
-        categories: ["tops", "outerwear"],
-      },
-      middle: {
-        styles: ["formal", "smart-casual"],
-        categories: ["tops", "bottoms"],
-      },
-      senior: {
-        styles: ["classic", "formal"],
-        categories: ["outerwear", "tops"],
-      },
+  private readonly bodyTypeRules: Record<string, { styles: string[]; categories: string[] }> = {
+    rectangle: {
+      styles: ["casual", "streetwear", "minimalist"],
+      categories: ["tops", "outerwear", "bottoms"],
     },
-    female: {
-      young: {
-        styles: ["trendy", "feminine"],
-        categories: ["dresses", "tops"],
-      },
-      middle: {
-        styles: ["elegant", "classic"],
-        categories: ["dresses", "outerwear"],
-      },
-      senior: {
-        styles: ["classic", "elegant"],
-        categories: ["outerwear", "dresses"],
-      },
+    triangle: {
+      styles: ["elegant", "casual", "classic"],
+      categories: ["tops", "outerwear"],
     },
+    inverted_triangle: {
+      styles: ["casual", "sporty", "streetwear"],
+      categories: ["bottoms", "tops"],
+    },
+    hourglass: {
+      styles: ["elegant", "classic", "feminine"],
+      categories: ["dresses", "tops", "bottoms"],
+    },
+    oval: {
+      styles: ["classic", "smart-casual"],
+      categories: ["outerwear", "tops"],
+    },
+  };
+
+  private readonly styleExpressionMapping: Record<string, string[]> = {
+    minimalist: ["white-shirt", "trousers", "blazer", "loafers"],
+    classic: ["white-shirt", "trousers", "blazer", "oxfords"],
+    romantic: ["blouse", "skirt", "heels", "accessories"],
+    edgy: ["leather-jacket", "boots", "dark-jeans", "graphic-tee"],
+    casual: ["t-shirt", "jeans", "sneakers", "hoodie"],
+    sporty: ["activewear", "running-shoes", "sports-jacket", "shorts"],
   };
 
   private readonly styleItemMapping: Record<string, string[]> = {
@@ -76,7 +83,7 @@ export class ColdStartService {
 
   constructor(private prisma: PrismaService) {}
 
-  async getDemographicRecommendations(
+  async getProfileBasedRecommendations(
     userId: string,
     topK: number = 10
   ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
@@ -89,16 +96,12 @@ export class ColdStartService {
 
     const reasons: string[] = [];
 
-    if (user.gender) {
-      reasons.push(`适合${user.gender === "male" ? "男性" : "女性"}`);
+    if (profile?.bodyType) {
+      reasons.push(`适配${profile.bodyType}体型`);
     }
 
     if (profile?.colorSeason) {
       reasons.push(`适合你的${this.translateColorSeason(profile.colorSeason)}色彩`);
-    }
-
-    if (profile?.bodyType) {
-      reasons.push(`适配${profile.bodyType}体型`);
     }
 
     const items = await this.prisma.clothingItem.findMany({
@@ -107,7 +110,7 @@ export class ColdStartService {
       orderBy: { createdAt: "desc" },
     });
 
-    const scored = items.map((item: any) => ({
+    const scored = items.map((item) => ({
       itemId: item.id,
       score: 50 + this.deterministicOffset(userId, item.id, 30),
       reason: reasons.join("，") || "为你精选推荐",
@@ -123,19 +126,19 @@ export class ColdStartService {
     const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
     const hasProfile = !!profile;
 
-    const [demographic, popular] = await Promise.all([
-      this.getDemographicRecommendations(userId, topK),
+    const [profileBased, popular] = await Promise.all([
+      this.getProfileBasedRecommendations(userId, topK),
       this.getPopularRecommendations(topK),
     ]);
 
     const weights = {
-      demographic: hasProfile ? 0.5 : 0.2,
+      profileBased: hasProfile ? 0.5 : 0.2,
       popular: hasProfile ? 0.3 : 0.6,
     };
 
     const merged = new Map<string, { score: number; reason: string }>();
-    for (const item of demographic) {
-      merged.set(item.itemId, { score: item.score * weights.demographic, reason: item.reason });
+    for (const item of profileBased) {
+      merged.set(item.itemId, { score: item.score * weights.profileBased, reason: item.reason });
     }
     for (const item of popular) {
       const existing = merged.get(item.itemId);
@@ -162,7 +165,7 @@ export class ColdStartService {
       select: { id: true },
     });
 
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       itemId: item.id,
       score: 50,
       reason: "热门推荐",
@@ -200,48 +203,67 @@ export class ColdStartService {
       return this.getSurveyBasedStrategy(userId, profile);
     }
 
-    if (profile?.gender && profile?.age) {
-      return this.getDemographicStrategy(userId, profile);
+    if (profile?.bodyType || (profile?.styleExpression && profile.styleExpression.length > 0)) {
+      return this.getProfileBasedStrategy(userId, profile);
     }
 
     return this.getPopularityStrategy(userId);
   }
 
-  private async getDemographicStrategy(
+  private async getProfileBasedStrategy(
     userId: string,
     profile: UserProfile
   ): Promise<ColdStartStrategy> {
-    const ageGroup = this.getAgeGroup(profile.age!);
-    const genderRules = this.demographicRules[profile.gender as keyof typeof this.demographicRules];
-
-    if (!genderRules) {
-      return this.getPopularityStrategy(userId);
-    }
-
-    const groupRules = genderRules[ageGroup as keyof typeof genderRules];
-    if (!groupRules) {
-      return this.getPopularityStrategy(userId);
-    }
-
     const recommendations: ColdStartRecommendation[] = [];
 
-    for (const style of groupRules.styles) {
-      const items = await this.getItemsByStyle(style, 5);
-      for (const item of items) {
-        recommendations.push({
-          itemId: item.id,
-          score: this.deterministicScore(userId, item.id, 70, 20, style),
-          reason: `适合${this.getAgeGroupName(ageGroup)}${
-            profile.gender === "male" ? "男性" : "女性"
-          }的${style}风格`,
-          strategy: "demographic",
-        });
+    if (profile.bodyType) {
+      const bodyRules = this.bodyTypeRules[profile.bodyType];
+      if (bodyRules) {
+        for (const style of bodyRules.styles) {
+          const items = await this.getItemsByStyle(style, 4);
+          for (const item of items) {
+            recommendations.push({
+              itemId: item.id,
+              score: this.deterministicScore(userId, item.id, 70, 20, style),
+              reason: `适合${profile.bodyType}体型的${style}风格`,
+              strategy: "profile-based",
+            });
+          }
+        }
       }
+    }
+
+    if (profile.styleExpression && profile.styleExpression.length > 0) {
+      for (const expr of profile.styleExpression) {
+        const itemKeywords = this.styleExpressionMapping[expr];
+        if (itemKeywords) {
+          const items = await this.prisma.clothingItem.findMany({
+            where: {
+              isActive: true,
+              OR: [{ tags: { hasSome: itemKeywords } }, { tags: { has: expr } }],
+            },
+            orderBy: { likeCount: "desc" },
+            take: 4,
+          });
+          for (const item of items) {
+            recommendations.push({
+              itemId: item.id,
+              score: this.deterministicScore(userId, item.id, 72, 18, expr),
+              reason: `符合${expr}风格表达`,
+              strategy: "profile-based",
+            });
+          }
+        }
+      }
+    }
+
+    if (recommendations.length === 0) {
+      return this.getPopularityStrategy(userId);
     }
 
     return {
       type: "demographic",
-      confidence: 0.6,
+      confidence: 0.65,
       recommendations: this.deduplicateAndSort(recommendations).slice(0, 20),
     };
   }
@@ -321,7 +343,7 @@ export class ColdStartService {
 
     const maxViews = popularItems[0]?.viewCount || 1;
 
-    const recommendations: ColdStartRecommendation[] = popularItems.map((item: any) => ({
+    const recommendations: ColdStartRecommendation[] = popularItems.map((item) => ({
       itemId: item.id,
       score: 50 + (item.viewCount / maxViews) * 30 + this.deterministicOffset(userId, item.id, 10),
       reason: "热门推荐",
@@ -383,11 +405,11 @@ export class ColdStartService {
       }))
     );
 
-    // 5. Demographic rules (5% weight - minimal)
-    if (profile?.gender && profile?.age) {
-      const demographicStrategy = await this.getDemographicStrategy(userId, profile);
+    // 5. Profile-based rules (5% weight - minimal)
+    if (profile?.bodyType || (profile?.styleExpression && profile.styleExpression.length > 0)) {
+      const profileBasedStrategy = await this.getProfileBasedStrategy(userId, profile);
       recommendations.push(
-        ...demographicStrategy.recommendations.map((r) => ({
+        ...profileBasedStrategy.recommendations.map((r) => ({
           ...r,
           score: r.score * 0.05,
           strategy: "hybrid" as const,
@@ -689,7 +711,7 @@ export class ColdStartService {
       take: limit,
     });
 
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       itemId: item.id,
       score: 55 + this.deterministicOffset(userId, item.id, 25),
       reason: `适合${profile.bodyType}体型的穿搭`,

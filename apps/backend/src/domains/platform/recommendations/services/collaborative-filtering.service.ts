@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -45,7 +44,7 @@ export class CollaborativeFilteringService {
         ORDER BY similarity DESC
         LIMIT ${topK}
       `;
-      return results.map((r: any) => ({
+      return results.map((r) => ({
         similarUserId: r.similar_user_id,
         similarity: Number(r.similarity),
       }));
@@ -67,7 +66,7 @@ export class CollaborativeFilteringService {
     const userItems = await this.prisma.$queryRaw<Array<{ itemId: string }>>`
       SELECT "itemId" FROM "UserBehavior" WHERE "userId" = ${userId} AND "itemId" IS NOT NULL
     `;
-    const excludeItemIds = userItems.map((r: any) => r.itemId);
+    const excludeItemIds = userItems.map((r) => r.itemId);
 
     if (excludeItemIds.length === 0) {
       const candidates = await this.prisma.$queryRaw<Array<{ itemId: string; score: number }>>`
@@ -80,7 +79,7 @@ export class CollaborativeFilteringService {
         ORDER BY score DESC
         LIMIT ${topK}
       `;
-      return candidates.map((c: any) => ({
+      return candidates.map((c) => ({
         itemId: c.itemId,
         score: Number(c.score),
       }));
@@ -97,7 +96,7 @@ export class CollaborativeFilteringService {
       ORDER BY score DESC
       LIMIT ${topK}
     `;
-    return candidates.map((c: any) => ({ itemId: c.itemId, score: Number(c.score) }));
+    return candidates.map((c) => ({ itemId: c.itemId, score: Number(c.score) }));
   }
 
   async getSimilarItems(
@@ -112,7 +111,7 @@ export class CollaborativeFilteringService {
         ORDER BY co_count DESC
         LIMIT ${topK}
       `;
-      return results.map((r: any) => ({
+      return results.map((r) => ({
         itemId: r.co_item_id,
         score: Number(r.co_count),
       }));
@@ -232,7 +231,7 @@ export class CollaborativeFilteringService {
       select: { id: true },
     });
 
-    return popularItems.map((item: any) => ({
+    return popularItems.map((item) => ({
       itemId: item.id,
       score: 50,
       reasons: ["热门推荐"],
