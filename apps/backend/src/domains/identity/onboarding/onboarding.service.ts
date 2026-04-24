@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { OnboardingStep, Gender } from "@prisma/client";
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
+import { OnboardingStep, Gender, BodyType as PrismaBodyType } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
+import { CompleteBasicInfoDto } from "./dto/onboarding.dto";
 
 const STEP_ORDER: OnboardingStep[] = [
   OnboardingStep.BASIC_INFO,
@@ -20,6 +21,8 @@ const STEP_PERCENTAGE: Record<OnboardingStep, number> = {
 
 @Injectable()
 export class OnboardingService {
+  private readonly logger = new Logger(OnboardingService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async getOnboardingState(userId: string) {
@@ -50,10 +53,7 @@ export class OnboardingService {
     };
   }
 
-  async completeBasicInfo(
-    userId: string,
-    dto: { gender: string; ageRange: string; height?: number; weight?: number }
-  ) {
+  async completeBasicInfo(userId: string, dto: CompleteBasicInfoDto) {
     const [user, profile] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId } }),
       this.prisma.userProfile.findUnique({ where: { userId } }),
@@ -70,19 +70,34 @@ export class OnboardingService {
       throw new BadRequestException("当前步骤不是基本信息填写");
     }
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { gender: dto.gender as Gender },
-    });
+    const userUpdateData: Partial<{ gender: Gender }> = {};
+    if (dto.gender) {
+      userUpdateData.gender = dto.gender as Gender;
+    }
+    if (Object.keys(userUpdateData).length > 0) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: userUpdateData,
+      });
+    }
 
     await this.prisma.userProfile.update({
       where: { userId },
       data: {
         height: dto.height,
         weight: dto.weight,
+        ...(dto.bodyType ? { bodyType: dto.bodyType as PrismaBodyType } : {}),
+        ...(dto.primaryScenarios ? { primaryScenarios: dto.primaryScenarios } : {}),
+        ...(dto.styleExpression ? { styleExpression: dto.styleExpression } : {}),
+        ...(dto.ageRange ? { ageRange: dto.ageRange } : {}),
+        ...(dto.garmentPreference ? { garmentPreference: dto.garmentPreference } : {}),
         onboardingStep: OnboardingStep.PHOTO,
       },
     });
+
+    if (dto.height || dto.weight) {
+      await this.recordConsentInternal(userId, "body_measurement", true);
+    }
 
     return this.getOnboardingState(userId);
   }
@@ -120,6 +135,10 @@ export class OnboardingService {
         skippedOnboardingSteps: skippedSteps,
       },
     });
+
+    if (step === "PHOTO") {
+      await this.recordConsentInternal(userId, "photo_processing", false);
+    }
 
     return this.getOnboardingState(userId);
   }
@@ -159,5 +178,31 @@ export class OnboardingService {
     });
 
     return { percentage, steps };
+  }
+
+  private async recordConsentInternal(userId: string, consentType: string, granted: boolean) {
+    try {
+      await this.prisma.userConsent.upsert({
+        where: {
+          userId_consentType: { userId, consentType },
+        },
+        update: {
+          granted,
+          grantedAt: granted ? new Date() : null,
+          revokedAt: !granted ? new Date() : null,
+          version: "1.0",
+        },
+        create: {
+          userId,
+          consentType,
+          granted,
+          grantedAt: granted ? new Date() : null,
+          version: "1.0",
+        },
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Failed to record consent ${consentType} for user ${userId}: ${message}`);
+    }
   }
 }

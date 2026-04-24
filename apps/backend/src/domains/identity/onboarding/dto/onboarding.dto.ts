@@ -1,31 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsNotEmpty,
-  IsIn,
-  IsOptional,
-  IsNumber,
-  Min,
-  Max,
-} from "class-validator";
+import { IsString, IsNotEmpty, IsIn, IsOptional, IsNumber, Min, Max } from "class-validator";
 
 const GenderValues = ["male", "female", "other"] as const;
 const AgeRangeValues = ["under_18", "18_24", "25_34", "35_44", "45_54", "55_plus"] as const;
+const BodyTypeValues = ["apple", "pear", "hourglass", "rectangle", "inverted-triangle"] as const;
+const StyleExpressionValues = [
+  "minimalist",
+  "classic",
+  "romantic",
+  "edgy",
+  "casual",
+  "sporty",
+] as const;
+const LowerBodyPreferenceValues = ["pants", "skirts", "both"] as const;
+const UpperFitValues = ["fitted", "regular", "loose"] as const;
 const SkipStepValues = ["PHOTO", "STYLE_TEST"] as const;
 const OnboardingStepValues = ["BASIC_INFO", "PHOTO", "STYLE_TEST"] as const;
 const StepStatusValues = ["pending", "completed", "skipped", "current"] as const;
 
 export class CompleteBasicInfoDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: GenderValues,
-    description: "性别：male-男性，female-女性，other-其他",
+    description: "性别（可选）：male-男性，female-女性，other-其他",
     example: "male",
   })
+  @IsOptional()
   @IsString({ message: "性别必须是字符串" })
-  @IsNotEmpty({ message: "性别不能为空" })
   @IsIn(GenderValues, { message: "性别必须是 male、female 或 other" })
-  gender!: string;
+  gender?: string;
 
   @ApiProperty({
     enum: AgeRangeValues,
@@ -60,6 +62,45 @@ export class CompleteBasicInfoDto {
   @Min(30, { message: "体重不能低于30kg" })
   @Max(300, { message: "体重不能超过300kg" })
   weight?: number;
+
+  @ApiPropertyOptional({
+    enum: BodyTypeValues,
+    description: "体型：apple/pear/hourglass/rectangle/inverted-triangle",
+    example: "hourglass",
+  })
+  @IsOptional()
+  @IsString({ message: "体型必须是字符串" })
+  @IsIn(BodyTypeValues, {
+    message: "体型必须是 apple、pear、hourglass、rectangle 或 inverted-triangle",
+  })
+  bodyType?: string;
+
+  @ApiProperty({
+    description: "主要穿搭场景",
+    type: [String],
+    example: ["work", "casual"],
+  })
+  @IsNotEmpty({ message: "主要穿搭场景不能为空" })
+  primaryScenarios!: string[];
+
+  @ApiProperty({
+    enum: StyleExpressionValues,
+    description: "风格表达",
+    type: [String],
+    example: ["minimalist", "classic"],
+  })
+  @IsNotEmpty({ message: "风格表达不能为空" })
+  styleExpression!: string[];
+
+  @ApiProperty({
+    description: "服装偏好",
+    example: { lowerBody: "both", upperFit: "regular" },
+  })
+  @IsNotEmpty({ message: "服装偏好不能为空" })
+  garmentPreference!: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
 }
 
 export class SkipStepDto {

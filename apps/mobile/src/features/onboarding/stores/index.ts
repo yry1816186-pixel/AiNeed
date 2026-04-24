@@ -1,4 +1,5 @@
-﻿import { create } from "zustand";
+/* eslint-disable @typescript-eslint/require-await */
+import { create } from "zustand";
 
 import {
   notificationApi,
@@ -234,6 +235,13 @@ export interface OnboardingFormData {
   skinTone?: string;
   budget?: string;
   stylePreferences?: string[];
+  primaryScenarios?: string[];
+  ageRange?: string;
+  styleExpression?: string[];
+  garmentPreference?: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
 }
 
 interface OnboardingState {

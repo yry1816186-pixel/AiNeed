@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { Gender } from "@prisma/client";
 
@@ -73,7 +72,7 @@ export class BodyMetricsService {
       ? Math.floor((Date.now() - user.birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
       : 25;
 
-    const gender = user?.gender || Gender.female;
+    const gender = user?.gender || null;
     const height = profile.height || 165;
     const weight = profile.weight || 55;
     const waist = profile.waist;
@@ -84,8 +83,15 @@ export class BodyMetricsService {
 
     return {
       basicMetrics: this.calculateBasicMetrics(height, weight, waist, hip, bust),
-      bodyComposition: this.calculateBodyComposition(height, weight, waist, hip, age, gender),
-      metabolicMetrics: this.calculateMetabolicMetrics(height, weight, age, gender),
+      bodyComposition: this.calculateBodyComposition(
+        height,
+        weight,
+        waist,
+        hip,
+        age,
+        gender ?? undefined
+      ),
+      metabolicMetrics: this.calculateMetabolicMetrics(height, weight, age, gender ?? undefined),
       healthIndices: this.calculateHealthIndices(height, weight, waist, hip),
       bodyProportions: this.calculateBodyProportions(shoulder, waist, hip, height, inseam, bust),
       sizeRecommendations: this.calculateSizeRecommendations(
@@ -229,13 +235,27 @@ export class BodyMetricsService {
     waist?: number | null,
     hip?: number | null,
     age: number = 25,
-    gender: Gender = Gender.female
+    gender?: Gender | null
   ): AdvancedBodyMetrics["bodyComposition"] {
+    // When gender is unknown, use waist-to-hip ratio to select formula:
+    // WHR < 0.8 -> typically curvy/female-like proportions -> female formula
+    // WHR >= 0.8 -> typically straight/male-like proportions -> male formula
+    // When gender IS set, use it directly.
+    let useFemaleFormula: boolean;
+    if (gender) {
+      useFemaleFormula = gender === Gender.female;
+    } else if (waist && hip) {
+      const whr = waist / hip;
+      useFemaleFormula = whr < 0.8;
+    } else {
+      useFemaleFormula = true; // default fallback
+    }
+
     let bodyFatPercentage: number | null = null;
     let bodyFatCategory = "未知";
 
     if (waist && hip) {
-      if (gender === Gender.female) {
+      if (useFemaleFormula) {
         const waistCm = waist * 2.54;
         const hipCm = hip * 2.54;
         const neckCm = 30;
@@ -263,7 +283,7 @@ export class BodyMetricsService {
       }
 
       if (bodyFatPercentage !== null) {
-        if (gender === Gender.female) {
+        if (useFemaleFormula) {
           if (bodyFatPercentage < 18) {
             bodyFatCategory = "偏瘦";
           } else if (bodyFatPercentage < 25) {
@@ -293,14 +313,14 @@ export class BodyMetricsService {
 
     if (!bodyFatPercentage) {
       const bmi = weight / (height / 100) ** 2;
-      if (gender === Gender.female) {
+      if (useFemaleFormula) {
         bodyFatPercentage = 1.2 * bmi + 0.23 * age - 5.4;
       } else {
         bodyFatPercentage = 1.2 * bmi + 0.23 * age - 16.2;
       }
       bodyFatPercentage = Math.max(10, Math.min(50, bodyFatPercentage));
 
-      if (gender === Gender.female) {
+      if (useFemaleFormula) {
         if (bodyFatPercentage < 18) {
           bodyFatCategory = "偏瘦";
         } else if (bodyFatPercentage < 25) {
@@ -338,14 +358,21 @@ export class BodyMetricsService {
     height: number,
     weight: number,
     age: number,
-    gender: Gender
+    gender?: Gender | null
   ): AdvancedBodyMetrics["metabolicMetrics"] {
     let bmr: number;
+    // Default to average of male and female formulas when gender is unknown
+    const useFemaleFormula = gender ? gender === Gender.female : null;
 
-    if (gender === Gender.female) {
+    if (useFemaleFormula === true) {
       bmr = 447.593 + 9.247 * weight + 3.098 * height - 4.33 * age;
-    } else {
+    } else if (useFemaleFormula === false) {
       bmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+    } else {
+      // Gender unknown: average of male and female Mifflin-St Jeor formulas
+      const bmrFemale = 447.593 + 9.247 * weight + 3.098 * height - 4.33 * age;
+      const bmrMale = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+      bmr = (bmrFemale + bmrMale) / 2;
     }
 
     bmr = Math.round(bmr);

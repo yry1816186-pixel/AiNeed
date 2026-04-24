@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 
 export interface UserProfile {
@@ -13,6 +12,10 @@ export interface UserProfile {
   stylePreferences?: unknown[];
   colorPreferences?: unknown[];
   photos?: unknown[];
+  primaryScenarios?: string[];
+  styleExpression?: string[];
+  garmentPreference?: unknown;
+  wardrobeItems?: unknown[];
 }
 
 export interface CompletenessResult {
@@ -22,12 +25,12 @@ export interface CompletenessResult {
 
 /**
  * ProfileCompletenessService calculates profile completion percentage
- * using a weighted scoring system:
- * - Basic info (30%): gender (10%), age/birthdate (10%), nickname (10%)
- * - Body data (25%): height (8%), weight (8%), bodyType (9%)
- * - Style preferences (20%): at least one StyleProfile (10%), at least one StylePreference (10%)
- * - Color preferences (15%): colorSeason filled (8%), at least one ColorPreference (7%)
- * - Photos (10%): at least one UserPhoto exists
+ * using a gender-free weighted scoring system:
+ * - Scenarios (20%): at least one primaryScenarios entry
+ * - Body type (25%): bodyType (10%), height/weight (15%)
+ * - Style (20%): at least one styleExpression entry (10%), at least one stylePreference (10%)
+ * - Wardrobe (20%): at least one wardrobe item (10%), garmentPreference (10%)
+ * - Photos (15%): at least one UserPhoto exists
  */
 @Injectable()
 export class ProfileCompletenessService {
@@ -35,55 +38,61 @@ export class ProfileCompletenessService {
     const missingFields: string[] = [];
     let totalScore = 0;
 
-    // Basic info (30%)
-    const genderScore = this.toBooleanScore(userProfile.gender);
-    const birthDateScore = this.toBooleanScore(userProfile.birthDate);
-    const nicknameScore = this.toBooleanScore(userProfile.nickname);
+    // Scenarios (20%)
+    const hasScenarios = this.hasItems(userProfile.primaryScenarios);
+    if (!hasScenarios) {
+      missingFields.push("穿搭场景");
+    }
+    totalScore += (hasScenarios ? 1 : 0) * 20;
 
-    if (!genderScore) {missingFields.push("性别");}
-    if (!birthDateScore) {missingFields.push("出生日期");}
-    if (!nicknameScore) {missingFields.push("昵称");}
-
-    totalScore += genderScore * 10 + birthDateScore * 10 + nicknameScore * 10;
-
-    // Body data (25%)
+    // Body type (25%)
+    const bodyTypeScore = this.toBooleanScore(userProfile.bodyType);
     const heightScore = this.toBooleanScore(userProfile.height);
     const weightScore = this.toBooleanScore(userProfile.weight);
-    const bodyTypeScore = this.toBooleanScore(userProfile.bodyType);
 
-    if (!heightScore && !weightScore && !bodyTypeScore) {
+    if (!bodyTypeScore) {
+      missingFields.push("体型");
+    }
+    if (!heightScore && !weightScore) {
       missingFields.push("身材数据");
     }
 
-    totalScore += heightScore * 8 + weightScore * 8 + bodyTypeScore * 9;
+    totalScore += bodyTypeScore * 10 + (heightScore || weightScore ? 1 : 0) * 15;
 
-    // Style preferences (20%)
-    const hasStyleProfile = this.hasItems(userProfile.styleProfiles);
+    // Style (20%)
+    const hasStyleExpression = this.hasItems(userProfile.styleExpression);
     const hasStylePreference = this.hasItems(userProfile.stylePreferences);
 
-    if (!hasStyleProfile) {missingFields.push("风格档案");}
-    if (!hasStylePreference) {missingFields.push("风格偏好");}
-
-    totalScore += (hasStyleProfile ? 1 : 0) * 10 + (hasStylePreference ? 1 : 0) * 10;
-
-    // Color preferences (15%)
-    const hasColorSeason = this.toBooleanScore(userProfile.colorSeason);
-    const hasColorPreference = this.hasItems(userProfile.colorPreferences);
-
-    if (!hasColorSeason && !hasColorPreference) {
-      missingFields.push("色彩分析");
+    if (!hasStyleExpression) {
+      missingFields.push("风格表达");
+    }
+    if (!hasStylePreference) {
+      missingFields.push("风格偏好");
     }
 
-    totalScore += hasColorSeason * 8 + (hasColorPreference ? 1 : 0) * 7;
+    totalScore += (hasStyleExpression ? 1 : 0) * 10 + (hasStylePreference ? 1 : 0) * 10;
 
-    // Photos (10%)
+    // Wardrobe (20%)
+    const hasWardrobeItems = this.hasItems(userProfile.wardrobeItems);
+    const hasGarmentPreference = this.toBooleanScore(userProfile.garmentPreference);
+
+    if (!hasWardrobeItems) {
+      missingFields.push("衣橱");
+    }
+    if (!hasGarmentPreference) {
+      missingFields.push("服装偏好");
+    }
+
+    totalScore += (hasWardrobeItems ? 1 : 0) * 10 + hasGarmentPreference * 10;
+
+    // Photos (15%)
     const hasPhotos = this.hasItems(userProfile.photos);
 
     if (!hasPhotos) {
       missingFields.push("个人照片");
     }
 
-    totalScore += (hasPhotos ? 1 : 0) * 10;
+    totalScore += (hasPhotos ? 1 : 0) * 15;
 
     return {
       percentage: Math.min(100, Math.max(0, totalScore)),

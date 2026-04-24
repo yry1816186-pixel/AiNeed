@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma , BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
+import { Prisma, BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { StylePreference } from "../../../common/types/common.types";
@@ -33,7 +32,7 @@ export interface BodyAnalysisResult {
   description: string;
   recommendations: BodyRecommendation[];
   idealStyles: string[];
-  avoidStyles: string[];
+  recommendStyles: string[];
 }
 
 export interface ColorAnalysisResult {
@@ -109,7 +108,12 @@ export class ProfileService {
     }
 
     // 更新用户基本信息
-    const userUpdateData: any = {};
+    const userUpdateData: Partial<{
+      nickname: string;
+      avatar: string;
+      gender: Gender;
+      birthDate: Date;
+    }> = {};
     if (dto.nickname !== undefined) {
       userUpdateData.nickname = dto.nickname;
     }
@@ -203,10 +207,11 @@ export class ProfileService {
           skinTone: profileData.skinTone,
           faceShape: profileData.faceShape,
           colorSeason: profileData.colorSeason,
-          stylePreferences: (profileData.stylePreferences ?? []) as unknown as any,
+          stylePreferences: (profileData.stylePreferences ??
+            []) as unknown as Prisma.InputJsonValue,
           colorPreferences: profileData.colorPreferences ?? [],
         },
-        update: profileData as any,
+        update: profileData as Prisma.UserProfileUpdateInput,
       });
     }
 
@@ -235,7 +240,7 @@ export class ProfileService {
         description: "请先上传照片或手动设置体型信息",
         recommendations: [],
         idealStyles: [],
-        avoidStyles: [],
+        recommendStyles: [],
       };
     }
 
@@ -261,7 +266,7 @@ export class ProfileService {
           },
         ],
         idealStyles: ["层叠穿搭", "收腰设计", "荷叶边", "褶皱设计"],
-        avoidStyles: ["过于宽松的直筒款", "无腰线的直筒连衣裙"],
+        recommendStyles: ["收腰衬衫", "高腰阔腿裤", "A字裙", "裹身裙"],
       },
       [BodyType.triangle]: {
         bodyTypeName: "A型（梨形）体型",
@@ -284,7 +289,7 @@ export class ProfileService {
           },
         ],
         idealStyles: ["亮色上衣", "A字裙", "垫肩设计", "荷叶袖"],
-        avoidStyles: ["紧身铅笔裙", "紧身牛仔裤", "臀部有装饰的款式"],
+        recommendStyles: ["条纹上衣", "A字裙", "阔腿裤", "垫肩西装"],
       },
       [BodyType.inverted_triangle]: {
         bodyTypeName: "Y型（倒三角）体型",
@@ -307,7 +312,7 @@ export class ProfileService {
           },
         ],
         idealStyles: ["V领设计", "阔腿裤", "A字裙", "深色上衣"],
-        avoidStyles: ["垫肩设计", "泡泡袖", "紧身牛仔裤"],
+        recommendStyles: ["V领衬衫", "印花裙", "阔腿裤", "A字连衣裙"],
       },
       [BodyType.hourglass]: {
         bodyTypeName: "X型（沙漏）体型",
@@ -330,7 +335,7 @@ export class ProfileService {
           },
         ],
         idealStyles: ["收腰设计", "高腰裤", "裹身裙", "紧身款式"],
-        avoidStyles: ["过于宽松的款式", "无腰线的直筒连衣裙"],
+        recommendStyles: ["收腰衬衫", "高腰牛仔裤", "裹身裙", "紧身裙"],
       },
       [BodyType.oval]: {
         bodyTypeName: "O型（苹果）体型",
@@ -353,7 +358,7 @@ export class ProfileService {
           },
         ],
         idealStyles: ["V领设计", "垂感面料", "垂直条纹", "深色系"],
-        avoidStyles: ["紧身款式", "过于宽松的款式", "水平条纹", "腰部有装饰的款式"],
+        recommendStyles: ["V领衬衫", "直筒裤", "衬衫裙", "垂感连衣裙"],
       },
     };
 
