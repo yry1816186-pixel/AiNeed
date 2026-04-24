@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 
 import { EmailService } from "../../../common/email/email.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -12,7 +11,7 @@ export class PrivacyService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: StorageService,
-    private readonly email: EmailService,
+    private readonly email: EmailService
   ) {}
 
   /**
@@ -22,7 +21,7 @@ export class PrivacyService {
     userId: string,
     consentType: string,
     granted: boolean,
-    metadata: { ipAddress?: string; userAgent?: string; version?: string },
+    metadata: { ipAddress?: string; userAgent?: string; version?: string }
   ) {
     return this.prisma.userConsent.upsert({
       where: {
@@ -68,9 +67,7 @@ export class PrivacyService {
 
     // 异步处理
     this.processExport(request.id).catch((error) => {
-      this.logger.error(
-        `Export failed for request ${request.id}: ${error.message}`,
-      );
+      this.logger.error(`Export failed for request ${request.id}: ${error.message}`);
     });
 
     return { requestId: request.id };
@@ -84,7 +81,9 @@ export class PrivacyService {
       where: { id: requestId },
     });
 
-    if (!request) {return;}
+    if (!request) {
+      return;
+    }
 
     await this.prisma.dataExportRequest.update({
       where: { id: requestId },
@@ -130,7 +129,7 @@ export class PrivacyService {
       const downloadUrl = await this.storage.uploadTemporary(
         `exports/${fileName}`,
         Buffer.from(fileContent),
-        7 * 24 * 60 * 60, // 7天过期
+        7 * 24 * 60 * 60 // 7天过期
       );
 
       // 更新请求
@@ -173,9 +172,7 @@ export class PrivacyService {
 
     // 异步处理
     this.processDeletion(request.id).catch((error) => {
-      this.logger.error(
-        `Deletion failed for request ${request.id}: ${error.message}`,
-      );
+      this.logger.error(`Deletion failed for request ${request.id}: ${error.message}`);
     });
 
     return { requestId: request.id };
@@ -189,7 +186,9 @@ export class PrivacyService {
       where: { id: requestId },
     });
 
-    if (!request) {return;}
+    if (!request) {
+      return;
+    }
 
     await this.prisma.dataDeletionRequest.update({
       where: { id: requestId },
@@ -204,7 +203,7 @@ export class PrivacyService {
         where: { userId },
       });
       const deleteResults = await Promise.allSettled(
-        photos.map((photo: any) => this.storage.delete(photo.url)),
+        photos.map((photo) => this.storage.delete(photo.url))
       );
 
       // Log any failed deletions for GDPR compliance tracking
@@ -215,12 +214,17 @@ export class PrivacyService {
       if (failedDeletions.length > 0) {
         this.logger.error(
           `GDPR data deletion: ${failedDeletions.length}/${photos.length} photos failed to delete from storage. ` +
-            `Failed photo URLs: ${failedDeletions.map(({ photo }) => photo?.url).filter(Boolean).join(", ")}`,
+            `Failed photo URLs: ${failedDeletions
+              .map(({ photo }) => photo?.url)
+              .filter(Boolean)
+              .join(", ")}`
         );
         // Continue with deletion process - database records will be deleted
         // Storage cleanup can be retried later via scheduled job
       } else {
-        this.logger.log(`GDPR data deletion: Successfully deleted ${photos.length} photos from storage for user ${userId}`);
+        this.logger.log(
+          `GDPR data deletion: Successfully deleted ${photos.length} photos from storage for user ${userId}`
+        );
       }
 
       // 2. 匿名化用户记录（保留审计需要）

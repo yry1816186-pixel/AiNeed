@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
-import { Gender } from "@prisma/client";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type User = any;
+import { Gender, User as PrismaUser } from "@prisma/client";
 
 import { EncryptionService } from "../../../common/encryption";
 import {
@@ -14,6 +11,7 @@ import * as bcrypt from "../../../common/security/bcrypt";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
 
+type User = PrismaUser;
 type UserPiiField = (typeof PII_FIELDS)["User"][number];
 
 export interface UpdateUserDto {
@@ -58,13 +56,11 @@ export class UsersService {
     private piiEncryptionService: PIIEncryptionService
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private encryptPii(data: Record<string, any>): Record<string, any> {
+  private encryptPii(data: Record<string, unknown>): Record<string, unknown> {
     return this.piiEncryptionService.encryptPII("User", data);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private decryptPii(data: Record<string, any>): UserWithDecrypted {
+  private decryptPii(data: Record<string, unknown>): UserWithDecrypted {
     return this.piiEncryptionService.decryptPII("User", data) as UserWithDecrypted;
   }
 
@@ -122,7 +118,7 @@ export class UsersService {
       throw new NotFoundException("用户不存在");
     }
 
-    const encryptedDto = this.encryptPii(dto);
+    const encryptedDto = this.encryptPii(dto as Record<string, unknown>);
 
     const updated = await this.prisma.user.update({
       where: { id },
