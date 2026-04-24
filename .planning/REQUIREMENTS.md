@@ -81,11 +81,11 @@
 
 ### Onboarding (引导流程)
 
-- [ ] **ONB-01**: Step 1 — 场景选择（8 卡片多选 1-3 个）
-- [ ] **ONB-02**: Step 2 — 快速画像（年龄段+身高体重+常穿尺码+garmentPreference）
-- [ ] **ONB-03**: Step 3 — 风格表达（5 选 1）+ 穿搭图选择（6 选 2，向量种子提取）
+- [x] **ONB-01**: Step 1 -- 场景选择（8 卡片多选 1-3 个） -- Phase 4 Plan 03
+- [x] **ONB-02**: Step 2 -- 快速画像（年龄段+身高体重+常穿尺码+garmentPreference） -- Phase 4 Plan 03
+- [x] **ONB-03**: Step 3 -- 风格表达（5 选 1）+ 穿搭图选择（6 选 2，向量种子提取） -- Phase 4 Plan 03
 - [ ] **ONB-04**: Step 4 — 让伊伊搭第一套（3 套方案+用户选择 → 立即偏好信号+首次衣橱保存）
-- [ ] **ONB-05**: Onboarding 数据立即流入 ColdStartService
+- [x] **ONB-05**: Onboarding 数据立即流入 ColdStartService -- Phase 4 Plan 03
 
 ### Fashion Rules (时尚规则修复)
 
@@ -232,36 +232,36 @@
 
 ## Traceability
 
-| Requirement       | Phase       | Status  |
-| ----------------- | ----------- | ------- |
-| FND-01 ~ FND-05   | Phase 1     | Pending |
-| GND-01 ~ GND-05   | Phase 1     | Pending |
-| REC-01 ~ REC-06   | Phase 2     | Pending |
-| NAV-01 ~ NAV-05   | Phase 3     | Pending |
-| TOD-01 ~ TOD-05   | Phase 3     | Pending |
-| DIS-01 ~ DIS-04   | Phase 3     | Pending |
-| YIYI-01 ~ YIYI-07 | Phase 4     | Pending |
-| VOI-01 ~ VOI-03   | Phase 4     | Pending |
-| WKS-01 ~ WKS-04   | Phase 4     | Pending |
-| ONB-01 ~ ONB-05   | Phase 4     | Pending |
-| RUL-01 ~ RUL-03   | Phase 4     | Pending |
-| VIS-01 ~ VIS-04   | Phase 1,3,5 | Pending |
-| CAL-01 ~ CAL-02   | Phase 3     | Pending |
-| CUR-01 ~ CUR-02   | Phase 2     | Pending |
-| ETH-01 ~ ETH-02   | Phase 4     | Pending |
-| MOD-01 ~ MOD-04   | Phase 6     | Pending |
-| FLY-01 ~ FLY-04   | Phase 7     | Pending |
-| PHO-01 ~ PHO-02   | Phase 8     | Pending |
-| CAL-03 ~ CAL-05   | Phase 7     | Pending |
-| MINI-01 ~ MINI-02 | Phase 8     | Pending |
-| SOC-01 ~ SOC-02   | Phase 9     | Pending |
-| RAD-01 ~ RAD-04   | Phase 6-7   | Pending |
-| DAT-01 ~ DAT-05   | Phase 6     | Pending |
-| CMP-01 ~ CMP-05   | Phase 6     | Pending |
-| SEC-01 ~ SEC-04   | Phase 6     | Pending |
-| MON-01 ~ MON-04   | Phase 9     | Pending |
-| PRD-01 ~ PRD-05   | Phase 10    | Pending |
-| CMP-06 ~ CMP-09   | Phase 5+    | Pending |
+| Requirement             | Phase           | Status   |
+| ----------------------- | --------------- | -------- | ---------- |
+| FND-01 ~ FND-05         | Phase 1         | Pending  |
+| GND-01 ~ GND-05         | Phase 1         | Pending  |
+| REC-01 ~ REC-06         | Phase 2         | Pending  |
+| NAV-01 ~ NAV-05         | Phase 3         | Pending  |
+| TOD-01 ~ TOD-05         | Phase 3         | Pending  |
+| DIS-01 ~ DIS-04         | Phase 3         | Pending  |
+| YIYI-01 ~ YIYI-07       | Phase 4         | Pending  |
+| VOI-01 ~ VOI-03         | Phase 4         | Pending  |
+| WKS-01 ~ WKS-04         | Phase 4         | Pending  |
+| ONB-01 ~ ONB-03, ONB-05 | Phase 4 Plan 03 | Complete | 2026-04-24 |
+| RUL-01 ~ RUL-03         | Phase 4         | Pending  |
+| VIS-01 ~ VIS-04         | Phase 1,3,5     | Pending  |
+| CAL-01 ~ CAL-02         | Phase 3         | Pending  |
+| CUR-01 ~ CUR-02         | Phase 2         | Pending  |
+| ETH-01 ~ ETH-02         | Phase 4         | Pending  |
+| MOD-01 ~ MOD-04         | Phase 6         | Pending  |
+| FLY-01 ~ FLY-04         | Phase 7         | Pending  |
+| PHO-01 ~ PHO-02         | Phase 8         | Pending  |
+| CAL-03 ~ CAL-05         | Phase 7         | Pending  |
+| MINI-01 ~ MINI-02       | Phase 8         | Pending  |
+| SOC-01 ~ SOC-02         | Phase 9         | Pending  |
+| RAD-01 ~ RAD-04         | Phase 6-7       | Pending  |
+| DAT-01 ~ DAT-05         | Phase 6         | Pending  |
+| CMP-01 ~ CMP-05         | Phase 6         | Pending  |
+| SEC-01 ~ SEC-04         | Phase 6         | Pending  |
+| MON-01 ~ MON-04         | Phase 9         | Pending  |
+| PRD-01 ~ PRD-05         | Phase 10        | Pending  |
+| CMP-06 ~ CMP-09         | Phase 5+        | Pending  |
 
 ---
 
