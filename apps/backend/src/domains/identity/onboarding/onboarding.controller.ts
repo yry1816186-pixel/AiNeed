@@ -3,8 +3,10 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagg
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { CompleteBasicInfoDto, SkipStepDto } from "./dto/onboarding.dto";
+import { CompleteBasicInfoDto, FirstOutfitsDto, SkipStepDto } from "./dto/onboarding.dto";
 import { OnboardingService } from "./onboarding.service";
+
+import { ColdStartService } from "../../platform/recommendations/services/cold-start.service";
 
 interface AuthenticatedRequest {
   user: {
@@ -19,7 +21,10 @@ interface AuthenticatedRequest {
 @UseGuards(JwtAuthGuard)
 @Controller("onboarding")
 export class OnboardingController {
-  constructor(private onboardingService: OnboardingService) {}
+  constructor(
+    private onboardingService: OnboardingService,
+    private coldStartService: ColdStartService
+  ) {}
 
   @Get("state")
   @ApiOperation({
@@ -103,5 +108,69 @@ export class OnboardingController {
   })
   async getProgress(@Request() req: AuthenticatedRequest) {
     return this.onboardingService.getOnboardingProgress(req.user.id);
+  }
+
+  @Post("first-outfits")
+  @ApiOperation({
+    summary: "生成首次穿搭推荐",
+    description:
+      "根据用户引导数据（场景、风格、服装偏好）生成3套穿搭推荐方案。使用 ColdStartService 的 profile-based 策略。",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "推荐生成成功",
+    schema: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          imageUrl: { type: "string" },
+          matchScore: { type: "number" },
+          reason: { type: "string" },
+          items: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                category: { type: "string" },
+                imageUrl: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: "请求参数无效" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async generateFirstOutfits(@Request() req: AuthenticatedRequest, @Body() dto: FirstOutfitsDto) {
+    const strategy = await this.coldStartService.handleNewUser(req.user.id, {
+      primaryScenarios: dto.primaryScenarios,
+      styleExpression: dto.styleExpression,
+      garmentPreference: dto.garmentPreference,
+      bodyType: dto.bodyType,
+    });
+
+    // Convert ColdStartRecommendation[] to outfit-like recommendations
+    const topThree = strategy.recommendations.slice(0, 3);
+
+    const outfitNames = ["日常休闲风", "通勤精致风", "轻松约会风"];
+
+    return topThree.map((rec, index) => ({
+      id: rec.itemId,
+      name: outfitNames[index] ?? `推荐搭配 ${index + 1}`,
+      imageUrl: "",
+      matchScore: Math.round(rec.score),
+      reason: rec.reason,
+      items: [
+        { name: "上衣", category: "tops", imageUrl: "" },
+        { name: "下装", category: "bottoms", imageUrl: "" },
+        { name: "鞋履", category: "shoes", imageUrl: "" },
+      ],
+      strategy: rec.strategy,
+    }));
   }
 }

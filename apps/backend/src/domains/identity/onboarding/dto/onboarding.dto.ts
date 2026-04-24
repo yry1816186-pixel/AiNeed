@@ -130,6 +130,42 @@ export class OnboardingStateDto {
   completedSteps!: string[];
 }
 
+export class FirstOutfitsDto {
+  @ApiProperty({
+    description: "主要穿搭场景",
+    type: [String],
+    example: ["work", "casual"],
+  })
+  @IsNotEmpty({ message: "主要穿搭场景不能为空" })
+  primaryScenarios!: string[];
+
+  @ApiProperty({
+    description: "风格表达",
+    type: [String],
+    example: ["minimalist", "classic"],
+  })
+  @IsNotEmpty({ message: "风格表达不能为空" })
+  styleExpression!: string[];
+
+  @ApiProperty({
+    description: "服装偏好",
+    example: { lowerBody: "both", upperFit: "regular" },
+  })
+  @IsNotEmpty({ message: "服装偏好不能为空" })
+  garmentPreference!: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
+
+  @ApiPropertyOptional({
+    description: "体型",
+    example: "hourglass",
+  })
+  @IsOptional()
+  @IsString({ message: "体型必须是字符串" })
+  bodyType?: string;
+}
+
 export class OnboardingProgressDto {
   @ApiProperty({
     description: "完成百分比",

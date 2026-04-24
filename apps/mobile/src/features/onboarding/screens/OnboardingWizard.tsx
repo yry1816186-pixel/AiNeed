@@ -27,6 +27,7 @@ import { onboardingService } from "../services/onboardingService";
 import { SceneSelectionStep } from "./steps/SceneSelectionStep";
 import { QuickProfileStep } from "./steps/QuickProfileStep";
 import { StyleExpressionStep } from "./steps/StyleExpressionStep";
+import { YiyiFirstOutfitStep } from "./steps/YiyiFirstOutfitStep";
 import type { RootStackParamList } from "../../../types/navigation";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
@@ -184,16 +185,13 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <View style={styles.placeholderContainer}>
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={styles.placeholderText}>正在为你搭配...</Text>
-            </View>
+            <YiyiFirstOutfitStep onComplete={handleComplete} />
           </Animated.View>
         );
       default:
         return null;
     }
-  }, [currentStep, formData, handleNext, updateFormData, colors.primary]);
+  }, [currentStep, formData, handleNext, handleComplete, updateFormData, colors.primary]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -303,16 +301,6 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     flex: 1,
-  },
-  placeholderContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing[4],
-  },
-  placeholderText: {
-    fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textSecondary,
   },
   footer: {
     flexDirection: "row",

@@ -1,7 +1,11 @@
 import apiClient from "../../../services/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { ApiResponse } from "../../../types";
-import type { OnboardingFormData, NewOnboardingState } from "../stores/onboardingStore";
+import type {
+  OnboardingFormData,
+  NewOnboardingState,
+  RecommendationItem,
+} from "../stores/onboardingStore";
 
 const AGE_RANGE_MAP: Record<string, string> = {
   "18-24": "18_24",
@@ -110,5 +114,27 @@ export const onboardingService = {
 
   markOnboardingComplete: async (): Promise<void> => {
     await AsyncStorage.setItem("@xuno:onboarding_complete", "true");
+  },
+
+  generateFirstOutfits: async (data: {
+    primaryScenarios: string[];
+    styleExpression: string[];
+    garmentPreference: { lowerBody: string; upperFit: string };
+    bodyType?: string;
+  }): Promise<RecommendationItem[]> => {
+    const response = await apiClient.post<RecommendationItem[]>("/onboarding/first-outfits", data);
+    if (response.success && response.data) {
+      return response.data;
+    }
+    return [];
+  },
+
+  saveOutfitToWardrobe: async (outfit: RecommendationItem): Promise<void> => {
+    await apiClient.post("/wardrobe", {
+      outfitId: outfit.id,
+      name: outfit.name,
+      items: outfit.items,
+      savedAt: new Date().toISOString(),
+    });
   },
 };
