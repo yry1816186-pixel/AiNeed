@@ -1,4 +1,4 @@
-﻿import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule } from "@nestjs/swagger";
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   // 应用指标中间件（排除 /metrics 端点）
   app.use((req: Request, res: Response, next: NextFunction) => {
-    if (!req.path.includes('/metrics')) {
+    if (!req.path.includes("/metrics")) {
       metricsMiddleware.use(req, res, next);
     } else {
       next();
@@ -55,7 +55,7 @@ async function bootstrap() {
       crossOriginOpenerPolicy: { policy: "same-origin" },
       crossOriginEmbedderPolicy: { policy: "require-corp" },
       referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-    }),
+    })
   );
 
   // 响应压缩
@@ -63,17 +63,18 @@ async function bootstrap() {
     compression({
       threshold: 1024, // 超过 1KB 的响应才压缩
       level: 6, // 压缩级别 1-9
-    }),
+    })
   );
 
   // CORS 配置
   const corsOrigins = process.env.CORS_ORIGINS?.split(",").filter(Boolean) || [];
   app.enableCors({
-    origin: corsOrigins.length > 0
-      ? corsOrigins
-      : (process.env.NODE_ENV === "production"
+    origin:
+      corsOrigins.length > 0
+        ? corsOrigins
+        : process.env.NODE_ENV === "production"
         ? []
-        : ["http://localhost:3000", "http://localhost:3001"]),
+        : ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"],
@@ -98,7 +99,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
-    }),
+    })
   );
 
   // 全局异常过滤器
@@ -124,13 +125,12 @@ async function bootstrap() {
   await app.listen(port);
 
   if (process.env.NODE_ENV !== "production") {
-    // eslint-disable-next-line no-console
-    console.log(`🚀 寻裳 API running on: http://localhost:${port}/api`);
-    // eslint-disable-next-line no-console
-    console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+    const logger = new Logger("Bootstrap");
+    logger.log(`API running on: http://localhost:${port}/api`);
+    logger.log(`API Documentation: http://localhost:${port}/api/docs`);
   } else {
-    // eslint-disable-next-line no-console
-    console.log(`🚀 寻裳 API running in production mode on port ${port}`);
+    const logger = new Logger("Bootstrap");
+    logger.log(`API running in production mode on port ${port}`);
   }
 }
 
