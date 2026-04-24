@@ -84,7 +84,10 @@ class TestGreetToSceneTransition:
 class TestGreetToDirectTransition:
     @pytest.mark.asyncio
     async def test_greet_to_direct(self):
-        engine = _make_engine()
+        """GREET -> DIRECT when user gives full details -> immediately generates outfits."""
+        engine = _make_engine(outfit_generator=AsyncMock(return_value=[
+            {"items": [{"name": "西装"}], "overall_score": 0.9}
+        ]))
         async def fake_extract(msg, slots):
             slots.occasion = "interview"
             slots.style_preference = ["简约利落"]
@@ -94,7 +97,10 @@ class TestGreetToDirectTransition:
         ctx = _context(state=DialogState.GREET)
         result = await engine.process_message("面试穿简约利落的风格", ctx)
 
-        assert ctx.state == DialogState.DIRECT
+        # DIRECT is transient -- it goes straight to GENERATE
+        assert ctx.state == DialogState.GENERATE
+        assert result["outfits"] is not None
+        assert len(result["outfits"]) > 0
 
 
 # ---------------------------------------------------------------------------
@@ -106,12 +112,12 @@ class TestGreetToContextTransition:
     async def test_greet_to_context_vague(self):
         engine = _make_engine()
         async def fake_extract(msg, slots):
-            # No slots filled - vague message
+            # No slots filled - vague message about wanting help but no specifics
             return slots
         engine.slot_extractor.extract = AsyncMock(side_effect=fake_extract)
 
         ctx = _context(state=DialogState.GREET)
-        result = await engine.process_message("你好", ctx)
+        result = await engine.process_message("我想买衣服但不知道穿什么好", ctx)
 
         assert ctx.state == DialogState.CONTEXT
 

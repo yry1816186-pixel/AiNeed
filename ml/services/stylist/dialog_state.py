@@ -13,6 +13,9 @@ from pydantic import BaseModel, Field
 class DialogState(str, Enum):
     GREET = "GREET"
     CONTEXT = "CONTEXT"
+    SCENE = "SCENE"
+    DIRECT = "DIRECT"
+    CHAT = "CHAT"
     GENERATE = "GENERATE"
     REFINE = "REFINE"
     ACTION = "ACTION"
@@ -48,6 +51,18 @@ class DialogSlot(BaseModel):
         None,
         description="天气温度(摄氏度)"
     )
+    company: Optional[str] = Field(
+        None,
+        description="面试目标公司"
+    )
+    position: Optional[str] = Field(
+        None,
+        description="面试目标岗位"
+    )
+    color_season: Optional[str] = Field(
+        None,
+        description="用户色彩季型"
+    )
 
 
 class DialogContext(BaseModel):
@@ -56,6 +71,14 @@ class DialogContext(BaseModel):
     turn_count: int = 0
     generated_outfits: List[Dict] = Field(default_factory=list)
     user_feedback: List[str] = Field(default_factory=list)
+    preference_memory: Dict[str, str] = Field(
+        default_factory=dict,
+        description="跨session偏好记忆"
+    )
+    negative_feedback_count: int = Field(
+        0,
+        description="连续负面反馈计数，用于工作室信号触发"
+    )
 
     def is_slot_filled(self, slot_name: str) -> bool:
         val = getattr(self.slots, slot_name, None)

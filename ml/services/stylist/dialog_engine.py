@@ -1,16 +1,19 @@
 """
 对话状态机引擎
 
-实现 GREET→CONTEXT→GENERATE→REFINE→ACTION→WRAP 状态流转，
+实现 GREET->CONTEXT->[SCENE|DIRECT|CHAT]->GENERATE->[ACTION|REFINE]->WRAP 状态流转，
 驱动有状态的对话Agent行为。
 
 核心逻辑：
-1. GREET: 初始问候，尝试从首条消息提取slot
+1. GREET: 初始问候，尝试从首条消息提取slot，路由到SCENE/DIRECT/CONTEXT/CHAT
 2. CONTEXT: 收集场景/偏好信息，追问缺失的必填slot
-3. GENERATE: 信息足够后生成搭配方案
-4. REFINE: 用户要求调整，重新生成
-5. ACTION: 展示详情/试穿
-6. WRAP: 对话结束
+3. SCENE: 场景化slot收集（面试：公司/岗位/预算）
+4. DIRECT: 用户给足信息，直接生成搭配
+5. CHAT: 自由对话，检测场景意图后路由
+6. GENERATE: 信息足够后生成搭配方案
+7. REFINE: 用户要求调整，重新生成
+8. ACTION: 展示详情/试穿
+9. WRAP: 对话结束
 """
 
 import json
@@ -21,6 +24,31 @@ from ml.services.stylist.dialog_state import DialogState, DialogContext, DialogS
 from ml.services.stylist.slot_extractor import SlotExtractor
 
 logger = logging.getLogger(__name__)
+
+YIYI_PERSONALITY_PROMPT = """你是伊伊(Yiyi)，用户最信任的穿搭搭子。
+
+## 性格
+你是温柔但有主见的朋友。你会给出明确建议，不是和稀泥。
+你有自己的审美判断，但永远尊重用户的选择。
+
+## 禁止用语（绝对不能出现）
+- "亲~"、"亲爱的"、"宝子"
+- "根据算法分析"、"系统推荐"、"数据分析显示"
+- 任何描述身体缺点或身材缺陷的语言
+- "这个风格很适合你的体型"（改为"这个风格很适合你的气质"）
+
+## 必须遵循
+- 用"适合你的风格"而非"适合你的体型"
+- 用"这件衣服的版型"而非"遮住/修饰你的XXX"
+- 推荐时从"衣服特点"出发，不从"身体缺点"出发
+- 试穿失败时归因于"这件衣服的剪裁可能不是最佳选择"
+- 语气像一个25-28岁的有品味的朋友，温暖但不甜腻
+
+## 说话风格
+- 简短自然，不啰嗦
+- 可以用"我觉得"、"依我看"表达观点
+- 偶尔用"诶"、"嗯"等语气词让对话更自然
+"""
 
 BODY_POSITIVE_PROMPT = """你必须遵循以下措辞原则：
 1. 描述服装特点，不描述身体特征
@@ -74,6 +102,35 @@ OUTFIT_REPLY_PROMPT = """你是一位专业的私人造型师，刚刚为客户�
 
 {body_positive_rule}"""
 
+SCENE_ASK_PROMPT = """你是伊伊，正在帮用户准备{scene_name}的穿搭。
+
+已了解：{slots_summary}
+还需要了解：{missing}
+
+请用自然、温暖的方式询问。要求：
+1. 一次问一个问题
+2. 给出具体选项引导
+3. 语气像朋友聊天
+
+{body_positive_rule}"""
+
+CHAT_REPLY_PROMPT = """用户在和你闲聊。请用伊伊的风格自然回应。
+
+用户消息: {message}
+
+要求：
+1. 简短自然
+2. 如果用户提到穿搭需求，引导到具体场景
+3. 体现你作为穿搭搭子的专业性
+
+{personality}
+"""
+
+# Interview scene keywords
+INTERVIEW_KEYWORDS = ["面试", "interview", "应聘", "面谈"]
+# Give-up keywords
+GIVE_UP_KEYWORDS = ["算了", "不要了", "不想要了", "放弃", "不需要了", "不用了"]
+
 
 class DialogEngine:
     def __init__(
@@ -96,6 +153,9 @@ class DialogEngine:
         handler_map = {
             DialogState.GREET: self._handle_greet,
             DialogState.CONTEXT: self._handle_context,
+            DialogState.SCENE: self._handle_scene,
+            DialogState.DIRECT: self._handle_direct,
+            DialogState.CHAT: self._handle_chat,
             DialogState.GENERATE: self._handle_generate,
             DialogState.REFINE: self._handle_refine,
             DialogState.ACTION: self._handle_action,
@@ -104,13 +164,48 @@ class DialogEngine:
         handler = handler_map.get(context.state, self._handle_wrap)
         return await handler(user_message, context)
 
+    def _classify_greet_intent(
+        self, message: str, context: DialogContext
+    ) -> DialogState:
+        """Classify the user's initial intent after GREET slot extraction."""
+        # Check if user gave enough info for direct generation
+        if context.can_generate():
+            return DialogState.DIRECT
+
+        # Check if user mentioned a specific scene (e.g., interview)
+        if any(kw in message for kw in INTERVIEW_KEYWORDS):
+            return DialogState.SCENE
+        if context.slots.occasion and context.slots.occasion not in ("", None):
+            return DialogState.SCENE
+
+        # Check if message is a social greeting with no intent
+        social_kw = ["你好", "嗨", "hi", "hello", "嘿", "早上好", "下午好", "晚上好"]
+        if any(message.strip().lower().startswith(kw) for kw in social_kw):
+            if not context.slots.occasion and not context.slots.style_preference:
+                return DialogState.CHAT
+
+        # Default: go to CONTEXT for slot filling
+        return DialogState.CONTEXT
+
     async def _handle_greet(self, message: str, context: DialogContext) -> Dict:
         context.slots = await self.slot_extractor.extract(message, context.slots)
 
-        if context.can_generate():
-            context.state = DialogState.GENERATE
+        # Route to appropriate state based on intent
+        next_state = self._classify_greet_intent(message, context)
+
+        if next_state == DialogState.DIRECT:
+            context.state = DialogState.DIRECT
             return await self._generate_outfits(context)
 
+        if next_state == DialogState.SCENE:
+            context.state = DialogState.SCENE
+            return await self._handle_scene(message, context)
+
+        if next_state == DialogState.CHAT:
+            context.state = DialogState.CHAT
+            return await self._handle_chat(message, context)
+
+        # Default: CONTEXT
         context.state = DialogState.CONTEXT
         missing = context.missing_required_slots()
         reply = await self._ask_for_slots(missing, context)
@@ -137,6 +232,144 @@ class DialogEngine:
             "slots": context.slots.model_dump(),
         }
 
+    async def _handle_scene(self, message: str, context: DialogContext) -> Dict:
+        """Scene-specific slot collection. For interview: company, position, budget."""
+        context.slots = await self.slot_extractor.extract(message, context.slots)
+
+        occasion = context.slots.occasion or ""
+
+        # Interview scene: check for company, position, budget
+        if occasion == "interview" or any(
+            kw in message for kw in INTERVIEW_KEYWORDS
+        ):
+            if not context.slots.occasion:
+                context.slots.occasion = "interview"
+
+            # Check if all interview-specific slots are filled
+            interview_missing = []
+            if not context.slots.company:
+                interview_missing.append("company")
+            if not context.slots.position:
+                interview_missing.append("position")
+            if not context.slots.budget:
+                interview_missing.append("budget")
+
+            # Also need style_preference for generation
+            if not context.slots.style_preference:
+                interview_missing.append("style_preference")
+
+            if not interview_missing:
+                # All slots filled, proceed to generate
+                context.state = DialogState.GENERATE
+                return await self._generate_outfits(context)
+
+            # Ask for missing interview slots
+            missing_names = {
+                "company": "目标公司类型",
+                "position": "应聘岗位",
+                "budget": "预算范围",
+                "style_preference": "风格偏好",
+            }
+            missing_desc = "、".join(
+                missing_names.get(m, m) for m in interview_missing
+            )
+            slots_summary = context.slots.model_dump_json(
+                exclude_none=True, exclude_defaults=True
+            )
+            prompt = SCENE_ASK_PROMPT.format(
+                scene_name="面试穿搭",
+                slots_summary=slots_summary,
+                missing=missing_desc,
+                body_positive_rule=BODY_POSITIVE_PROMPT,
+            )
+
+            try:
+                reply = await self._call_llm(
+                    messages=[
+                        {"role": "system", "content": YIYI_PERSONALITY_PROMPT + "\n" + BODY_POSITIVE_PROMPT},
+                        {"role": "user", "content": prompt},
+                    ],
+                    max_tokens=300,
+                )
+                reply = reply.strip()
+            except Exception as e:
+                logger.warning(f"Scene ask LLM failed: {e}")
+                reply_parts = []
+                if "company" in interview_missing:
+                    reply_parts.append("什么类型的公司？互联网、金融、还是外企？")
+                if "position" in interview_missing:
+                    reply_parts.append("什么岗位呢？")
+                if "budget" in interview_missing:
+                    reply_parts.append("预算大概多少？")
+                reply = " ".join(reply_parts)
+
+            return {
+                "reply": reply,
+                "quick_replies": self._get_scene_quick_replies(context, interview_missing),
+                "state": context.state.value,
+                "slots": context.slots.model_dump(),
+            }
+
+        # Generic scene: check if can generate
+        if context.can_generate():
+            context.state = DialogState.GENERATE
+            return await self._generate_outfits(context)
+
+        missing = context.missing_required_slots()
+        reply = await self._ask_for_slots(missing, context)
+        return {
+            "reply": reply,
+            "quick_replies": self._get_context_quick_replies(context),
+            "state": context.state.value,
+            "slots": context.slots.model_dump(),
+        }
+
+    async def _handle_direct(self, message: str, context: DialogContext) -> Dict:
+        """User gave enough info -- skip directly to outfit generation."""
+        context.state = DialogState.GENERATE
+        return await self._generate_outfits(context)
+
+    async def _handle_chat(self, message: str, context: DialogContext) -> Dict:
+        """Free-form conversation with Yiyi personality. Detect scene intent."""
+        # Check if user shifts to a specific request
+        if any(kw in message for kw in INTERVIEW_KEYWORDS):
+            context.state = DialogState.SCENE
+            return await self._handle_scene(message, context)
+
+        # Check for other scene keywords
+        scene_kw = ["穿搭", "搭配", "穿什么", "造型", "约会", "通勤", "旅行", "面试"]
+        if any(kw in message for kw in scene_kw):
+            context.slots = await self.slot_extractor.extract(message, context.slots)
+            if context.slots.occasion:
+                context.state = DialogState.SCENE
+                return await self._handle_scene(message, context)
+
+        # Regular chat reply with Yiyi personality
+        prompt = CHAT_REPLY_PROMPT.format(
+            message=message,
+            personality=YIYI_PERSONALITY_PROMPT,
+        )
+
+        try:
+            reply = await self._call_llm(
+                messages=[
+                    {"role": "system", "content": YIYI_PERSONALITY_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=200,
+            )
+            reply = reply.strip()
+        except Exception as e:
+            logger.warning(f"Chat LLM failed: {e}")
+            reply = "嗯，有什么穿搭问题都可以问我哦"
+
+        return {
+            "reply": reply,
+            "quick_replies": ["面试穿搭", "约会穿搭", "日常穿搭", "帮我搭配"],
+            "state": DialogState.CHAT.value,
+            "slots": context.slots.model_dump(),
+        }
+
     async def _handle_generate(self, message: str, context: DialogContext) -> Dict:
         feedback = await self._analyze_feedback(message, len(context.generated_outfits))
 
@@ -144,6 +377,8 @@ class DialogEngine:
             context.state = DialogState.ACTION
             selected_idx = feedback.get("selected_index", 0)
             context.user_feedback.append(f"positive:{selected_idx}")
+            # Reset negative counter on positive feedback
+            context.negative_feedback_count = 0
             return {
                 "reply": "太好了！要不要试试穿上看看效果？",
                 "quick_replies": ["试穿效果", "查看搭配详情", "再来一套"],
@@ -158,16 +393,38 @@ class DialogEngine:
             context.user_feedback.append(f"refine:{feedback.get('reason', '')}")
             return await self._generate_outfits(context)
 
+        # Negative feedback
         context.state = DialogState.REFINE
+        context.negative_feedback_count += 1
         context.user_feedback.append("negative")
-        return {
+
+        result = {
             "reply": "没关系，告诉我你更想要什么感觉的？",
-            "quick_replies": ["换个风格", "换个颜色", "换个价位"],
+            "quick_replies": self._get_refine_quick_replies(context),
             "state": context.state.value,
             "slots": context.slots.model_dump(),
         }
 
+        # Studio signal on 3+ consecutive negative feedback
+        if context.negative_feedback_count >= 3:
+            result["studio_signal"] = "multiple_rejections"
+            result["reply"] = (
+                "看来线上挑不到完全满意的？要不试试工作室定制？"
+            )
+
+        return result
+
     async def _handle_refine(self, message: str, context: DialogContext) -> Dict:
+        # Check for give-up intent
+        if any(kw in message for kw in GIVE_UP_KEYWORDS):
+            context.state = DialogState.WRAP
+            return {
+                "reply": "没问题，下次想聊穿搭随时找我",
+                "quick_replies": ["开始新对话"],
+                "state": DialogState.WRAP.value,
+                "slots": context.slots.model_dump(),
+            }
+
         context.slots = await self.slot_extractor.extract(message, context.slots)
 
         if context.can_generate():
@@ -212,13 +469,14 @@ class DialogEngine:
 
     async def _handle_wrap(self, message: str, context: DialogContext) -> Dict:
         return {
-            "reply": "很高兴能帮到你！下次需要穿搭建议随时找我哦 ✨",
+            "reply": "很高兴能帮到你！下次需要穿搭建议随时找我",
             "quick_replies": ["开始新对话"],
             "state": DialogState.WRAP.value,
             "slots": context.slots.model_dump(),
         }
 
     async def _generate_outfits(self, context: DialogContext) -> Dict:
+        outfits = []
         if self._outfit_generator is not None:
             try:
                 outfits = await self._outfit_generator(context)
@@ -230,13 +488,21 @@ class DialogEngine:
             context.generated_outfits = []
 
         context.state = DialogState.GENERATE
+
+        # Rule-based fallback when no outfits generated
+        if not context.generated_outfits:
+            return {
+                "reply": "我先用基础规则帮你搭了一套，之后再细聊你的喜好",
+                "outfits": [],
+                "quick_replies": ["换个风格", "换个价位", "详细说说喜好"],
+                "state": context.state.value,
+                "slots": context.slots.model_dump(),
+            }
+
         reply = await self._format_outfit_reply(context)
 
-        quick_replies = []
-        for i, outfit in enumerate(context.generated_outfits[:3]):
-            label = chr(65 + i)
-            quick_replies.append(f"喜欢方案{label}")
-        quick_replies.append("都不喜欢")
+        # State-aware quick replies
+        quick_replies = self._get_generate_quick_replies(context)
 
         return {
             "reply": reply,
@@ -245,6 +511,41 @@ class DialogEngine:
             "state": context.state.value,
             "slots": context.slots.model_dump(),
         }
+
+    def _get_generate_quick_replies(self, context: DialogContext) -> List[str]:
+        """Generate state-aware quick replies for outfit display."""
+        base_replies = []
+        for i, outfit in enumerate(context.generated_outfits[:3]):
+            label = chr(65 + i)
+            base_replies.append(f"喜欢方案{label}")
+        base_replies.append("都不喜欢")
+
+        occasion = context.slots.occasion or ""
+        if occasion == "interview":
+            return base_replies[:-1] + ["换个价位", "换个风格", "都不喜欢"]
+        if occasion == "date":
+            return base_replies[:-1] + ["更甜一点", "更酷一点", "都不喜欢"]
+
+        return base_replies
+
+    def _get_refine_quick_replies(self, context: DialogContext) -> List[str]:
+        """Quick replies for refine state."""
+        return ["换个风格", "换个颜色", "换个价位"]
+
+    def _get_scene_quick_replies(
+        self, context: DialogContext, missing: List[str]
+    ) -> List[str]:
+        """Scene-specific quick replies based on missing slots."""
+        replies = []
+        if "company" in missing and context.slots.occasion == "interview":
+            replies.extend(["互联网公司", "金融公司", "外企", "国企", "创业公司"])
+        if "position" in missing and context.slots.occasion == "interview":
+            replies.extend(["技术岗", "产品岗", "设计岗", "运营岗", "管理岗"])
+        if "budget" in missing:
+            replies.extend(["500以内", "500-1500", "1500-3000", "3000以上"])
+        if "style_preference" in missing:
+            replies.extend(["简约利落", "温柔优雅", "专业正式"])
+        return replies[:6]
 
     async def _ask_for_slots(self, missing: List[str], context: DialogContext) -> str:
         slots_summary = context.slots.model_dump_json(exclude_none=True, exclude_defaults=True)
@@ -267,7 +568,7 @@ class DialogEngine:
         try:
             reply = await self._call_llm(
                 messages=[
-                    {"role": "system", "content": BODY_POSITIVE_PROMPT},
+                    {"role": "system", "content": YIYI_PERSONALITY_PROMPT + "\n" + BODY_POSITIVE_PROMPT},
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=300,
@@ -289,7 +590,10 @@ class DialogEngine:
         )
         try:
             raw = await self._call_llm(
-                messages=[{"role": "user", "content": prompt}],
+                messages=[
+                    {"role": "system", "content": YIYI_PERSONALITY_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
                 max_tokens=200,
             )
             text = raw.strip()
@@ -340,7 +644,7 @@ class DialogEngine:
         try:
             reply = await self._call_llm(
                 messages=[
-                    {"role": "system", "content": BODY_POSITIVE_PROMPT},
+                    {"role": "system", "content": YIYI_PERSONALITY_PROMPT + "\n" + BODY_POSITIVE_PROMPT},
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=400,
@@ -352,8 +656,11 @@ class DialogEngine:
 
     def _get_context_quick_replies(self, context: DialogContext) -> List[str]:
         replies = []
+        occasion = context.slots.occasion or ""
         if not context.is_slot_filled("occasion"):
             replies.extend(["面试穿搭", "约会穿搭", "日常通勤", "旅行穿搭"])
+        elif occasion == "interview":
+            replies.extend(["互联网公司", "金融公司", "外企", "国企", "创业公司"])
         if not context.is_slot_filled("style_preference"):
             replies.extend(["简约利落", "温柔优雅", "活力运动", "前卫个性"])
         if not context.is_slot_filled("budget"):
