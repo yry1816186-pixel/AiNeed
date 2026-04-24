@@ -11,7 +11,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 **Track A: 48-Hour Sprint (Phases 1-5)**
 
 - [ ] **Phase 1: Foundation + TS Cleanup + Visual Base** - Zero compile errors, data schema enriched, gender demoted, visual system initialized, FashionSigLIP visualization component
-- [ ] **Phase 2: Pipeline + Cold Start + Curated Wardrobe** - Recommendation pipeline single entry, cold start refactored, mock data seeded, curated wardrobe model, A/B experiment ID
+- [x] **Phase 2: Pipeline + Cold Start + Curated Wardrobe** - Recommendation pipeline single entry, cold start refactored, mock data seeded, curated wardrobe model, A/B experiment ID ✓ 2026-04-24
 - [x] **Phase 3: Navigation + Core Screens + Calendar** - 4-tab navigation, Today Screen with Yiyi proactive push, Discover Screen with curation space, simplified 7-day calendar ✓ 2026-04-24
 - [ ] **Phase 4: Yiyi Agent + Voice + Onboarding + Studio** - Agent state machine, interview outfit dialog, voice button, Edge-TTS, new 4-step onboarding, studio smart recommendation
 - [ ] **Phase 5: E2E Integration + Competition Demo** - Full flow test, visual consistency, competition-specific demo path, tech depth showcase
