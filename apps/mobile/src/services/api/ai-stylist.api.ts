@@ -108,6 +108,11 @@ export interface AiStylistSessionResponse {
   sessionExpiresAt?: string;
   isFallback?: boolean;
   error?: string;
+  // Dialog state machine fields (forwarded from Python DialogEngine via NestJS)
+  quickReplies?: string[];
+  action?: "try_on" | "detail";
+  studioSignal?: string;
+  outfits?: unknown[];
 }
 
 export interface AiStylistSuggestionResponse {
@@ -125,6 +130,9 @@ export interface DialogChatResponse {
     stylePreference?: string[];
     budget?: { min: number; max: number };
   };
+  action?: "try_on" | "detail";
+  studioSignal?: string;
+  audioUrl?: string;
 }
 
 export const aiStylistApi = {

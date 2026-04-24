@@ -8,6 +8,16 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   backendState?: string;
+  studioSignal?: string;
+  studio?: {
+    id: string;
+    name: string;
+    city: string;
+    specialty: string;
+    price_range: { min: number; max: number };
+    contact: string;
+    description: string;
+  };
 }
 
 interface AiStylistChatState {

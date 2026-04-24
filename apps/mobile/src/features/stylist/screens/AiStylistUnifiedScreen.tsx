@@ -12,6 +12,7 @@ import {
   FlatList,
   Image,
   Pressable,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -27,6 +28,7 @@ import Animated, {
   Easing,
   cancelAnimation,
 } from "react-native-reanimated";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useTranslation } from "../../../i18n";
 import { DesignTokens, Spacing, BorderRadius } from "../../../design-system/theme";
@@ -40,7 +42,15 @@ import { useAuthStore } from "../../auth/stores";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import { useAiStylistChatStore, type ChatMessage } from "../stores/aiStylistChatStore";
 import { TypewriterMessage } from "../components/TypewriterMessage";
-import { ItemReplacementModal, FeedbackModal, PresetQuestionsModal } from "../components";
+import {
+  ItemReplacementModal,
+  FeedbackModal,
+  PresetQuestionsModal,
+  TryOnBottomSheet,
+  StudioRecommendCard,
+  QuickReplyBar,
+} from "../components";
+import type { OutfitData, StudioData } from "../components";
 import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -570,7 +580,8 @@ const AnimatedMessageBubble: React.FC<{
   onItemPress?: (item: AiStylistOutfitItem) => void;
   onTryOn?: (plan: OutfitPlanDetail) => void;
   onLike?: (plan: OutfitPlanDetail) => void;
-}> = ({ msg, index, outfitPlan, onItemPress, onTryOn, onLike }) => {
+  onStudioPress?: (studio: ChatMessage["studio"]) => void;
+}> = ({ msg, index, outfitPlan, onItemPress, onTryOn, onLike, onStudioPress }) => {
   const { reducedMotion } = useReducedMotion();
   const { colors, seasonAccent } = useTheme();
   const s = useStyles(colors);
@@ -615,6 +626,12 @@ const AnimatedMessageBubble: React.FC<{
                 onItemPress={onItemPress}
                 onTryOn={onTryOn}
                 onLike={onLike}
+              />
+            )}
+            {msg.studioSignal && msg.studio && (
+              <StudioRecommendCard
+                studio={msg.studio}
+                onPress={() => onStudioPress?.(msg.studio)}
               />
             )}
           </View>
@@ -666,7 +683,55 @@ export const AiStylistUnifiedScreen: React.FC = () => {
   } | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
 
+  // Try-on + Studio + Quick Reply state
+  const tryOnRef = useRef<BottomSheetModal>(null);
+  const [selectedOutfit, setSelectedOutfit] = useState<OutfitData | null>(null);
+  const [quickReplies, setQuickReplies] = useState<string[]>([]);
+  const [studioData, setStudioData] = useState<StudioData | null>(null);
+
   const scrollViewRef = useRef<ScrollView>(null);
+
+  // Studio lookup from local directory for sprint (production would query backend)
+  const getStudioForSignal = useCallback((signal: string): StudioData | null => {
+    // Sprint: static studio data. In production, backend provides this.
+    const studios: StudioData[] = [
+      {
+        id: "studio_001",
+        name: "织造社",
+        city: "上海",
+        specialty: "职场穿搭定制",
+        price_range: { min: 2000, max: 8000 },
+        contact: "微信: zhizaoshe_studio",
+        description: "专注职场女性形象定制，擅长用高品质面料打造专业又不失个性的穿搭",
+      },
+      {
+        id: "studio_002",
+        name: "锦时造型",
+        city: "北京",
+        specialty: "婚礼造型",
+        price_range: { min: 5000, max: 20000 },
+        contact: "微信: jinshi_styling",
+        description: "北京资深婚礼造型工作室，提供从婚纱挑选到整体造型的一站式服务",
+      },
+      {
+        id: "studio_003",
+        name: "素白日常",
+        city: "杭州",
+        specialty: "日常穿搭定制",
+        price_range: { min: 800, max: 3000 },
+        contact: "微信: subai_daily",
+        description: "主打日常穿搭定制，擅长把基础款穿出个人风格，性价比极高",
+      },
+    ];
+    // Match by signal type -- premium/luxury -> higher-end studios
+    if (signal.includes("luxury") || signal.includes("premium")) {
+      return studios[1] ?? null; // 锦时造型 for high-end
+    }
+    if (signal.includes("wedding") || signal.includes("special_event")) {
+      return studios[1] ?? null;
+    }
+    return studios[0] ?? null; // Default: 织造社
+  }, []);
 
   const orderedScenes = useMemo(() => getOrderedScenes(), []);
 
@@ -681,6 +746,47 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       }
     });
   }, [authLoading, isAuthenticated, hasInitialized, isNewUser, fetchPresetQuestions]);
+
+  /** Process dialog response: handle quickReplies, try-on action, studio signal */
+  const processDialogResponse = useCallback(
+    (result: any) => {
+      // Handle quick replies from backend
+      if (result.quickReplies && Array.isArray(result.quickReplies)) {
+        setQuickReplies(result.quickReplies as string[]);
+      }
+
+      // Handle studio signal
+      const studioSignal = result.studioSignal as string | undefined;
+      let matchedStudio: StudioData | null = null;
+      if (studioSignal) {
+        matchedStudio = getStudioForSignal(studioSignal);
+        setStudioData(matchedStudio);
+      }
+
+      // Build and add assistant message with studio data
+      if (result.assistantMessage) {
+        const assistantMsg: ChatMessage = {
+          id: `assistant_${Date.now()}`,
+          role: "assistant",
+          content: result.assistantMessage,
+          timestamp: new Date().toISOString(),
+          studioSignal,
+          studio: matchedStudio ?? undefined,
+        };
+        addMessage(assistantMsg);
+      }
+
+      // Handle try-on action from dialog response
+      if (result.action === "try_on") {
+        const outfits = result.outfits as unknown[] | undefined;
+        if (outfits && outfits.length > 0) {
+          setSelectedOutfit(outfits[0] as OutfitData);
+        }
+        tryOnRef.current?.present();
+      }
+    },
+    [addMessage, getStudioForSignal]
+  );
 
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
@@ -705,14 +811,8 @@ export const AiStylistUnifiedScreen: React.FC = () => {
 
     if (sid) {
       const result = await sendMessage(text);
-      if (result?.assistantMessage) {
-        const assistantMsg: ChatMessage = {
-          id: `assistant_${Date.now()}`,
-          role: "assistant",
-          content: result.assistantMessage,
-          timestamp: new Date().toISOString(),
-        };
-        addMessage(assistantMsg);
+      if (result) {
+        processDialogResponse(result);
       }
       if (result?.result) {
         await fetchOutfitPlan(sid);
@@ -726,6 +826,7 @@ export const AiStylistUnifiedScreen: React.FC = () => {
     sendMessage,
     fetchOutfitPlan,
     addMessage,
+    processDialogResponse,
   ]);
 
   const handleScenePress = useCallback(
@@ -763,6 +864,46 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       }
     },
     [isGenerating, currentSessionId, createSession, sendMessage, fetchOutfitPlan, addMessage]
+  );
+
+  /** Handle quick reply selection -- sends text through same pipeline */
+  const handleQuickReplySelect = useCallback(
+    (option: string) => {
+      if (isGenerating) return;
+
+      const userMsg: ChatMessage = {
+        id: `user_${Date.now()}`,
+        role: "user",
+        content: option,
+        timestamp: new Date().toISOString(),
+      };
+      addMessage(userMsg);
+
+      void (async () => {
+        let sid = currentSessionId;
+        if (!sid) {
+          sid = await createSession(option);
+        }
+        if (sid) {
+          const result = await sendMessage(option);
+          if (result) {
+            processDialogResponse(result);
+          }
+          if (result?.result) {
+            await fetchOutfitPlan(sid);
+          }
+        }
+      })();
+    },
+    [
+      isGenerating,
+      currentSessionId,
+      createSession,
+      sendMessage,
+      fetchOutfitPlan,
+      addMessage,
+      processDialogResponse,
+    ]
   );
 
   const handlePresetSelect = useCallback(
@@ -874,6 +1015,12 @@ export const AiStylistUnifiedScreen: React.FC = () => {
     setShowFeedbackModal(true);
   }, []);
 
+  const handleStudioPress = useCallback((studio: ChatMessage["studio"]) => {
+    if (!studio) return;
+    // Sprint: show alert with studio contact info
+    Alert.alert(studio.name, `${studio.specialty}\n${studio.city}\n${studio.contact}`);
+  }, []);
+
   if (authLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -966,6 +1113,7 @@ export const AiStylistUnifiedScreen: React.FC = () => {
               onItemPress={handleItemPress}
               onTryOn={handleTryOn}
               onLike={handleLike}
+              onStudioPress={handleStudioPress}
             />
           ))}
 
@@ -999,6 +1147,11 @@ export const AiStylistUnifiedScreen: React.FC = () => {
             ))}
           </ScrollView>
         </View>
+
+        {/* Quick Reply bar -- shows when backend provides options */}
+        {quickReplies.length > 0 && (
+          <QuickReplyBar options={quickReplies} onSelect={handleQuickReplySelect} />
+        )}
 
         <View style={styles.inputBar}>
           <View style={styles.inputWrapper}>
@@ -1044,6 +1197,20 @@ export const AiStylistUnifiedScreen: React.FC = () => {
         isLoading={isAlternativesLoading}
         onSelect={handleReplacementSelect}
         onClose={() => setReplacementTarget(null)}
+      />
+
+      {/* Try-on BottomSheet -- presents within chat screen (no page navigation) */}
+      <TryOnBottomSheet
+        ref={tryOnRef}
+        outfit={selectedOutfit}
+        onSave={() => {
+          // Sprint: save outfit to wardrobe (would call API in production)
+          tryOnRef.current?.dismiss();
+        }}
+        onTryAnother={() => {
+          tryOnRef.current?.dismiss();
+          setInputText("再来一套");
+        }}
       />
     </SafeAreaView>
   );
