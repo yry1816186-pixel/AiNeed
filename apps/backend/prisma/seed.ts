@@ -10,6 +10,7 @@ import { seedFashionRules } from "./seeds/fashion-rules.seed";
 import { seedRecommendationTestData } from "./seeds/recommendation-test.seed";
 import { seedRecommendations } from "./seeds/recommendations.seed";
 import { seedEcommerce } from "./seeds/ecommerce.seed";
+import { seedFeatureFlags } from "./seeds/feature-flags.seed";
 
 const prisma = new PrismaClient();
 
@@ -47,13 +48,17 @@ async function main() {
   const { count: ruleCount } = await seedFashionRules(prisma);
   console.log(`   ✅ ${ruleCount} 条时尚规则`);
 
-  console.log("\n🎯 Step 8/9: 创建推荐测试数据...");
+  console.log("\n🎯 Step 8/10: 创建推荐测试数据...");
   const recTestData = await seedRecommendationTestData(prisma, userMap, itemMap);
   console.log(
     `   ✅ ${recTestData.eventCount} 条行为事件, ${recTestData.quizResultCount} 条问卷结果, ${recTestData.impressionCount} 条推荐曝光`
   );
 
-  console.log("\n🛒 Step 9/9: 创建推荐和电商数据...");
+  console.log("\n🧪 Step 9/10: 创建 Feature Flag 种子数据...");
+  await seedFeatureFlags(prisma);
+  console.log(`   ✅ Feature Flag 数据完成`);
+
+  console.log("\n🛒 Step 10/10: 创建推荐和电商数据...");
   try {
     const recData = await seedRecommendations(prisma, userMap, itemMap);
     console.log(`   ✅ 推荐数据完成`);

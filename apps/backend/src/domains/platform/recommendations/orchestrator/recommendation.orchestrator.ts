@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Optional } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.constants";
@@ -20,6 +20,7 @@ import { RecommendationExplainerService } from "../services/recommendation-expla
 import { RecommendationFeedService } from "../services/recommendation-feed.service";
 import { RuleEngineService } from "../services/rule-engine.service";
 import { SASRecService } from "../services/sasrec.service";
+import type { FeatureFlagService } from "../../feature-flags/feature-flag.service";
 
 export interface ScoreWeights {
   rule: number;
@@ -164,7 +165,8 @@ export class RecommendationOrchestrator {
     private readonly feedService: RecommendationFeedService,
     private readonly outfitCompletionService: OutfitCompletionService,
     private readonly goldenRecommendationService: GoldenRecommendationService,
-    private readonly behaviorTrackingService: BehaviorTrackingService
+    private readonly behaviorTrackingService: BehaviorTrackingService,
+    @Optional() private readonly featureFlagService: FeatureFlagService | null
   ) {}
 
   async getRecommendations(request: RecommendationRequest): Promise<RecommendationResult[]> {
@@ -225,7 +227,7 @@ export class RecommendationOrchestrator {
 
       const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
 
-      const experimentId = this.generateExperimentId();
+      const { experimentId } = await this.assignExperimentVariant(userId);
 
       return fused.map((sc) =>
         this.toRecommendationResult(sc, {
@@ -1053,6 +1055,39 @@ export class RecommendationOrchestrator {
 
   private generateExperimentId(): string {
     return `exp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  /**
+   * Assign experiment variant using FeatureFlag system.
+   * Falls back to timestamp-random format when no flag is configured.
+   */
+  private async assignExperimentVariant(
+    userId: string
+  ): Promise<{ experimentId: string; variant?: string }> {
+    if (!this.featureFlagService) {
+      return { experimentId: this.generateExperimentId() };
+    }
+
+    try {
+      const result = await this.featureFlagService.evaluate(
+        "recommendation_algorithm_v2",
+        userId
+      );
+
+      if (result.variant) {
+        return {
+          experimentId: `exp-${result.variant}-${Date.now()}`,
+          variant: result.variant,
+        };
+      }
+
+      return { experimentId: this.generateExperimentId() };
+    } catch (error) {
+      this.logger.debug(
+        `Feature flag evaluation failed, using fallback experiment ID: ${error}`
+      );
+      return { experimentId: this.generateExperimentId() };
+    }
   }
 
   private async degradedPipeline(request: RecommendationRequest): Promise<RecommendationResult[]> {

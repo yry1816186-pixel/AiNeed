@@ -22,6 +22,7 @@ import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { RedisModule } from "../../../common/redis/redis.module";
 import { CacheModule } from "../../../modules/cache/cache.module";
 import { AIModule } from "../../ai-core/ai/ai.module";
+import { FeatureFlagModule } from "../../platform/feature-flags/feature-flag.module";
 
 import { RecommendationOrchestrator } from "./orchestrator";
 import { RecommendationsController } from "./recommendations.controller";
@@ -50,6 +51,7 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     AIModule,
     RedisModule,
     CacheModule,
+    FeatureFlagModule,
     // Algorithm submodules
     CollaborativeSubmodule,
     ContentSubmodule,
