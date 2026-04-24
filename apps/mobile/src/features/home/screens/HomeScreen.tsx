@@ -175,7 +175,7 @@ const HomeScreen: React.FC = () => {
   }, [navigation]);
 
   const handleWardrobePress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Me", params: { screen: "Wardrobe" } });
+    navigation.navigate("MainTabs", { screen: "Discover", params: { screen: "Wardrobe" } });
   }, [navigation]);
 
   const handleStyleReportPress = useCallback(() => {

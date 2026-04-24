@@ -722,7 +722,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "分析身材和肤色",
       onPress: () => {
         setMenuVisible(false);
-        navigateTab("Me", "Wardrobe");
+        navigateTab("Discover", "Wardrobe");
       },
     },
     {
@@ -742,7 +742,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "管理你的衣物",
       onPress: () => {
         setMenuVisible(false);
-        navigateTab("Me", "Wardrobe");
+        navigateTab("Discover", "Wardrobe");
       },
     },
   ];

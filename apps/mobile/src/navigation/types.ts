@@ -46,6 +46,8 @@ export type DiscoverStackParamList = {
   VirtualTryOn: { clothingId?: string };
   TryOnResult: { resultId: string };
   TryOnHistory: undefined;
+  Wardrobe: undefined;
+  Favorites: undefined;
 };
 
 // ============================================================
@@ -92,8 +94,7 @@ export type ProfileStackParamList = {
   BodyAnalysis: undefined;
   ColorAnalysis: undefined;
   SharePoster: { type?: string; id?: string };
-  Wardrobe: undefined;
-  Favorites: undefined;
+  // Wardrobe and Favorites REMOVED -- moved to DiscoverStack
   Settings: undefined;
   NotificationSettings: undefined;
   Subscription: undefined;
@@ -430,14 +431,14 @@ export const DEEP_LINK_ROUTES: DeepLinkRouteConfig[] = [
   },
   {
     pattern: "wardrobe",
-    tab: "Me",
+    tab: "Discover",
     stack: "Wardrobe",
     paramsMapping: () => undefined,
     requiresAuth: true,
   },
   {
     pattern: "favorites",
-    tab: "Me",
+    tab: "Discover",
     stack: "Favorites",
     paramsMapping: () => undefined,
     requiresAuth: true,

@@ -157,7 +157,8 @@ export const ProfileScreenComponent: React.FC = () => {
       label: t.wardrobe.title,
       accessibilityLabel: t.wardrobe.title,
       color: colors.textSecondary,
-      onPress: () => navigation.navigate("Wardrobe"),
+      onPress: () =>
+        navigation.navigate("MainTabs", { screen: "Discover", params: { screen: "Wardrobe" } }),
     },
     {
       icon: "sparkles-outline" as const,
@@ -171,7 +172,8 @@ export const ProfileScreenComponent: React.FC = () => {
       label: t.profile.myFavorites,
       accessibilityLabel: t.profile.myFavorites,
       color: colors.textSecondary,
-      onPress: () => navigation.navigate("Favorites"),
+      onPress: () =>
+        navigation.navigate("MainTabs", { screen: "Discover", params: { screen: "Favorites" } }),
     },
     {
       icon: "color-wand-outline" as const,

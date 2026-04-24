@@ -347,6 +347,24 @@ export function DiscoverStackNavigator() {
           </G>
         )}
       </DiscoverStack.Screen>
+      <DiscoverStack.Screen name="Wardrobe" options={{ animation: "slide_from_right" }}>
+        {() => (
+          <G route="Wardrobe">
+            <SuspenseScreen>
+              <WardrobeScreen />
+            </SuspenseScreen>
+          </G>
+        )}
+      </DiscoverStack.Screen>
+      <DiscoverStack.Screen name="Favorites" options={{ animation: "slide_from_right" }}>
+        {() => (
+          <G route="Favorites">
+            <SuspenseScreen>
+              <FavoritesScreen />
+            </SuspenseScreen>
+          </G>
+        )}
+      </DiscoverStack.Screen>
     </DiscoverStack.Navigator>
   );
 }
@@ -464,24 +482,6 @@ export function ProfileStackNavigator() {
           <G route="SharePoster">
             <SuspenseScreen>
               <SharePosterScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Wardrobe" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Wardrobe">
-            <SuspenseScreen>
-              <WardrobeScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Favorites" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Favorites">
-            <SuspenseScreen>
-              <FavoritesScreen />
             </SuspenseScreen>
           </G>
         )}
