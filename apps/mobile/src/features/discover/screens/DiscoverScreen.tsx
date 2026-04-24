@@ -69,7 +69,7 @@ export function DiscoverScreen() {
           <EmptyState
             illustration="search"
             title="还没有发现内容"
-            message="去完成风格测试，解锁个性化推荐"
+            description="去完成风格测试，解锁个性化推荐"
             actionLabel="做风格测试"
             onAction={() => navigateTryOn("Wardrobe")}
           />
@@ -78,7 +78,7 @@ export function DiscoverScreen() {
     );
   }
 
-  const scenes = (feedData as Record<string, unknown>)?.scenes as string[] | undefined;
+  const scenes = (feedData as unknown as Record<string, unknown>)?.scenes as string[] | undefined;
 
   return (
     <View style={styles.container}>

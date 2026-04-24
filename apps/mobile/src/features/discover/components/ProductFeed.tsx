@@ -70,7 +70,7 @@ export function ProductFeed({ onBrowseWardrobe }: ProductFeedProps) {
         <EmptyState
           illustration="search"
           title="加载失败"
-          message={error}
+          description={error}
           actionLabel="重试"
           onAction={() => fetchProducts()}
         />
@@ -84,6 +84,7 @@ export function ProductFeed({ onBrowseWardrobe }: ProductFeedProps) {
         <EmptyState
           illustration="search"
           title="还没有发现好物，去衣橱看看？"
+          description="浏览你的衣橱，发现更多搭配灵感"
           actionLabel="浏览衣橱"
           onAction={onBrowseWardrobe}
         />

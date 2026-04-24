@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -37,7 +37,7 @@ export interface TryOnBottomSheetProps {
   outfit: OutfitData | null;
   isLoading?: boolean;
   error?: string | null;
-  onSave: () => void;
+  onSave: () => Promise<void>;
   onTryAnother: () => void;
   onRetry?: () => void;
 }
@@ -55,6 +55,24 @@ export const TryOnBottomSheet = React.forwardRef<BottomSheetModal, TryOnBottomSh
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const snapPoints = useMemo(() => ["70%"], []);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
+    const handleSave = useCallback(async () => {
+      setIsSaving(true);
+      setSaveError(null);
+      setSaveSuccess(false);
+      try {
+        await onSave();
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+      } catch (err) {
+        setSaveError("保存失败，请重试");
+      } finally {
+        setIsSaving(false);
+      }
+    }, [onSave]);
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
@@ -123,7 +141,7 @@ export const TryOnBottomSheet = React.forwardRef<BottomSheetModal, TryOnBottomSh
               <EmptyState
                 illustration="empty-box"
                 title="试穿结果生成中"
-                message="伊伊正在为你搭配，请稍候"
+                description="伊伊正在为你搭配，请稍候"
               />
             </View>
           )}
@@ -183,14 +201,28 @@ export const TryOnBottomSheet = React.forwardRef<BottomSheetModal, TryOnBottomSh
 
               {/* Action buttons */}
               <View style={styles.actions}>
-                <TouchableOpacity style={styles.saveButton} onPress={onSave} activeOpacity={0.8}>
-                  <Ionicons
-                    name="heart-outline"
-                    size={18}
-                    color={DesignTokens.colors.neutral.white}
-                  />
-                  <Text style={styles.saveButtonText}>保存到衣橱</Text>
+                <TouchableOpacity
+                  style={[styles.saveButton, isSaving && styles.saveButtonDisabled]}
+                  onPress={handleSave}
+                  activeOpacity={0.8}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                  ) : (
+                    <>
+                      <Ionicons
+                        name={saveSuccess ? "checkmark" : "heart-outline"}
+                        size={18}
+                        color={DesignTokens.colors.neutral.white}
+                      />
+                      <Text style={styles.saveButtonText}>
+                        {saveSuccess ? "已保存" : "保存到衣橱"}
+                      </Text>
+                    </>
+                  )}
                 </TouchableOpacity>
+                {saveError && <Text style={styles.saveErrorText}>{saveError}</Text>}
                 <TouchableOpacity
                   style={styles.tryAnotherButton}
                   onPress={onTryAnother}
@@ -338,6 +370,15 @@ const useStyles = createStyles((colors) =>
       backgroundColor: DesignTokens.colors.brand.terracotta,
       ...DesignTokens.shadows.brand,
     } as ViewStyle,
+    saveButtonDisabled: {
+      opacity: 0.6,
+    } as ViewStyle,
+    saveErrorText: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      color: DesignTokens.colors.semantic.error,
+      textAlign: "center",
+      marginTop: 4,
+    },
     saveButtonText: {
       fontSize: DesignTokens.typography.sizes.base,
       fontWeight: DesignTokens.typography.fontWeights.semibold as TextStyle["fontWeight"],

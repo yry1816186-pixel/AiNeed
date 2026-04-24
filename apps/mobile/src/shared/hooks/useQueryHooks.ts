@@ -10,6 +10,7 @@ import {
   type UseQueryOptions,
   type UseInfiniteQueryOptions,
 } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 import { clothingApi } from "../../services/api/clothing.api";
 import { cartApi, searchApi } from "../../services/api/commerce.api";

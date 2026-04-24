@@ -255,11 +255,11 @@ export const ProfileScreenComponent: React.FC = () => {
         <ErrorState
           title="加载失败"
           message={error}
+          actionLabel="重新加载"
           onRetry={() => {
             setLoading(true);
             void fetchStats();
           }}
-          actionLabel="重新加载"
         />
       </SafeAreaView>
     );

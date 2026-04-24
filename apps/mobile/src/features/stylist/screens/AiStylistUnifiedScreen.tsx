@@ -1263,8 +1263,13 @@ export const AiStylistUnifiedScreen: React.FC = () => {
         </View>
 
         {/* Quick Reply bar -- shows when backend provides options */}
-        {quickReplies.length > 0 && (
+        {quickReplies.length > 0 ? (
           <QuickReplyBar options={quickReplies} onSelect={handleQuickReplySelect} />
+        ) : (
+          <QuickReplyBar
+            options={["换一套", "不喜欢", "推荐其他风格"]}
+            onSelect={handleQuickReplySelect}
+          />
         )}
 
         <View style={styles.inputBar}>
@@ -1323,7 +1328,7 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       <TryOnBottomSheet
         ref={tryOnRef}
         outfit={selectedOutfit}
-        onSave={() => {
+        onSave={async () => {
           tryOnRef.current?.dismiss();
         }}
         onTryAnother={() => {

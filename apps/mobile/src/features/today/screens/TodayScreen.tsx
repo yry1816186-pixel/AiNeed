@@ -67,7 +67,7 @@ export function TodayScreen() {
           <EmptyState
             illustration="empty-box"
             title="今天还没有推荐"
-            message="伊伊正在根据天气和场景为你搭配"
+            description="伊伊正在根据天气和场景为你搭配"
             actionLabel="看看昨天推荐"
             onAction={() => navigateStylist("AIStylist")}
           />
