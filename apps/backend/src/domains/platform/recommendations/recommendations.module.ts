@@ -42,6 +42,7 @@ import { RecommendationFeedService } from "./services/recommendation-feed.servic
 import { RuleEngineService } from "./services/rule-engine.service";
 import { SASRecClientService } from "./services/sasrec-client.service";
 import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
+import { WardrobeComplementaryService } from "./services/wardrobe-complementary.service";
 import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./submodules";
 
 @Module({
@@ -93,6 +94,8 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     BodyMetricsService,
     // Profile completeness
     ProfileCompletenessService,
+    // Wardrobe complementary recommendations
+    WardrobeComplementaryService,
   ],
   exports: [
     // Primary exports - use orchestrator for new code
@@ -121,6 +124,8 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     GoldenRecommendationService,
     // Rule engine
     RuleEngineService,
+    // Wardrobe complementary
+    WardrobeComplementaryService,
   ],
 })
 export class RecommendationsModule {}

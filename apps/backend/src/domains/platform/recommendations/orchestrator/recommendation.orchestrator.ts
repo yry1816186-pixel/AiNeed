@@ -20,6 +20,7 @@ import { RecommendationExplainerService } from "../services/recommendation-expla
 import { RecommendationFeedService } from "../services/recommendation-feed.service";
 import { RuleEngineService } from "../services/rule-engine.service";
 import { SASRecService } from "../services/sasrec.service";
+import { WardrobeComplementaryService } from "../services/wardrobe-complementary.service";
 import type { FeatureFlagService } from "../../feature-flags/feature-flag.service";
 
 export interface ScoreWeights {
@@ -166,6 +167,7 @@ export class RecommendationOrchestrator {
     private readonly outfitCompletionService: OutfitCompletionService,
     private readonly goldenRecommendationService: GoldenRecommendationService,
     private readonly behaviorTrackingService: BehaviorTrackingService,
+    private readonly wardrobeComplementary: WardrobeComplementaryService,
     @Optional() private readonly featureFlagService: FeatureFlagService | null
   ) {}
 
@@ -227,9 +229,12 @@ export class RecommendationOrchestrator {
 
       const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
 
+      // Mix in complementary recommendations from wardrobe analysis
+      const complementary = await this.getComplementaryItems(userId, fused, context);
+
       const { experimentId } = await this.assignExperimentVariant(userId);
 
-      return fused.map((sc) =>
+      const mainResults = fused.map((sc) =>
         this.toRecommendationResult(sc, {
           totalCandidates,
           afterSceneFilter,
@@ -238,6 +243,8 @@ export class RecommendationOrchestrator {
           experimentId,
         })
       );
+
+      return [...mainResults, ...complementary];
     } catch (error) {
       this.logger.warn(
         `AI pipeline unavailable, falling back to rule engine: ${
@@ -1069,10 +1076,7 @@ export class RecommendationOrchestrator {
     }
 
     try {
-      const result = await this.featureFlagService.evaluate(
-        "recommendation_algorithm_v2",
-        userId
-      );
+      const result = await this.featureFlagService.evaluate("recommendation_algorithm_v2", userId);
 
       if (result.variant) {
         return {
@@ -1083,9 +1087,7 @@ export class RecommendationOrchestrator {
 
       return { experimentId: this.generateExperimentId() };
     } catch (error) {
-      this.logger.debug(
-        `Feature flag evaluation failed, using fallback experiment ID: ${error}`
-      );
+      this.logger.debug(`Feature flag evaluation failed, using fallback experiment ID: ${error}`);
       return { experimentId: this.generateExperimentId() };
     }
   }
@@ -1138,6 +1140,137 @@ export class RecommendationOrchestrator {
       return behaviorCount < this.COLD_START_THRESHOLD;
     } catch {
       return true;
+    }
+  }
+
+  private async getComplementaryItems(
+    userId: string,
+    fused: ScoredCandidate[],
+    context?: RecommendationRequest["context"]
+  ): Promise<RecommendationResult[]> {
+    try {
+      const isColdStart = await this.isColdStartUser(userId);
+      if (isColdStart) {
+        return [];
+      }
+
+      const existingIds = new Set(fused.map((sc) => sc.candidate.id));
+
+      const [bridgeRecs, categoryGaps] = await Promise.all([
+        this.wardrobeComplementary.getComplementaryRecommendations(userId, context),
+        this.wardrobeComplementary.getStyleGaps(userId),
+      ]);
+
+      const complementaryResults: RecommendationResult[] = [];
+
+      for (const rec of bridgeRecs) {
+        if (existingIds.has(rec.itemId)) {continue;}
+        existingIds.add(rec.itemId);
+
+        const item = await this.prisma.clothingItem.findUnique({
+          where: { id: rec.itemId },
+          include: { brand: { select: { id: true, name: true, logo: true } } },
+        });
+
+        if (!item) {continue;}
+
+        complementaryResults.push({
+          item: {
+            id: item.id,
+            name: item.name,
+            price: Number(item.price),
+            category: String(item.category),
+            images: item.images as string[],
+            brand: item.brand
+              ? { id: item.brand.id, name: item.brand.name, logo: item.brand.logo }
+              : null,
+          },
+          score: 60,
+          sources: ["wardrobe-complementary"],
+          reasons: [rec.reason],
+          explanation: {
+            why: rec.reason,
+            alternative:
+              rec.bridgeType === "bridge"
+                ? `也可以看看纯${rec.newStyle}风格的更多单品`
+                : `或者回到你熟悉的${rec.dominantStyle}风格`,
+            nextAction: "试穿看看效果",
+            confidence: 0.6,
+          },
+        });
+      }
+
+      const gapCategories = categoryGaps.filter((g) => g.isGap).map((g) => g.category);
+      if (gapCategories.length > 0 && complementaryResults.length < 2) {
+        const gapCategory = gapCategories[0];
+        if (gapCategory) {
+          const gapFilling = await this.prisma.clothingItem.findFirst({
+            where: {
+              isActive: true,
+              isDeleted: false,
+              category: gapCategory as ClothingCategory,
+              id: { notIn: [...existingIds] },
+            },
+            include: { brand: { select: { id: true, name: true, logo: true } } },
+            orderBy: { viewCount: "desc" },
+          });
+
+          if (gapFilling && gapFilling.brand) {
+            complementaryResults.push({
+              item: {
+                id: gapFilling.id,
+                name: gapFilling.name,
+                price: Number(gapFilling.price),
+                category: String(gapFilling.category),
+                images: gapFilling.images as string[],
+                brand: {
+                  id: gapFilling.brand.id,
+                  name: gapFilling.brand.name,
+                  logo: gapFilling.brand.logo,
+                },
+              },
+              score: 55,
+              sources: ["wardrobe-complementary"],
+              reasons: [`你的衣橱缺少${gapCategory}，这件能补全整体搭配`],
+              explanation: {
+                why: `你的衣橱缺少${gapCategory}，这件能补全整体搭配`,
+                alternative: "查看更多同类型单品",
+                nextAction: "试穿看看效果",
+                confidence: 0.55,
+              },
+            });
+          } else if (gapFilling) {
+            complementaryResults.push({
+              item: {
+                id: gapFilling.id,
+                name: gapFilling.name,
+                price: Number(gapFilling.price),
+                category: String(gapFilling.category),
+                images: gapFilling.images as string[],
+                brand: null,
+              },
+              score: 55,
+              sources: ["wardrobe-complementary"],
+              reasons: [`你的衣橱缺少${gapCategory}，这件能补全整体搭配`],
+              explanation: {
+                why: `你的衣橱缺少${gapCategory}，这件能补全整体搭配`,
+                alternative: "查看更多同类型单品",
+                nextAction: "试穿看看效果",
+                confidence: 0.55,
+              },
+            });
+          }
+        }
+      }
+
+      return complementaryResults.slice(0, 2);
+    } catch (error) {
+      this.logger.debug(
+        `Complementary recommendations failed: ${
+          error instanceof Error ? error.message : "unknown"
+        }`
+      );
+      return [];
     }
   }
 
