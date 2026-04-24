@@ -1,0 +1,68 @@
+[
+  {
+    "id": "studio_001",
+    "name": "织造社",
+    "city": "上海",
+    "specialty": "职场穿搭定制",
+    "price_range": { "min": 2000, "max": 8000 },
+    "contact": "微信: zhizaoshe_studio",
+    "style_tags": ["极简", "轻正式"],
+    "occasions": ["interview", "work"],
+    "description": "专注职场女性形象定制，擅长用高品质面料打造专业又不失个性的穿搭"
+  },
+  {
+    "id": "studio_002",
+    "name": "锦时造型",
+    "city": "北京",
+    "specialty": "婚礼造型",
+    "price_range": { "min": 5000, "max": 20000 },
+    "contact": "微信: jinshi_styling",
+    "style_tags": ["优雅", "浪漫", "华丽"],
+    "occasions": ["wedding", "ceremony"],
+    "description": "北京资深婚礼造型工作室，提供从婚纱挑选到整体造型的一站式服务"
+  },
+  {
+    "id": "studio_003",
+    "name": "素白日常",
+    "city": "杭州",
+    "specialty": "日常穿搭定制",
+    "price_range": { "min": 800, "max": 3000 },
+    "contact": "微信: subai_daily",
+    "style_tags": ["自然", "文艺", "简约"],
+    "occasions": ["daily", "casual", "date"],
+    "description": "主打日常穿搭定制，擅长把基础款穿出个人风格，性价比极高"
+  },
+  {
+    "id": "studio_004",
+    "name": "BOUNDLESS边界",
+    "city": "上海",
+    "specialty": "设计师品牌集合",
+    "price_range": { "min": 3000, "max": 15000 },
+    "contact": "微信: boundless_design",
+    "style_tags": ["先锋", "实验", "艺术感"],
+    "occasions": ["party", "event", "photoshoot"],
+    "description": "集合国内新锐设计师品牌，适合追求独特穿搭表达的风格探索者"
+  },
+  {
+    "id": "studio_005",
+    "name": "拾锦阁",
+    "city": "成都",
+    "specialty": "国风定制",
+    "price_range": { "min": 1500, "max": 10000 },
+    "contact": "微信: shijinge_guofeng",
+    "style_tags": ["新中式", "国风", "古典"],
+    "occasions": ["ceremony", "photoshoot", "event"],
+    "description": "专注于新中式穿搭定制，将传统元素融入现代日常，打造独特东方美学"
+  },
+  {
+    "id": "studio_006",
+    "name": "NEON霓虹",
+    "city": "深圳",
+    "specialty": "街头潮流定制",
+    "price_range": { "min": 1000, "max": 5000 },
+    "contact": "微信: neon_streetwear",
+    "style_tags": ["街头", "潮流", "机能"],
+    "occasions": ["casual", "party", "date"],
+    "description": "深圳潮流风向标，擅长街头风格混搭定制，年轻人的穿搭实验室"
+  }
+]

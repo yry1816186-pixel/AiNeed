@@ -508,6 +508,14 @@ class FullOutfitEngine:
         self._cache_lock = threading.RLock()
         self._max_cache_size = 200
 
+        # Fashion rules dynamic loading (RUL-01, RUL-02)
+        from ml.services.stylist.rule_loader import FashionRuleLoader
+        try:
+            self.rule_loader = FashionRuleLoader()
+        except Exception as e:
+            logger.warning("Failed to initialize FashionRuleLoader: %s", e)
+            self.rule_loader = None
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -1938,6 +1946,11 @@ class FullOutfitEngine:
             rec = _BODY_TYPE_RECOMMENDATIONS[body_type]
             parts.append(f"针对{rec['name']}体型优化，{rec['focus']}")
 
+        # 4b. Fashion rules injection (RUL-01, RUL-02)
+        rule_tip = self._get_rule_tip(user_profile, context)
+        if rule_tip:
+            parts.append(rule_tip)
+
         # 5. 评分总结
         parts.append(
             f"综合评分{plan.overall_score:.0f}分"
@@ -1979,6 +1992,37 @@ class FullOutfitEngine:
                 "cache_size": len(self._cache),
                 "max_cache_size": self._max_cache_size,
             }
+
+    def _get_rule_tip(
+        self,
+        user_profile: UserProfile,
+        context: OutfitContext,
+    ) -> str:
+        """Get a fashion rule-based tip for the explanation (RUL-01, RUL-02).
+
+        Loads matching rules from JSON files filtered by body_type, occasion,
+        and injects the first relevant tip into the outfit explanation.
+        """
+        if not self.rule_loader:
+            return ""
+
+        body_type = getattr(user_profile, "body_type", None)
+        occasion = context.occasion
+
+        rules = self.rule_loader.get_filtered_rules(
+            body_type=body_type,
+            occasion=occasion,
+        )
+
+        for rule in rules:
+            tip = rule.get("tips", "")
+            if tip:
+                return tip
+            strategy = rule.get("strategy", "")
+            if strategy:
+                return strategy
+
+        return ""
 
 
 # ---------------------------------------------------------------------------
