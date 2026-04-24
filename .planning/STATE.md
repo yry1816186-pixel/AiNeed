@@ -11,19 +11,19 @@ See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 ## Current Position
 
 Phase: 4 of 10 (Yiyi Agent + Voice + Onboarding + Studio)
-Plan: 3 of 7 executed in current phase
+Plan: 4 of 7 executed in current phase
 Status: In Progress
-Last activity: 2026-04-24 -- Plan 04-03 completed: New onboarding step components + 4-step wizard flow
+Last activity: 2026-04-24 -- Plan 04-04 completed: TryOnBottomSheet + StudioRecommendCard + QuickReplyBar wired into chat screen
 
-Progress: [#######...] 54%
+Progress: [########..] 62%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 3)
+- Total plans completed: 13 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 4)
 - Average duration: ~22min
-- Total execution time: ~4h 2min
+- Total execution time: ~4h 18min
 
 **By Phase:**
 
@@ -32,7 +32,7 @@ Progress: [#######...] 54%
 | 1     | 3     | ~110m | ~37min   |
 | 2     | 3     | ~51m  | ~17min   |
 | 3     | 3     | 55m   | 18m      |
-| 4     | 3     | 39m   | 13m      |
+| 4     | 4     | 55m   | 14m      |
 
 **Recent Trend:**
 
@@ -83,6 +83,7 @@ Critical decisions affecting current work:
 - **Plan 01**: DialogEngine core extension -- SCENE/DIRECT/CHAT states, interview flow (company/position/budget), YIYI_PERSONALITY_PROMPT, FashionRuleLoader (7 JSON files), StudioSignalDetector (5 signals), 50 pytest tests (17min, 4 commits)
 - **Plan 02**: NestJS dialog forwarding + TTS + Yiyi prompt -- DialogState enum parity (SCENE/DIRECT/CHAT), EdgeTTSService gateway, POST /tts endpoint, Yiyi personality system prompt, deprecated advanceState/updateSlots, Python /dialog/process forwarding (9min, 2 commits)
 - **Plan 03**: New onboarding step components -- SceneSelectionStep (8 cards, phosphor icons, multi-select 1-3), QuickProfileStep (age/height/weight/garmentPreference), StyleExpressionStep (5 styles + 6 outfit placeholders), OnboardingWizard rewritten with 4-step flow, store updated (13min, 2 commits)
+- **Plan 04**: TryOnBottomSheet + StudioRecommendCard + QuickReplyBar -- TryOnBottomSheet wraps BottomSheetModal with snapPoints=["70%"], StudioRecommendCard renders studio info in chat, QuickReplyBar wired with backend-provided options, processDialogResponse handles try_on action and studio signal, ChatMessage type extended (16min, 2 commits)
 
 ### Pending Todos
 
@@ -115,5 +116,5 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-04-24
-Stopped at: Completed 04-03-PLAN.md (New Onboarding Step Components + 4-Step Wizard)
-Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-03-SUMMARY.md
+Stopped at: Completed 04-04-PLAN.md (TryOnBottomSheet + StudioRecommendCard + QuickReplyBar)
+Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-04-SUMMARY.md

@@ -109,7 +109,7 @@ Plans:
 - [ ] 04-01-PLAN.md — Python DialogEngine: 新状态(SCENE/DIRECT/CHAT) + 面试流程 + 伊伊人格 + FashionRuleLoader + StudioSignalDetector (YIYI-01~03, YIYI-05~07, RUL-01~03, WKS-01, WKS-03, ETH-01~02)
 - [ ] 04-02-PLAN.md — NestJS Backend: DialogState DTO 同步 + Yiyi 系统提示词 + Python 转发 + Edge-TTS 端点 (YIYI-03, YIYI-05, VOI-03, WKS-04)
 - [x] 04-03-PLAN.md — Onboarding Steps 1-3: 场景选择 + 快速画像 + 风格表达 (ONB-01~03, ONB-05) ✓ 2026-04-24
-- [ ] 04-04-PLAN.md — Chat UI: TryOnBottomSheet + StudioRecommendCard + QuickReply 接入 (YIYI-04, YIYI-06, WKS-02, WKS-04)
+- [x] 04-04-PLAN.md — Chat UI: TryOnBottomSheet + StudioRecommendCard + QuickReply 接入 (YIYI-04, YIYI-06, WKS-02, WKS-04) ✓ 2026-04-24
 - [ ] 04-05-PLAN.md — Voice: @react-native-voice/voice STT + Edge-TTS TTS + VoiceButton 接入 (VOI-01~03)
 - [ ] 04-06-PLAN.md — Onboarding Step 4: "让伊伊搭第一套" 3 方案选择+保存衣橱 (ONB-04)
 - [ ] 04-07-PLAN.md — E2E Wiring: 首页语音按钮接入 + 偏好记忆 + 面试流程验证 (YIYI-04, YIYI-05)
