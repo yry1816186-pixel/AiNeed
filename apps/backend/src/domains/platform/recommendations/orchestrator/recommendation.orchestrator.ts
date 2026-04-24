@@ -5,12 +5,19 @@ import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.cons
 import { CacheService } from "../../../../modules/cache/cache.service";
 import { ClothingCategory } from "../../../../types/prisma-enums";
 import { AdvancedRecommendationService } from "../services/advanced-recommendation.service";
+import {
+  BehaviorTrackingService,
+  type BehaviorAction,
+} from "../services/behavior-tracking.service";
 import { ColdStartService } from "../services/cold-start.service";
 import { ColorMatchingService } from "../services/color-matching.service";
+import { GoldenRecommendationService } from "../services/golden-recommendation.service";
 import { MatchingTheoryService } from "../services/matching-theory.service";
+import { OutfitCompletionService } from "../services/outfit-completion.service";
 import { PreferenceLearningService } from "../services/preference-learning.service";
 import { QdrantService } from "../services/qdrant.service";
 import { RecommendationExplainerService } from "../services/recommendation-explainer.service";
+import { RecommendationFeedService } from "../services/recommendation-feed.service";
 import { RuleEngineService } from "../services/rule-engine.service";
 import { SASRecService } from "../services/sasrec.service";
 
@@ -139,7 +146,11 @@ export class RecommendationOrchestrator {
     private readonly sasrec: SASRecService,
     private readonly matchingTheory: MatchingTheoryService,
     private readonly ruleEngine: RuleEngineService,
-    private readonly explainer: RecommendationExplainerService
+    private readonly explainer: RecommendationExplainerService,
+    private readonly feedService: RecommendationFeedService,
+    private readonly outfitCompletionService: OutfitCompletionService,
+    private readonly goldenRecommendationService: GoldenRecommendationService,
+    private readonly behaviorTrackingService: BehaviorTrackingService
   ) {}
 
   async getRecommendations(request: RecommendationRequest): Promise<RecommendationResult[]> {
@@ -285,6 +296,105 @@ export class RecommendationOrchestrator {
   ): Promise<void> {
     await this.preferenceLearning.recordFeedback(userId, itemId, feedback);
     this.logger.debug(`Recorded ${feedback} feedback for item ${itemId}`);
+  }
+
+  /**
+   * Get paginated recommendation feed (delegates to RecommendationFeedService)
+   */
+  async getFeed(
+    userId: string,
+    category: "daily" | "occasion" | "trending" | "explore",
+    subCategory?: string,
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<{ items: unknown[]; total: number; hasMore: boolean }> {
+    return this.feedService.getFeed(userId, category, subCategory, page, pageSize);
+  }
+
+  /**
+   * Get complete-the-look outfit suggestions (delegates to OutfitCompletionService)
+   */
+  async getCompleteTheLook(clothingId: string, userId: string): Promise<unknown> {
+    return this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
+  }
+
+  /**
+   * Get all golden recommendation profiles (delegates to GoldenRecommendationService)
+   */
+  async getGoldenProfiles(): Promise<Array<{ profile_id: string; profile: unknown }>> {
+    return this.goldenRecommendationService.getAllGoldenProfiles();
+  }
+
+  /**
+   * Get a specific golden recommendation (delegates to GoldenRecommendationService)
+   */
+  async getGoldenRecommendation(profileId: string): Promise<unknown> {
+    return this.goldenRecommendationService.getGoldenRecommendation(profileId);
+  }
+
+  /**
+   * Submit user feedback with behavior tracking and preference learning
+   */
+  async submitFeedback(
+    userId: string,
+    dto: { clothingId: string; action: string; recommendationId?: string }
+  ): Promise<void> {
+    const actionMap: Record<string, BehaviorAction> = {
+      like: "post_like",
+      dislike: "click",
+      ignore: "click",
+    };
+
+    await this.behaviorTrackingService.track({
+      userId,
+      action: actionMap[dto.action] || "click",
+      clothingId: dto.clothingId,
+      context: {
+        recommendationId: dto.recommendationId,
+        source: "recommendation_feedback",
+      },
+    });
+
+    if (dto.action === "like" || dto.action === "dislike") {
+      await this.recordFeedback(userId, dto.clothingId, dto.action === "like" ? "like" : "dislike");
+    }
+  }
+
+  /**
+   * Submit batch user feedback with behavior tracking and preference learning
+   */
+  async submitBatchFeedback(
+    userId: string,
+    items: Array<{ clothingId: string; action: string; recommendationId?: string }>
+  ): Promise<void> {
+    const actionMap: Record<string, BehaviorAction> = {
+      like: "post_like",
+      dislike: "click",
+      ignore: "click",
+    };
+
+    await this.behaviorTrackingService.trackBatch(
+      items.map((item) => ({
+        userId,
+        action: actionMap[item.action] || ("click" as BehaviorAction),
+        clothingId: item.clothingId,
+        context: {
+          recommendationId: item.recommendationId,
+          source: "recommendation_feedback_batch",
+        },
+      }))
+    );
+
+    const feedbackItems = items.filter(
+      (item) => item.action === "like" || item.action === "dislike"
+    );
+    for (const item of feedbackItems) {
+      await this.recordFeedback(
+        userId,
+        item.clothingId,
+        item.action === "like" ? "like" : "dislike"
+      );
+    }
   }
 
   async recordImpressions(

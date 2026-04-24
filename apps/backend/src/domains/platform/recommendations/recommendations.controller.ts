@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, Post, Param, Body, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { CacheKey, CacheTTL } from "../../../common/decorators/cache.decorators";
+import { ClothingCategory } from "../../../types/prisma-enums";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { Public } from "../../identity/auth/decorators/public.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
@@ -21,10 +20,6 @@ import {
   SubmitBatchFeedbackDto,
 } from "./dto";
 import { RecommendationOrchestrator } from "./orchestrator/recommendation.orchestrator";
-import { RecommendationsService } from "./recommendations.service";
-import { BehaviorTrackingService, type BehaviorAction } from "./services/behavior-tracking.service";
-import { OutfitCompletionService } from "./services/outfit-completion.service";
-import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
 /**
  * 服装项响应
@@ -127,13 +122,7 @@ class DiscoverResponseDto {
 @ApiTags("recommendations")
 @Controller("recommendations")
 export class RecommendationsController {
-  constructor(
-    private readonly orchestrator: RecommendationOrchestrator,
-    private readonly fallbackService: RecommendationsService,
-    private readonly outfitCompletionService: OutfitCompletionService,
-    private readonly behaviorTrackingService: BehaviorTrackingService,
-    private readonly feedService: RecommendationFeedService
-  ) {}
+  constructor(private readonly orchestrator: RecommendationOrchestrator) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -210,7 +199,7 @@ export class RecommendationsController {
   })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getFeed(@CurrentUser("id") userId: string, @Query() dto: GetFeedDto) {
-    return this.feedService.getFeed(
+    return this.orchestrator.getFeed(
       userId,
       (dto.category as "daily" | "occasion" | "trending" | "explore") || "daily",
       dto.subCategory,
@@ -262,14 +251,13 @@ export class RecommendationsController {
     @Query("occasion") occasion?: string,
     @Query("season") season?: string,
     @Query("limit") limit?: string,
-    @Query("algorithm") algorithm?: string
+    @Query("algorithm") _algorithm?: string
   ) {
     return this.orchestrator.getRecommendations({
       userId,
       context: { occasion, season },
       options: {
         limit: limit ? parseInt(limit) : 20,
-        algorithm: (algorithm as any) || "unified",
       },
     });
   }
@@ -395,15 +383,16 @@ export class RecommendationsController {
   })
   async getDiscoverRecommendations(
     @CurrentUser("id") userId?: string,
-    @Query("limit") limit?: string
+    @Query() dto?: GetDiscoverQueryDto
   ) {
+    const limit = dto?.limit ?? 20;
     if (userId) {
       return this.orchestrator.getRecommendations({
         userId,
-        options: { limit: limit ? parseInt(limit) : 20 },
+        options: { limit },
       });
     } else {
-      return this.orchestrator.getTrendingRecommendations(limit ? parseInt(limit) : 20);
+      return this.orchestrator.getTrendingRecommendations(limit);
     }
   }
 
@@ -422,7 +411,7 @@ export class RecommendationsController {
     @CurrentUser("id") userId: string,
     @Param("clothingId") clothingId: string
   ) {
-    return this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
+    return this.orchestrator.getCompleteTheLook(clothingId, userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -437,29 +426,11 @@ export class RecommendationsController {
     description: "反馈已记录",
   })
   async submitFeedback(@CurrentUser("id") userId: string, @Body() dto: SubmitFeedbackDto) {
-    const actionMap: Record<string, BehaviorAction> = {
-      like: "post_like",
-      dislike: "click",
-      ignore: "click",
-    };
-
-    await this.behaviorTrackingService.track({
-      userId,
-      action: actionMap[dto.action] || "click",
+    await this.orchestrator.submitFeedback(userId, {
       clothingId: dto.clothingId,
-      context: {
-        recommendationId: dto.recommendationId,
-        source: "recommendation_feedback",
-      },
+      action: dto.action,
+      recommendationId: dto.recommendationId,
     });
-
-    if (dto.action === "like" || dto.action === "dislike") {
-      await this.orchestrator.recordFeedback(
-        userId,
-        dto.clothingId,
-        dto.action === "like" ? "like" : "dislike"
-      );
-    }
 
     return { success: true, message: "反馈已记录" };
   }
@@ -479,36 +450,40 @@ export class RecommendationsController {
     @CurrentUser("id") userId: string,
     @Body() dto: SubmitBatchFeedbackDto
   ) {
-    const actionMap: Record<string, BehaviorAction> = {
-      like: "post_like",
-      dislike: "click",
-      ignore: "click",
-    };
-
-    await this.behaviorTrackingService.trackBatch(
+    await this.orchestrator.submitBatchFeedback(
+      userId,
       dto.items.map((item) => ({
-        userId,
-        action: actionMap[item.action] || ("click" as BehaviorAction),
         clothingId: item.clothingId,
-        context: {
-          recommendationId: item.recommendationId,
-          source: "recommendation_feedback_batch",
-        },
+        action: item.action,
+        recommendationId: item.recommendationId,
       }))
     );
 
-    const feedbackItems = dto.items.filter(
-      (item) => item.action === "like" || item.action === "dislike"
-    );
-    for (const item of feedbackItems) {
-      await this.orchestrator.recordFeedback(
-        userId,
-        item.clothingId,
-        item.action === "like" ? "like" : "dislike"
-      );
-    }
-
     return { success: true, message: `已记录 ${dto.items.length} 条反馈` };
+  }
+
+  @Public()
+  @Get("golden/profiles")
+  @ApiOperation({
+    summary: "获取所有黄金推荐Profile列表",
+    description: "返回所有预定义的黄金推荐Profile及其匹配条件，用于前端展示可选的推荐方案。",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  async getGoldenProfiles() {
+    return this.orchestrator.getGoldenProfiles();
+  }
+
+  @Public()
+  @Get("golden/:profileId")
+  @ApiOperation({
+    summary: "获取黄金推荐方案",
+    description:
+      "根据profileId返回预定义的黄金推荐方案。黄金方案是经过人工审核的高质量搭配推荐，保证Demo体验。",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 404, description: "Profile不存在" })
+  async getGoldenRecommendation(@Param("profileId") profileId: string) {
+    return this.orchestrator.getGoldenRecommendation(profileId);
   }
 
   @UseGuards(JwtAuthGuard)
