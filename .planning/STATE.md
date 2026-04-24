@@ -11,26 +11,26 @@ See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 ## Current Position
 
 Phase: 3 of 10 (Navigation + Core Screens + Calendar)
-Plan: 1 of 3 executed in current phase
+Plan: 2 of 3 executed in current phase
 Status: Executing
-Last activity: 2026-04-24 -- Plan 03-01 completed: Zustand store deduplication (42 files deleted, ~30 imports migrated)
+Last activity: 2026-04-24 -- Plan 03-02 completed: Wardrobe + Favorites moved to DiscoverStack
 
-Progress: [##........] 20%
+Progress: [###.......] 30%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 4 (Phase 1: 3, Phase 3: 1)
-- Average duration: ~33min
-- Total execution time: ~2h 24min
+- Total plans completed: 5 (Phase 1: 3, Phase 3: 2)
+- Average duration: ~30min
+- Total execution time: ~2h 30min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 | ----- | ----- | ----- | -------- |
 | 1     | 3     | ~110m | ~37min   |
-| 3     | 1     | 24m   | 24m      |
+| 3     | 2     | 30m   | 15m      |
 
 **Recent Trend:**
 
@@ -63,6 +63,7 @@ Critical decisions affecting current work:
 ### Phase 3 Completed Work
 
 - **Plan 01**: Zustand store deduplication -- deleted src/stores/ (42 files, ~8700 lines), migrated ~30 files to feature-local store imports, centralized clearAllStores (24min, 3 commits)
+- **Plan 02**: Wardrobe + Favorites moved from ProfileStack to DiscoverStack -- updated types, deep links, MainStackNavigator, fixed 3 cross-reference files (6min, 1 commit)
 
 ### Pending Todos
 
@@ -71,6 +72,7 @@ None yet.
 ### Blockers/Concerns
 
 - FashionCLIP/SigLIP embeddings carry latent gender bias from Farfetch training data -- diversity constraints needed (Phase 6)
+- Cross-tab navigation pattern: when screens move between stacks, callers must navigate via MainTabs intermediate route (from 03-02)
 - Software copyright is 60-90 day critical path for app store listing (Phase 6 starts it)
 - garmentPreference MUST be in Onboarding Step 2 to avoid incoherent cold start (Phase 4)
 - 264+ JSON fashion rules are NEVER loaded into LLM -- filtered context injection needed (Phase 4)
@@ -94,5 +96,5 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-04-24
-Stopped at: Completed 03-01-PLAN.md (Zustand store deduplication), next: 03-02-PLAN.md
-Resume file: .planning/phases/03-navigation-core-screens-calendar/03-02-PLAN.md
+Stopped at: Completed 03-02-PLAN.md (Wardrobe + Favorites to DiscoverStack), next: 03-03-PLAN.md
+Resume file: .planning/phases/03-navigation-core-screens-calendar/03-03-PLAN.md
