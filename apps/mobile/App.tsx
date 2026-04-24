@@ -1,43 +1,40 @@
 /* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, no-useless-escape */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Linking,
-  LogBox,
-  StatusBar,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { NavigationContainer } from '@react-navigation/native';
-import { ErrorBoundary } from './src/shared/components/ErrorBoundary';
-import { RootNavigator } from './src/navigation/RootNavigator';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Linking, LogBox, StatusBar, StyleSheet, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavigationContainer } from "@react-navigation/native";
+import { ErrorBoundary } from "./src/shared/components/ErrorBoundary";
+import { RootNavigator } from "./src/navigation/RootNavigator";
 import {
   navigationRef,
   setNavigationReady,
   navigateDeepLink,
   isNavigationReady as checkNavigationReady,
-} from './src/navigation/navigationService';
-import { ThemeProvider as UnifiedThemeProvider, useTheme } from './src/shared/contexts/ThemeContext';
-import { ThemeProvider as PaperThemeProvider } from './src/design-system/ui/PaperThemeProvider';
-import { useAuthStore } from './src/stores/index';
-import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
-import { I18nProvider } from './src/i18n';
-import { FeatureFlagProvider } from './src/shared/contexts/FeatureFlagContext';
-import { SplashScreen as AnimatedSplashScreen } from './src/shared/components/flows/FlowAnimations';
-import { initSentry } from './src/shared/services/sentry';
-import apiClient from './src/shared/services/apiClient';
-import { authApi } from './src/features/auth/services/auth.api';
-import { analytics } from './src/shared/services/analytics';
+} from "./src/navigation/navigationService";
+import {
+  ThemeProvider as UnifiedThemeProvider,
+  useTheme,
+} from "./src/shared/contexts/ThemeContext";
+import { ThemeProvider as PaperThemeProvider } from "./src/design-system/ui/PaperThemeProvider";
+import { useAuthStore } from "./src/features/auth/stores";
+import { OfflineBanner } from "./src/shared/components/common/OfflineBanner";
+import { I18nProvider } from "./src/i18n";
+import { FeatureFlagProvider } from "./src/shared/contexts/FeatureFlagContext";
+import { SplashScreen as AnimatedSplashScreen } from "./src/shared/components/flows/FlowAnimations";
+import { initSentry } from "./src/shared/services/sentry";
+import apiClient from "./src/shared/services/apiClient";
+import { authApi } from "./src/features/auth/services/auth.api";
+import { analytics } from "./src/shared/services/analytics";
 
 // Suppress known benign warnings from polyfill stubs
 LogBox.ignoreLogs([
-  'FileSystem\.\w+Async is a stub',
-  'expo-media-library\.saveToLibraryAsync is a stub',
-  'expo-router\.router: Navigation not ready',
-  'setNavigationRef is deprecated',
-  'EXPO_OS is not defined',
+  "FileSystem.w+Async is a stub",
+  "expo-media-library.saveToLibraryAsync is a stub",
+  "expo-router.router: Navigation not ready",
+  "setNavigationRef is deprecated",
+  "EXPO_OS is not defined",
 ]);
 
 const queryClient = new QueryClient({
@@ -51,8 +48,8 @@ const queryClient = new QueryClient({
 
 const DEV_TEST_ACCOUNT_CONFIG = {
   enabled: __DEV__,
-  email: 'test@example.com',
-  password: 'Test123456!',
+  email: "test@example.com",
+  password: "Test123456!",
 };
 
 function ThemedStatusBar() {
@@ -83,15 +80,21 @@ export default function App() {
   const hasAutoLoggedInRef = useRef(false);
 
   const queueDeepLink = useCallback((url?: string | null) => {
-    if (!url) {return;}
+    if (!url) {
+      return;
+    }
     pendingDeepLinkUrlRef.current = url;
   }, []);
 
   const flushPendingDeepLink = useCallback(() => {
-    if (!checkNavigationReady() || isLoading) {return;}
+    if (!checkNavigationReady() || isLoading) {
+      return;
+    }
 
     const pendingUrl = pendingDeepLinkUrlRef.current;
-    if (!pendingUrl || pendingUrl === lastHandledDeepLinkUrlRef.current) {return;}
+    if (!pendingUrl || pendingUrl === lastHandledDeepLinkUrlRef.current) {
+      return;
+    }
 
     const handled = navigateDeepLink(pendingUrl, isAuthenticated);
     if (handled) {
@@ -111,7 +114,7 @@ export default function App() {
       hasAutoLoggedInRef.current = true;
       const autoLogin = async () => {
         try {
-          console.log('[DEV] Attempting auto-login with test account...');
+          console.log("[DEV] Attempting auto-login with test account...");
           const response = await authApi.login({
             email: DEV_TEST_ACCOUNT_CONFIG.email,
             password: DEV_TEST_ACCOUNT_CONFIG.password,
@@ -120,10 +123,10 @@ export default function App() {
           if (response.success && response.data) {
             useAuthStore.getState().setToken(response.data.token);
             useAuthStore.getState().setUser(response.data.user);
-            console.log('[DEV] Auto-login successful');
+            console.log("[DEV] Auto-login successful");
           }
         } catch (error) {
-          console.warn('[DEV] Auto-login failed:', error);
+          console.warn("[DEV] Auto-login failed:", error);
           hasAutoLoggedInRef.current = false;
         }
       };
@@ -156,7 +159,9 @@ export default function App() {
       return false;
     };
 
-    if (checkHydration()) {return;}
+    if (checkHydration()) {
+      return;
+    }
 
     const interval = setInterval(() => {
       if (checkHydration()) {
@@ -176,7 +181,9 @@ export default function App() {
   }, [setLoading]);
 
   useEffect(() => {
-    if (isLoading) {return;}
+    if (isLoading) {
+      return;
+    }
     void apiClient.setToken(authToken ?? null);
   }, [authToken, isLoading]);
 
@@ -184,10 +191,12 @@ export default function App() {
     let isMounted = true;
 
     void Linking.getInitialURL().then((url) => {
-      if (isMounted) {queueDeepLink(url);}
+      if (isMounted) {
+        queueDeepLink(url);
+      }
     });
 
-    const subscription = Linking.addEventListener('url', ({ url }) => {
+    const subscription = Linking.addEventListener("url", ({ url }) => {
       queueDeepLink(url);
     });
 
@@ -205,9 +214,9 @@ export default function App() {
     return (
       <ErrorBoundary
         screenName="SplashScreen"
-        context={{ phase: 'loading' }}
+        context={{ phase: "loading" }}
         onError={(error, errorInfo, structuredError) => {
-          console.error('[App:Loading] Error:', structuredError);
+          console.error("[App:Loading] Error:", structuredError);
         }}
       >
         <GestureHandlerRootView style={rootStyles.root}>
@@ -215,10 +224,10 @@ export default function App() {
             <PaperThemeProvider>
               <I18nProvider>
                 <FeatureFlagProvider>
-                <SafeAreaProvider>
-                  <ThemedStatusBar />
-                  <SplashScreen />
-                </SafeAreaProvider>
+                  <SafeAreaProvider>
+                    <ThemedStatusBar />
+                    <SplashScreen />
+                  </SafeAreaProvider>
                 </FeatureFlagProvider>
               </I18nProvider>
             </PaperThemeProvider>
@@ -234,10 +243,10 @@ export default function App() {
       context={{ isAuthenticated }}
       maxRetries={3}
       onError={(error, errorInfo, structuredError) => {
-        console.error('[App:Root] Error:', structuredError);
+        console.error("[App:Root] Error:", structuredError);
       }}
       onReset={() => {
-        console.log('[App:Root] Error boundary reset');
+        console.log("[App:Root] Error boundary reset");
       }}
     >
       <GestureHandlerRootView style={rootStyles.root}>
@@ -245,32 +254,32 @@ export default function App() {
           <PaperThemeProvider>
             <I18nProvider>
               <FeatureFlagProvider>
-              <SafeAreaProvider>
-                <QueryClientProvider client={queryClient}>
-                  <NavigationContainer
-                    ref={navigationRef}
-                    onReady={() => {
-                      setNavigationReady(true);
-                      const routeName = navigationRef.getCurrentRoute()?.name;
-                      setCurrentRouteName(routeName);
-                      if (routeName) {
-                        analytics.trackScreen(routeName);
-                      }
-                    }}
-                    onStateChange={() => {
-                      const routeName = navigationRef.getCurrentRoute()?.name;
-                      setCurrentRouteName(routeName);
-                      if (routeName) {
-                        analytics.trackScreen(routeName);
-                      }
-                    }}
-                  >
-                    <ThemedStatusBar />
-                    <OfflineBanner />
-                    <RootNavigator isAuthenticated={isAuthenticated} />
-                  </NavigationContainer>
-                </QueryClientProvider>
-              </SafeAreaProvider>
+                <SafeAreaProvider>
+                  <QueryClientProvider client={queryClient}>
+                    <NavigationContainer
+                      ref={navigationRef}
+                      onReady={() => {
+                        setNavigationReady(true);
+                        const routeName = navigationRef.getCurrentRoute()?.name;
+                        setCurrentRouteName(routeName);
+                        if (routeName) {
+                          analytics.trackScreen(routeName);
+                        }
+                      }}
+                      onStateChange={() => {
+                        const routeName = navigationRef.getCurrentRoute()?.name;
+                        setCurrentRouteName(routeName);
+                        if (routeName) {
+                          analytics.trackScreen(routeName);
+                        }
+                      }}
+                    >
+                      <ThemedStatusBar />
+                      <OfflineBanner />
+                      <RootNavigator isAuthenticated={isAuthenticated} />
+                    </NavigationContainer>
+                  </QueryClientProvider>
+                </SafeAreaProvider>
               </FeatureFlagProvider>
             </I18nProvider>
           </PaperThemeProvider>
