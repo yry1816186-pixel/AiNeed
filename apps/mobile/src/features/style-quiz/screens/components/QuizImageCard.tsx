@@ -1,8 +1,8 @@
 import React, { useRef, useCallback } from "react";
-import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
 import { Colors, Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
 import { ProgressiveImage } from "../../../../shared/components/ux/ProgressiveImage";
-import type { QuizImage } from "../../../../stores/quizStore";
+import type { QuizImage } from "../../stores/quizStore";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 

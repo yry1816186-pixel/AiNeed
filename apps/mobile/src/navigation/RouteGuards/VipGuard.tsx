@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useAuthStore } from "../../stores/index";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { useAuthStore } from "../../features/auth/stores";
+
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { flatColors as colors, DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, DesignTokens } from "../../design-system/theme";
 
 interface VipGuardProps {
   children: React.ReactNode;

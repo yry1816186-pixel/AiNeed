@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useAuthStore } from "../../stores/index";
+import { useAuthStore } from "../../features/auth/stores";
 
 interface ProfileGuardProps {
   children: React.ReactNode;

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "../../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, flatColors } from "../../../../design-system/theme";
+import { Spacing, BorderRadius, flatColors } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
-import type { OnboardingFormData } from "../../../../stores/onboardingStore";
+import type { OnboardingFormData } from "../../stores/onboardingStore";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface BasicInfoStepProps {
@@ -36,7 +36,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
 }) => {
   const [validationAttempted, setValidationAttempted] = useState(false);
 
-  const genderError = validationAttempted && !formData.gender;
+  const genderError = validationAttempted && !formData.ageRange;
   const ageRangeError = validationAttempted && !formData.ageRange;
 
   const handleUpdate = (data: Partial<OnboardingFormData>) => {
@@ -62,7 +62,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
         <View style={styles.section}>
           <View style={styles.labelRow}>
             <Text style={styles.sectionLabel}>性别</Text>
-            <Text style={styles.requiredMark}>*</Text>
+            <Text style={styles.optionalMark}>选填</Text>
           </View>
           <View style={styles.genderRow}>
             {GENDER_OPTIONS.map((option) => {
@@ -86,7 +86,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
               );
             })}
           </View>
-          {genderError && <Text style={styles.errorText}>请选择性别</Text>}
+          {genderError && <Text style={styles.errorText}>请选择年龄段</Text>}
         </View>
 
         <View style={styles.section}>

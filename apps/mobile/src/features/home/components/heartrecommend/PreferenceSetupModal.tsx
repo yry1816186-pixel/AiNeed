@@ -27,9 +27,9 @@ import {
   Shadows,
 } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { profileApi } from "../../../services/api/profile.api";
-import { useAuthStore } from "../../../stores";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { profileApi } from "../../../../services/api/profile.api";
+import { useAuthStore } from "../../../auth/stores";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -220,7 +220,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
       setLoading(true);
 
       const preferences = {
-        gender: selectedGender,
+        ...(selectedGender ? { gender: selectedGender } : {}),
         preferredStyles: selectedStyles,
         preferredColors: selectedColors,
         preferredOccasions: selectedOccasions,

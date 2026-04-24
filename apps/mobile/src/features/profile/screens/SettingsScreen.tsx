@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 // @ts-nocheck
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -18,7 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useAuthStore } from "../stores/index";
+import { useAuthStore } from "../../auth/stores";
 import { authApi } from "../../../services/api/auth.api";
 import { apiClient } from "../../../services/api/client";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";

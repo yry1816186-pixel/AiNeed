@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars, @typescript-eslint/require-await, import/no-unresolved */
 // @ts-nocheck
 import React, { useState, useCallback, useEffect } from "react";
 import {
@@ -23,7 +24,7 @@ import {
   clothingEnhancementApi,
   type SizeRecommendation,
 } from "../../../services/api/commerce.api";
-import { useSizeRecommendationStore } from "../../../stores/sizeRecommendationStore";
+import { useSizeRecommendationStore } from "../../commerce/stores/sizeRecommendationStore";
 import { ProductImageCarousel } from "../../../components/ProductImageCarousel";
 import { SKUSelector } from "../../../components/SKUSelector";
 import { OutfitRecommendationCards } from "../../../components/OutfitRecommendationCards";

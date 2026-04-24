@@ -1,18 +1,17 @@
-﻿import { createNavigationContainerRef, CommonActions } from "@react-navigation/native";
+import { createNavigationContainerRef, CommonActions } from "@react-navigation/native";
 import type {
   RootStackParamList,
   AuthStackParamList,
   MainTabParamList,
-  HomeStackParamList,
+  TodayStackParamList,
+  DiscoverStackParamList,
   StylistStackParamList,
-  TryOnStackParamList,
-  CommunityStackParamList,
   ProfileStackParamList,
   DeepLinkRouteConfig,
   GuardType,
 } from "./types";
 import { DEEP_LINK_ROUTES, GUARDED_ROUTES } from "./types";
-import { useAuthStore } from "../stores/index";
+import { useAuthStore } from "../features/auth/stores";
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
@@ -159,11 +158,11 @@ export function navigateTab<RouteName extends keyof MainTabParamList>(
   );
 }
 
-export function navigateHome<RouteName extends keyof HomeStackParamList>(
+export function navigateHome<RouteName extends keyof TodayStackParamList>(
   screen: RouteName,
-  params?: HomeStackParamList[RouteName]
+  params?: TodayStackParamList[RouteName]
 ): void {
-  navigateTab("Home", screen as string, params as Record<string, unknown>);
+  navigateTab("Today", screen as string, params as Record<string, unknown>);
 }
 
 export function navigateStylist<RouteName extends keyof StylistStackParamList>(
@@ -173,25 +172,25 @@ export function navigateStylist<RouteName extends keyof StylistStackParamList>(
   navigateTab("Stylist", screen as string, params as Record<string, unknown>);
 }
 
-export function navigateTryOn<RouteName extends keyof TryOnStackParamList>(
+export function navigateTryOn<RouteName extends keyof DiscoverStackParamList>(
   screen: RouteName,
-  params?: TryOnStackParamList[RouteName]
+  params?: DiscoverStackParamList[RouteName]
 ): void {
-  navigateTab("TryOn", screen as string, params as Record<string, unknown>);
+  navigateTab("Discover", screen as string, params as Record<string, unknown>);
 }
 
-export function navigateCommunity<RouteName extends keyof CommunityStackParamList>(
+export function navigateCommunity<RouteName extends keyof DiscoverStackParamList>(
   screen: RouteName,
-  params?: CommunityStackParamList[RouteName]
+  params?: DiscoverStackParamList[RouteName]
 ): void {
-  navigateTab("Community", screen as string, params as Record<string, unknown>);
+  navigateTab("Discover", screen as string, params as Record<string, unknown>);
 }
 
 export function navigateProfile<RouteName extends keyof ProfileStackParamList>(
   screen: RouteName,
   params?: ProfileStackParamList[RouteName]
 ): void {
-  navigateTab("Profile", screen as string, params as Record<string, unknown>);
+  navigateTab("Me", screen as string, params as Record<string, unknown>);
 }
 
 // ============================================================
@@ -248,7 +247,7 @@ export function parseDeepLink(url: string): ParsedDeepLink | null {
   const segments = rawPath.split("/").filter(Boolean).map(decodeURIComponent);
 
   if (segments.length === 0) {
-    return { target: "tab", tab: "Home", screen: "HomeFeed", requiresAuth: false };
+    return { target: "tab", tab: "Today", screen: "TodayMain", requiresAuth: false };
   }
 
   const matched = matchDeepLinkConfig(segments, DEEP_LINK_ROUTES);

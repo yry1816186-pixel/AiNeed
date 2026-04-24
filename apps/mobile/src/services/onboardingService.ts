@@ -1,7 +1,7 @@
 import apiClient from "./api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { ApiResponse } from "../types";
-import type { OnboardingFormData } from "../stores/onboardingStore";
+import type { OnboardingFormData } from "../features/onboarding/stores/onboardingStore";
 
 export const onboardingService = {
   saveOnboardingData: async (formData: OnboardingFormData): Promise<ApiResponse<unknown>> => {
@@ -9,6 +9,18 @@ export const onboardingService = {
 
     if (formData.gender) {
       updateData.gender = formData.gender;
+    }
+    if (formData.bodyType) {
+      updateData.bodyType = formData.bodyType;
+    }
+    if (formData.primaryScenarios && formData.primaryScenarios.length > 0) {
+      updateData.primaryScenarios = formData.primaryScenarios;
+    }
+    if (formData.styleExpression && formData.styleExpression.length > 0) {
+      updateData.styleExpression = formData.styleExpression;
+    }
+    if (formData.garmentPreference) {
+      updateData.garmentPreference = formData.garmentPreference;
     }
     if (formData.ageRange) {
       updateData.ageRange = formData.ageRange;

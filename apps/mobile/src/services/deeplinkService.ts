@@ -1,5 +1,5 @@
 import { Linking } from "react-native";
-import { useAuthStore } from "../stores";
+import { useAuthStore } from "../features/auth/stores";
 import { navigateDeepLink } from "../navigation/navigationService";
 
 export const DeepLinkService = {

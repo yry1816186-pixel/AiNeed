@@ -16,10 +16,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows, DesignTokens } from "../../../design-system/theme";
-import { recommendationsApi } from "../../services/api/tryon.api";
-import { cartApi } from "../../services/api/commerce.api";
-import { useAuthStore, useHeartRecommendStore } from "../../stores";
+import { theme, Colors, Shadows, DesignTokens } from "../../../../design-system/theme";
+import { recommendationsApi } from "../../../../services/api/tryon.api";
+import { cartApi } from "../../../../services/api/commerce.api";
+import { useAuthStore } from "../../../auth/stores";
+import { useHeartRecommendStore } from "../../stores/heart-recommend.store";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";

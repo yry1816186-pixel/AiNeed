@@ -1,80 +1,51 @@
-﻿import React, { useCallback, useRef } from "react";
-import { StyleSheet } from "react-native";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+import React, { useCallback, useEffect, useRef } from "react";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons } from "../polyfills/expo-vector-icons";
+
 import type { MainTabParamList, RootStackParamList, GuardType } from "./types";
 import { TAB_LABELS, GUARDED_ROUTES } from "./types";
 import { AuthNavigator } from "./AuthNavigator";
 import {
-  HomeStackNavigator,
+  TodayStackNavigator,
+  DiscoverStackNavigator,
   StylistStackNavigator,
-  TryOnStackNavigator,
-  CommunityStackNavigator,
   ProfileStackNavigator,
 } from "./MainStackNavigator";
-import { useAuthStore, useCartStore } from "../stores/index";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useAuthStore } from "../features/auth/stores";
+import { useCartStore } from "../features/commerce/stores/cart.store";
+import { useTheme } from "../shared/contexts/ThemeContext";
 import { navigateAuth, navigateProfile, navigationRef } from "./navigationService";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+
+import { AnimatedTabBar } from "../shared/components/AnimatedTabBar";
+import { CommonActions } from "@react-navigation/native";
 
 // ============================================================
-// Main Tab Navigator (5 Tabs)
+// Main Tab Navigator (4 Tabs: Today / Discover / Stylist / Me)
 // ============================================================
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export function MainTabNavigator() {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const cartCount = useCartStore((state) => state.totalItems);
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = "home";
-
-          switch (route.name) {
-            case "Home":
-              iconName = focused ? "home" : "home-outline";
-              break;
-            case "Stylist":
-              iconName = focused ? "color-wand" : "color-wand-outline";
-              break;
-            case "TryOn":
-              iconName = focused ? "shirt" : "shirt-outline";
-              break;
-            case "Community":
-              iconName = focused ? "people" : "people-outline";
-              break;
-            case "Profile":
-              iconName = focused ? "person" : "person-outline";
-              break;
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textTertiary,
+      tabBar={(props: any) => <AnimatedTabBar {...props} />}
+      screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: colors.border,
-          paddingTop: DesignTokens.spacing['1.5'],
-          paddingBottom: DesignTokens.spacing['1.5'],
-          height: 56,
-        },
-        tabBarLabelStyle: {
-          fontSize: DesignTokens.typography.sizes.xs,
-          fontWeight: "600",
-          letterSpacing: 0.3,
-        },
-      })}
+      }}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeStackNavigator}
-        options={{ tabBarLabel: TAB_LABELS.Home }}
+        name="Today"
+        component={TodayStackNavigator}
+        options={{ tabBarLabel: TAB_LABELS.Today }}
+      />
+      <Tab.Screen
+        name="Discover"
+        component={DiscoverStackNavigator}
+        options={{ tabBarLabel: TAB_LABELS.Discover }}
       />
       <Tab.Screen
         name="Stylist"
@@ -82,20 +53,10 @@ export function MainTabNavigator() {
         options={{ tabBarLabel: TAB_LABELS.Stylist }}
       />
       <Tab.Screen
-        name="TryOn"
-        component={TryOnStackNavigator}
-        options={{ tabBarLabel: TAB_LABELS.TryOn }}
-      />
-      <Tab.Screen
-        name="Community"
-        component={CommunityStackNavigator}
-        options={{ tabBarLabel: TAB_LABELS.Community }}
-      />
-      <Tab.Screen
-        name="Profile"
+        name="Me"
         component={ProfileStackNavigator}
         options={{
-          tabBarLabel: TAB_LABELS.Profile,
+          tabBarLabel: TAB_LABELS.Me,
           tabBarBadge: cartCount > 0 ? cartCount : undefined,
         }}
       />
@@ -229,6 +190,20 @@ interface RootNavigatorProps {
 export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
   const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
   const lastGuardedRouteRef = useRef<string | null>(null);
+  const prevAuthRef = useRef(isAuthenticated);
+
+  // When auth state changes, reset the root stack to the correct screen
+  useEffect(() => {
+    if (prevAuthRef.current !== isAuthenticated && navigationRef.isReady()) {
+      prevAuthRef.current = isAuthenticated;
+      navigationRef.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: isAuthenticated ? "MainTabs" : "Auth" }],
+        })
+      );
+    }
+  }, [isAuthenticated]);
 
   // Navigation state listener for route guard enforcement at the navigation level
   const handleStateChange = useCallback(() => {

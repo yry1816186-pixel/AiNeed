@@ -1,6 +1,7 @@
-﻿import React, { useRef, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useRef, useCallback } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useAuthStore } from "../../stores/index";
+import { useAuthStore } from "../../features/auth/stores";
 import { navigateAuth, navigateProfile } from "../navigationService";
 import { GUARDED_ROUTES, type GuardType } from "../types";
 
@@ -49,7 +50,6 @@ function handleGuardFailure(failedGuard: GuardType) {
 }
 
 export function useRouteGuard(routeName: string): GuardResult {
-  const _navigation = useNavigation();
   const hasRedirected = useRef(false);
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);

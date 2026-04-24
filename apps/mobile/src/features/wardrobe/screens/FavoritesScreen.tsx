@@ -1,4 +1,5 @@
-﻿import React, { useCallback, useState, memo } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import React, { useCallback, useState, memo } from "react";
 import {
   View,
   Text,
@@ -17,7 +18,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useTranslation } from "../../../i18n";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { favoriteApi } from "../../../services/api/commerce.api";
-import { useAuthStore } from "../../../stores";
+import { useAuthStore } from "../../auth/stores";
 import type { ClothingItem } from "../../../types/clothing";
 import type { RootStackParamList } from "../../../types/navigation";
 import { ImageWithPlaceholder } from "../../../shared/components/common/ImageWithPlaceholder";

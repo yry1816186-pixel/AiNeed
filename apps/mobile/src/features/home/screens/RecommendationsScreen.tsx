@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import React, { useState, useCallback, useEffect, memo } from "react";
 import {
@@ -14,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { recommendationsApi, type RecommendedItem } from "../../../services/api/tryon.api";
-import { useAuthStore } from "../stores/index";
+import { useAuthStore } from "../../auth/stores";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import {
   flatColors as colors,

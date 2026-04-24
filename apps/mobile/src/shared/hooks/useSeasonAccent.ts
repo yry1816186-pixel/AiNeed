@@ -10,13 +10,12 @@
  */
 import { useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useProfileStore } from "../../stores/profileStore";
+import { useProfileStore } from "../../features/profile/stores/profileStore";
 import {
   normalizeColorSeason,
   type ColorSeason,
   type SeasonAccentColors,
 } from "../../theme/tokens/season-colors";
-import { Colors } from "../../theme";
 
 interface UseSeasonAccentReturn {
   /** 当前色彩季型（null 表示未分析或已清除） */
@@ -33,7 +32,9 @@ export function useSeasonAccent(): UseSeasonAccentReturn {
 
   // 自动从 profileStore 的色彩分析数据同步到 ThemeContext
   useEffect(() => {
-    if (!colorAnalysis?.colorSeason?.type) return;
+    if (!colorAnalysis?.colorSeason?.type) {
+      return;
+    }
 
     const normalized = normalizeColorSeason(colorAnalysis.colorSeason.type);
     if (normalized && normalized !== colorSeason) {
