@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../../../common/types/api-response.types";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
+import { ClothingCategory, DataSource, Gender } from "../../../types/prisma-enums";
 
 type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;
 type ClothingItemCreateInput = Prisma.ClothingItemCreateInput;
@@ -45,6 +45,10 @@ export interface ClothingItemResponse {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  material: string | null;
+  season: string | null;
+  gender: Gender | null;
+  source: DataSource;
 }
 
 type ClothingItemSelect = {
@@ -64,6 +68,10 @@ type ClothingItemSelect = {
   isActive: true;
   createdAt: true;
   updatedAt: true;
+  material: true;
+  season: true;
+  gender: true;
+  source: true;
 };
 
 // 列表查询专用轻量 select（不包含 description/images 等大字段）
@@ -82,6 +90,10 @@ type ClothingItemListItemSelect = {
   likeCount: true;
   isActive: true;
   createdAt: true;
+  material: true;
+  season: true;
+  gender: true;
+  source: true;
 };
 
 type BrandSelect = {
@@ -110,9 +122,12 @@ type ClothingItemDetailSelect = {
   isActive: true;
   createdAt: true;
   updatedAt: true;
+  material: true;
+  season: true;
+  gender: true;
+  source: true;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ClothingItemWithBrandDetail = any;
 
 // 列表查询轻量类型（不包含 description/images/tags 等大字段）
@@ -131,6 +146,10 @@ type ClothingItemListItem = {
   likeCount: number;
   isActive: boolean;
   createdAt: Date;
+  material: string | null;
+  season: string | null;
+  gender: Gender | null;
+  source: DataSource;
   brand?: {
     id: string;
     name: string;
@@ -175,6 +194,10 @@ function normalizeClothingItem(
     isActive: item.isActive,
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
+    material: item.material ?? null,
+    season: item.season ?? null,
+    gender: item.gender ?? null,
+    source: item.source ?? "MANUAL",
   };
 }
 
@@ -204,6 +227,10 @@ function normalizeClothingListItem(item: ClothingItemListItem): ClothingItemResp
     isActive: item.isActive,
     createdAt: item.createdAt,
     updatedAt: item.createdAt, // 使用 createdAt 作为 updatedAt（列表接口不需要精确的更新时间）
+    material: item.material ?? null,
+    season: item.season ?? null,
+    gender: item.gender ?? null,
+    source: item.source ?? "MANUAL",
   };
 }
 
@@ -387,6 +414,10 @@ export class ClothingService {
           likeCount: true,
           isActive: true,
           createdAt: true,
+          material: true,
+          season: true,
+          gender: true,
+          source: true,
           // 延迟加载 brand 信息，避免 N+1 查询
         },
         orderBy: { [sortBy]: sortOrder },
@@ -671,6 +702,10 @@ export class ClothingService {
       sizes?: string[];
       tags?: string[];
       externalUrl?: string;
+      material?: string;
+      season?: string;
+      gender?: Gender;
+      source?: DataSource;
     }
   ) {
     const createData: ClothingItemCreateInput = {
@@ -693,6 +728,10 @@ export class ClothingService {
       ...(data.sizes !== undefined && { sizes: data.sizes }),
       ...(data.tags !== undefined && { tags: data.tags }),
       ...(data.externalUrl !== undefined && { externalUrl: data.externalUrl }),
+      ...(data.material !== undefined && { material: data.material }),
+      ...(data.season !== undefined && { season: data.season }),
+      ...(data.gender !== undefined && { gender: data.gender }),
+      ...(data.source !== undefined && { source: data.source }),
     };
 
     const item = await this.prisma.clothingItem.create({
@@ -722,6 +761,10 @@ export class ClothingService {
       sizes?: string[];
       tags?: string[];
       externalUrl?: string;
+      material?: string;
+      season?: string;
+      gender?: Gender;
+      source?: DataSource;
     }
   ) {
     const existing = await this.prisma.clothingItem.findFirst({
@@ -768,6 +811,18 @@ export class ClothingService {
     }
     if (data.externalUrl !== undefined) {
       updateData.externalUrl = data.externalUrl;
+    }
+    if (data.material !== undefined) {
+      updateData.material = data.material;
+    }
+    if (data.season !== undefined) {
+      updateData.season = data.season;
+    }
+    if (data.gender !== undefined) {
+      updateData.gender = data.gender;
+    }
+    if (data.source !== undefined) {
+      updateData.source = data.source;
     }
 
     if (data.brandId !== undefined) {

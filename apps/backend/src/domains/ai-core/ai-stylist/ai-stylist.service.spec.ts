@@ -1,13 +1,13 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType } from "../../../types/prisma-enums";
 
 import { CircuitBreakerService } from "../../../common/circuit-breaker";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+import { PhotoType } from "../../../types/prisma-enums";
+import { RecommendationsService } from "../../platform/recommendations/recommendations.service";
 import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
 import { PhotosService } from "../photos/photos.service";
-import { RecommendationsService } from "../../platform/recommendations/recommendations.service";
 
 import { AiStylistService } from "./ai-stylist.service";
 import { AiStylistChatService } from "./services/chat.service";
@@ -131,62 +131,60 @@ describe("AiStylistService", () => {
         recentBehaviors: [],
       };
     }),
-    deriveOrchestration: jest
-      .fn()
-      .mockImplementation(
-        (session: {
-          state: {
-            slots: { occasion?: string; preferredStyles?: string[]; fitGoals?: string[] };
-            bodyProfile?: { bodyType?: string; skinTone?: string; colorSeason?: string };
-            photoSkipped?: boolean;
-            lastPhotoStatus?: string;
-            currentStage?: string;
-            sceneReady?: boolean;
-            styleReady?: boolean;
-            bodyReady?: boolean;
-            result?: unknown;
-          };
-        }) => {
-          const { slots, bodyProfile, photoSkipped, lastPhotoStatus } = session.state;
-          const missingFields: string[] = [];
+    deriveOrchestration: jest.fn().mockImplementation(
+      (session: {
+        state: {
+          slots: { occasion?: string; preferredStyles?: string[]; fitGoals?: string[] };
+          bodyProfile?: { bodyType?: string; skinTone?: string; colorSeason?: string };
+          photoSkipped?: boolean;
+          lastPhotoStatus?: string;
+          currentStage?: string;
+          sceneReady?: boolean;
+          styleReady?: boolean;
+          bodyReady?: boolean;
+          result?: unknown;
+        };
+      }) => {
+        const { slots, bodyProfile, photoSkipped, lastPhotoStatus } = session.state;
+        const missingFields: string[] = [];
 
-          session.state.sceneReady = Boolean(slots.occasion);
-          session.state.styleReady = (slots.preferredStyles?.length ?? 0) > 0;
-          session.state.bodyReady = Boolean(
-            bodyProfile?.bodyType || bodyProfile?.colorSeason || bodyProfile?.skinTone
-          );
+        session.state.sceneReady = Boolean(slots.occasion);
+        session.state.styleReady = (slots.preferredStyles?.length ?? 0) > 0;
+        session.state.bodyReady = Boolean(
+          bodyProfile?.bodyType || bodyProfile?.colorSeason || bodyProfile?.skinTone
+        );
 
-          if (session.state.result) {
-            session.state.currentStage = "resolved";
-            return { nextAction: { type: "show_outfit_cards" }, missingFields };
-          }
-          if (lastPhotoStatus === "processing" || lastPhotoStatus === "pending") {
-            session.state.currentStage = "analysis_pending";
-            return { nextAction: { type: "poll_analysis" }, missingFields };
-          }
-          if (!slots.occasion) {
-            missingFields.push("occasion");
-            session.state.currentStage = "collecting_scene";
-            return { nextAction: { type: "ask_question", field: "occasion" }, missingFields };
-          }
-          if ((slots.preferredStyles?.length ?? 0) === 0) {
-            missingFields.push("style_preferences");
-            session.state.currentStage = "collecting_style";
-            return { nextAction: { type: "show_preference_buttons" }, missingFields };
-          }
-          const shouldRequestPhoto =
-            !photoSkipped &&
-            !session.state.bodyReady &&
-            ((slots.fitGoals?.length ?? 0) > 0 || slots.occasion === "interview");
-          if (shouldRequestPhoto) {
-            missingFields.push("body_profile");
-            session.state.currentStage = "awaiting_photo";
-            return { nextAction: { type: "request_photo_upload", canSkip: true }, missingFields };
-          }
-          session.state.currentStage = "ready_to_resolve";
-          return { nextAction: { type: "generate_outfit" }, missingFields };
+        if (session.state.result) {
+          session.state.currentStage = "resolved";
+          return { nextAction: { type: "show_outfit_cards" }, missingFields };
         }
-      ),
+        if (lastPhotoStatus === "processing" || lastPhotoStatus === "pending") {
+          session.state.currentStage = "analysis_pending";
+          return { nextAction: { type: "poll_analysis" }, missingFields };
+        }
+        if (!slots.occasion) {
+          missingFields.push("occasion");
+          session.state.currentStage = "collecting_scene";
+          return { nextAction: { type: "ask_question", field: "occasion" }, missingFields };
+        }
+        if ((slots.preferredStyles?.length ?? 0) === 0) {
+          missingFields.push("style_preferences");
+          session.state.currentStage = "collecting_style";
+          return { nextAction: { type: "show_preference_buttons" }, missingFields };
+        }
+        const shouldRequestPhoto =
+          !photoSkipped &&
+          !session.state.bodyReady &&
+          ((slots.fitGoals?.length ?? 0) > 0 || slots.occasion === "interview");
+        if (shouldRequestPhoto) {
+          missingFields.push("body_profile");
+          session.state.currentStage = "awaiting_photo";
+          return { nextAction: { type: "request_photo_upload", canSkip: true }, missingFields };
+        }
+        session.state.currentStage = "ready_to_resolve";
+        return { nextAction: { type: "generate_outfit" }, missingFields };
+      }
+    ),
     getInitialPreferredStyles: jest
       .fn()
       .mockImplementation((context: { userProfile?: { stylePreferences?: string[] } }) => {

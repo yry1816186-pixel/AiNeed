@@ -3,10 +3,10 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 
+import { EmailService } from "../../../common/email/email.service";
 import { StructuredLoggerService } from "../../../common/logging/structured-logger.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-import { EmailService } from "../../../common/email/email.service";
 import * as bcrypt from "../../../common/security/bcrypt";
 
 import { AuthHelpersService } from "./auth.helpers";

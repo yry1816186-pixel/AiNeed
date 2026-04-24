@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Notification template definitions for 4 categories:
  * - order: Order status notifications
@@ -227,12 +226,8 @@ export const NOTIFICATION_TEMPLATES: Record<string, NotificationTemplate> = {
 /**
  * Get all templates grouped by category.
  */
-export function getTemplatesByCategory(
-  category: NotificationCategory,
-): NotificationTemplate[] {
-  return Object.values(NOTIFICATION_TEMPLATES).filter(
-    (t) => t.category === category,
-  );
+export function getTemplatesByCategory(category: NotificationCategory): NotificationTemplate[] {
+  return Object.values(NOTIFICATION_TEMPLATES).filter((t) => t.category === category);
 }
 
 /**

@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 export interface UserPreference {
   category: string;
@@ -46,10 +45,7 @@ export class PreferenceLearningService {
   private readonly MIN_WEIGHT = 0.1;
   private readonly MAX_WEIGHT = 10.0;
 
-  constructor(
-    private prisma: PrismaService,
-    private redisService: RedisService
-  ) {}
+  constructor(private prisma: PrismaService, private redisService: RedisService) {}
 
   async recordEvent(input: LearningInput): Promise<void> {
     await this.prisma.userBehaviorEvent.create({

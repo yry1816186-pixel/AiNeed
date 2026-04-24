@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColorSeason } from "@prisma/client";
 
 import { PosterTemplate } from "./base-template";

@@ -1,13 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Query,
-  UseGuards,
-  Request,
-} from "@nestjs/common";
+import { Controller, Post, Get, Body, Query, UseGuards, Request } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -18,7 +9,7 @@ import {
 } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../../common/types/common.types";
-import { OptionalAuthGuard } from '../../../identity/auth/guards/optional-auth.guard';
+import { OptionalAuthGuard } from "../../../identity/auth/guards/optional-auth.guard";
 import { TrackEventDto } from "../dto/track-event.dto";
 import { BehaviorTrackerService } from "../services/behavior-tracker.service";
 
@@ -80,12 +71,23 @@ export class AnalyticsController {
     summary: "获取热门趋势",
     description: "获取平台热门趋势数据，支持按类型（商品/搜索）筛选。公开接口，无需认证。",
   })
-  @ApiQuery({ name: "type", required: false, enum: ["items", "searches"], description: "趋势类型：items(商品)、searches(搜索)" })
-  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiQuery({
+    name: "type",
+    required: false,
+    enum: ["items", "searches"],
+    description: "趋势类型：items(商品)、searches(搜索)",
+  })
+  @ApiQuery({
+    name: "limit",
+    required: false,
+    type: Number,
+    description: "返回数量，默认10",
+    example: 10,
+  })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getTrending(
     @Query("type") type: "items" | "searches" = "items",
-    @Query("limit") limit: string = "10",
+    @Query("limit") limit: string = "10"
   ) {
     return this.behaviorTracker.getTrending(type, parseInt(limit));
   }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -27,10 +26,7 @@ const WEATHER_CACHE_TTL_SECONDS = 30 * 60; // 30 分钟缓存
 export class WeatherIntegrationService {
   private readonly logger = new Logger(WeatherIntegrationService.name);
 
-  constructor(
-    private weatherService: WeatherService,
-    private redisService: RedisService
-  ) {}
+  constructor(private weatherService: WeatherService, private redisService: RedisService) {}
 
   /**
    * 获取天气上下文（带缓存）

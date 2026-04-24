@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -14,11 +13,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@ne
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
-import {
-  AddressService,
-  CreateAddressDto,
-  UpdateAddressDto,
-} from "./address.service";
+import { AddressService, CreateAddressDto, UpdateAddressDto } from "./address.service";
 
 @ApiTags("addresses")
 @ApiBearerAuth()
@@ -41,10 +36,7 @@ export class AddressController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "地址不存在" })
   @ApiParam({ name: "id", description: "地址 ID" })
-  async findOne(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async findOne(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     return this.addressService.findOne(req.user.id, id);
   }
 
@@ -53,10 +45,7 @@ export class AddressController {
   @ApiResponse({ status: 201, description: "创建成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async create(
-    @Request() req: { user: { id: string } },
-    @Body() dto: CreateAddressDto,
-  ) {
+  async create(@Request() req: { user: { id: string } }, @Body() dto: CreateAddressDto) {
     return this.addressService.create(req.user.id, dto);
   }
 
@@ -70,7 +59,7 @@ export class AddressController {
   async update(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() dto: UpdateAddressDto,
+    @Body() dto: UpdateAddressDto
   ) {
     return this.addressService.update(req.user.id, id, dto);
   }
@@ -81,10 +70,7 @@ export class AddressController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "地址不存在" })
   @ApiParam({ name: "id", description: "地址 ID" })
-  async remove(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async remove(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.addressService.remove(req.user.id, id);
     return { success: true };
   }
@@ -95,10 +81,7 @@ export class AddressController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "地址不存在" })
   @ApiParam({ name: "id", description: "地址 ID" })
-  async setDefault(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async setDefault(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.addressService.setDefault(req.user.id, id);
     return { success: true };
   }

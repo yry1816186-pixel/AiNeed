@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsArray, IsEnum, IsNumber, MaxLength } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsOptional, IsArray, IsEnum, IsNumber, MaxLength } from "class-validator";
+
 import { CustomizationType } from "../../../../types/prisma-enums";
 
 export class CreateCustomizationRequestDto {

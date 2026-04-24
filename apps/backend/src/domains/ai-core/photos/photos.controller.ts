@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Body,
   Controller,
@@ -27,10 +26,10 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from "../../../types/prisma-enums";
 import type { Response } from "express";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
+import { PhotoType } from "../../../types/prisma-enums";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 

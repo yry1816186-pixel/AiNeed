@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { ClothingCategory } from "../../../../types/prisma-enums";
 import {
   type ClothingItemWhereInput,
   type ClothingAttributes,

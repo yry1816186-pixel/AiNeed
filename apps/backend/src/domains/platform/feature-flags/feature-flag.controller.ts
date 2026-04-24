@@ -10,8 +10,8 @@ import {
   UseGuards,
   Request as NestRequest,
 } from "@nestjs/common";
-import type { Request } from "express";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
+import type { Request } from "express";
 
 import { Public } from "../../identity/auth/decorators/public.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 支付提供商接口
  * 定义所有支付提供商必须实现的方法
@@ -94,9 +93,7 @@ export interface PaymentProviderInterface {
    * @param callbackData 原始回调数据
    * @returns 解析后的回调数据
    */
-  handleCallback(
-    callbackData: PaymentRawCallbackData,
-  ): Promise<PaymentCallbackData>;
+  handleCallback(callbackData: PaymentRawCallbackData): Promise<PaymentCallbackData>;
 
   /**
    * 验证回调签名

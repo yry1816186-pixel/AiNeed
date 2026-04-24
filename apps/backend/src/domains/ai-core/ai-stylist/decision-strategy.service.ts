@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+
 import { ClothingCategory } from "../../../types/prisma-enums";
 
+import { DecisionScoreService } from "./decision-score.service";
 import {
   type DecisionNodeType,
   type DecisionNode,
@@ -13,8 +14,6 @@ import {
   type DecisionContext,
   type LlmChatCompletionResponse,
 } from "./types";
-
-import { DecisionScoreService } from "./decision-score.service";
 
 const DECISION_NODE_TYPES: DecisionNodeType[] = ["style", "top", "bottom", "color", "fit"];
 
@@ -75,10 +74,7 @@ export class DecisionStrategyService {
   private readonly apiEndpoint: string;
   private readonly model: string;
 
-  constructor(
-    private configService: ConfigService,
-    private scoreService: DecisionScoreService
-  ) {
+  constructor(private configService: ConfigService, private scoreService: DecisionScoreService) {
     this.apiKey =
       this.configService.get<string>("AI_STYLIST_API_KEY", "") ||
       this.configService.get<string>("GLM_API_KEY", "") ||

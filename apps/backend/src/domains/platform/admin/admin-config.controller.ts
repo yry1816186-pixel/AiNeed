@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -43,22 +42,14 @@ export class AdminConfigController {
   async setConfig(
     @Request() req: RequestWithUser,
     @Param("key") key: string,
-    @Body() dto: Omit<SystemConfigDto, "key">,
+    @Body() dto: Omit<SystemConfigDto, "key">
   ) {
-    return this.configService.setConfig(
-      key,
-      dto.value,
-      dto.description,
-      req.user.id,
-    );
+    return this.configService.setConfig(key, dto.value, dto.description, req.user.id);
   }
 
   @Delete(":key")
   @ApiOperation({ summary: "Delete config" })
-  async deleteConfig(
-    @Request() req: RequestWithUser,
-    @Param("key") key: string,
-  ) {
+  async deleteConfig(@Request() req: RequestWithUser, @Param("key") key: string) {
     return this.configService.deleteConfig(key, req.user.id);
   }
 }

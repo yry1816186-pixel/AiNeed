@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 /**
@@ -67,10 +66,7 @@ export class FaceShapeAnalyzer {
    * 获取脸型详情
    */
   getFaceShapeDetails(faceShape: string) {
-    return (
-      this.faceShapes[faceShape as keyof typeof this.faceShapes] ||
-      this.faceShapes.oval
-    );
+    return this.faceShapes[faceShape as keyof typeof this.faceShapes] || this.faceShapes.oval;
   }
 
   /**
@@ -111,8 +107,7 @@ export class FaceShapeAnalyzer {
     balance: string;
     recommendations: string[];
   } {
-    const { faceLength, faceWidth, foreheadHeight, noseLength, chinLength } =
-      faceData;
+    const { faceLength, faceWidth, foreheadHeight, noseLength, chinLength } = faceData;
 
     const recommendations: string[] = [];
 

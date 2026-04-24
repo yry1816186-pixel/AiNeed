@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview NL Slot Extractor Service - LLM-powered slot extraction.
  *
@@ -15,10 +14,7 @@ import { LlmProviderService } from "./llm-provider.service";
 import { SLOT_EXTRACTION_PROMPT } from "./prompts/system-prompt";
 
 // Import shared types
-import {
-  type ExtractedSlots,
-  type ExtractionResult,
-} from "./types";
+import { type ExtractedSlots, type ExtractionResult } from "./types";
 
 /**
  * Valid values for slot fields.
@@ -33,16 +29,7 @@ const VALID_OCCASIONS = [
   "campus",
 ] as const;
 
-const VALID_STYLES = [
-  "极简",
-  "韩系",
-  "法式",
-  "日系",
-  "轻正式",
-  "街头",
-  "运动",
-  "复古",
-] as const;
+const VALID_STYLES = ["极简", "韩系", "法式", "日系", "轻正式", "街头", "运动", "复古"] as const;
 
 const VALID_FIT_GOALS = [
   "显高",
@@ -106,7 +93,7 @@ export class NlSlotExtractorService {
    */
   async extractFromMessage(
     message: string,
-    existingSlots?: Partial<ExtractedSlots>,
+    existingSlots?: Partial<ExtractedSlots>
   ): Promise<ExtractionResult> {
     if (!message?.trim()) {
       return {
@@ -126,11 +113,13 @@ export class NlSlotExtractorService {
         }
 
         this.logger.debug(
-          `LLM extraction confidence too low (${result.confidence}), trying keyword fallback`,
+          `LLM extraction confidence too low (${result.confidence}), trying keyword fallback`
         );
       } catch (error) {
         this.logger.warn(
-          `LLM slot extraction failed, falling back to keywords: ${error instanceof Error ? error.message : String(error)}`,
+          `LLM slot extraction failed, falling back to keywords: ${
+            error instanceof Error ? error.message : String(error)
+          }`
         );
       }
     }
@@ -144,7 +133,7 @@ export class NlSlotExtractorService {
    */
   private async extractWithLlm(
     message: string,
-    existingSlots?: Partial<ExtractedSlots>,
+    existingSlots?: Partial<ExtractedSlots>
   ): Promise<ExtractionResult> {
     const contextParts: string[] = [];
     if (existingSlots) {
@@ -162,9 +151,10 @@ export class NlSlotExtractorService {
       }
     }
 
-    const userMessage = contextParts.length > 0
-      ? `${contextParts.join("\n\n")}\n\n用户最新消息：${message}`
-      : `用户消息：${message}`;
+    const userMessage =
+      contextParts.length > 0
+        ? `${contextParts.join("\n\n")}\n\n用户最新消息：${message}`
+        : `用户消息：${message}`;
 
     const response = await this.llmProvider.chatStructured<ExtractedSlots>({
       messages: [
@@ -185,7 +175,9 @@ export class NlSlotExtractorService {
       };
     }
 
-    const slots = this.validateAndNormalizeSlots(response.parsed as unknown as Record<string, unknown>);
+    const slots = this.validateAndNormalizeSlots(
+      response.parsed as unknown as Record<string, unknown>
+    );
 
     return {
       slots,
@@ -274,14 +266,16 @@ export class NlSlotExtractorService {
 
     // Validate colors (more lenient - accept any string)
     if (Array.isArray(raw.preferredColors)) {
-      slots.preferredColors = raw.preferredColors
-        .filter((c: unknown) => typeof c === "string" && c.trim().length > 0);
+      slots.preferredColors = raw.preferredColors.filter(
+        (c: unknown) => typeof c === "string" && c.trim().length > 0
+      );
     }
 
     // Validate style avoidances
     if (Array.isArray(raw.styleAvoidances)) {
-      slots.styleAvoidances = raw.styleAvoidances
-        .filter((s: unknown) => typeof s === "string" && s.trim().length > 0);
+      slots.styleAvoidances = raw.styleAvoidances.filter(
+        (s: unknown) => typeof s === "string" && s.trim().length > 0
+      );
     }
 
     // Validate budget
@@ -308,10 +302,7 @@ export class NlSlotExtractorService {
   /**
    * Calculate confidence score for extracted slots.
    */
-  private calculateConfidence(
-    slots: Partial<ExtractedSlots>,
-    originalMessage: string,
-  ): number {
+  private calculateConfidence(slots: Partial<ExtractedSlots>, originalMessage: string): number {
     if (!originalMessage?.trim()) {
       return 0;
     }
@@ -403,11 +394,13 @@ export class NlSlotExtractorService {
     ];
 
     const normalized = message.toLowerCase();
-    return [...new Set(
-      styleMap
-        .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
-        .map(([, value]) => value),
-    )];
+    return [
+      ...new Set(
+        styleMap
+          .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
+          .map(([, value]) => value)
+      ),
+    ];
   }
 
   private extractFitGoals(message: string): string[] {
@@ -425,11 +418,13 @@ export class NlSlotExtractorService {
     ];
 
     const normalized = message.toLowerCase();
-    return [...new Set(
-      goalMap
-        .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
-        .map(([, value]) => value),
-    )];
+    return [
+      ...new Set(
+        goalMap
+          .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
+          .map(([, value]) => value)
+      ),
+    ];
   }
 
   private extractColors(message: string): string[] {
@@ -447,16 +442,12 @@ export class NlSlotExtractorService {
       };
     }
 
-    const underMatch = message.match(
-      /(\d{2,5})\s*(?:元|块|rmb)?\s*(?:以内|以下)/i,
-    );
+    const underMatch = message.match(/(\d{2,5})\s*(?:元|块|rmb)?\s*(?:以内|以下)/i);
     if (underMatch) {
       return { max: Number(underMatch[1]) };
     }
 
-    const aroundMatch = message.match(
-      /(\d{2,5})\s*(?:元|块|rmb)?\s*(?:左右|上下)/i,
-    );
+    const aroundMatch = message.match(/(\d{2,5})\s*(?:元|块|rmb)?\s*(?:左右|上下)/i);
     if (aroundMatch) {
       const center = Number(aroundMatch[1]);
       return {

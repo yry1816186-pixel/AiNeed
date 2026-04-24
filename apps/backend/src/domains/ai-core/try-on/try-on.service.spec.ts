@@ -1,13 +1,13 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { TryOnStatus } from "../../../types/prisma-enums";
 
 import { NotificationService } from "../../../common/gateway/notification.service";
 import { StructuredLoggerService } from "../../../common/logging/structured-logger.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 import { StorageService } from "../../../common/storage/storage.service";
+import { TryOnStatus } from "../../../types/prisma-enums";
 import { QueueService } from "../../platform/queue/queue.service";
 
 import { TryOnOrchestratorService } from "./services/tryon-orchestrator.service";

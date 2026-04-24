@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Payment Events - Event-driven architecture for payment module
  * These events decouple Payment from Subscription and Notification modules
@@ -8,14 +7,14 @@ import { PaymentOrderMetadata } from "../types/common.types";
 
 // Event constants for type safety
 export const PAYMENT_EVENTS = {
-  PAYMENT_SUCCEEDED: 'payment.succeeded',
-  PAYMENT_FAILED: 'payment.failed',
-  PAYMENT_REFUNDED: 'payment.refunded',
-  PAYMENT_CLOSED: 'payment.closed',
-  SUBSCRIPTION_ACTIVATION_REQUIRED: 'payment.subscription.activation',
+  PAYMENT_SUCCEEDED: "payment.succeeded",
+  PAYMENT_FAILED: "payment.failed",
+  PAYMENT_REFUNDED: "payment.refunded",
+  PAYMENT_CLOSED: "payment.closed",
+  SUBSCRIPTION_ACTIVATION_REQUIRED: "payment.subscription.activation",
 } as const;
 
-export type PaymentEventType = typeof PAYMENT_EVENTS[keyof typeof PAYMENT_EVENTS];
+export type PaymentEventType = (typeof PAYMENT_EVENTS)[keyof typeof PAYMENT_EVENTS];
 
 // Event payloads
 export interface PaymentSucceededPayload {

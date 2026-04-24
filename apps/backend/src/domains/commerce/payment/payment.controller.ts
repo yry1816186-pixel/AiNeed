@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Post,
   Get,
@@ -12,19 +11,13 @@
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 import { Request } from "express";
 
 import { CurrentUser } from "../../../domains/identity/auth/decorators/current-user.decorator";
-import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 import { Public } from "../../../domains/identity/auth/decorators/public.decorator";
+import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import {
   CreatePaymentDto,
@@ -65,7 +58,7 @@ export class PaymentController {
   async createPayment(
     @CurrentUser() user: { id: string },
     @Body() dto: CreatePaymentDto,
-    @Req() req: Request,
+    @Req() req: Request
   ): Promise<PaymentResponseDto> {
     // 获取客户端 IP
     const clientIp = this.getClientIp(req);
@@ -93,7 +86,7 @@ export class PaymentController {
   @ApiResponse({ status: 404, description: "订单不存在" })
   async queryPayment(
     @CurrentUser() user: { id: string },
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<PaymentStatusResponseDto> {
     return this.paymentService.queryPayment(user.id, orderId);
   }
@@ -108,7 +101,7 @@ export class PaymentController {
   @ApiResponse({ status: 200, description: "轮询成功" })
   async pollPaymentStatus(
     @CurrentUser() user: { id: string },
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<{ paid: boolean; status: string }> {
     return this.paymentService.pollPaymentStatus(user.id, orderId);
   }
@@ -124,7 +117,7 @@ export class PaymentController {
   @ApiResponse({ status: 200, description: "回调处理成功" })
   async alipayCallback(
     @Body() body: PaymentRawCallbackData,
-    @Req() _req: Request,
+    @Req() _req: Request
   ): Promise<string> {
     this.logger.log("Received Alipay callback");
 
@@ -154,7 +147,7 @@ export class PaymentController {
   @ApiResponse({ status: 200, description: "回调处理成功" })
   async wechatCallback(
     @Body() body: PaymentRawCallbackData,
-    @Req() req: Request,
+    @Req() req: Request
   ): Promise<{ code: string; message: string }> {
     this.logger.log("Received Wechat callback");
 
@@ -187,7 +180,7 @@ export class PaymentController {
   @ApiResponse({ status: 404, description: "订单不存在" })
   async refund(
     @CurrentUser() user: { id: string },
-    @Body() dto: RefundPaymentDto,
+    @Body() dto: RefundPaymentDto
   ): Promise<RefundResponseDto> {
     return this.paymentService.refund(user.id, dto);
   }
@@ -204,7 +197,7 @@ export class PaymentController {
   @ApiResponse({ status: 404, description: "订单不存在" })
   async closeOrder(
     @CurrentUser() user: { id: string },
-    @Body() dto: ClosePaymentDto,
+    @Body() dto: ClosePaymentDto
   ): Promise<{ success: boolean }> {
     const result = await this.paymentService.closeOrder(user.id, dto.orderId);
     return { success: result };
@@ -225,12 +218,12 @@ export class PaymentController {
   async getPaymentRecords(
     @CurrentUser() user: { id: string },
     @Query("page") page?: string,
-    @Query("pageSize") pageSize?: string,
+    @Query("pageSize") pageSize?: string
   ): Promise<PaymentListResponseDto> {
     return this.paymentService.getPaymentRecords(
       user.id,
       page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 10,
+      pageSize ? parseInt(pageSize, 10) : 10
     );
   }
 

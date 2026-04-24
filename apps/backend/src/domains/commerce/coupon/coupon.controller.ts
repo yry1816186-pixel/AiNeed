@@ -1,15 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-  Req,
-} from "@nestjs/common";
+import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Req } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
@@ -32,7 +21,7 @@ export class CouponController {
       req.user.id,
       dto.orderAmount,
       dto.categoryIds,
-      dto.brandId,
+      dto.brandId
     );
   }
 
@@ -48,10 +37,7 @@ export class CouponController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get user's coupons" })
-  async getUserCoupons(
-    @Req() req: { user: { id: string } },
-    @Query("status") status?: string,
-  ) {
+  async getUserCoupons(@Req() req: { user: { id: string } }, @Query("status") status?: string) {
     return this.couponService.getUserCoupons(req.user.id, status);
   }
 

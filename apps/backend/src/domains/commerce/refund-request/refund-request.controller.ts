@@ -1,15 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  Query,
-  UseGuards,
-  Req,
-} from "@nestjs/common";
+import { Controller, Get, Post, Patch, Param, Body, Query, UseGuards, Req } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
@@ -31,10 +20,7 @@ export class RefundRequestController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create refund request" })
-  async create(
-    @Req() req: { user: { id: string } },
-    @Body() dto: CreateRefundRequestDto,
-  ) {
+  async create(@Req() req: { user: { id: string } }, @Body() dto: CreateRefundRequestDto) {
     return this.refundRequestService.create(req.user.id, dto);
   }
 
@@ -44,7 +30,7 @@ export class RefundRequestController {
   @ApiOperation({ summary: "Get user's refund requests" })
   async getUserRefundRequests(
     @Req() req: { user: { id: string } },
-    @Query("orderId") orderId?: string,
+    @Query("orderId") orderId?: string
   ) {
     return this.refundRequestService.getUserRefundRequests(req.user.id, orderId);
   }
@@ -64,23 +50,16 @@ export class RefundRequestController {
   async addTrackingNumber(
     @Req() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() dto: AddTrackingNumberDto,
+    @Body() dto: AddTrackingNumberDto
   ) {
-    return this.refundRequestService.addTrackingNumber(
-      req.user.id,
-      id,
-      dto.trackingNumber,
-    );
+    return this.refundRequestService.addTrackingNumber(req.user.id, id, dto.trackingNumber);
   }
 
   @Patch(":id/approve")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Approve refund request (admin/merchant)" })
-  async approve(
-    @Param("id") id: string,
-    @Body() dto: ApproveRefundDto,
-  ) {
+  async approve(@Param("id") id: string, @Body() dto: ApproveRefundDto) {
     return this.refundRequestService.approve(id, dto.adminNote);
   }
 
@@ -88,10 +67,7 @@ export class RefundRequestController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Reject refund request (admin/merchant)" })
-  async reject(
-    @Param("id") id: string,
-    @Body() dto: RejectRefundDto,
-  ) {
+  async reject(@Param("id") id: string, @Body() dto: RejectRefundDto) {
     return this.refundRequestService.reject(id, dto.adminNote);
   }
 

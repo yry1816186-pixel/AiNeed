@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -19,10 +18,7 @@ export class SASRecClientService {
   private readonly enabled: boolean;
 
   constructor(private configService: ConfigService) {
-    this.baseUrl = this.configService.get<string>(
-      "SASREC_SERVICE_URL",
-      "http://localhost:8100",
-    );
+    this.baseUrl = this.configService.get<string>("SASREC_SERVICE_URL", "http://localhost:8100");
     this.enabled = this.configService.get<string>("SASREC_ENABLED", "false") === "true";
   }
 
@@ -33,9 +29,11 @@ export class SASRecClientService {
   async predict(
     userSequence: SequenceItem[],
     topK: number = 10,
-    excludeItems: string[] = [],
+    excludeItems: string[] = []
   ): Promise<SASRecRecommendation[]> {
-    if (!this.enabled) {return [];}
+    if (!this.enabled) {
+      return [];
+    }
 
     try {
       const response = await fetch(`${this.baseUrl}/predict`, {
@@ -69,9 +67,11 @@ export class SASRecClientService {
   async train(
     userSequences: SequenceItem[][],
     epochs: number = 10,
-    learningRate: number = 0.001,
+    learningRate: number = 0.001
   ): Promise<{ loss: number; epochs: number } | null> {
-    if (!this.enabled) {return null;}
+    if (!this.enabled) {
+      return null;
+    }
 
     try {
       const response = await fetch(`${this.baseUrl}/train`, {
@@ -82,7 +82,7 @@ export class SASRecClientService {
             seq.map((item) => ({
               item_id: item.itemId,
               timestamp: item.timestamp,
-            })),
+            }))
           ),
           epochs,
           learning_rate: learningRate,
@@ -102,7 +102,9 @@ export class SASRecClientService {
   }
 
   async warmup(itemIds: string[]): Promise<boolean> {
-    if (!this.enabled) {return false;}
+    if (!this.enabled) {
+      return false;
+    }
 
     try {
       const response = await fetch(`${this.baseUrl}/warmup`, {
@@ -118,7 +120,9 @@ export class SASRecClientService {
   }
 
   async healthCheck(): Promise<boolean> {
-    if (!this.enabled) {return false;}
+    if (!this.enabled) {
+      return false;
+    }
 
     try {
       const response = await fetch(`${this.baseUrl}/health`);

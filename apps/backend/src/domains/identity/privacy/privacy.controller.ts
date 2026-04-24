@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -10,19 +9,17 @@ import {
   Ip,
   Headers,
 } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../auth/guards/auth.guard";
 
 import { RecordConsentDto, ExportDataDto, DeleteAccountDto } from "./dto";
-import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION, POLICY_UPDATED_AT } from "./privacy-version";
+import {
+  CURRENT_TERMS_VERSION,
+  CURRENT_PRIVACY_VERSION,
+  POLICY_UPDATED_AT,
+} from "./privacy-version";
 import { PrivacyService } from "./privacy.service";
 
 @ApiTags("privacy")
@@ -36,7 +33,10 @@ export class PrivacyController {
    * Get current policy versions
    */
   @Get("policy-version")
-  @ApiOperation({ summary: "Get policy versions", description: "Get the current versions of privacy policy and terms of service" })
+  @ApiOperation({
+    summary: "Get policy versions",
+    description: "Get the current versions of privacy policy and terms of service",
+  })
   @ApiResponse({ status: 200, description: "Current policy versions" })
   getPolicyVersion() {
     return {
@@ -69,34 +69,26 @@ export class PrivacyController {
     @Request() req: RequestWithUser,
     @Body() body: RecordConsentDto,
     @Ip() ip: string,
-    @Headers("user-agent") userAgent: string,
+    @Headers("user-agent") userAgent: string
   ) {
-    return this.privacyService.recordConsent(
-      req.user.id,
-      body.consentType,
-      body.granted,
-      {
-        ipAddress: ip,
-        userAgent,
-      },
-    );
+    return this.privacyService.recordConsent(req.user.id, body.consentType, body.granted, {
+      ipAddress: ip,
+      userAgent,
+    });
   }
 
   /**
    * 导出数据
    */
   @Post("export")
-  @ApiOperation({ summary: "导出用户数据", description: "请求导出当前用户的个人数据，支持 JSON 和 CSV 格式" })
+  @ApiOperation({
+    summary: "导出用户数据",
+    description: "请求导出当前用户的个人数据，支持 JSON 和 CSV 格式",
+  })
   @ApiResponse({ status: 200, description: "导出请求已创建" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async exportData(
-    @Request() req: RequestWithUser,
-    @Body() body: ExportDataDto,
-  ) {
-    return this.privacyService.exportUserData(
-      req.user.id,
-      body.format || "json",
-    );
+  async exportData(@Request() req: RequestWithUser, @Body() body: ExportDataDto) {
+    return this.privacyService.exportUserData(req.user.id, body.format || "json");
   }
 
   /**
@@ -108,10 +100,7 @@ export class PrivacyController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "导出请求不存在" })
   @ApiParam({ name: "requestId", description: "导出请求ID" })
-  async getExportStatus(
-    @Request() req: RequestWithUser,
-    @Param("requestId") requestId: string,
-  ) {
+  async getExportStatus(@Request() req: RequestWithUser, @Param("requestId") requestId: string) {
     return this.privacyService.getExportRequest(requestId, req.user.id);
   }
 
@@ -135,10 +124,7 @@ export class PrivacyController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "删除请求不存在" })
   @ApiParam({ name: "requestId", description: "删除请求ID" })
-  async getDeletionStatus(
-    @Request() req: RequestWithUser,
-    @Param("requestId") requestId: string,
-  ) {
+  async getDeletionStatus(@Request() req: RequestWithUser, @Param("requestId") requestId: string) {
     return this.privacyService.getDeletionRequest(requestId, req.user.id);
   }
 
@@ -151,10 +137,7 @@ export class PrivacyController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "删除请求不存在" })
   @ApiParam({ name: "requestId", description: "删除请求ID" })
-  async cancelDeletion(
-    @Request() req: RequestWithUser,
-    @Param("requestId") requestId: string,
-  ) {
+  async cancelDeletion(@Request() req: RequestWithUser, @Param("requestId") requestId: string) {
     return this.privacyService.cancelDeletionRequest(requestId, req.user.id);
   }
 }

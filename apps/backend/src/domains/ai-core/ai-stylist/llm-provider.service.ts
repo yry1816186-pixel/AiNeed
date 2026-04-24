@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview LLM Provider Service - Multi-provider abstraction layer.
  *
@@ -95,10 +94,13 @@ export class LlmProviderService implements OnModuleInit {
   private config!: LlmProviderConfig;
   private readonly fallbackChain: LlmProviderConfig[] = [];
   private readonly retryConfig: RetryConfig;
-  private readonly circuitBreakers = new Map<LlmProvider, {
-    consecutiveFailures: number;
-    lastFailureTime: number;
-  }>();
+  private readonly circuitBreakers = new Map<
+    LlmProvider,
+    {
+      consecutiveFailures: number;
+      lastFailureTime: number;
+    }
+  >();
   private readonly circuitBreakerThreshold = 5;
   private readonly circuitBreakerResetMs = 60_000;
 
@@ -114,14 +116,14 @@ export class LlmProviderService implements OnModuleInit {
 
     const chainDescription = [
       `${this.config.provider}/${this.config.model}`,
-      ...this.fallbackChain.map(
-        (fallback) => `${fallback.provider}/${fallback.model}`,
-      ),
+      ...this.fallbackChain.map((fallback) => `${fallback.provider}/${fallback.model}`),
     ].join(" -> ");
 
     this.logger.log(`LLM Provider chain: ${chainDescription}`);
     this.logger.log(
-      `API key status: ${this.config.apiKey ? "configured" : "NOT configured - using fallback mode"}`,
+      `API key status: ${
+        this.config.apiKey ? "configured" : "NOT configured - using fallback mode"
+      }`
     );
   }
 
@@ -166,7 +168,7 @@ export class LlmProviderService implements OnModuleInit {
   }): Promise<LlmChatResponse> {
     if (!this.isConfigured) {
       throw new Error(
-        "LLM provider is not configured. Set DEEPSEEK_API_KEY, DASHSCOPE_API_KEY, or GLM_API_KEY in .env",
+        "LLM provider is not configured. Set DEEPSEEK_API_KEY, DASHSCOPE_API_KEY, or GLM_API_KEY in .env"
       );
     }
 
@@ -174,9 +176,7 @@ export class LlmProviderService implements OnModuleInit {
     const temperature = params.temperature ?? this.config.temperature;
     const requestId = params.requestId ?? `chat-${Date.now()}`;
 
-    this.logger.debug(
-      `[${requestId}] Sending chat request (${params.messages.length} messages)`,
-    );
+    this.logger.debug(`[${requestId}] Sending chat request (${params.messages.length} messages)`);
 
     // Try primary provider
     if (this.isProviderAvailable(this.config.provider)) {
@@ -186,7 +186,7 @@ export class LlmProviderService implements OnModuleInit {
           params.messages,
           maxTokens,
           temperature,
-          requestId,
+          requestId
         );
         this.logUsageMetrics({
           provider: response.provider,
@@ -204,7 +204,7 @@ export class LlmProviderService implements OnModuleInit {
         const errorMessage =
           primaryError instanceof Error ? primaryError.message : String(primaryError);
         this.logger.warn(
-          `[${requestId}] Primary provider (${this.config.provider}) failed: ${errorMessage}`,
+          `[${requestId}] Primary provider (${this.config.provider}) failed: ${errorMessage}`
         );
       }
     }
@@ -216,7 +216,7 @@ export class LlmProviderService implements OnModuleInit {
       }
 
       this.logger.log(
-        `[${requestId}] Falling back to ${fallbackConfig.provider}/${fallbackConfig.model}`,
+        `[${requestId}] Falling back to ${fallbackConfig.provider}/${fallbackConfig.model}`
       );
 
       try {
@@ -225,7 +225,7 @@ export class LlmProviderService implements OnModuleInit {
           params.messages,
           maxTokens,
           temperature,
-          requestId,
+          requestId
         );
         this.logUsageMetrics({
           provider: response.provider,
@@ -243,15 +243,13 @@ export class LlmProviderService implements OnModuleInit {
         const errorMessage =
           fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         this.logger.warn(
-          `[${requestId}] Fallback provider (${fallbackConfig.provider}) failed: ${errorMessage}`,
+          `[${requestId}] Fallback provider (${fallbackConfig.provider}) failed: ${errorMessage}`
         );
       }
     }
 
     // All providers failed
-    throw new Error(
-      "All LLM providers failed. Check your API keys and network connectivity.",
-    );
+    throw new Error("All LLM providers failed. Check your API keys and network connectivity.");
   }
 
   /**
@@ -318,9 +316,7 @@ export class LlmProviderService implements OnModuleInit {
    */
   async healthCheck(): Promise<LlmHealthCheck[]> {
     const results: LlmHealthCheck[] = [];
-    const allConfigs = [this.config, ...this.fallbackChain].filter(
-      (config) => config.apiKey,
-    );
+    const allConfigs = [this.config, ...this.fallbackChain].filter((config) => config.apiKey);
 
     for (const providerConfig of allConfigs) {
       const startTime = Date.now();
@@ -396,10 +392,7 @@ export class LlmProviderService implements OnModuleInit {
 
     // Check for explicit AI_STYLIST_* override
     const stylistKey = this.configService.get<string>("AI_STYLIST_API_KEY", "");
-    const stylistEndpoint = this.configService.get<string>(
-      "AI_STYLIST_API_ENDPOINT",
-      "",
-    );
+    const stylistEndpoint = this.configService.get<string>("AI_STYLIST_API_ENDPOINT", "");
     const stylistModel = this.configService.get<string>("AI_STYLIST_MODEL", "");
 
     if (stylistKey && stylistEndpoint) {
@@ -426,15 +419,11 @@ export class LlmProviderService implements OnModuleInit {
       availableProviders.push({
         provider: "deepseek",
         apiKey: deepseekKey,
-        endpoint:
-          this.configService.get<string>(
-            "DEEPSEEK_API_ENDPOINT",
-            PROVIDER_DEFAULTS.deepseek.endpoint,
-          ),
-        model: this.configService.get<string>(
-          "DEEPSEEK_MODEL",
-          PROVIDER_DEFAULTS.deepseek.model,
+        endpoint: this.configService.get<string>(
+          "DEEPSEEK_API_ENDPOINT",
+          PROVIDER_DEFAULTS.deepseek.endpoint
         ),
+        model: this.configService.get<string>("DEEPSEEK_MODEL", PROVIDER_DEFAULTS.deepseek.model),
         maxTokens: 800,
         temperature: 0.3,
         timeoutMs: 30_000,
@@ -449,15 +438,11 @@ export class LlmProviderService implements OnModuleInit {
       availableProviders.push({
         provider: "qwen",
         apiKey: qwenKey,
-        endpoint:
-          this.configService.get<string>(
-            "QWEN_API_ENDPOINT",
-            PROVIDER_DEFAULTS.qwen.endpoint,
-          ),
-        model: this.configService.get<string>(
-          "QWEN_MODEL",
-          PROVIDER_DEFAULTS.qwen.model,
+        endpoint: this.configService.get<string>(
+          "QWEN_API_ENDPOINT",
+          PROVIDER_DEFAULTS.qwen.endpoint
         ),
+        model: this.configService.get<string>("QWEN_MODEL", PROVIDER_DEFAULTS.qwen.model),
         maxTokens: 800,
         temperature: 0.3,
         timeoutMs: 30_000,
@@ -472,15 +457,11 @@ export class LlmProviderService implements OnModuleInit {
       availableProviders.push({
         provider: "zhipu",
         apiKey: glmKey,
-        endpoint:
-          this.configService.get<string>(
-            "GLM_API_ENDPOINT",
-            PROVIDER_DEFAULTS.zhipu.endpoint,
-          ),
-        model: this.configService.get<string>(
-          "GLM_MODEL",
-          PROVIDER_DEFAULTS.zhipu.model,
+        endpoint: this.configService.get<string>(
+          "GLM_API_ENDPOINT",
+          PROVIDER_DEFAULTS.zhipu.endpoint
         ),
+        model: this.configService.get<string>("GLM_MODEL", PROVIDER_DEFAULTS.zhipu.model),
         maxTokens: 800,
         temperature: 0.3,
         timeoutMs: 30_000,
@@ -495,12 +476,9 @@ export class LlmProviderService implements OnModuleInit {
         apiKey: openaiKey,
         endpoint: this.configService.get<string>(
           "OPENAI_API_ENDPOINT",
-          PROVIDER_DEFAULTS.openai.endpoint,
+          PROVIDER_DEFAULTS.openai.endpoint
         ),
-        model: this.configService.get<string>(
-          "OPENAI_MODEL",
-          PROVIDER_DEFAULTS.openai.model,
-        ),
+        model: this.configService.get<string>("OPENAI_MODEL", PROVIDER_DEFAULTS.openai.model),
         maxTokens: 800,
         temperature: 0.3,
         timeoutMs: 30_000,
@@ -510,7 +488,7 @@ export class LlmProviderService implements OnModuleInit {
     if (availableProviders.length === 0) {
       this.logger.warn(
         "No LLM API key configured. Set DEEPSEEK_API_KEY, DASHSCOPE_API_KEY, or GLM_API_KEY in .env. " +
-        "The AI stylist will use fallback template responses.",
+          "The AI stylist will use fallback template responses."
       );
       return { primary: defaultConfig, fallbacks: [] };
     }
@@ -531,7 +509,7 @@ export class LlmProviderService implements OnModuleInit {
     messages: LlmChatMessage[],
     maxTokens: number,
     temperature: number,
-    requestId: string,
+    requestId: string
   ): Promise<LlmChatResponse> {
     const startTime = Date.now();
     let lastError: Error | null = null;
@@ -543,7 +521,7 @@ export class LlmProviderService implements OnModuleInit {
           messages,
           maxTokens,
           temperature,
-          requestId,
+          requestId
         );
 
         this.onProviderSuccess(providerConfig.provider, requestId, Date.now() - startTime);
@@ -561,18 +539,15 @@ export class LlmProviderService implements OnModuleInit {
 
         const delay = this.calculateBackoffDelay(attempt);
         this.logger.warn(
-          `[${requestId}] ${providerConfig.provider} attempt ${attempt + 1} failed, retrying in ${delay}ms: ${lastError.message}`,
+          `[${requestId}] ${providerConfig.provider} attempt ${
+            attempt + 1
+          } failed, retrying in ${delay}ms: ${lastError.message}`
         );
         await this.sleep(delay);
       }
     }
 
-    this.onProviderFailure(
-      providerConfig.provider,
-      requestId,
-      Date.now() - startTime,
-      lastError,
-    );
+    this.onProviderFailure(providerConfig.provider, requestId, Date.now() - startTime, lastError);
     throw lastError ?? new Error("Unknown error during chat request");
   }
 
@@ -584,13 +559,10 @@ export class LlmProviderService implements OnModuleInit {
     messages: LlmChatMessage[],
     maxTokens: number,
     temperature: number,
-    requestId: string,
+    requestId: string
   ): Promise<Omit<LlmChatResponse, "provider">> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      providerConfig.timeoutMs,
-    );
+    const timeoutId = setTimeout(() => controller.abort(), providerConfig.timeoutMs);
 
     try {
       const url = `${providerConfig.endpoint}/chat/completions`;
@@ -641,7 +613,7 @@ export class LlmProviderService implements OnModuleInit {
 
       this.logger.debug(
         `[${requestId}] ${providerConfig.provider} response: ${content.length} chars, ` +
-        `${usage.total_tokens} tokens, finish_reason=${data.choices[0]?.finish_reason}`,
+          `${usage.total_tokens} tokens, finish_reason=${data.choices[0]?.finish_reason}`
       );
 
       return {
@@ -669,20 +641,12 @@ export class LlmProviderService implements OnModuleInit {
    * Handle HTTP error responses with specific error messages.
    * Uses `never` return type to signal this always throws.
    */
-  private handleHttpError(
-    status: number,
-    errorText: string,
-    requestId: string,
-  ): never {
-    this.logger.warn(
-      `[${requestId}] LLM API error: ${status} - ${errorText.slice(0, 200)}`,
-    );
+  private handleHttpError(status: number, errorText: string, requestId: string): never {
+    this.logger.warn(`[${requestId}] LLM API error: ${status} - ${errorText.slice(0, 200)}`);
 
     switch (status) {
       case 401:
-        throw new Error(
-          "LLM API authentication failed. Check your API keys in .env.",
-        );
+        throw new Error("LLM API authentication failed. Check your API keys in .env.");
       case 403:
         throw new Error("LLM API access forbidden. Check your account permissions.");
       case 429:
@@ -691,7 +655,7 @@ export class LlmProviderService implements OnModuleInit {
       case 502:
       case 503:
         throw new Error(
-          `LLM API server error (${status}). Service may be temporarily unavailable.`,
+          `LLM API server error (${status}). Service may be temporarily unavailable.`
         );
       default:
         throw new Error(`LLM API error: ${status} - ${errorText.slice(0, 100)}`);
@@ -735,9 +699,7 @@ export class LlmProviderService implements OnModuleInit {
       }
     }
 
-    this.logger.warn(
-      `Failed to parse JSON from LLM response: ${content.slice(0, 100)}...`,
-    );
+    this.logger.warn(`Failed to parse JSON from LLM response: ${content.slice(0, 100)}...`);
     return null;
   }
 
@@ -763,30 +725,24 @@ export class LlmProviderService implements OnModuleInit {
     }
 
     this.logger.debug(
-      `Circuit breaker open for ${provider} (${state.consecutiveFailures} consecutive failures)`,
+      `Circuit breaker open for ${provider} (${state.consecutiveFailures} consecutive failures)`
     );
     return false;
   }
 
-  private onProviderSuccess(
-    provider: LlmProvider,
-    requestId: string,
-    latencyMs: number,
-  ): void {
+  private onProviderSuccess(provider: LlmProvider, requestId: string, latencyMs: number): void {
     const state = this.circuitBreakers.get(provider);
     if (state) {
       state.consecutiveFailures = 0;
     }
-    this.logger.debug(
-      `[${requestId}] ${provider} request succeeded in ${latencyMs}ms`,
-    );
+    this.logger.debug(`[${requestId}] ${provider} request succeeded in ${latencyMs}ms`);
   }
 
   private onProviderFailure(
     provider: LlmProvider,
     requestId: string,
     latencyMs: number,
-    error: Error | null,
+    error: Error | null
   ): void {
     let state = this.circuitBreakers.get(provider);
     if (!state) {
@@ -798,7 +754,7 @@ export class LlmProviderService implements OnModuleInit {
 
     this.logger.warn(
       `[${requestId}] ${provider} request failed after ${latencyMs}ms ` +
-      `(${state.consecutiveFailures}/${this.circuitBreakerThreshold} failures): ${error?.message}`,
+        `(${state.consecutiveFailures}/${this.circuitBreakerThreshold} failures): ${error?.message}`
     );
   }
 
@@ -828,10 +784,7 @@ export class LlmProviderService implements OnModuleInit {
     }
 
     // Auth errors are never retryable
-    if (
-      error.message.includes("authentication") ||
-      error.message.includes("401")
-    ) {
+    if (error.message.includes("authentication") || error.message.includes("401")) {
       return false;
     }
 
@@ -853,10 +806,10 @@ export class LlmProviderService implements OnModuleInit {
   private logUsageMetrics(metrics: LlmUsageMetrics): void {
     this.logger.log(
       `[${metrics.requestId}] ${metrics.provider}/${metrics.model} ` +
-      `${metrics.totalTokens} tokens ` +
-      `(${metrics.promptTokens}+${metrics.completionTokens}) ` +
-      `${metrics.fallbackUsed ? "(fallback) " : ""}` +
-      `success=${metrics.success}`,
+        `${metrics.totalTokens} tokens ` +
+        `(${metrics.promptTokens}+${metrics.completionTokens}) ` +
+        `${metrics.fallbackUsed ? "(fallback) " : ""}` +
+        `success=${metrics.success}`
     );
   }
 

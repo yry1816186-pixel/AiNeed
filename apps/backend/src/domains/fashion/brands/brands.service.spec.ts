@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { BrandsService } from "./brands.service";
 

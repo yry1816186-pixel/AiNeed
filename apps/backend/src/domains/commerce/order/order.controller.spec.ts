@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Test, TestingModule } from "@nestjs/testing";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
@@ -52,12 +52,7 @@ describe("OrderController", () => {
       };
       mockOrderService.findAll.mockResolvedValue(mockResult);
 
-      const result = await controller.findAll(
-        { user: mockUser },
-        "pending",
-        "1",
-        "10",
-      );
+      const result = await controller.findAll({ user: mockUser }, "pending", "1", "10");
 
       expect(result).toEqual(mockResult);
       expect(service.findAll).toHaveBeenCalledWith(mockUser.id, {
@@ -150,10 +145,7 @@ describe("OrderController", () => {
       };
       mockOrderService.getTracking.mockResolvedValue(mockTracking);
 
-      const result = await controller.getTracking(
-        { user: mockUser },
-        "order-1",
-      );
+      const result = await controller.getTracking({ user: mockUser }, "order-1");
 
       expect(result).toEqual(mockTracking);
     });

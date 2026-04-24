@@ -93,11 +93,7 @@ export class WardrobeCollectionService {
     return collection;
   }
 
-  async updateCollection(
-    userId: string,
-    collectionId: string,
-    dto: UpdateWardrobeCollectionDto,
-  ) {
+  async updateCollection(userId: string, collectionId: string, dto: UpdateWardrobeCollectionDto) {
     await this.verifyOwnership(userId, collectionId);
 
     return this.prisma.wardrobeCollection.update({
@@ -134,11 +130,7 @@ export class WardrobeCollectionService {
 
   // ==================== 分类项 CRUD ====================
 
-  async addCollectionItem(
-    userId: string,
-    collectionId: string,
-    dto: CreateCollectionItemDto,
-  ) {
+  async addCollectionItem(userId: string, collectionId: string, dto: CreateCollectionItemDto) {
     await this.verifyOwnership(userId, collectionId);
 
     await this.validateItemReference(dto.itemType, dto.itemId);
@@ -161,7 +153,7 @@ export class WardrobeCollectionService {
   async batchAddCollectionItems(
     userId: string,
     collectionId: string,
-    dto: BatchCreateCollectionItemsDto,
+    dto: BatchCreateCollectionItemsDto
   ) {
     await this.verifyOwnership(userId, collectionId);
 
@@ -181,23 +173,16 @@ export class WardrobeCollectionService {
       skipDuplicates: true,
     });
 
-    this.logger.log(
-      `User ${userId} added ${result.count} items to collection ${collectionId}`,
-    );
+    this.logger.log(`User ${userId} added ${result.count} items to collection ${collectionId}`);
 
     return { count: result.count };
   }
 
-  async getCollectionItems(
-    userId: string,
-    collectionId: string,
-    query: CollectionItemQueryDto,
-  ) {
+  async getCollectionItems(userId: string, collectionId: string, query: CollectionItemQueryDto) {
     await this.verifyOwnership(userId, collectionId);
 
     const { itemType, page = 1, pageSize = 20 } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, any> = { collectionId };
     if (itemType) {
       where.itemType = itemType;
@@ -231,7 +216,7 @@ export class WardrobeCollectionService {
     userId: string,
     collectionId: string,
     itemId: string,
-    dto: UpdateCollectionItemDto,
+    dto: UpdateCollectionItemDto
   ) {
     await this.verifyCollectionItemOwnership(userId, collectionId, itemId);
 
@@ -243,11 +228,7 @@ export class WardrobeCollectionService {
     });
   }
 
-  async removeCollectionItem(
-    userId: string,
-    collectionId: string,
-    itemId: string,
-  ) {
+  async removeCollectionItem(userId: string, collectionId: string, itemId: string) {
     await this.verifyCollectionItemOwnership(userId, collectionId, itemId);
 
     await this.prisma.wardrobeCollectionItem.delete({
@@ -260,7 +241,7 @@ export class WardrobeCollectionService {
   async reorderCollectionItems(
     userId: string,
     collectionId: string,
-    dto: ReorderCollectionItemsDto,
+    dto: ReorderCollectionItemsDto
   ) {
     await this.verifyOwnership(userId, collectionId);
 
@@ -270,8 +251,8 @@ export class WardrobeCollectionService {
         this.prisma.wardrobeCollectionItem.updateMany({
           where: { id: itemId, collectionId },
           data: { sortOrder: index },
-        }),
-      ),
+        })
+      )
     );
 
     return { success: true };
@@ -304,7 +285,7 @@ export class WardrobeCollectionService {
   private async verifyCollectionItemOwnership(
     userId: string,
     collectionId: string,
-    itemId: string,
+    itemId: string
   ) {
     const item = await this.prisma.wardrobeCollectionItem.findUnique({
       where: { id: itemId },
@@ -360,7 +341,7 @@ export class WardrobeCollectionService {
    * 按类型分组后批量查询，将 N 次数据库查询降为 3 次（最多3种类型）
    */
   private async batchGetItemDetails(
-    items: { id: string; itemType: string; itemId: string; sortOrder: number; createdAt: Date }[],
+    items: { id: string; itemType: string; itemId: string; sortOrder: number; createdAt: Date }[]
   ) {
     // 按类型分组收集 ID
     const postIds: string[] = [];
@@ -369,9 +350,15 @@ export class WardrobeCollectionService {
 
     for (const item of items) {
       switch (item.itemType) {
-        case CollectionItemType.POST: postIds.push(item.itemId); break;
-        case CollectionItemType.OUTFIT: outfitIds.push(item.itemId); break;
-        case CollectionItemType.TRY_ON: tryOnIds.push(item.itemId); break;
+        case CollectionItemType.POST:
+          postIds.push(item.itemId);
+          break;
+        case CollectionItemType.OUTFIT:
+          outfitIds.push(item.itemId);
+          break;
+        case CollectionItemType.TRY_ON:
+          tryOnIds.push(item.itemId);
+          break;
       }
     }
 
@@ -380,7 +367,13 @@ export class WardrobeCollectionService {
       postIds.length > 0
         ? this.prisma.communityPost.findMany({
             where: { id: { in: postIds } },
-            select: { id: true, title: true, images: true, likeCount: true, author: { select: { id: true, nickname: true, avatar: true } } },
+            select: {
+              id: true,
+              title: true,
+              images: true,
+              likeCount: true,
+              author: { select: { id: true, nickname: true, avatar: true } },
+            },
           })
         : [],
       outfitIds.length > 0
@@ -399,9 +392,15 @@ export class WardrobeCollectionService {
 
     // 构建查找映射
     const detailMap = new Map<string, any>();
-    for (const post of posts) {detailMap.set(post.id, post);}
-    for (const outfit of outfits) {detailMap.set(outfit.id, outfit);}
-    for (const tryOn of tryOns) {detailMap.set(tryOn.id, tryOn);}
+    for (const post of posts) {
+      detailMap.set(post.id, post);
+    }
+    for (const outfit of outfits) {
+      detailMap.set(outfit.id, outfit);
+    }
+    for (const tryOn of tryOns) {
+      detailMap.set(tryOn.id, tryOn);
+    }
 
     // 组装结果
     return items.map((item) => ({
@@ -458,18 +457,16 @@ export class WardrobeCollectionService {
   /**
    * 自动更新分类封面图（当添加第一项时）
    */
-  private async updateCollectionCoverImage(
-    collectionId: string,
-    itemType: string,
-    itemId: string,
-  ) {
+  private async updateCollectionCoverImage(collectionId: string, itemType: string, itemId: string) {
     const collection = await this.prisma.wardrobeCollection.findUnique({
       where: { id: collectionId },
       select: { coverImage: true },
     });
 
     // 已有封面图则不覆盖
-    if (collection?.coverImage) {return;}
+    if (collection?.coverImage) {
+      return;
+    }
 
     let coverImage: string | null = null;
 

@@ -1,7 +1,8 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { ShareTemplateService } from "./share-template.service";
 
 const mockPrismaService = {
@@ -22,10 +23,7 @@ describe("ShareTemplateService", () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ShareTemplateService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [ShareTemplateService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<ShareTemplateService>(ShareTemplateService);
@@ -129,9 +127,7 @@ describe("ShareTemplateService", () => {
 
     it("should filter by isActive when provided", async () => {
       const query = { page: 1, pageSize: 10, isActive: true };
-      const mockTemplates = [
-        { id: "tpl-1", name: "模板1", isActive: true },
-      ];
+      const mockTemplates = [{ id: "tpl-1", name: "模板1", isActive: true }];
 
       mockPrismaService.shareTemplate.findMany.mockResolvedValue(mockTemplates);
       mockPrismaService.shareTemplate.count.mockResolvedValue(1);
@@ -142,7 +138,7 @@ describe("ShareTemplateService", () => {
       expect(mockPrismaService.shareTemplate.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { isActive: true },
-        }),
+        })
       );
     });
 
@@ -162,7 +158,7 @@ describe("ShareTemplateService", () => {
         expect.objectContaining({
           skip: 10,
           take: 10,
-        }),
+        })
       );
     });
   });
@@ -195,12 +191,8 @@ describe("ShareTemplateService", () => {
     it("should throw NotFoundException when template not found", async () => {
       mockPrismaService.shareTemplate.findUnique.mockResolvedValue(null);
 
-      await expect(service.getTemplateById(templateId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.getTemplateById(templateId)).rejects.toThrow(
-        "分享模板不存在",
-      );
+      await expect(service.getTemplateById(templateId)).rejects.toThrow(NotFoundException);
+      await expect(service.getTemplateById(templateId)).rejects.toThrow("分享模板不存在");
     });
   });
 
@@ -246,12 +238,8 @@ describe("ShareTemplateService", () => {
 
       mockPrismaService.shareTemplate.findUnique.mockResolvedValue(null);
 
-      await expect(service.updateTemplate(templateId, dto)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.updateTemplate(templateId, dto)).rejects.toThrow(
-        "分享模板不存在",
-      );
+      await expect(service.updateTemplate(templateId, dto)).rejects.toThrow(NotFoundException);
+      await expect(service.updateTemplate(templateId, dto)).rejects.toThrow("分享模板不存在");
       expect(mockPrismaService.shareTemplate.update).not.toHaveBeenCalled();
     });
   });
@@ -283,12 +271,8 @@ describe("ShareTemplateService", () => {
     it("should throw NotFoundException when template not found", async () => {
       mockPrismaService.shareTemplate.findUnique.mockResolvedValue(null);
 
-      await expect(service.deleteTemplate(templateId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.deleteTemplate(templateId)).rejects.toThrow(
-        "分享模板不存在",
-      );
+      await expect(service.deleteTemplate(templateId)).rejects.toThrow(NotFoundException);
+      await expect(service.deleteTemplate(templateId)).rejects.toThrow("分享模板不存在");
       expect(mockPrismaService.shareTemplate.delete).not.toHaveBeenCalled();
     });
   });

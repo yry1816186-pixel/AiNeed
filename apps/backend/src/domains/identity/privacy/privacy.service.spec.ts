@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EmailService } from "../../../common/email/email.service";
@@ -80,11 +80,11 @@ describe("PrivacyService", () => {
     $transaction: jest.fn(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (callbacks: any[] | ((tx: typeof mockPrisma) => unknown)) => {
-      if (Array.isArray(callbacks)) {
-        return Promise.all(callbacks);
+        if (Array.isArray(callbacks)) {
+          return Promise.all(callbacks);
+        }
+        return callbacks(mockPrisma);
       }
-      return callbacks(mockPrisma);
-      },
     ),
   });
 
@@ -158,12 +158,7 @@ describe("PrivacyService", () => {
 
       mockPrisma.userConsent.upsert.mockResolvedValue(mockConsent);
 
-      const result = await service.recordConsent(
-        userId,
-        consentType,
-        granted,
-        metadata,
-      );
+      const result = await service.recordConsent(userId, consentType, granted, metadata);
 
       expect(result).toEqual(mockConsent);
       expect(mockPrisma.userConsent.upsert).toHaveBeenCalled();
@@ -227,9 +222,7 @@ describe("PrivacyService", () => {
         expiresAt: new Date(Date.now() + 86400000),
       };
 
-      mockPrisma.dataExportRequest.findFirst.mockResolvedValue(
-        mockExportRequest,
-      );
+      mockPrisma.dataExportRequest.findFirst.mockResolvedValue(mockExportRequest);
 
       const result = await service.getExportRequest(requestId, userId);
 
@@ -257,9 +250,7 @@ describe("PrivacyService", () => {
         reason,
       };
 
-      mockPrisma.dataDeletionRequest.create.mockResolvedValue(
-        mockDeletionRequest,
-      );
+      mockPrisma.dataDeletionRequest.create.mockResolvedValue(mockDeletionRequest);
 
       const result = await service.deleteUserData(userId, reason);
 

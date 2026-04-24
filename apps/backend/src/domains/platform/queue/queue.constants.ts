@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @deprecated 此文件已废弃，请使用 queue-config.ts 作为唯一权威配置源。
  * - 队列名称请使用 QueueName 枚举（来自 queue-config.ts）
@@ -12,40 +11,40 @@
  */
 
 export const QUEUE_NAMES = {
-  AI_TASKS: 'ai_tasks',
-  STYLE_ANALYSIS: 'style_analysis',
-  VIRTUAL_TRYON: 'virtual_tryon',
-  WARDROBE_MATCH: 'wardrobe_match',
-  BODY_ANALYSIS: 'body_analysis',
-  PHOTO_PROCESSING: 'photo_processing',
-  AI_GENERATION: 'ai_generation',
-  NOTIFICATION: 'notification',
-  DATA_EXPORT: 'data_export',
+  AI_TASKS: "ai_tasks",
+  STYLE_ANALYSIS: "style_analysis",
+  VIRTUAL_TRYON: "virtual_tryon",
+  WARDROBE_MATCH: "wardrobe_match",
+  BODY_ANALYSIS: "body_analysis",
+  PHOTO_PROCESSING: "photo_processing",
+  AI_GENERATION: "ai_generation",
+  NOTIFICATION: "notification",
+  DATA_EXPORT: "data_export",
 } as const;
 
 export const JOB_TYPES = {
-  STYLE_ANALYSIS: 'style_analysis',
-  VIRTUAL_TRYON: 'virtual_tryon',
-  WARDROBE_MATCH: 'wardrobe_match',
-  IMAGE_ANALYSIS: 'image_analysis',
-  BODY_ANALYSIS: 'body_analysis',
-  RECOMMENDATION: 'recommendation',
+  STYLE_ANALYSIS: "style_analysis",
+  VIRTUAL_TRYON: "virtual_tryon",
+  WARDROBE_MATCH: "wardrobe_match",
+  IMAGE_ANALYSIS: "image_analysis",
+  BODY_ANALYSIS: "body_analysis",
+  RECOMMENDATION: "recommendation",
 } as const;
 
 export const JOB_STATUS = {
-  PENDING: 'pending',
-  PROCESSING: 'processing',
-  COMPLETED: 'completed',
-  FAILED: 'failed',
-  CANCELLED: 'cancelled',
-  TIMEOUT: 'timeout',
+  PENDING: "pending",
+  PROCESSING: "processing",
+  COMPLETED: "completed",
+  FAILED: "failed",
+  CANCELLED: "cancelled",
+  TIMEOUT: "timeout",
 } as const;
 
 export const QUEUE_CONFIG = {
   DEFAULT_JOB_OPTIONS: {
     attempts: 3,
     backoff: {
-      type: 'exponential',
+      type: "exponential",
       delay: 1000,
     },
     removeOnComplete: 100,

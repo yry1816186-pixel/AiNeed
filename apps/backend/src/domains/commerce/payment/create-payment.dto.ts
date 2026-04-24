@@ -1,16 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import {
-  IsString,
-  IsNumber,
-  IsEnum,
-  IsOptional,
-  Min,
-  Max,
-  IsIP,
-  Length,
-} from "class-validator";
+import { IsString, IsNumber, IsEnum, IsOptional, Min, Max, IsIP, Length } from "class-validator";
 
 export enum PaymentProvider {
   ALIPAY = "alipay",

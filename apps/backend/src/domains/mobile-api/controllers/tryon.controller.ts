@@ -19,14 +19,14 @@ import {
   ApiConsumes,
   ApiBody,
   ApiParam,
+  ApiProperty,
 } from "@nestjs/swagger";
 import { IsString } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
 
-import { AuthenticatedRequest } from "../../../common/types/auth.types";
-import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 import { StorageService } from "../../../common/storage/storage.service";
+import { AuthenticatedRequest } from "../../../common/types/auth.types";
 import { TryOnService } from "../../ai-core/try-on/try-on.service";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 class MobileTryOnProcessDto {
   @ApiProperty({ description: "照片ID" })

@@ -6,8 +6,9 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import Decimal from "decimal.js";
-import { EarningStatus, WithdrawalStatus } from "../../../types/prisma-enums";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { EarningStatus, WithdrawalStatus } from "../../../types/prisma-enums";
 
 @Injectable()
 export class ConsultantEarningService {

@@ -1,9 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 
-import { FeatureFlagService } from "./feature-flag.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService, RedisKeyBuilder } from "../../../common/redis/redis.service";
+
+import { FeatureFlagService } from "./feature-flag.service";
 
 describe("FeatureFlagService", () => {
   let service: FeatureFlagService;

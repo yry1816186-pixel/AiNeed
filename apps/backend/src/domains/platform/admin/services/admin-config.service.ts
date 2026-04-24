@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { AdminAuditService } from "./admin-audit.service";

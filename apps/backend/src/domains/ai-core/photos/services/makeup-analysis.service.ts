@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
+
 import { SkinTone, ColorSeason } from "../../../../types/prisma-enums";
 
 export interface MakeupRecommendation {

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ClothingCategory } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsArray,
@@ -13,6 +11,8 @@ import {
   Max,
   Min,
 } from "class-validator";
+
+import { ClothingCategory, DataSource, Gender } from "../../../../types/prisma-enums";
 
 export class GetClothingQueryDto {
   @ApiPropertyOptional({
@@ -233,6 +233,28 @@ export class ClothingItemDto {
     type: Number,
   })
   likeCount?: number;
+
+  @ApiPropertyOptional({
+    description: "材质",
+  })
+  material?: string;
+
+  @ApiPropertyOptional({
+    description: "适穿季节",
+  })
+  season?: string;
+
+  @ApiPropertyOptional({
+    description: "适用性别",
+    enum: Gender,
+  })
+  gender?: Gender;
+
+  @ApiPropertyOptional({
+    description: "数据来源",
+    enum: DataSource,
+  })
+  source?: DataSource;
 }
 
 export class ClothingCategoryDto {
@@ -413,6 +435,36 @@ export class CreateClothingItemDto {
   @IsOptional()
   @IsString()
   externalUrl?: string;
+
+  @ApiPropertyOptional({
+    description: "材质",
+  })
+  @IsOptional()
+  @IsString()
+  material?: string;
+
+  @ApiPropertyOptional({
+    description: "适穿季节",
+  })
+  @IsOptional()
+  @IsString()
+  season?: string;
+
+  @ApiPropertyOptional({
+    description: "适用性别",
+    enum: Gender,
+  })
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
+
+  @ApiPropertyOptional({
+    description: "数据来源",
+    enum: DataSource,
+  })
+  @IsOptional()
+  @IsEnum(DataSource)
+  source?: DataSource;
 }
 
 export class UpdateClothingItemDto {
@@ -522,6 +574,36 @@ export class UpdateClothingItemDto {
   @IsOptional()
   @IsString()
   externalUrl?: string;
+
+  @ApiPropertyOptional({
+    description: "材质",
+  })
+  @IsOptional()
+  @IsString()
+  material?: string;
+
+  @ApiPropertyOptional({
+    description: "适穿季节",
+  })
+  @IsOptional()
+  @IsString()
+  season?: string;
+
+  @ApiPropertyOptional({
+    description: "适用性别",
+    enum: Gender,
+  })
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
+
+  @ApiPropertyOptional({
+    description: "数据来源",
+    enum: DataSource,
+  })
+  @IsOptional()
+  @IsEnum(DataSource)
+  source?: DataSource;
 }
 
 export class SearchClothingQueryDto {

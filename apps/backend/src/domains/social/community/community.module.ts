@@ -8,8 +8,8 @@ import { AdminCommunityController } from "../../platform/admin/admin-community.c
 
 import { CommunityController } from "./community.controller";
 import { CommunityService } from "./community.service";
-import { ContentModerationService, CONTENT_MODERATION_QUEUE } from "./content-moderation.service";
 import { ContentModerationProcessor } from "./content-moderation.processor";
+import { ContentModerationService, CONTENT_MODERATION_QUEUE } from "./content-moderation.service";
 
 @Module({
   imports: [

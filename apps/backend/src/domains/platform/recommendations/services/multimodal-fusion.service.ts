@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
@@ -46,16 +41,10 @@ export class MultimodalFusionService {
     attributeWeight: 0.25,
   };
 
-  constructor(
-    private prisma: PrismaService,
-    private configService: ConfigService,
-  ) {
+  constructor(private prisma: PrismaService, private configService: ConfigService) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
 
-    this.aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
 
     this.aiClient = axios.create({
       baseURL: this.aiServiceUrl,
@@ -76,7 +65,7 @@ export class MultimodalFusionService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `AI Service not available for multimodal embeddings (${this.aiServiceUrl}): ${errorMessage}`,
+        `AI Service not available for multimodal embeddings (${this.aiServiceUrl}): ${errorMessage}`
       );
       this.aiServiceAvailable = false;
     }
@@ -88,24 +77,19 @@ export class MultimodalFusionService {
         return this.generateDeterministicEmbedding(512, imageUrl);
       }
 
-      throw new ServiceUnavailableException(
-        "AI visual embedding service is unavailable",
-      );
+      throw new ServiceUnavailableException("AI visual embedding service is unavailable");
     }
 
     try {
       const response = await this.aiClient.post("/api/embedding", {
         image_url: imageUrl,
       });
-      if (
-        response.data?.success &&
-        Array.isArray(response.data.data?.embedding)
-      ) {
+      if (response.data?.success && Array.isArray(response.data.data?.embedding)) {
         return response.data.data.embedding;
       }
     } catch (error: unknown) {
       this.logger.error(
-        `AI visual embedding failed: ${error instanceof Error ? error.message : String(error)}`,
+        `AI visual embedding failed: ${error instanceof Error ? error.message : String(error)}`
       );
       if (this.allowFallbacks) {
         return this.generateDeterministicEmbedding(512, imageUrl);
@@ -118,7 +102,7 @@ export class MultimodalFusionService {
     }
 
     throw new ServiceUnavailableException(
-      "AI visual embedding response did not include an embedding",
+      "AI visual embedding response did not include an embedding"
     );
   }
 
@@ -128,24 +112,19 @@ export class MultimodalFusionService {
         return this.generateDeterministicEmbedding(300, text);
       }
 
-      throw new ServiceUnavailableException(
-        "AI text embedding service is unavailable",
-      );
+      throw new ServiceUnavailableException("AI text embedding service is unavailable");
     }
 
     try {
       const response = await this.aiClient.post("/api/embedding/text", {
         text: text,
       });
-      if (
-        response.data?.success &&
-        Array.isArray(response.data.data?.embedding)
-      ) {
+      if (response.data?.success && Array.isArray(response.data.data?.embedding)) {
         return response.data.data.embedding;
       }
     } catch (error: unknown) {
       this.logger.error(
-        `AI text embedding failed: ${error instanceof Error ? error.message : String(error)}`,
+        `AI text embedding failed: ${error instanceof Error ? error.message : String(error)}`
       );
       if (this.allowFallbacks) {
         return this.generateDeterministicEmbedding(300, text);
@@ -158,7 +137,7 @@ export class MultimodalFusionService {
     }
 
     throw new ServiceUnavailableException(
-      "AI text embedding response did not include an embedding",
+      "AI text embedding response did not include an embedding"
     );
   }
 
@@ -171,14 +150,12 @@ export class MultimodalFusionService {
       throw new Error(`Item ${itemId} not found`);
     }
 
-    const visualFeatures = await this.extractVisualFeatures(
-      item.images[0] ?? "",
-    );
+    const visualFeatures = await this.extractVisualFeatures(item.images[0] ?? "");
 
     const textContent = [
       item.name,
       item.description || "",
-      ...((item.attributes as Record<string, unknown>)?.style as string[] || []),
+      ...(((item.attributes as Record<string, unknown>)?.style as string[]) || []),
     ].join(" ");
     const textualFeatures = await this.extractTextualFeatures(textContent);
 
@@ -191,7 +168,7 @@ export class MultimodalFusionService {
 
   weightedFusion(
     features: MultimodalFeatures,
-    config: FusionConfig = this.defaultConfig,
+    config: FusionConfig = this.defaultConfig
   ): number[] {
     const { visual, textual, attributes } = features;
     const { visualWeight, textualWeight, attributeWeight } = config;
@@ -205,7 +182,7 @@ export class MultimodalFusionService {
     const maxLen = Math.max(
       visualNormalized.length,
       textualNormalized.length,
-      attributeNormalized.length,
+      attributeNormalized.length
     );
 
     const fused = new Array(maxLen).fill(0);
@@ -224,35 +201,26 @@ export class MultimodalFusionService {
   async calculateCompatibility(
     item1Features: MultimodalFeatures,
     item2Features: MultimodalFeatures,
-    config?: FusionConfig,
+    config?: FusionConfig
   ): Promise<CompatibilityScore> {
-    const visualScore = this.cosineSimilarity(
-      item1Features.visual,
-      item2Features.visual,
-    );
+    const visualScore = this.cosineSimilarity(item1Features.visual, item2Features.visual);
 
-    const textualScore = this.cosineSimilarity(
-      item1Features.textual,
-      item2Features.textual,
-    );
+    const textualScore = this.cosineSimilarity(item1Features.textual, item2Features.textual);
 
     const attributeScore = this.calculateAttributeCompatibility(
       item1Features.attributes,
-      item2Features.attributes,
+      item2Features.attributes
     );
 
-    const { visualWeight, textualWeight, attributeWeight } =
-      config || this.defaultConfig;
+    const { visualWeight, textualWeight, attributeWeight } = config || this.defaultConfig;
 
     const totalScore =
-      visualScore * visualWeight +
-      textualScore * textualWeight +
-      attributeScore * attributeWeight;
+      visualScore * visualWeight + textualScore * textualWeight + attributeScore * attributeWeight;
 
     const reasons = this.generateCompatibilityReasons(
       { visual: visualScore, textual: textualScore, attribute: attributeScore },
       item1Features.attributes,
-      item2Features.attributes,
+      item2Features.attributes
     );
 
     return {
@@ -281,13 +249,17 @@ export class MultimodalFusionService {
       norm2 += value2 * value2;
     }
 
-    if (norm1 === 0 || norm2 === 0) {return 0;}
+    if (norm1 === 0 || norm2 === 0) {
+      return 0;
+    }
     return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
   }
 
   private normalizeVector(vec: number[]): number[] {
     const norm = Math.sqrt(vec.reduce((sum, v) => sum + v * v, 0));
-    if (norm === 0) {return vec;}
+    if (norm === 0) {
+      return vec;
+    }
     return vec.map((v) => v / norm);
   }
 
@@ -323,7 +295,9 @@ export class MultimodalFusionService {
 
   private encodeCategory(items: string[]): number[] {
     const encoding = new Array(32).fill(0);
-    if (!Array.isArray(items)) {return encoding;}
+    if (!Array.isArray(items)) {
+      return encoding;
+    }
 
     items.forEach((item, index) => {
       if (index < 32) {
@@ -347,34 +321,28 @@ export class MultimodalFusionService {
 
   private calculateAttributeCompatibility(
     attrs1: Record<string, unknown>,
-    attrs2: Record<string, unknown>,
+    attrs2: Record<string, unknown>
   ): number {
     let score = 0.5;
 
     if (attrs1.style && attrs2.style) {
       const style1 = attrs1.style as string[];
       const style2 = attrs2.style as string[];
-      const commonStyles = style1.filter((s: string) =>
-        style2.includes(s),
-      );
+      const commonStyles = style1.filter((s: string) => style2.includes(s));
       score += commonStyles.length * 0.1;
     }
 
     if (attrs1.occasions && attrs2.occasions) {
       const occ1 = attrs1.occasions as string[];
       const occ2 = attrs2.occasions as string[];
-      const commonOccasions = occ1.filter((o: string) =>
-        occ2.includes(o),
-      );
+      const commonOccasions = occ1.filter((o: string) => occ2.includes(o));
       score += commonOccasions.length * 0.05;
     }
 
     if (attrs1.season && attrs2.season) {
       const season1 = attrs1.season as string[];
       const season2 = attrs2.season as string[];
-      const commonSeasons = season1.filter((s: string) =>
-        season2.includes(s),
-      );
+      const commonSeasons = season1.filter((s: string) => season2.includes(s));
       score += commonSeasons.length * 0.05;
     }
 
@@ -384,7 +352,7 @@ export class MultimodalFusionService {
   private generateCompatibilityReasons(
     scores: { visual: number; textual: number; attribute: number },
     attrs1: Record<string, unknown>,
-    attrs2: Record<string, unknown>,
+    attrs2: Record<string, unknown>
   ): string[] {
     const reasons: string[] = [];
 
@@ -399,9 +367,7 @@ export class MultimodalFusionService {
     if (attrs1.style && attrs2.style) {
       const style1 = attrs1.style as string[];
       const style2 = attrs2.style as string[];
-      const commonStyles = style1.filter((s: string) =>
-        style2.includes(s),
-      );
+      const commonStyles = style1.filter((s: string) => style2.includes(s));
       if (commonStyles.length > 0) {
         reasons.push(`共同风格: ${commonStyles.join(", ")}`);
       }
@@ -410,9 +376,7 @@ export class MultimodalFusionService {
     if (attrs1.occasions && attrs2.occasions) {
       const occ1 = attrs1.occasions as string[];
       const occ2 = attrs2.occasions as string[];
-      const commonOccasions = occ1.filter((o: string) =>
-        occ2.includes(o),
-      );
+      const commonOccasions = occ1.filter((o: string) => occ2.includes(o));
       if (commonOccasions.length > 0) {
         reasons.push(`适合场合: ${commonOccasions.join(", ")}`);
       }
@@ -438,16 +402,14 @@ export class MultimodalFusionService {
     return embedding;
   }
 
-  async batchExtractFeatures(
-    itemIds: string[],
-  ): Promise<Map<string, MultimodalFeatures>> {
+  async batchExtractFeatures(itemIds: string[]): Promise<Map<string, MultimodalFeatures>> {
     const featuresMap = new Map<string, MultimodalFeatures>();
 
     await Promise.all(
       itemIds.map(async (id) => {
         const features = await this.extractItemFeatures(id);
         featuresMap.set(id, features);
-      }),
+      })
     );
 
     return featuresMap;
@@ -456,7 +418,7 @@ export class MultimodalFusionService {
   async findCompatibleItems(
     queryItemId: string,
     candidateIds: string[],
-    topK: number = 10,
+    topK: number = 10
   ): Promise<Array<{ itemId: string; score: CompatibilityScore }>> {
     const queryFeatures = await this.extractItemFeatures(queryItemId);
     const candidatesFeatures = await this.batchExtractFeatures(candidateIds);
@@ -464,20 +426,17 @@ export class MultimodalFusionService {
     const results = await Promise.all(
       candidateIds.map(async (id) => {
         const features = candidatesFeatures.get(id);
-        if (!features) {return null;}
+        if (!features) {
+          return null;
+        }
 
-        const score = await this.calculateCompatibility(
-          queryFeatures,
-          features,
-        );
+        const score = await this.calculateCompatibility(queryFeatures, features);
         return { itemId: id, score };
-      }),
+      })
     );
 
     return results
-      .filter(
-        (r): r is { itemId: string; score: CompatibilityScore } => r !== null,
-      )
+      .filter((r): r is { itemId: string; score: CompatibilityScore } => r !== null)
       .sort((a, b) => b.score.score - a.score.score)
       .slice(0, topK);
   }

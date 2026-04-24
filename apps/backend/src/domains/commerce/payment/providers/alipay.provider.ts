@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as crypto from "crypto";
 
 import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from "@nestjs/common";
@@ -42,24 +41,19 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
 
   onModuleInit() {
     this.appId = this.configService.get<string>("ALIPAY_APP_ID") || "";
-    this.privateKey =
-      this.configService.get<string>("ALIPAY_PRIVATE_KEY") || "";
-    this.alipayPublicKey =
-      this.configService.get<string>("ALIPAY_PUBLIC_KEY") || "";
+    this.privateKey = this.configService.get<string>("ALIPAY_PRIVATE_KEY") || "";
+    this.alipayPublicKey = this.configService.get<string>("ALIPAY_PUBLIC_KEY") || "";
     this.notifyUrl = this.configService.get<string>("ALIPAY_NOTIFY_URL") || "";
     this.returnUrl = this.configService.get<string>("ALIPAY_RETURN_URL") || "";
 
     // 沙箱环境或生产环境
-    const isSandbox =
-      this.configService.get<string>("ALIPAY_SANDBOX") === "true";
+    const isSandbox = this.configService.get<string>("ALIPAY_SANDBOX") === "true";
     this.gateway = isSandbox
       ? "https://openapi.alipaydev.com/gateway.do"
       : "https://openapi.alipay.com/gateway.do";
 
     if (!this.appId || !this.privateKey) {
-      this.logger.warn(
-        "Alipay configuration is incomplete. Payment will not work.",
-      );
+      this.logger.warn("Alipay configuration is incomplete. Payment will not work.");
     }
   }
 
@@ -71,19 +65,12 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
     if (!this.appId || !this.privateKey) {
       throw new ServiceUnavailableException(
         "Alipay payment is not available: appId or privateKey is not configured. " +
-        "Please set ALIPAY_APP_ID and ALIPAY_PRIVATE_KEY environment variables.",
+          "Please set ALIPAY_APP_ID and ALIPAY_PRIVATE_KEY environment variables."
       );
     }
 
     try {
-      const {
-        orderId,
-        amount,
-        subject,
-        body,
-        method,
-        expireMinutes = 30,
-      } = options;
+      const { orderId, amount, subject, body, method, expireMinutes = 30 } = options;
 
       const expireAt = new Date();
       expireAt.setMinutes(expireAt.getMinutes() + expireMinutes);
@@ -126,7 +113,8 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
           break;
         case "h5":
           // H5 支付需要额外的场景信息
-          (bizContent as AlipayBizContent & { product_code: string }).product_code = "QUICK_WAP_WAY";
+          (bizContent as AlipayBizContent & { product_code: string }).product_code =
+            "QUICK_WAP_WAY";
           (bizContent as AlipayBizContent & { extend_params: unknown }).extend_params = {
             sys_service_provider_id: this.appId,
           };
@@ -145,10 +133,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to create alipay payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to create alipay payment: ${errorMessage}`, errorStack);
       return {
         success: false,
         orderId: options.orderId,
@@ -205,18 +190,13 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
         tradeNo: queryResponse.trade_no,
         amount: parseFloat(queryResponse.total_amount || "0"),
         status: statusMap[queryResponse.trade_status] || "failed",
-        paidAt: queryResponse.gmt_payment
-          ? new Date(queryResponse.gmt_payment)
-          : undefined,
+        paidAt: queryResponse.gmt_payment ? new Date(queryResponse.gmt_payment) : undefined,
         rawData: queryResponse as unknown as PaymentRawCallbackData,
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to query alipay payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to query alipay payment: ${errorMessage}`, errorStack);
       return {
         orderId,
         status: "failed",
@@ -228,9 +208,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
   /**
    * 处理支付回调
    */
-  async handleCallback(
-    callbackData: PaymentRawCallbackData,
-  ): Promise<PaymentCallbackData> {
+  async handleCallback(callbackData: PaymentRawCallbackData): Promise<PaymentCallbackData> {
     const alipayData = callbackData as unknown as AlipayCallbackData;
     const status = alipayData.trade_status;
 
@@ -246,9 +224,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
       tradeNo: alipayData.trade_no,
       amount: parseFloat(alipayData.total_amount || "0"),
       status: paymentStatus,
-      paidAt: alipayData.gmt_payment
-        ? new Date(alipayData.gmt_payment)
-        : new Date(),
+      paidAt: alipayData.gmt_payment ? new Date(alipayData.gmt_payment) : new Date(),
       rawData: callbackData,
     };
   }
@@ -346,10 +322,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to refund alipay payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to refund alipay payment: ${errorMessage}`, errorStack);
       return {
         success: false,
         refundId: options.refundId,
@@ -405,10 +378,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to close alipay order: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to close alipay order: ${errorMessage}`, errorStack);
       return false;
     }
   }
@@ -476,7 +446,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
           paramsRecord[key] !== undefined &&
           paramsRecord[key] !== "" &&
           key !== "sign" &&
-          key !== "sign_type",
+          key !== "sign_type"
       )
       .sort();
 
@@ -530,7 +500,9 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
    */
   private formatTime(date: Date): string {
     const pad = (n: number) => n.toString().padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(
+      date.getHours()
+    )}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 
   /**
@@ -544,9 +516,7 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
           "Content-Type": "application/json",
         },
       });
-      return typeof response.data === "string"
-        ? response.data
-        : JSON.stringify(response.data);
+      return typeof response.data === "string" ? response.data : JSON.stringify(response.data);
     } catch (error) {
       const message = error instanceof Error ? error.message : "未知错误";
       this.logger.error(`Alipay HTTP GET failed: ${message}`);

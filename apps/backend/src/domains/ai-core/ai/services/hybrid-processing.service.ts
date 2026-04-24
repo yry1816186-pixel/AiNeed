@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
@@ -120,10 +115,7 @@ export class HybridProcessingService {
   constructor(private configService: ConfigService) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
 
-    this.aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
 
     this.aiClient = axios.create({
       baseURL: this.aiServiceUrl,
@@ -148,15 +140,13 @@ export class HybridProcessingService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `AI Service not available for hybrid processing (${this.aiServiceUrl}): ${errorMessage}`,
+        `AI Service not available for hybrid processing (${this.aiServiceUrl}): ${errorMessage}`
       );
       this.aiServiceAvailable = false;
     }
   }
 
-  async process(
-    request: HybridProcessingRequest,
-  ): Promise<HybridProcessingResult> {
+  async process(request: HybridProcessingRequest): Promise<HybridProcessingResult> {
     const startTime = Date.now();
     const requestId = request.requestId || `hybrid_${Date.now()}`;
     this.totalRequests++;
@@ -164,19 +154,12 @@ export class HybridProcessingService {
     this.logger.log(`Processing request ${requestId}`);
 
     const networkQuality = await this.assessNetworkQuality();
-    const imageComplexity = this.assessImageComplexity(
-      request.personImage,
-      request.garmentImage,
-    );
+    const imageComplexity = this.assessImageComplexity(request.personImage, request.garmentImage);
 
-    const decision = this.makeProcessingDecision(
-      imageComplexity,
-      networkQuality,
-      request.options,
-    );
+    const decision = this.makeProcessingDecision(imageComplexity, networkQuality, request.options);
 
     this.logger.log(
-      `Decision for ${requestId}: ${decision.useCloud ? "cloud" : "local"} - ${decision.reason}`,
+      `Decision for ${requestId}: ${decision.useCloud ? "cloud" : "local"} - ${decision.reason}`
     );
 
     let result: TryOnResult | RecommendationResult | SegmentationResult;
@@ -214,24 +197,15 @@ export class HybridProcessingService {
   private async assessNetworkQuality(): Promise<NetworkQuality> {
     if (this.aiServiceAvailable && this.networkLatencyHistory.length > 0) {
       const recentLatencies = this.networkLatencyHistory.slice(-5);
-      const avgLatency =
-        recentLatencies.reduce((a, b) => a + b, 0) / recentLatencies.length;
+      const avgLatency = recentLatencies.reduce((a, b) => a + b, 0) / recentLatencies.length;
       const latencyVariance =
-        recentLatencies.reduce(
-          (sum, l) => sum + Math.pow(l - avgLatency, 2),
-          0,
-        ) / recentLatencies.length;
-      const stability = Math.max(
-        0,
-        1 - Math.sqrt(latencyVariance) / avgLatency,
-      );
+        recentLatencies.reduce((sum, l) => sum + Math.pow(l - avgLatency, 2), 0) /
+        recentLatencies.length;
+      const stability = Math.max(0, 1 - Math.sqrt(latencyVariance) / avgLatency);
 
       const bandwidth = Math.max(1, 1000 / avgLatency);
 
-      const score =
-        (bandwidth / 100) * 0.4 +
-        (1 - avgLatency / 500) * 0.3 +
-        stability * 0.3;
+      const score = (bandwidth / 100) * 0.4 + (1 - avgLatency / 500) * 0.3 + stability * 0.3;
 
       return { bandwidth, latency: avgLatency, stability, score };
     }
@@ -244,14 +218,9 @@ export class HybridProcessingService {
     };
   }
 
-  private assessImageComplexity(
-    personImage: Buffer,
-    garmentImage?: Buffer,
-  ): number {
+  private assessImageComplexity(personImage: Buffer, garmentImage?: Buffer): number {
     const personComplexity = this.calculateImageComplexity(personImage);
-    const garmentComplexity = this.calculateImageComplexity(
-      garmentImage ?? personImage,
-    );
+    const garmentComplexity = this.calculateImageComplexity(garmentImage ?? personImage);
 
     return (personComplexity + garmentComplexity) / 2;
   }
@@ -291,7 +260,7 @@ export class HybridProcessingService {
   private makeProcessingDecision(
     imageComplexity: number,
     networkQuality: NetworkQuality,
-    options: HybridProcessingRequest["options"],
+    options: HybridProcessingRequest["options"]
   ): ProcessingDecision {
     if (options?.useCloud !== undefined) {
       return {
@@ -310,7 +279,9 @@ export class HybridProcessingService {
     const useCloud = conditions.filter(Boolean).length >= 1;
 
     const reason = useCloud
-      ? `Complexity: ${(imageComplexity * 100).toFixed(1)}%, Network: ${(networkQuality.score * 100).toFixed(1)}%`
+      ? `Complexity: ${(imageComplexity * 100).toFixed(1)}%, Network: ${(
+          networkQuality.score * 100
+        ).toFixed(1)}%`
       : "Local processing sufficient";
 
     return {
@@ -322,7 +293,7 @@ export class HybridProcessingService {
   }
 
   private async processLocally(
-    request: HybridProcessingRequest,
+    request: HybridProcessingRequest
   ): Promise<TryOnResult | RecommendationResult | SegmentationResult> {
     this.logger.log("Processing locally with Python ML service");
 
@@ -363,7 +334,7 @@ export class HybridProcessingService {
       }
     } catch (error: unknown) {
       this.logger.error(
-        `Local hybrid processing failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Local hybrid processing failed: ${error instanceof Error ? error.message : String(error)}`
       );
       if (this.allowFallbacks) {
         return this.getFallbackResult(request);
@@ -375,13 +346,11 @@ export class HybridProcessingService {
       return this.getFallbackResult(request);
     }
 
-    throw new ServiceUnavailableException(
-      "Local hybrid processing did not produce a valid result",
-    );
+    throw new ServiceUnavailableException("Local hybrid processing did not produce a valid result");
   }
 
   private async processOnCloud(
-    request: HybridProcessingRequest,
+    request: HybridProcessingRequest
   ): Promise<TryOnResult | RecommendationResult | SegmentationResult> {
     this.logger.log("Processing on cloud with enhanced AI models");
 
@@ -404,15 +373,12 @@ export class HybridProcessingService {
       }
 
       if (request.type === "recommendation") {
-        const response = await this.aiClient.post(
-          "/api/recommendations/advanced",
-          {
-            user_id: request.userId,
-            context: request.context,
-            count: 20,
-            use_advanced_models: true,
-          },
-        );
+        const response = await this.aiClient.post("/api/recommendations/advanced", {
+          user_id: request.userId,
+          context: request.context,
+          count: 20,
+          use_advanced_models: true,
+        });
 
         if (response.data?.success) {
           return {
@@ -427,7 +393,9 @@ export class HybridProcessingService {
       }
     } catch (error: unknown) {
       this.logger.warn(
-        `Cloud processing failed, falling back to local: ${error instanceof Error ? error.message : String(error)}`,
+        `Cloud processing failed, falling back to local: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       return this.processLocally(request);
     }
@@ -436,22 +404,18 @@ export class HybridProcessingService {
       return this.getFallbackResult(request);
     }
 
-    throw new ServiceUnavailableException(
-      "Cloud hybrid processing did not produce a valid result",
-    );
+    throw new ServiceUnavailableException("Cloud hybrid processing did not produce a valid result");
   }
 
   private calculateConfidence(
-    result: TryOnResult | RecommendationResult | SegmentationResult,
+    result: TryOnResult | RecommendationResult | SegmentationResult
   ): number {
     if (result.type === "tryon") {
       return result.score;
     }
     if (result.type === "recommendation") {
       const scores = result.items.map((i) => i.score);
-      return scores.length > 0
-        ? scores.reduce((a, b) => a + b, 0) / scores.length
-        : 0;
+      return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
     }
     return 0.8;
   }
@@ -472,8 +436,7 @@ export class HybridProcessingService {
   } {
     return {
       totalRequests: this.totalRequests,
-      cacheHitRate:
-        this.totalRequests > 0 ? this.cacheHits / this.totalRequests : 0,
+      cacheHitRate: this.totalRequests > 0 ? this.cacheHits / this.totalRequests : 0,
       averageLatency: 500,
       cloudUsageRate: 0.6,
     };
@@ -488,7 +451,7 @@ export class HybridProcessingService {
   }
 
   private getFallbackResult(
-    request: HybridProcessingRequest,
+    request: HybridProcessingRequest
   ): TryOnResult | RecommendationResult | SegmentationResult {
     if (request.type === "recommendation") {
       return {

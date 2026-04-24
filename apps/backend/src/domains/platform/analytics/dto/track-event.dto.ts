@@ -1,13 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsIn,
-  IsOptional,
-  IsObject,
-  IsNumber,
-  IsUUID,
-} from "class-validator";
+import { IsString, IsIn, IsOptional, IsObject, IsNumber, IsUUID } from "class-validator";
 
 const BehaviorEventTypeValues = [
   "page_view",
@@ -69,7 +61,6 @@ export class TrackEventDto {
   @ApiPropertyOptional({ description: "事件元数据", type: Object })
   @IsOptional()
   @IsObject()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: Record<string, any>;
 
   @ApiPropertyOptional({ description: "来源" })
@@ -85,7 +76,6 @@ export class TrackEventDto {
   @ApiPropertyOptional({ description: "设备信息", type: Object })
   @IsOptional()
   @IsObject()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deviceInfo?: Record<string, any>;
 
   @ApiPropertyOptional({ description: "持续时间（毫秒）" })

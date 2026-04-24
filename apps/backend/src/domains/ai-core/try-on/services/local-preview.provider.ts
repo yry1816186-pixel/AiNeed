@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
@@ -7,11 +6,7 @@ import sharp from "sharp";
 import { sanitizeImage } from "../../../../common/security/image-sanitizer";
 import { StorageService } from "../../../../common/storage/storage.service";
 
-import {
-  TryOnProvider,
-  TryOnRequest,
-  TryOnResponse,
-} from "./ai-tryon-provider.interface";
+import { TryOnProvider, TryOnRequest, TryOnResponse } from "./ai-tryon-provider.interface";
 
 @Injectable()
 export class LocalPreviewTryOnProvider implements TryOnProvider {
@@ -24,16 +19,12 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly storageService: StorageService,
+    private readonly storageService: StorageService
   ) {
     this.enabled =
-      this.configService.get<string>("TRYON_LOCAL_PREVIEW_ENABLED", "true") !==
-      "false";
+      this.configService.get<string>("TRYON_LOCAL_PREVIEW_ENABLED", "true") !== "false";
     this.maxFetchBytes = Number(
-      this.configService.get<string>(
-        "TRYON_LOCAL_PREVIEW_MAX_BYTES",
-        String(15 * 1024 * 1024),
-      ),
+      this.configService.get<string>("TRYON_LOCAL_PREVIEW_MAX_BYTES", String(15 * 1024 * 1024))
     );
   }
 
@@ -52,11 +43,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       this.fetchImageBuffer(request.garmentImageUrl),
     ]);
 
-    const previewBuffer = await this.composePreview(
-      personImage,
-      garmentImage,
-      request.category,
-    );
+    const previewBuffer = await this.composePreview(personImage, garmentImage, request.category);
 
     const upload = await this.storageService.uploadImage(
       {
@@ -67,7 +54,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
         buffer: previewBuffer,
         size: previewBuffer.length,
       },
-      "tryon-results",
+      "tryon-results"
     );
 
     const processingTime = Date.now() - startedAt;
@@ -109,7 +96,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
   private async composePreview(
     personImage: Buffer,
     garmentImage: Buffer,
-    category?: TryOnRequest["category"],
+    category?: TryOnRequest["category"]
   ): Promise<Buffer> {
     const canvasWidth = 768;
     const canvasHeight = 1024;
@@ -134,15 +121,14 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       .png()
       .toBuffer();
 
-    const transparentGarment =
-      await this.makeNearWhitePixelsTransparent(garmentOverlay);
+    const transparentGarment = await this.makeNearWhitePixelsTransparent(garmentOverlay);
 
     const previewBadge = Buffer.from(
       `<svg width="160" height="48" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="160" height="48" rx="24" fill="rgba(17,24,39,0.78)" />
         <text x="80" y="30" text-anchor="middle" font-size="18" fill="#FFFFFF"
           font-family="Arial, Helvetica, sans-serif" font-weight="700">PREVIEW</text>
-      </svg>`,
+      </svg>`
     );
 
     return sanitizeImage(sharp(personCanvas))
@@ -167,7 +153,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
   private getPlacement(
     category: TryOnRequest["category"],
     canvasWidth: number,
-    canvasHeight: number,
+    canvasHeight: number
   ): { left: number; top: number; width: number; height: number } {
     switch (category) {
       case "lower_body":
@@ -196,9 +182,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
     }
   }
 
-  private async makeNearWhitePixelsTransparent(
-    imageBuffer: Buffer,
-  ): Promise<Buffer> {
+  private async makeNearWhitePixelsTransparent(imageBuffer: Buffer): Promise<Buffer> {
     const { data, info } = await sanitizeImage(sharp(imageBuffer))
       .ensureAlpha()
       .raw()
@@ -225,6 +209,8 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       data[index + 3] = Math.round(alpha * 0.9);
     }
 
-    return sanitizeImage(sharp(data, { raw: info })).png().toBuffer();
+    return sanitizeImage(sharp(data, { raw: info }))
+      .png()
+      .toBuffer();
   }
 }

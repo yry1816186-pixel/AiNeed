@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -23,7 +22,10 @@ import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import { RegisterDeviceTokenDto, DeregisterDeviceTokenDto } from "./dto/push-notification.dto";
-import { NotificationService, UpdateNotificationSettingsDto } from "./services/notification.service";
+import {
+  NotificationService,
+  UpdateNotificationSettingsDto,
+} from "./services/notification.service";
 import { PushNotificationService } from "./services/push-notification.service";
 
 @ApiTags("notification")
@@ -33,14 +35,17 @@ import { PushNotificationService } from "./services/push-notification.service";
 export class NotificationController {
   constructor(
     private readonly notificationService: NotificationService,
-    private readonly pushNotificationService: PushNotificationService,
+    private readonly pushNotificationService: PushNotificationService
   ) {}
 
   /**
    * 获取通知列表
    */
   @Get()
-  @ApiOperation({ summary: "获取通知列表", description: "分页获取当前用户的通知列表，支持筛选未读通知" })
+  @ApiOperation({
+    summary: "获取通知列表",
+    description: "分页获取当前用户的通知列表，支持筛选未读通知",
+  })
   @ApiResponse({ status: 200, description: "成功返回通知列表" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiQuery({ name: "limit", required: false, description: "每页数量，默认20", type: Number })
@@ -50,7 +55,7 @@ export class NotificationController {
     @Request() req: RequestWithUser,
     @Query("limit") limit?: string,
     @Query("offset") offset?: string,
-    @Query("unreadOnly") unreadOnly?: string,
+    @Query("unreadOnly") unreadOnly?: string
   ) {
     return this.notificationService.getUserNotifications(req.user.id, {
       limit: limit ? parseInt(limit) : 20,
@@ -117,7 +122,7 @@ export class NotificationController {
   @ApiResponse({ status: 400, description: "请求参数错误" })
   async updateSettings(
     @Request() req: RequestWithUser,
-    @Body() settings: UpdateNotificationSettingsDto,
+    @Body() settings: UpdateNotificationSettingsDto
   ) {
     return this.notificationService.updateUserSettings(req.user.id, settings);
   }
@@ -131,15 +136,12 @@ export class NotificationController {
   @ApiOperation({ summary: "注册设备推送令牌", description: "注册或更新设备的FCM/APNs推送令牌" })
   @ApiResponse({ status: 201, description: "注册成功" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async registerDeviceToken(
-    @Request() req: RequestWithUser,
-    @Body() dto: RegisterDeviceTokenDto,
-  ) {
+  async registerDeviceToken(@Request() req: RequestWithUser, @Body() dto: RegisterDeviceTokenDto) {
     return this.pushNotificationService.registerDeviceToken(
       req.user.id,
       dto.token,
       dto.platform,
-      dto.appId,
+      dto.appId
     );
   }
 
@@ -151,10 +153,7 @@ export class NotificationController {
   @ApiResponse({ status: 200, description: "注销成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiParam({ name: "token", description: "设备推送令牌" })
-  async deregisterDeviceToken(
-    @Request() req: RequestWithUser,
-    @Param("token") token: string,
-  ) {
+  async deregisterDeviceToken(@Request() req: RequestWithUser, @Param("token") token: string) {
     return this.pushNotificationService.deregisterDeviceToken(req.user.id, token);
   }
 
@@ -162,7 +161,10 @@ export class NotificationController {
    * List user's registered devices
    */
   @Get("device-tokens")
-  @ApiOperation({ summary: "获取已注册设备列表", description: "获取当前用户所有已注册推送的设备列表" })
+  @ApiOperation({
+    summary: "获取已注册设备列表",
+    description: "获取当前用户所有已注册推送的设备列表",
+  })
   @ApiResponse({ status: 200, description: "成功返回设备列表" })
   @ApiResponse({ status: 401, description: "未授权" })
   async getDeviceTokens(@Request() req: RequestWithUser) {

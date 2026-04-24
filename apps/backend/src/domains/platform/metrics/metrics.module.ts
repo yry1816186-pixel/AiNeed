@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Module } from '@nestjs/common';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { Module } from "@nestjs/common";
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 
-import { MetricsController } from './metrics.controller';
-import { MetricsService } from './metrics.service';
+import { MetricsController } from "./metrics.controller";
+import { MetricsService } from "./metrics.service";
 
 @Module({
   imports: [
@@ -11,7 +10,7 @@ import { MetricsService } from './metrics.service';
       defaultMetrics: {
         enabled: true,
       },
-      path: '/metrics',
+      path: "/metrics",
     }),
   ],
   controllers: [MetricsController],

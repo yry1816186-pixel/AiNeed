@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as crypto from "crypto";
 
 export interface TryOnRequest {
@@ -27,7 +26,7 @@ export interface TryOnProvider {
 export function generateTryOnCacheKey(
   personImageUrl: string,
   garmentImageUrl: string,
-  category: string = "upper_body",
+  category: string = "upper_body"
 ): string {
   const hash = crypto
     .createHash("sha256")
@@ -36,15 +35,8 @@ export function generateTryOnCacheKey(
   return `tryon:${hash}`;
 }
 
-export function generateStableCacheKey(
-  photoId: string,
-  itemId: string,
-  category?: string,
-): string {
+export function generateStableCacheKey(photoId: string, itemId: string, category?: string): string {
   const parts = [photoId, itemId, category ?? "upper_body"];
-  const hash = crypto
-    .createHash("sha256")
-    .update(parts.join("|"))
-    .digest("hex");
+  const hash = crypto.createHash("sha256").update(parts.join("|")).digest("hex");
   return `tryon:stable:${hash}`;
 }

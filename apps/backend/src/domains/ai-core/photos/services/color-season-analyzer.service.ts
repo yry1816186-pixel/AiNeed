@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 /**
@@ -16,12 +15,7 @@ export class ColorSeasonAnalyzer {
     spring: {
       name: "春季型",
       description: "暖调、明亮、清新的色彩",
-      characteristics: [
-        "暖调肤色",
-        "明亮的眼睛",
-        "金色或草莓金发色",
-        "皮肤有红润感",
-      ],
+      characteristics: ["暖调肤色", "明亮的眼睛", "金色或草莓金发色", "皮肤有红润感"],
       bestColors: [
         "珊瑚色",
         "桃红",
@@ -42,12 +36,7 @@ export class ColorSeasonAnalyzer {
     summer: {
       name: "夏季型",
       description: "冷调、柔和、优雅的色彩",
-      characteristics: [
-        "冷调肤色",
-        "柔和的眼睛",
-        "灰棕或深棕发色",
-        "皮肤偏粉白",
-      ],
+      characteristics: ["冷调肤色", "柔和的眼睛", "灰棕或深棕发色", "皮肤偏粉白"],
       bestColors: [
         "玫瑰粉",
         "薰衣草",
@@ -67,12 +56,7 @@ export class ColorSeasonAnalyzer {
     autumn: {
       name: "秋季型",
       description: "暖调、深沉、大地色系",
-      characteristics: [
-        "暖调肤色",
-        "深沉的眼睛",
-        "红棕或深棕发色",
-        "皮肤有金黄调",
-      ],
+      characteristics: ["暖调肤色", "深沉的眼睛", "红棕或深棕发色", "皮肤有金黄调"],
       bestColors: [
         "砖红",
         "橘棕",
@@ -92,24 +76,8 @@ export class ColorSeasonAnalyzer {
     winter: {
       name: "冬季型",
       description: "冷调、高对比、鲜明的色彩",
-      characteristics: [
-        "冷调肤色",
-        "深邃的眼睛",
-        "黑发或深棕发色",
-        "皮肤白皙或深色",
-      ],
-      bestColors: [
-        "正红",
-        "纯黑",
-        "纯白",
-        "宝蓝",
-        "深紫",
-        "冰蓝",
-        "翠绿",
-        "洋红",
-        "银色",
-        "炭灰",
-      ],
+      characteristics: ["冷调肤色", "深邃的眼睛", "黑发或深棕发色", "皮肤白皙或深色"],
+      bestColors: ["正红", "纯黑", "纯白", "宝蓝", "深紫", "冰蓝", "翠绿", "洋红", "银色", "炭灰"],
       avoidColors: ["橙色", "暖棕色", "浑浊色", "浅黄色", "米色"],
       metals: ["银色", "白金", "铂金"],
       makeupStyle: ["高级冷艳", "红唇经典", "酷飒风格"],
@@ -173,10 +141,7 @@ export class ColorSeasonAnalyzer {
    * 获取色彩季节详情
    */
   getColorSeasonDetails(season: string) {
-    return (
-      this.colorSeasons[season as keyof typeof this.colorSeasons] ||
-      this.colorSeasons.autumn
-    );
+    return this.colorSeasons[season as keyof typeof this.colorSeasons] || this.colorSeasons.autumn;
   }
 
   /**
@@ -215,14 +180,10 @@ export class ColorSeasonAnalyzer {
    * 判断是否为浅色/亮色发色
    */
   private isBrightHairColor(hairColor?: string): boolean {
-    if (!hairColor) {return false;}
-    const brightColors = [
-      "blonde",
-      "golden",
-      "strawberry",
-      "light brown",
-      "auburn",
-    ];
+    if (!hairColor) {
+      return false;
+    }
+    const brightColors = ["blonde", "golden", "strawberry", "light brown", "auburn"];
     return brightColors.some((c) => hairColor.toLowerCase().includes(c));
   }
 
@@ -230,7 +191,9 @@ export class ColorSeasonAnalyzer {
    * 判断是否为深色发色
    */
   private isDarkHairColor(hairColor?: string): boolean {
-    if (!hairColor) {return false;}
+    if (!hairColor) {
+      return false;
+    }
     const darkColors = ["black", "dark brown", "dark", "brunette"];
     return darkColors.some((c) => hairColor.toLowerCase().includes(c));
   }
@@ -239,15 +202,10 @@ export class ColorSeasonAnalyzer {
    * 判断是否为暖调发色
    */
   private isWarmHairColor(hairColor?: string): boolean {
-    if (!hairColor) {return false;}
-    const warmColors = [
-      "red",
-      "auburn",
-      "golden",
-      "copper",
-      "strawberry",
-      "chestnut",
-    ];
+    if (!hairColor) {
+      return false;
+    }
+    const warmColors = ["red", "auburn", "golden", "copper", "strawberry", "chestnut"];
     return warmColors.some((c) => hairColor.toLowerCase().includes(c));
   }
 

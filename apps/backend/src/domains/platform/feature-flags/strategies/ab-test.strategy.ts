@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 interface FeatureFlag {
   id: string;
   key: string;
@@ -16,8 +14,7 @@ export interface ABTestResult {
 
 export class ABTestStrategy {
   evaluate(flag: FeatureFlag, userId: string): ABTestResult {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const variants = (flag.value as Record<string, any>).variants ?? [];
+    const variants = flag.value.variants ?? [];
     if (!variants.length) {
       return { enabled: false, variant: "control" };
     }

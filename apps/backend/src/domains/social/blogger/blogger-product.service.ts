@@ -7,8 +7,8 @@ import {
 } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { NotificationService } from "../../platform/notification/services/notification.service";
 import { NotificationType } from "../../../types/prisma-enums";
+import { NotificationService } from "../../platform/notification/services/notification.service";
 
 import type {
   CreateBloggerProductDto,
@@ -25,7 +25,7 @@ export class BloggerProductService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly notificationService: NotificationService,
+    private readonly notificationService: NotificationService
   ) {}
 
   async createProduct(bloggerId: string, dto: CreateBloggerProductDto) {
@@ -78,13 +78,22 @@ export class BloggerProductService {
       throw new ForbiddenException("You can only update your own products");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {};
-    if (dto.title !== undefined) {updateData.title = dto.title;}
-    if (dto.description !== undefined) {updateData.description = dto.description;}
-    if (dto.price !== undefined) {updateData.price = dto.price;}
-    if (dto.images !== undefined) {updateData.images = dto.images;}
-    if (dto.status !== undefined) {updateData.status = dto.status;}
+    if (dto.title !== undefined) {
+      updateData.title = dto.title;
+    }
+    if (dto.description !== undefined) {
+      updateData.description = dto.description;
+    }
+    if (dto.price !== undefined) {
+      updateData.price = dto.price;
+    }
+    if (dto.images !== undefined) {
+      updateData.images = dto.images;
+    }
+    if (dto.status !== undefined) {
+      updateData.status = dto.status;
+    }
 
     return this.prisma.bloggerProduct.update({
       where: { id: productId },
@@ -112,12 +121,17 @@ export class BloggerProductService {
   }
 
   async getProducts(query: BloggerProductQueryDto) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
 
-    if (query.bloggerId) {where.bloggerId = query.bloggerId;}
-    if (query.type) {where.type = query.type;}
-    if (query.status) {where.status = query.status;}
+    if (query.bloggerId) {
+      where.bloggerId = query.bloggerId;
+    }
+    if (query.type) {
+      where.type = query.type;
+    }
+    if (query.status) {
+      where.status = query.status;
+    }
 
     const [items, total] = await Promise.all([
       this.prisma.bloggerProduct.findMany({
@@ -198,10 +212,16 @@ export class BloggerProductService {
         targetId: product.id,
       });
     } catch (error) {
-      this.logger.error(`Failed to send product sold notification: ${error instanceof Error ? error.message : "Unknown"}`);
+      this.logger.error(
+        `Failed to send product sold notification: ${
+          error instanceof Error ? error.message : "Unknown"
+        }`
+      );
     }
 
-    this.logger.log(`User ${userId} purchased product ${dto.productId} from blogger ${product.bloggerId}`);
+    this.logger.log(
+      `User ${userId} purchased product ${dto.productId} from blogger ${product.bloggerId}`
+    );
 
     return {
       productId: product.id,

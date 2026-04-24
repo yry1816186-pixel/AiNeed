@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Queue Module Interfaces
  * Defines data structures for AI task jobs
  */
 
-import { JobType, JobStatus } from './queue.constants';
+import { JobType, JobStatus } from "./queue.constants";
 
 export interface BaseJobData {
   jobId: string;
@@ -16,7 +15,7 @@ export interface BaseJobData {
 }
 
 export interface StyleAnalysisJobData extends BaseJobData {
-  type: 'style_analysis';
+  type: "style_analysis";
   userInput: string;
   userProfile?: {
     bodyType?: string;
@@ -28,7 +27,7 @@ export interface StyleAnalysisJobData extends BaseJobData {
 }
 
 export interface VirtualTryOnJobData extends BaseJobData {
-  type: 'virtual_tryon';
+  type: "virtual_tryon";
   photoId: string;
   userPhotoUrl: string;
   itemId: string;
@@ -37,7 +36,7 @@ export interface VirtualTryOnJobData extends BaseJobData {
 }
 
 export interface WardrobeMatchJobData extends BaseJobData {
-  type: 'wardrobe_match';
+  type: "wardrobe_match";
   wardrobeItems: string[];
   targetStyle?: string;
   occasion?: string;
@@ -45,20 +44,19 @@ export interface WardrobeMatchJobData extends BaseJobData {
 }
 
 export interface ImageAnalysisJobData extends BaseJobData {
-  type: 'image_analysis';
+  type: "image_analysis";
   imagePath: string;
-  analysisType: 'full' | 'color' | 'style' | 'body';
+  analysisType: "full" | "color" | "style" | "body";
 }
 
 export interface BodyAnalysisJobData extends BaseJobData {
-  type: 'body_analysis';
+  type: "body_analysis";
   imagePath: string;
 }
 
 export interface RecommendationJobData extends BaseJobData {
-  type: 'recommendation';
+  type: "recommendation";
   userInput: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userProfile?: Record<string, any>;
   occasion?: string;
   category?: string;
@@ -73,7 +71,6 @@ export type AITaskJobData =
   | BodyAnalysisJobData
   | RecommendationJobData;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JobResult<T = any> {
   jobId: string;
   status: JobStatus;

@@ -6,13 +6,13 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiProperty,
 } from "@nestjs/swagger";
 import { IsString } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
 
 import { AuthenticatedRequest } from "../../../common/types/auth.types";
-import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 import { AiStylistService } from "../../ai-core/ai-stylist/ai-stylist.service";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 class MobileStylistChatDto {
   @ApiProperty({ description: "会话ID" })

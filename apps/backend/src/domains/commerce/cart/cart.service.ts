@@ -428,7 +428,6 @@ export class CartService {
    * Move cart items to favorites.
    */
   async moveToFavorites(userId: string, cartItemIds: string[]) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.prisma.$transaction(async (tx: any) => {
       const cartItems = await tx.cartItem.findMany({
         where: { id: { in: cartItemIds }, userId },
@@ -500,7 +499,6 @@ export class CartService {
 
     if (existing) {
       // Merge quantities
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return this.prisma.$transaction(async (tx: any) => {
         await tx.cartItem.update({
           where: { id: existing.id },

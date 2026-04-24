@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
+
 import { ClothingCategory } from "../../../types/prisma-enums";
 
+import { RecommendationOrchestrator } from "./orchestrator/recommendation.orchestrator";
 import { RecommendationsController } from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
 
@@ -17,9 +19,8 @@ jest.mock("./orchestrator/recommendation.orchestrator", () => ({
 }));
 
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
-import { RecommendationFeedService } from "./services/recommendation-feed.service";
-import { RecommendationOrchestrator } from "./orchestrator/recommendation.orchestrator";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
+import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
 describe("RecommendationsController", () => {
   let controller: RecommendationsController;

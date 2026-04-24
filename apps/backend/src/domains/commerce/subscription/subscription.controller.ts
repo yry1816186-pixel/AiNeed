@@ -1,20 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-  Request,
-} from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from "@nestjs/swagger";
+import { Controller, Get, Post, Body, Param, UseGuards, Request } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
 import { RequestWithUser } from "../../../common/types/common.types";
@@ -34,7 +19,10 @@ export class SubscriptionController {
    * 获取所有会员计划（公开）
    */
   @Get("plans")
-  @ApiOperation({ summary: "获取所有会员计划", description: "获取所有可用的会员订阅计划列表（公开接口，无需认证）" })
+  @ApiOperation({
+    summary: "获取所有会员计划",
+    description: "获取所有可用的会员订阅计划列表（公开接口，无需认证）",
+  })
   @ApiResponse({ status: 200, description: "会员计划列表" })
   async getPlans() {
     return this.subscriptionService.getAllPlans();
@@ -60,15 +48,8 @@ export class SubscriptionController {
   @ApiResponse({ status: 201, description: "订阅成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async subscribe(
-    @Request() req: RequestWithUser,
-    @Body() dto: SubscribeDto,
-  ) {
-    return this.subscriptionService.subscribe(
-      req.user.id,
-      dto.planId,
-      dto.paymentMethod,
-    );
+  async subscribe(@Request() req: RequestWithUser, @Body() dto: SubscribeDto) {
+    return this.subscriptionService.subscribe(req.user.id, dto.planId, dto.paymentMethod);
   }
 
   /**
@@ -92,10 +73,7 @@ export class SubscriptionController {
   @ApiParam({ name: "feature", description: "功能标识" })
   @ApiResponse({ status: 200, description: "权限检查结果" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async checkPermission(
-    @Request() req: RequestWithUser,
-    @Param("feature") feature: string,
-  ) {
+  async checkPermission(@Request() req: RequestWithUser, @Param("feature") feature: string) {
     return this.subscriptionService.checkPermission(req.user.id, feature);
   }
 }

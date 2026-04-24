@@ -1,14 +1,10 @@
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import type { ClothingCategory } from '../../../types/prisma-enums';
 import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../common/config/runtime-flags";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import type { ClothingCategory } from "../../../types/prisma-enums";
 import { QdrantService } from "../../platform/recommendations/services/qdrant.service";
 
 import {
@@ -35,13 +31,10 @@ export class SearchService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-    private qdrantService: QdrantService,
+    private qdrantService: QdrantService
   ) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
-    this.mlServiceUrl = this.configService.get<string>(
-      "ML_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
   }
 
   /**
@@ -57,15 +50,9 @@ export class SearchService {
       maxPrice?: number;
       page?: number;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<PaginatedSearchResult<ScoredSearchResult>> {
-    const {
-      category,
-      minPrice,
-      maxPrice,
-      page = 1,
-      limit = 20,
-    } = options;
+    const { category, minPrice, maxPrice, page = 1, limit = 20 } = options;
 
     const candidateLimit = limit * 3; // Fetch more candidates for RRF fusion
     const rrfK = 60; // Standard RRF constant
@@ -92,23 +79,25 @@ export class SearchService {
     try {
       // Get query embedding from ML service
       const embedResponse = await axios.post<{ embedding: number[] }>(
-        `${this.mlServiceUrl}/embed/text`,
+        `${this.mlServiceUrl}/api/vector/embed/text`,
         { text: query },
-        { timeout: 10000 },
+        { timeout: 10000 }
       );
       const queryVector = embedResponse.data.embedding;
       if (queryVector && queryVector.length > 0) {
-        const vectorResults = await this.qdrantService.searchSimilar(
-          queryVector,
-          { topK: candidateLimit, minScore: 0.3 },
-        );
+        const vectorResults = await this.qdrantService.searchSimilar(queryVector, {
+          topK: candidateLimit,
+          minScore: 0.3,
+        });
         vectorResults.forEach((result, idx) => {
           vectorRanks.set(result.id, idx + 1);
         });
       }
     } catch (error: unknown) {
       this.logger.warn(
-        `Vector search unavailable for hybrid: ${error instanceof Error ? error.message : String(error)}`,
+        `Vector search unavailable for hybrid: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 
@@ -152,10 +141,7 @@ export class SearchService {
       }
 
       // Popularity contribution (20% weight, normalized)
-      const popularityScore = Math.min(
-        1,
-        (item.viewCount * 0.5 + item.likeCount) / 1000,
-      );
+      const popularityScore = Math.min(1, (item.viewCount * 0.5 + item.likeCount) / 1000);
       rrfScore += 0.2 * popularityScore;
 
       return {
@@ -164,13 +150,15 @@ export class SearchService {
         matchReasons: this.generateHybridReasons(
           textRank !== undefined,
           vectorRank !== undefined,
-          item.viewCount,
+          item.viewCount
         ),
       };
     });
 
     // Sort by RRF score descending
-    scored.sort((a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore);
+    scored.sort(
+      (a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore
+    );
 
     const total = scored.length;
     const paginated = scored.slice((page - 1) * limit, page * limit);
@@ -188,7 +176,7 @@ export class SearchService {
   private generateHybridReasons(
     hasTextMatch: boolean,
     hasVectorMatch: boolean,
-    viewCount: number,
+    viewCount: number
   ): string[] {
     const reasons: string[] = [];
     if (hasTextMatch) {
@@ -212,16 +200,9 @@ export class SearchService {
       sortBy?: "relevance" | "price_asc" | "price_desc" | "popular";
       page?: number;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<PaginatedSearchResult<ClothingItemWithBrand>> {
-    const {
-      category,
-      minPrice,
-      maxPrice,
-      sortBy = "relevance",
-      page = 1,
-      limit = 20,
-    } = options;
+    const { category, minPrice, maxPrice, sortBy = "relevance", page = 1, limit = 20 } = options;
 
     // 使用类型安全的 where 条件构建函数
     const where: ClothingItemWhereInput = buildSearchWhereClause({
@@ -232,8 +213,7 @@ export class SearchService {
     });
 
     // 使用类型安全的排序构建函数
-    const orderBy: ClothingItemOrderByWithRelationInput =
-      buildOrderByClause(sortBy);
+    const orderBy: ClothingItemOrderByWithRelationInput = buildOrderByClause(sortBy);
 
     const skip = (page - 1) * limit;
 
@@ -260,10 +240,7 @@ export class SearchService {
     };
   }
 
-  async searchByImage(
-    imageUrl: string,
-    limit: number = 20,
-  ): Promise<ScoredSearchResult[]> {
+  async searchByImage(imageUrl: string, limit: number = 20): Promise<ScoredSearchResult[]> {
     try {
       const mlResponse = await axios.post<{
         results: MLSimilarItemResult[];
@@ -273,7 +250,7 @@ export class SearchService {
           image_url: imageUrl,
           top_k: limit * 2,
         },
-        { timeout: 30000 },
+        { timeout: 30000 }
       );
 
       const similarItems = mlResponse.data.results || [];
@@ -314,7 +291,7 @@ export class SearchService {
         .slice(0, limit);
     } catch (error: unknown) {
       this.logger.error(
-        `ML service error: ${error instanceof Error ? error.message : String(error)}`,
+        `ML service error: ${error instanceof Error ? error.message : String(error)}`
       );
       if (!this.allowFallbacks) {
         throw new ServiceUnavailableException("图像搜索服务不可用");
@@ -323,9 +300,7 @@ export class SearchService {
     }
   }
 
-  private async fallbackSearch(
-    limit: number,
-  ): Promise<ScoredSearchResult[]> {
+  private async fallbackSearch(limit: number): Promise<ScoredSearchResult[]> {
     const items = await this.prisma.clothingItem.findMany({
       where: { isActive: true },
       include: {
@@ -344,13 +319,13 @@ export class SearchService {
 
   private async attributeBasedSearch(
     imageUrl: string,
-    limit: number,
+    limit: number
   ): Promise<ScoredSearchResult[]> {
     try {
       const analysisResponse = await axios.post<MLAnalysisResponse>(
         `${this.mlServiceUrl}/analyze`,
         { image_url: imageUrl },
-        { timeout: 30000 },
+        { timeout: 30000 }
       );
 
       const analysis = analysisResponse.data;
@@ -376,7 +351,7 @@ export class SearchService {
         const attrs = getClothingAttributes(item.attributes);
         if (style && attrs?.style) {
           const styleMatch = attrs.style.filter((s: string) =>
-            style.some((qs: string) => s.toLowerCase() === qs.toLowerCase()),
+            style.some((qs: string) => s.toLowerCase() === qs.toLowerCase())
           );
           score += styleMatch.length * 15;
         }
@@ -386,8 +361,8 @@ export class SearchService {
             colors.some(
               (qc: string) =>
                 c.toLowerCase().includes(qc.toLowerCase()) ||
-                qc.toLowerCase().includes(c.toLowerCase()),
-            ),
+                qc.toLowerCase().includes(c.toLowerCase())
+            )
           );
           score += colorMatch.length * 10;
         }
@@ -402,12 +377,14 @@ export class SearchService {
         };
       });
 
-      scoredItems.sort((a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore);
+      scoredItems.sort(
+        (a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore
+      );
 
       return scoredItems.slice(0, limit);
     } catch (error: unknown) {
       this.logger.error(
-        `Attribute search failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Attribute search failed: ${error instanceof Error ? error.message : String(error)}`
       );
       if (!this.allowFallbacks) {
         throw new ServiceUnavailableException("图像属性搜索服务不可用");
@@ -419,7 +396,7 @@ export class SearchService {
   private generateMatchReasons(
     attrs: ClothingAttributes | null,
     queryColors: string[] | undefined,
-    itemColors: string[],
+    itemColors: string[]
   ): string[] {
     const reasons: string[] = [];
 
@@ -432,8 +409,8 @@ export class SearchService {
         queryColors.some(
           (qc) =>
             ic.toLowerCase().includes(qc.toLowerCase()) ||
-            qc.toLowerCase().includes(ic.toLowerCase()),
-        ),
+            qc.toLowerCase().includes(ic.toLowerCase())
+        )
       );
       if (matchedColor) {
         reasons.push(`包含${matchedColor}色调`);
@@ -443,10 +420,7 @@ export class SearchService {
     return reasons.length > 0 ? reasons : ["相似推荐"];
   }
 
-  async getSearchSuggestions(
-    query: string,
-    limit: number = 10,
-  ): Promise<SearchSuggestionsResult> {
+  async getSearchSuggestions(query: string, limit: number = 10): Promise<SearchSuggestionsResult> {
     // Escape special ILIKE pattern characters to prevent pattern injection
     const escapedQuery = query.replace(/[%_\\]/g, "\\$&");
     const pattern = `%${escapedQuery}%`;
@@ -490,7 +464,7 @@ export class SearchService {
       colors?: string[];
       sizes?: string[];
       styleTags?: string[];
-    } = {},
+    } = {}
   ): Promise<PaginatedSearchResult<ClothingItemWithBrand>> {
     const {
       category,
@@ -552,11 +526,19 @@ export class SearchService {
         .map((item: ClothingItemWithBrand) => ({
           ...item,
           totalPurchases: (item as unknown as Record<string, unknown>).salesStats
-            ? ((item as unknown as Record<string, unknown>).salesStats as Array<{ purchases: number }>)
-                .reduce((sum: number, s: { purchases: number }) => sum + s.purchases, 0)
+            ? (
+                (item as unknown as Record<string, unknown>).salesStats as Array<{
+                  purchases: number;
+                }>
+              ).reduce((sum: number, s: { purchases: number }) => sum + s.purchases, 0)
             : 0,
         }))
-        .sort((a: ClothingItemWithBrand & { totalPurchases: number }, b: ClothingItemWithBrand & { totalPurchases: number }) => b.totalPurchases - a.totalPurchases);
+        .sort(
+          (
+            a: ClothingItemWithBrand & { totalPurchases: number },
+            b: ClothingItemWithBrand & { totalPurchases: number }
+          ) => b.totalPurchases - a.totalPurchases
+        );
 
       return { items: sorted, page, limit, total, totalPages: Math.ceil(total / limit), query };
     }
@@ -593,7 +575,11 @@ export class SearchService {
     const [brands, priceAgg] = await Promise.all([
       this.prisma.brand.findMany({
         where: { products: { some: where as never } },
-        select: { id: true, name: true, _count: { select: { products: { where: where as never } } } },
+        select: {
+          id: true,
+          name: true,
+          _count: { select: { products: { where: where as never } } },
+        },
         orderBy: { name: "asc" },
       }),
       this.prisma.clothingItem.aggregate({
@@ -628,7 +614,11 @@ export class SearchService {
     }
 
     return {
-      brands: brands.map((b: { id: string; name: string; _count: { products: number } }) => ({ id: b.id, name: b.name, count: b._count.products })),
+      brands: brands.map((b: { id: string; name: string; _count: { products: number } }) => ({
+        id: b.id,
+        name: b.name,
+        count: b._count.products,
+      })),
       colors: Object.entries(colorCounts)
         .map(([value, count]) => ({ value, count }))
         .sort((a: { count: number }, b: { count: number }) => b.count - a.count),

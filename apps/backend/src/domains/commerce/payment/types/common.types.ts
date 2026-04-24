@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 通用支付类型定义
  * 金融级安全类型，确保支付数据类型安全

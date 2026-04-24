@@ -1,13 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsOptional,
-  IsNumber,
-  Min,
-  Max,
-  IsDateString,
-} from "class-validator";
+import { IsString, IsOptional, IsNumber, Min, Max, IsDateString } from "class-validator";
 
 export class AuditLogQueryDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })

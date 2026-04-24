@@ -1,12 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  IsArray,
-} from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsEnum, IsArray } from "class-validator";
 
 export enum RefundTypeDto {
   REFUND_ONLY = "REFUND_ONLY",

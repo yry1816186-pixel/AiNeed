@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -6,11 +5,7 @@ import Opossum from "opossum";
 
 import { StorageService } from "../../../../common/storage/storage.service";
 
-import {
-  TryOnProvider,
-  TryOnRequest,
-  TryOnResponse,
-} from "./ai-tryon-provider.interface";
+import { TryOnProvider, TryOnRequest, TryOnResponse } from "./ai-tryon-provider.interface";
 
 @Injectable()
 export class GlmTryOnProvider implements TryOnProvider {
@@ -25,23 +20,17 @@ export class GlmTryOnProvider implements TryOnProvider {
   private readonly client: AxiosInstance;
   private readonly circuitBreaker: Opossum<[TryOnRequest], TryOnResponse>;
 
-  constructor(
-    private configService: ConfigService,
-    private storageService: StorageService,
-  ) {
-    this.apiKey = this.configService.get<string>("GLM_API_KEY", "") ||
+  constructor(private configService: ConfigService, private storageService: StorageService) {
+    this.apiKey =
+      this.configService.get<string>("GLM_API_KEY", "") ||
       this.configService.get<string>("ZHIPU_API_KEY", "");
     this.apiEndpoint = this.configService.get<string>(
       "GLM_API_ENDPOINT",
-      "https://open.bigmodel.cn/api/paas/v4",
+      "https://open.bigmodel.cn/api/paas/v4"
     );
-    this.model = this.configService.get<string>(
-      "GLM_TRYON_MODEL",
-      "glm-4v-plus",
-    );
+    this.model = this.configService.get<string>("GLM_TRYON_MODEL", "glm-4v-plus");
     this.enabled =
-      this.configService.get<string>("GLM_TRYON_ENABLED", "false") ===
-        "true" && !!this.apiKey;
+      this.configService.get<string>("GLM_TRYON_ENABLED", "false") === "true" && !!this.apiKey;
 
     this.client = axios.create({
       baseURL: this.apiEndpoint,
@@ -52,17 +41,14 @@ export class GlmTryOnProvider implements TryOnProvider {
       },
     });
 
-    this.circuitBreaker = new Opossum(
-      (req: TryOnRequest) => this.executeGlmInference(req),
-      {
-        timeout: 20000,
-        errorThresholdPercentage: 60,
-        resetTimeout: 45000,
-        rollingCountTimeout: 10000,
-        rollingCountBuckets: 10,
-        volumeThreshold: 3,
-      },
-    );
+    this.circuitBreaker = new Opossum((req: TryOnRequest) => this.executeGlmInference(req), {
+      timeout: 20000,
+      errorThresholdPercentage: 60,
+      resetTimeout: 45000,
+      rollingCountTimeout: 10000,
+      rollingCountBuckets: 10,
+      volumeThreshold: 3,
+    });
 
     this.circuitBreaker.on("open", () => {
       this.logger.warn("GLM try-on circuit breaker OPENED");
@@ -75,7 +61,7 @@ export class GlmTryOnProvider implements TryOnProvider {
     });
 
     this.logger.log(
-      `GLM TryOn Provider initialized. Enabled: ${this.enabled}, Model: ${this.model}`,
+      `GLM TryOn Provider initialized. Enabled: ${this.enabled}, Model: ${this.model}`
     );
   }
 
@@ -93,17 +79,11 @@ export class GlmTryOnProvider implements TryOnProvider {
     return this.circuitBreaker.fire(request);
   }
 
-  private async executeGlmInference(
-    request: TryOnRequest,
-  ): Promise<TryOnResponse> {
+  private async executeGlmInference(request: TryOnRequest): Promise<TryOnResponse> {
     const startTime = Date.now();
 
-    const personImageBase64 = await this.fetchImageAsBase64(
-      request.personImageUrl,
-    );
-    const garmentImageBase64 = await this.fetchImageAsBase64(
-      request.garmentImageUrl,
-    );
+    const personImageBase64 = await this.fetchImageAsBase64(request.personImageUrl);
+    const garmentImageBase64 = await this.fetchImageAsBase64(request.garmentImageUrl);
 
     const categoryDesc = this.getCategoryDescription(request.category);
     const prompt = `请生成一张图片：将第二张图片中的${categoryDesc}穿在第一张图片的人物身上，保持人物面部和姿势不变，生成高质量真实感的换装效果图。`;
@@ -139,15 +119,12 @@ export class GlmTryOnProvider implements TryOnProvider {
 
     const response = await this.client.post("/chat/completions", payload);
 
-    const content =
-      response.data?.choices?.[0]?.message?.content ?? "";
+    const content = response.data?.choices?.[0]?.message?.content ?? "";
 
     let resultImageUrl: string | undefined;
 
     if (typeof content === "string" && content.includes("http")) {
-      const urlMatch = content.match(
-        /https?:\/\/[^\s"'<>]+\.(png|jpg|jpeg|webp)/i,
-      );
+      const urlMatch = content.match(/https?:\/\/[^\s"'<>]+\.(png|jpg|jpeg|webp)/i);
       if (urlMatch) {
         resultImageUrl = urlMatch[0];
       }
@@ -163,12 +140,8 @@ export class GlmTryOnProvider implements TryOnProvider {
     }
 
     if (!resultImageUrl) {
-      this.logger.warn(
-        "GLM returned text-only response, cannot generate try-on image",
-      );
-      throw new Error(
-        "GLM try-on fallback returned text-only response, no image generated",
-      );
+      this.logger.warn("GLM returned text-only response, cannot generate try-on image");
+      throw new Error("GLM try-on fallback returned text-only response, no image generated");
     }
 
     const finalUrl = await this.uploadResultToStorage(resultImageUrl);
@@ -189,9 +162,7 @@ export class GlmTryOnProvider implements TryOnProvider {
     };
   }
 
-  private getCategoryDescription(
-    category?: TryOnRequest["category"],
-  ): string {
+  private getCategoryDescription(category?: TryOnRequest["category"]): string {
     switch (category) {
       case "upper_body":
         return "上装";
@@ -219,7 +190,7 @@ export class GlmTryOnProvider implements TryOnProvider {
           buffer: imageBuffer,
           size: imageBuffer.length,
         },
-        "tryon-results",
+        "tryon-results"
       );
       return upload.url;
     }
@@ -234,7 +205,7 @@ export class GlmTryOnProvider implements TryOnProvider {
         buffer: imageBuffer,
         size: imageBuffer.length,
       },
-      "tryon-results",
+      "tryon-results"
     );
     return upload.url;
   }

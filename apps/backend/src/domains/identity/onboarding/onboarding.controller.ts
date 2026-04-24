@@ -1,11 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, Post, Body, Param, UseGuards, Request } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiResponse,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
@@ -65,10 +59,7 @@ export class OnboardingController {
     status: 401,
     description: "未授权",
   })
-  async completeBasicInfo(
-    @Request() req: AuthenticatedRequest,
-    @Body() dto: CompleteBasicInfoDto,
-  ) {
+  async completeBasicInfo(@Request() req: AuthenticatedRequest, @Body() dto: CompleteBasicInfoDto) {
     return this.onboardingService.completeBasicInfo(req.user.id, dto);
   }
 
@@ -89,10 +80,7 @@ export class OnboardingController {
     status: 401,
     description: "未授权",
   })
-  async skipStep(
-    @Request() req: AuthenticatedRequest,
-    @Param("step") step: string,
-  ) {
+  async skipStep(@Request() req: AuthenticatedRequest, @Param("step") step: string) {
     return this.onboardingService.skipStep(req.user.id, step);
   }
 

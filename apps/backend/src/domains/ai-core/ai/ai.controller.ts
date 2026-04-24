@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Post,
@@ -23,8 +22,8 @@ import {
   ApiConsumes,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
+import { ClothingCategory } from "../../../types/prisma-enums";
 import { Public } from "../../identity/auth/decorators/public.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 

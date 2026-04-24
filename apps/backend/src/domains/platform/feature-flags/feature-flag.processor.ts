@@ -1,18 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
+import { Processor, WorkerHost } from "@nestjs/bullmq";
+import { Logger } from "@nestjs/common";
+import { Job } from "bullmq";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-const FEATURE_FLAG_QUEUE = 'feature_flag_evaluations';
+const FEATURE_FLAG_QUEUE = "feature_flag_evaluations";
 
 interface EvaluationJobData {
   flagId: string;
   userId: string | null;
   result: boolean;
   variant: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: Record<string, any> | null;
   evaluatedAt: string;
 }
@@ -41,7 +39,9 @@ export class FeatureFlagProcessor extends WorkerHost {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to log evaluation for flag ${flagId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to log evaluation for flag ${flagId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       throw error;
     }

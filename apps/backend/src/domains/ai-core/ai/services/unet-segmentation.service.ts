@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
@@ -46,10 +41,7 @@ export class UNetSegmentationService {
 
   constructor(private configService: ConfigService) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
-    this.aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
 
     this.aiClient = axios.create({
       baseURL: this.aiServiceUrl,
@@ -70,7 +62,7 @@ export class UNetSegmentationService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `Python AI Service not available for segmentation (${this.aiServiceUrl}): ${errorMessage}. Will use fallback if enabled.`,
+        `Python AI Service not available for segmentation (${this.aiServiceUrl}): ${errorMessage}. Will use fallback if enabled.`
       );
       this.serviceAvailable = false;
     }
@@ -84,16 +76,14 @@ export class UNetSegmentationService {
         return this.segmentWithFallback();
       }
 
-      throw new ServiceUnavailableException(
-        "Python AI Service is unavailable for segmentation",
-      );
+      throw new ServiceUnavailableException("Python AI Service is unavailable for segmentation");
     }
 
     try {
       return await this.segmentWithPythonService(imageBuffer);
     } catch (error: unknown) {
       this.logger.error(
-        `Python segmentation failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Python segmentation failed: ${error instanceof Error ? error.message : String(error)}`
       );
       if (this.allowFallbacks) {
         return this.segmentWithFallback();
@@ -103,9 +93,7 @@ export class UNetSegmentationService {
     }
   }
 
-  private async segmentWithPythonService(
-    imageBuffer: Buffer,
-  ): Promise<SegmentationResult> {
+  private async segmentWithPythonService(imageBuffer: Buffer): Promise<SegmentationResult> {
     const base64 = imageBuffer.toString("base64");
 
     const response = await this.aiClient.post("/api/analyze/path", {
@@ -128,10 +116,7 @@ export class UNetSegmentationService {
       mask,
       attributes: {
         category: attributes.category || "tops",
-        subcategory: this.inferSubcategory(
-          attributes.category,
-          attributes.style,
-        ),
+        subcategory: this.inferSubcategory(attributes.category, attributes.style),
         colors: attributes.colors || [],
         patterns: this.extractPatterns(attributes),
         styles: attributes.style || [],
@@ -155,8 +140,7 @@ export class UNetSegmentationService {
     for (let y = 0; y < size; y++) {
       const row: number[] = [];
       for (let x = 0; x < size; x++) {
-        const inCenter =
-          x > size * 0.2 && x < size * 0.8 && y > size * 0.1 && y < size * 0.9;
+        const inCenter = x > size * 0.2 && x < size * 0.8 && y > size * 0.1 && y < size * 0.9;
         row.push(inCenter ? 1 : 0);
       }
       mask.push(row);
@@ -197,9 +181,7 @@ export class UNetSegmentationService {
       const normalizedMask = rawMask
         .filter((row): row is unknown[] => Array.isArray(row))
         .map((row) =>
-          row.map((value) =>
-            typeof value === "number" ? Number(value) : Number(Boolean(value)),
-          ),
+          row.map((value) => (typeof value === "number" ? Number(value) : Number(Boolean(value))))
         );
 
       if (normalizedMask.length > 0) {
@@ -228,7 +210,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.pattern) {
       const pattern = attrs.pattern as Record<string, unknown>;
-      if (pattern.type && typeof pattern.type === 'string') {
+      if (pattern.type && typeof pattern.type === "string") {
         return [pattern.type];
       }
     }
@@ -239,7 +221,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.material) {
       const material = attrs.material as Record<string, unknown>;
-      if (material.type && typeof material.type === 'string') {
+      if (material.type && typeof material.type === "string") {
         return [material.type];
       }
     }
@@ -250,7 +232,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.sleeve) {
       const sleeve = attrs.sleeve as Record<string, unknown>;
-      if (sleeve.type && typeof sleeve.type === 'string') {
+      if (sleeve.type && typeof sleeve.type === "string") {
         return sleeve.type;
       }
     }
@@ -261,7 +243,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.neckline) {
       const neckline = attrs.neckline as Record<string, unknown>;
-      if (neckline.type && typeof neckline.type === 'string') {
+      if (neckline.type && typeof neckline.type === "string") {
         return neckline.type;
       }
     }
@@ -272,7 +254,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.length) {
       const length = attrs.length as Record<string, unknown>;
-      if (length.type && typeof length.type === 'string') {
+      if (length.type && typeof length.type === "string") {
         return length.type;
       }
     }
@@ -283,7 +265,7 @@ export class UNetSegmentationService {
     const attrs = attributes.attributes as Record<string, unknown> | undefined;
     if (attrs?.fit) {
       const fit = attrs.fit as Record<string, unknown>;
-      if (fit.type && typeof fit.type === 'string') {
+      if (fit.type && typeof fit.type === "string") {
         return fit.type;
       }
     }
@@ -333,7 +315,7 @@ export class UNetSegmentationService {
         }
       } catch (error: unknown) {
         this.logger.error(
-          `Failed to extract embedding: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to extract embedding: ${error instanceof Error ? error.message : String(error)}`
         );
       }
     }
@@ -343,14 +325,12 @@ export class UNetSegmentationService {
     }
 
     throw new ServiceUnavailableException(
-      "AI embedding service is unavailable for segmentation features",
+      "AI embedding service is unavailable for segmentation features"
     );
   }
 
   async batchSegment(imageBuffers: Buffer[]): Promise<SegmentationResult[]> {
-    return Promise.all(
-      imageBuffers.map((buffer) => this.segmentClothing(buffer)),
-    );
+    return Promise.all(imageBuffers.map((buffer) => this.segmentClothing(buffer)));
   }
 
   isServiceAvailable(): boolean {
@@ -367,9 +347,7 @@ export class UNetSegmentationService {
       vector.push(((current % 2000) - 1000) / 1000);
     }
 
-    const norm = Math.sqrt(
-      vector.reduce((sum, value) => sum + value * value, 0),
-    );
+    const norm = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0));
     return norm === 0 ? vector : vector.map((value) => value / norm);
   }
 

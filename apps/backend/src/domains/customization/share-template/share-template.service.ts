@@ -31,13 +31,9 @@ export class ShareTemplateService {
     });
   }
 
-  async getTemplates(
-    query: ShareTemplateQueryDto,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<PaginatedResponse<any>> {
+  async getTemplates(query: ShareTemplateQueryDto): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;

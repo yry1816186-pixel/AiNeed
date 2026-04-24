@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
-import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
 
 type Decimal = any;
 import { CreateCouponDto } from "./dto";

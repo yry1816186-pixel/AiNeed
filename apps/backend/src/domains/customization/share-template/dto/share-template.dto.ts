@@ -1,13 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsOptional,
-  IsBoolean,
-  IsObject,
-  IsNumber,
-  Min,
-  Max,
-} from "class-validator";
+import { IsString, IsOptional, IsBoolean, IsObject, IsNumber, Min, Max } from "class-validator";
 
 export class CreateShareTemplateDto {
   @ApiProperty({ description: "模板名称", example: "简约风格海报" })
@@ -25,7 +17,6 @@ export class CreateShareTemplateDto {
 
   @ApiProperty({ description: "布局配置", example: { width: 750, height: 1334, elements: [] } })
   @IsObject()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   layoutConfig!: Record<string, any>;
 
   @ApiPropertyOptional({ description: "是否启用", example: true })
@@ -50,10 +41,12 @@ export class UpdateShareTemplateDto {
   @IsString()
   backgroundImageUrl?: string;
 
-  @ApiPropertyOptional({ description: "布局配置", example: { width: 750, height: 1334, elements: [] } })
+  @ApiPropertyOptional({
+    description: "布局配置",
+    example: { width: 750, height: 1334, elements: [] },
+  })
   @IsOptional()
   @IsObject()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   layoutConfig?: Record<string, any>;
 
   @ApiPropertyOptional({ description: "是否启用", example: true })

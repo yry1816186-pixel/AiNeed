@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -44,7 +43,6 @@ export class AdminCommunityController {
   async listPosts(@Query() query: AdminPostQueryDto) {
     const { page = 1, pageSize = 20, status, moderationStatus } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { isDeleted: false };
 
     if (moderationStatus) {
@@ -165,7 +163,6 @@ export class AdminCommunityController {
   async listReports(@Query() query: AdminReportQueryDto) {
     const { page = 1, pageSize = 20, status, contentType } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
 
     if (status) {

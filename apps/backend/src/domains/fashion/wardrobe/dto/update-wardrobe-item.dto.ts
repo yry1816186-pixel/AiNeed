@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsArray, IsBoolean, IsUrl, MaxLength } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsOptional, IsArray, IsBoolean, IsUrl, MaxLength } from "class-validator";
 
 export class UpdateWardrobeItemDto {
   @ApiPropertyOptional({ description: "单品名称", example: "白色T恤" })

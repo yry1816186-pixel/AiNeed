@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 
 export interface ColorTag {
@@ -118,10 +117,11 @@ const COLOR_NAME_MAP: Record<string, string> = {
 @Injectable()
 export class ColorDerivationEngine {
   deriveColorPreferences(
-    selectedOptions: Array<{ colorTags: Array<{ hex: string; category: string; weight: number }> }>,
+    selectedOptions: Array<{ colorTags: Array<{ hex: string; category: string; weight: number }> }>
   ): ColorPreferenceResult {
     // Aggregate weights per hex code, track highest-weight category
-    const hexData: Map<string, { totalWeight: number; category: string; maxWeight: number }> = new Map();
+    const hexData: Map<string, { totalWeight: number; category: string; maxWeight: number }> =
+      new Map();
 
     for (const option of selectedOptions) {
       for (const tag of option.colorTags) {
@@ -177,14 +177,24 @@ export class ColorDerivationEngine {
     const b = parseInt(hex.slice(5, 7), 16);
 
     const brightness = (r + g + b) / 3;
-    if (brightness < 50) {return "深色";}
-    if (brightness > 200) {return "浅色";}
+    if (brightness < 50) {
+      return "深色";
+    }
+    if (brightness > 200) {
+      return "浅色";
+    }
 
     // Determine dominant channel
     const max = Math.max(r, g, b);
-    if (max === r && r > g + 30) {return "暖色调";}
-    if (max === b && b > r + 30) {return "冷色调";}
-    if (max === g && g > r + 30) {return "绿色调";}
+    if (max === r && r > g + 30) {
+      return "暖色调";
+    }
+    if (max === b && b > r + 30) {
+      return "冷色调";
+    }
+    if (max === g && g > r + 30) {
+      return "绿色调";
+    }
     return "中性色";
   }
 }

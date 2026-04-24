@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Inject } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -26,12 +25,11 @@ export class ProfileEventEmitter {
       timestamp: Date.now(),
     });
 
-    await this.redisService.publish(
-      ProfileEventEmitter.CHANNEL_PROFILE_UPDATED,
-      message,
-    );
+    await this.redisService.publish(ProfileEventEmitter.CHANNEL_PROFILE_UPDATED, message);
 
-    this.logger.debug(`Emitted profile:updated for user ${userId}, fields: ${changedFields.join(",")}`);
+    this.logger.debug(
+      `Emitted profile:updated for user ${userId}, fields: ${changedFields.join(",")}`
+    );
   }
 
   /**
@@ -44,10 +42,7 @@ export class ProfileEventEmitter {
       timestamp: Date.now(),
     });
 
-    await this.redisService.publish(
-      ProfileEventEmitter.CHANNEL_QUIZ_COMPLETED,
-      message,
-    );
+    await this.redisService.publish(ProfileEventEmitter.CHANNEL_QUIZ_COMPLETED, message);
 
     this.logger.debug(`Emitted quiz:completed for user ${userId}, quiz: ${quizId}`);
   }

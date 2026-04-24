@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -35,7 +34,7 @@ export class HealthService {
     private prisma: PrismaService,
     private redis: RedisService,
     private storage: StorageService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   async checkHealth(): Promise<HealthStatus> {
@@ -150,10 +149,7 @@ export class HealthService {
 
   async checkMLService(): Promise<ComponentHealth> {
     const start = Date.now();
-    const mlServiceUrl = this.configService.get<string>(
-      "ML_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    const mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);

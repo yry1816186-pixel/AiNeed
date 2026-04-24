@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
+
 import { BodyType, FaceShape, SkinTone } from "../../../../types/prisma-enums";
 
 export interface AccessoryRecommendation {
@@ -129,7 +129,7 @@ export class AccessoryRecommendationService {
       oblong: "长",
       diamond: "菱形",
     };
-    return names[shape]!;
+    return names[shape];
   }
 
   private getBodyTypeName(type: BodyType): string {
@@ -140,7 +140,7 @@ export class AccessoryRecommendationService {
       hourglass: "X型",
       oval: "O型",
     };
-    return names[type]!;
+    return names[type];
   }
 
   private getSkinToneName(tone: SkinTone): string {
@@ -152,6 +152,6 @@ export class AccessoryRecommendationService {
       tan: "小麦",
       dark: "深色",
     };
-    return names[tone]!;
+    return names[tone];
   }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomInt, timingSafeEqual } from "crypto";
 
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from "@nestjs/common";
@@ -27,11 +26,18 @@ export class AliyunSmsService implements ISmsService {
 
   async sendCode(phone: string, code: string): Promise<void> {
     if (!this.accessKeyId || !this.accessKeySecret || !this.signName || !this.templateCode) {
-      this.logger.warn(`[SMS Dev Mode] Sending code to ${phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')} (credentials not configured)`);
+      this.logger.warn(
+        `[SMS Dev Mode] Sending code to ${phone.replace(
+          /(\d{3})\d{4}(\d{4})/,
+          "$1****$2"
+        )} (credentials not configured)`
+      );
       return;
     }
 
-    this.logger.log(`[SMS] Sending code to ${phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')} via Aliyun`);
+    this.logger.log(
+      `[SMS] Sending code to ${phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2")} via Aliyun`
+    );
   }
 }
 
@@ -40,7 +46,9 @@ export class MockSmsService implements ISmsService {
   private readonly logger = new Logger(MockSmsService.name);
 
   async sendCode(phone: string, code: string): Promise<void> {
-    this.logger.debug(`[SMS Mock] Sending code to ${phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}`);
+    this.logger.debug(
+      `[SMS Mock] Sending code to ${phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2")}`
+    );
   }
 }
 
@@ -59,7 +67,7 @@ export class SmsService {
 
   constructor(
     private readonly redisService: RedisService,
-    @Inject("ISmsService") private readonly smsProvider: ISmsService,
+    @Inject("ISmsService") private readonly smsProvider: ISmsService
   ) {}
 
   async sendVerificationCode(phone: string): Promise<void> {

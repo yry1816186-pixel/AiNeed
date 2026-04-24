@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as crypto from "crypto";
 import * as https from "https";
 
@@ -56,22 +55,10 @@ export class AiAnalysisService {
   ];
 
   constructor(private configService: ConfigService) {
-    this.accessKeyId = this.configService.get<string>(
-      "ALIYUN_ACCESS_KEY_ID",
-      "",
-    );
-    this.accessKeySecret = this.configService.get<string>(
-      "ALIYUN_ACCESS_KEY_SECRET",
-      "",
-    );
-    this.region = this.configService.get<string>(
-      "ALIYUN_REGION",
-      "cn-shanghai",
-    );
-    this.aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.accessKeyId = this.configService.get<string>("ALIYUN_ACCESS_KEY_ID", "");
+    this.accessKeySecret = this.configService.get<string>("ALIYUN_ACCESS_KEY_SECRET", "");
+    this.region = this.configService.get<string>("ALIYUN_REGION", "cn-shanghai");
+    this.aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
 
     this.aiClient = axios.create({
       baseURL: this.aiServiceUrl,
@@ -92,30 +79,25 @@ export class AiAnalysisService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `Python AI Service not available (${this.aiServiceUrl}): ${errorMessage}. Body/face analysis will fall back to Aliyun.`,
+        `Python AI Service not available (${this.aiServiceUrl}): ${errorMessage}. Body/face analysis will fall back to Aliyun.`
       );
       this.aiServiceAvailable = false;
     }
   }
 
-  async analyzeBodyAndFace(
-    imageBuffer: Buffer,
-  ): Promise<BodyFaceAnalysisResult> {
+  async analyzeBodyAndFace(imageBuffer: Buffer): Promise<BodyFaceAnalysisResult> {
     if (this.aiServiceAvailable) {
       try {
         return await this.callPythonAIService(imageBuffer);
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Unknown error";
-        this.logger.warn(
-          `Python AI Service failed, falling back to Aliyun: ${message}`,
-        );
+        const message = error instanceof Error ? error.message : "Unknown error";
+        this.logger.warn(`Python AI Service failed, falling back to Aliyun: ${message}`);
       }
     }
 
     if (!this.accessKeyId || !this.accessKeySecret) {
       this.logger.warn(
-        "Aliyun credentials are not configured, using local heuristic body analysis",
+        "Aliyun credentials are not configured, using local heuristic body analysis"
       );
       return this.runLocalAnalysis(imageBuffer);
     }
@@ -123,15 +105,13 @@ export class AiAnalysisService {
     return this.callAliyunAnalysis(imageBuffer);
   }
 
-  private async callPythonAIService(
-    imageBuffer: Buffer,
-  ): Promise<BodyFaceAnalysisResult> {
+  private async callPythonAIService(imageBuffer: Buffer): Promise<BodyFaceAnalysisResult> {
     const base64Image = imageBuffer.toString("base64");
 
     const response = await this.aiClient.post(
       "/api/body-analysis",
       { image_base64: base64Image },
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json" } }
     );
 
     const data = response.data?.data;
@@ -142,17 +122,14 @@ export class AiAnalysisService {
     return {
       bodyType: data.body_type,
       skinTone: data.skin_tone,
-      faceShape:
-        typeof data.face_shape === "string" ? data.face_shape : undefined,
+      faceShape: typeof data.face_shape === "string" ? data.face_shape : undefined,
       colorSeason: data.color_season,
       confidence: typeof data.confidence === "number" ? data.confidence : 0.9,
       rawResult: data,
     };
   }
 
-  private async callAliyunAnalysis(
-    imageBuffer: Buffer,
-  ): Promise<BodyFaceAnalysisResult> {
+  private async callAliyunAnalysis(imageBuffer: Buffer): Promise<BodyFaceAnalysisResult> {
     try {
       const base64Image = imageBuffer.toString("base64");
 
@@ -161,19 +138,16 @@ export class AiAnalysisService {
         this.callAliyunFaceAnalysis(base64Image),
       ]);
 
-      if (
-        bodyResult.status === "rejected" &&
-        faceResult.status === "rejected"
-      ) {
+      if (bodyResult.status === "rejected" && faceResult.status === "rejected") {
         throw new Error(
-          `Aliyun analysis failed: ${bodyResult.reason?.message || "body failed"}; ${faceResult.reason?.message || "face failed"}`,
+          `Aliyun analysis failed: ${bodyResult.reason?.message || "body failed"}; ${
+            faceResult.reason?.message || "face failed"
+          }`
         );
       }
 
-      const bodyData =
-        bodyResult.status === "fulfilled" ? bodyResult.value : {};
-      const faceData =
-        faceResult.status === "fulfilled" ? faceResult.value : {};
+      const bodyData = bodyResult.status === "fulfilled" ? bodyResult.value : {};
+      const faceData = faceResult.status === "fulfilled" ? faceResult.value : {};
 
       const bodyType = this.mapBodyType(bodyData);
       const skinTone = this.mapSkinTone(faceData);
@@ -195,9 +169,7 @@ export class AiAnalysisService {
     }
   }
 
-  private async runLocalAnalysis(
-    imageBuffer: Buffer,
-  ): Promise<BodyFaceAnalysisResult> {
+  private async runLocalAnalysis(imageBuffer: Buffer): Promise<BodyFaceAnalysisResult> {
     const sharp = (await import("sharp")).default;
     const image = sanitizeImage(sharp(imageBuffer, { failOn: "none" })).rotate();
     const [metadata, stats] = await Promise.all([image.metadata(), image.stats()]);
@@ -239,9 +211,7 @@ export class AiAnalysisService {
     };
   }
 
-  private async callAliyunBodyAnalysis(
-    imageBase64: string,
-  ): Promise<AliyunBodyAnalysisResult> {
+  private async callAliyunBodyAnalysis(imageBase64: string): Promise<AliyunBodyAnalysisResult> {
     const params = {
       Action: "DetectBodyCount",
       Version: "2020-03-20",
@@ -249,10 +219,7 @@ export class AiAnalysisService {
     };
 
     try {
-      const response = await this.makeAliyunRequest(
-        "/viapi/body/analysis",
-        params,
-      );
+      const response = await this.makeAliyunRequest("/viapi/body/analysis", params);
       return response.Data || {};
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
@@ -260,9 +227,7 @@ export class AiAnalysisService {
     }
   }
 
-  private async callAliyunFaceAnalysis(
-    imageBase64: string,
-  ): Promise<AliyunFaceAnalysisResult> {
+  private async callAliyunFaceAnalysis(imageBase64: string): Promise<AliyunFaceAnalysisResult> {
     const params = {
       Action: "DetectFace",
       Version: "2020-03-20",
@@ -270,10 +235,7 @@ export class AiAnalysisService {
     };
 
     try {
-      const response = await this.makeAliyunRequest(
-        "/viapi/face/analysis",
-        params,
-      );
+      const response = await this.makeAliyunRequest("/viapi/face/analysis", params);
       return response.Data?.FaceAttributes || {};
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
@@ -281,10 +243,7 @@ export class AiAnalysisService {
     }
   }
 
-  private async makeAliyunRequest(
-    path: string,
-    params: Record<string, string>,
-  ): Promise<any> {
+  private async makeAliyunRequest(path: string, params: Record<string, string>): Promise<any> {
     const method = "POST";
     const host = `viapi.${this.region}.aliyuncs.com`;
 
@@ -324,14 +283,17 @@ export class AiAnalysisService {
             try {
               resolve(JSON.parse(data));
             } catch (parseError) {
-              const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+              const errorMessage =
+                parseError instanceof Error ? parseError.message : String(parseError);
               this.logger.error(
-                `Failed to parse Aliyun API response as JSON. Status: ${res.statusCode}. Raw response (truncated): ${data.substring(0, 200)}. Error: ${errorMessage}`,
+                `Failed to parse Aliyun API response as JSON. Status: ${
+                  res.statusCode
+                }. Raw response (truncated): ${data.substring(0, 200)}. Error: ${errorMessage}`
               );
               reject(new Error(`Invalid JSON response from Aliyun API: ${errorMessage}`));
             }
           });
-        },
+        }
       );
 
       req.on("error", reject);
@@ -341,7 +303,9 @@ export class AiAnalysisService {
   }
 
   private mapBodyType(data: AliyunBodyAnalysisResult): string | undefined {
-    if (!data.BodyType) {return undefined;}
+    if (!data.BodyType) {
+      return undefined;
+    }
 
     const typeMap: Record<string, string> = {
       Rectangle: "rectangle",
@@ -355,7 +319,9 @@ export class AiAnalysisService {
   }
 
   private mapSkinTone(data: AliyunFaceAnalysisResult): string | undefined {
-    if (!data.SkinTone) {return undefined;}
+    if (!data.SkinTone) {
+      return undefined;
+    }
 
     const toneMap: Record<string, string> = {
       Fair: "fair",
@@ -370,7 +336,9 @@ export class AiAnalysisService {
   }
 
   private mapFaceShape(data: AliyunFaceAnalysisResult): string | undefined {
-    if (!data.FaceShape) {return undefined;}
+    if (!data.FaceShape) {
+      return undefined;
+    }
 
     const shapeMap: Record<string, string> = {
       Oval: "oval",
@@ -409,9 +377,7 @@ export class AiAnalysisService {
     for (const candidate of this.localSkinTonePalette) {
       const [cr, cg, cb] = candidate.rgb;
       const distance = Math.sqrt(
-        Math.pow(rgb[0] - cr, 2) +
-          Math.pow(rgb[1] - cg, 2) +
-          Math.pow(rgb[2] - cb, 2),
+        Math.pow(rgb[0] - cr, 2) + Math.pow(rgb[1] - cg, 2) + Math.pow(rgb[2] - cb, 2)
       );
       if (distance < bestDistance) {
         bestDistance = distance;
@@ -422,10 +388,7 @@ export class AiAnalysisService {
     return best.name;
   }
 
-  private estimateFaceShape(
-    aspectRatio: number,
-    saturation: number,
-  ): string {
+  private estimateFaceShape(aspectRatio: number, saturation: number): string {
     if (aspectRatio > 0.92) {
       return "round";
     }
@@ -441,10 +404,7 @@ export class AiAnalysisService {
     return "heart";
   }
 
-  private estimateBodyType(
-    aspectRatio: number,
-    saturation: number,
-  ): string {
+  private estimateBodyType(aspectRatio: number, saturation: number): string {
     if (aspectRatio < 0.56) {
       return "hourglass";
     }
@@ -456,11 +416,7 @@ export class AiAnalysisService {
     return "rectangle";
   }
 
-  private estimateColorSeason(
-    skinTone: string,
-    warmth: number,
-    brightness: number,
-  ): string {
+  private estimateColorSeason(skinTone: string, warmth: number, brightness: number): string {
     if (brightness > 180) {
       return warmth >= 0 ? "spring" : "summer";
     }
@@ -474,9 +430,11 @@ export class AiAnalysisService {
 
   private determineColorSeason(
     skinTone: string | undefined,
-    _faceData: AliyunFaceAnalysisResult,
+    _faceData: AliyunFaceAnalysisResult
   ): string | undefined {
-    if (!skinTone) {return undefined;}
+    if (!skinTone) {
+      return undefined;
+    }
 
     const seasonBySkinTone: Record<string, string> = {
       fair: "summer",
@@ -492,12 +450,16 @@ export class AiAnalysisService {
 
   private calculateConfidence(
     bodyResult: PromiseSettledResult<unknown>,
-    faceResult: PromiseSettledResult<unknown>,
+    faceResult: PromiseSettledResult<unknown>
   ): number {
     let confidence = 0.5;
 
-    if (bodyResult.status === "fulfilled") {confidence += 0.25;}
-    if (faceResult.status === "fulfilled") {confidence += 0.25;}
+    if (bodyResult.status === "fulfilled") {
+      confidence += 0.25;
+    }
+    if (faceResult.status === "fulfilled") {
+      confidence += 0.25;
+    }
 
     return Math.min(confidence, 1.0);
   }

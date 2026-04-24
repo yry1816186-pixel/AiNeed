@@ -1,14 +1,28 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { RefundTypeDto } from "./dto";
 
 jest.mock("@prisma/client", () => ({
   ...jest.requireActual("@prisma/client"),
   RefundType: { REFUND_ONLY: "REFUND_ONLY", RETURN_REFUND: "RETURN_REFUND" },
-  RefundRequestStatus: { PENDING: "PENDING", APPROVED: "APPROVED", PROCESSING: "PROCESSING", COMPLETED: "COMPLETED", REJECTED: "REJECTED", CANCELLED: "CANCELLED" },
-  OrderStatus: { pending: "pending", paid: "paid", shipped: "shipped", delivered: "delivered", cancelled: "cancelled", refunded: "refunded" },
+  RefundRequestStatus: {
+    PENDING: "PENDING",
+    APPROVED: "APPROVED",
+    PROCESSING: "PROCESSING",
+    COMPLETED: "COMPLETED",
+    REJECTED: "REJECTED",
+    CANCELLED: "CANCELLED",
+  },
+  OrderStatus: {
+    pending: "pending",
+    paid: "paid",
+    shipped: "shipped",
+    delivered: "delivered",
+    cancelled: "cancelled",
+    refunded: "refunded",
+  },
 }));
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -20,7 +34,13 @@ describe("RefundRequestService", () => {
   let service: RefundRequestService;
   let prisma: {
     order: { findUnique: jest.Mock };
-    refundRequest: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock; update: jest.Mock };
+    refundRequest: {
+      findUnique: jest.Mock;
+      findFirst: jest.Mock;
+      findMany: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+    };
     clothingItem: { update: jest.Mock };
     $transaction: jest.Mock;
   };
@@ -142,10 +162,7 @@ describe("RefundRequestService", () => {
     it("should throw error when total refunded exceeds order amount", async () => {
       prisma.order.findUnique.mockResolvedValue(paidOrder);
       prisma.refundRequest.findFirst.mockResolvedValue(null);
-      prisma.refundRequest.findMany.mockResolvedValue([
-        { amount: 150 },
-        { amount: 100 },
-      ]);
+      prisma.refundRequest.findMany.mockResolvedValue([{ amount: 150 }, { amount: 100 }]);
 
       await expect(service.create(userId, dto)).rejects.toThrow(BadRequestException);
     });
@@ -221,7 +238,9 @@ describe("RefundRequestService", () => {
         status: "COMPLETED",
       });
 
-      await expect(service.reject(refundRequestId, "Too late")).rejects.toThrow(BadRequestException);
+      await expect(service.reject(refundRequestId, "Too late")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw error when refund request not found", async () => {
@@ -257,7 +276,9 @@ describe("RefundRequestService", () => {
     it("should throw error when refund request not found", async () => {
       prisma.refundRequest.findUnique.mockResolvedValue(null);
 
-      await expect(service.addTrackingNumber(refundRequestId, userId, trackingNumber)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.addTrackingNumber(refundRequestId, userId, trackingNumber)
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("should throw error when user is not the owner", async () => {
@@ -268,7 +289,9 @@ describe("RefundRequestService", () => {
         status: "APPROVED",
       });
 
-      await expect(service.addTrackingNumber(refundRequestId, userId, trackingNumber)).rejects.toThrow(BadRequestException);
+      await expect(
+        service.addTrackingNumber(refundRequestId, userId, trackingNumber)
+      ).rejects.toThrow(BadRequestException);
     });
 
     it("should throw error when type is REFUND_ONLY", async () => {
@@ -279,7 +302,9 @@ describe("RefundRequestService", () => {
         status: "APPROVED",
       });
 
-      await expect(service.addTrackingNumber(refundRequestId, userId, trackingNumber)).rejects.toThrow(BadRequestException);
+      await expect(
+        service.addTrackingNumber(refundRequestId, userId, trackingNumber)
+      ).rejects.toThrow(BadRequestException);
     });
 
     it("should throw error when status is not APPROVED", async () => {
@@ -290,7 +315,9 @@ describe("RefundRequestService", () => {
         status: "PENDING",
       });
 
-      await expect(service.addTrackingNumber(refundRequestId, userId, trackingNumber)).rejects.toThrow(BadRequestException);
+      await expect(
+        service.addTrackingNumber(refundRequestId, userId, trackingNumber)
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -335,7 +362,7 @@ describe("RefundRequestService", () => {
           orderId: "order-1",
           userId: "user-1",
           amount: 200,
-        }),
+        })
       );
     });
 
@@ -378,7 +405,7 @@ describe("RefundRequestService", () => {
       expect(prisma.refundRequest.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ userId: "user-1", orderId: "order-1" }),
-        }),
+        })
       );
     });
   });

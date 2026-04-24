@@ -24,13 +24,14 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from "../../../types/prisma-enums";
 
 import { AuthenticatedRequest } from "../../../common/types/auth.types";
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiStylistService } from "./ai-stylist.service";
+import { DialogStateService } from "./dialog-state.service";
 import {
   CreateStylistSessionDto,
   SendStylistMessageDto,
@@ -40,6 +41,7 @@ import {
   GetAlternativesQueryDto,
   ReplaceItemDto,
 } from "./dto/ai-stylist.dto";
+import { DialogChatRequestDto, DialogChatResponseDto } from "./dto/dialog.dto";
 import { ItemReplacementService } from "./services/item-replacement.service";
 import { OutfitPlanService } from "./services/outfit-plan.service";
 import { PresetQuestionsService } from "./services/preset-questions.service";
@@ -164,8 +166,62 @@ export class AiStylistController {
     private readonly itemReplacementService: ItemReplacementService,
     private readonly sessionArchiveService: SessionArchiveService,
     private readonly presetQuestionsService: PresetQuestionsService,
-    private readonly weatherIntegrationService: WeatherIntegrationService
+    private readonly weatherIntegrationService: WeatherIntegrationService,
+    private readonly dialogStateService: DialogStateService
   ) {}
+
+  @Post("dialog/session")
+  @ApiOperation({
+    summary: "创建对话状态机会话",
+    description:
+      "创建一个新的对话状态机会话，用于 GREET→CONTEXT→GENERATE→REFINE→ACTION→WRAP 流程。",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "会话创建成功",
+    schema: {
+      type: "object",
+      properties: {
+        sessionId: { type: "string", description: "会话ID" },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async createDialogSession(@Request() req: AuthenticatedRequest) {
+    return this.stylistService.createDialogSession();
+  }
+
+  @Post("dialog/chat")
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType("ai-stylist")
+  @ApiOperation({
+    summary: "对话状态机聊天",
+    description:
+      "通过对话状态机处理用户消息，返回结构化响应（reply + quickReplies + state + slots）。",
+  })
+  @ApiBody({ type: DialogChatRequestDto })
+  @ApiResponse({
+    status: 201,
+    description: "回复成功",
+    type: DialogChatResponseDto,
+  })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async dialogChat(@Request() req: AuthenticatedRequest, @Body() dto: DialogChatRequestDto) {
+    return this.stylistService.dialogChat(dto, req.user.id);
+  }
+
+  @Delete("dialog/session/:id")
+  @ApiOperation({
+    summary: "结束对话状态机会话",
+    description: "清除对话状态机的会话上下文。",
+  })
+  @ApiParam({ name: "id", description: "会话ID", type: String })
+  @ApiResponse({ status: 200, description: "会话已清除" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async endDialogSession(@Param("id") sessionId: string) {
+    await this.stylistService.endDialogSession(sessionId);
+    return { success: true };
+  }
 
   @Post("sessions")
   @ApiOperation({

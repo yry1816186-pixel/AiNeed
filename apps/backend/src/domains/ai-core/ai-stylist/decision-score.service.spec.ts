@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { DecisionScoreService } from "./decision-score.service";
-
 import type { DecisionNodeType, DecisionContext, UserProfile } from "./types";
 
 describe("DecisionScoreService", () => {

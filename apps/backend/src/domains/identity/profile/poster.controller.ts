@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, Post, Param, UseGuards, UseInterceptors, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
@@ -66,7 +65,7 @@ export class PosterController {
   })
   async getPoster(
     @Request() req: AuthenticatedRequest,
-    @Param("id") id: string,
+    @Param("id") id: string
   ): Promise<GeneratePosterResponseDto> {
     return this.posterGeneratorService.getPoster(req.user.id, id);
   }

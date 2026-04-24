@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsIn, MaxLength } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsOptional, IsIn, MaxLength } from "class-validator";
 
 export class ReviewConsultantProfileDto {
   @ApiProperty({ description: "审核状态", enum: ["active", "rejected"] })

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { RefundType, RefundRequestStatus, OrderStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RefundType, RefundRequestStatus, OrderStatus } from "../../../types/prisma-enums";
 import { PaymentService } from "../payment/payment.service";
 
 import { CreateRefundRequestDto } from "./dto";

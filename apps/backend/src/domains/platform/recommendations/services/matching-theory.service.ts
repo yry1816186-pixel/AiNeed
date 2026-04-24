@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
+
 import { BodyType, SkinTone, ColorSeason } from "../../../../types/prisma-enums";
 
 interface ColorHarmony {
@@ -62,14 +62,11 @@ export class MatchingTheoryService {
     },
   };
 
-  private readonly bodyTypeRecommendations: Record<
-    BodyType,
-    BodyTypeRecommendation
-  > = {
+  private readonly bodyTypeRecommendations: Record<BodyType, BodyTypeRecommendation> = {
     [BodyType.rectangle]: {
       bodyType: BodyType.rectangle,
       suitableStyles: ["fitted", "structured", "layered", "peplum", "wrap"],
-      avoidStyles: ["boxy", "oversized", "shapeless"],
+      avoidStyles: [],
       tips: [
         "选择有腰线的款式来创造曲线感",
         "尝试层叠穿搭增加层次感",
@@ -80,40 +77,40 @@ export class MatchingTheoryService {
     [BodyType.triangle]: {
       bodyType: BodyType.triangle,
       suitableStyles: ["a-line", "boat-neck", "off-shoulder", "wide-leg"],
-      avoidStyles: ["skinny", "tight-bottom", "mini"],
+      avoidStyles: [],
       tips: [
         "上身选择亮色或有图案的款式",
         "A字裙非常适合您的体型",
-        "避免紧身裤和紧身裙",
         "上身可以增加细节装饰",
+        "阔腿裤可以平衡下半身",
       ],
     },
     [BodyType.inverted_triangle]: {
       bodyType: BodyType.inverted_triangle,
       suitableStyles: ["v-neck", "wide-leg", "a-line", "flared"],
-      avoidStyles: ["shoulder-pads", "boat-neck", "tight-top"],
+      avoidStyles: [],
       tips: [
         "选择V领或圆领来平衡肩宽",
         "下身可以选择有图案或亮色的款式",
-        "避免垫肩设计",
         "阔腿裤可以平衡上半身",
+        "A字裙可以增加下半身视觉重心",
       ],
     },
     [BodyType.hourglass]: {
       bodyType: BodyType.hourglass,
       suitableStyles: ["fitted", "wrap", "belted", "high-waist"],
-      avoidStyles: ["boxy", "oversized", "shapeless"],
+      avoidStyles: [],
       tips: [
         "突出腰线的款式最适合您",
         "合身的剪裁比宽松款更好",
         "高腰设计可以强调您的优势",
-        "避免过于宽松或过于紧身",
+        "裹身裙是您的最佳选择",
       ],
     },
     [BodyType.oval]: {
       bodyType: BodyType.oval,
       suitableStyles: ["v-neck", "a-line", "empire", "flowy"],
-      avoidStyles: ["tight", "crop-top", "high-neck"],
+      avoidStyles: [],
       tips: [
         "选择V领或开领设计",
         "垂直条纹可以拉长视觉效果",
@@ -123,10 +120,7 @@ export class MatchingTheoryService {
     },
   };
 
-  private readonly colorSeasonProfiles: Record<
-    ColorSeason,
-    ColorSeasonProfile
-  > = {
+  private readonly colorSeasonProfiles: Record<ColorSeason, ColorSeasonProfile> = {
     [ColorSeason.spring_warm]: {
       season: ColorSeason.spring_warm,
       bestColors: [
@@ -213,13 +207,7 @@ export class MatchingTheoryService {
         "forest green",
         "cream",
       ],
-      avoidColors: [
-        "bright pink",
-        "pure white",
-        "cool blue",
-        "fuchsia",
-        "silver",
-      ],
+      avoidColors: ["bright pink", "pure white", "cool blue", "fuchsia", "silver"],
       metalTone: "gold",
       description: "秋季暖型人适合温暖的大地色系，如驼色、棕色、橄榄绿",
     },
@@ -237,13 +225,7 @@ export class MatchingTheoryService {
         "forest green",
         "cream",
       ],
-      avoidColors: [
-        "bright pink",
-        "pure white",
-        "cool blue",
-        "fuchsia",
-        "silver",
-      ],
+      avoidColors: ["bright pink", "pure white", "cool blue", "fuchsia", "silver"],
       metalTone: "gold",
       description: "秋季深型人适合浓郁深沉的色彩，如砖红色、深棕色、墨绿色",
     },
@@ -286,46 +268,11 @@ export class MatchingTheoryService {
   };
 
   private readonly skinToneColors: Record<SkinTone, string[]> = {
-    [SkinTone.fair]: [
-      "white",
-      "pink",
-      "light blue",
-      "lavender",
-      "peach",
-      "soft coral",
-    ],
-    [SkinTone.light]: [
-      "coral",
-      "turquoise",
-      "warm beige",
-      "rose",
-      "mint",
-      "soft yellow",
-    ],
-    [SkinTone.medium]: [
-      "olive",
-      "mustard",
-      "burgundy",
-      "teal",
-      "rust",
-      "warm brown",
-    ],
-    [SkinTone.olive]: [
-      "earth tones",
-      "gold",
-      "cream",
-      "forest green",
-      "maroon",
-      "terracotta",
-    ],
-    [SkinTone.tan]: [
-      "white",
-      "bright colors",
-      "coral",
-      "emerald",
-      "navy",
-      "orange",
-    ],
+    [SkinTone.fair]: ["white", "pink", "light blue", "lavender", "peach", "soft coral"],
+    [SkinTone.light]: ["coral", "turquoise", "warm beige", "rose", "mint", "soft yellow"],
+    [SkinTone.medium]: ["olive", "mustard", "burgundy", "teal", "rust", "warm brown"],
+    [SkinTone.olive]: ["earth tones", "gold", "cream", "forest green", "maroon", "terracotta"],
+    [SkinTone.tan]: ["white", "bright colors", "coral", "emerald", "navy", "orange"],
     [SkinTone.dark]: [
       "jewel tones",
       "bright white",
@@ -371,10 +318,8 @@ export class MatchingTheoryService {
       }
 
       if (
-        (colors.some((c) => c.includes(c1)) &&
-          colors.some((c) => c.includes(c2))) ||
-        (colors.some((c) => c.includes(c2)) &&
-          colors.some((c) => c.includes(c1)))
+        (colors.some((c) => c.includes(c1)) && colors.some((c) => c.includes(c2))) ||
+        (colors.some((c) => c.includes(c2)) && colors.some((c) => c.includes(c1)))
       ) {
         return {
           type: "complementary",
@@ -389,9 +334,7 @@ export class MatchingTheoryService {
 
   private checkAnalogous(colors: string[]): ColorHarmony | null {
     for (const group of this.colorHarmonyRules.analogous.groups) {
-      const matchCount = group.filter((g) =>
-        colors.some((c) => c.includes(g)),
-      ).length;
+      const matchCount = group.filter((g) => colors.some((c) => c.includes(g))).length;
 
       if (matchCount >= 2) {
         return {
@@ -407,9 +350,7 @@ export class MatchingTheoryService {
 
   private checkTriadic(colors: string[]): ColorHarmony | null {
     for (const set of this.colorHarmonyRules.triadic.sets) {
-      const matchCount = set.filter((s) =>
-        colors.some((c) => c.includes(s)),
-      ).length;
+      const matchCount = set.filter((s) => colors.some((c) => c.includes(s))).length;
 
       if (matchCount >= 2) {
         return {
@@ -433,9 +374,7 @@ export class MatchingTheoryService {
     };
 
     for (const [baseColor, variants] of Object.entries(colorGroups)) {
-      const matchCount = variants.filter((v) =>
-        colors.some((c) => c.includes(v)),
-      ).length;
+      const matchCount = variants.filter((v) => colors.some((c) => c.includes(v))).length;
 
       if (matchCount >= 2) {
         return {
@@ -450,11 +389,11 @@ export class MatchingTheoryService {
   }
 
   getBodyTypeRecommendation(bodyType: BodyType): BodyTypeRecommendation {
-    return this.bodyTypeRecommendations[bodyType]!;
+    return this.bodyTypeRecommendations[bodyType];
   }
 
   getColorSeasonProfile(colorSeason: ColorSeason): ColorSeasonProfile {
-    return this.colorSeasonProfiles[colorSeason]!;
+    return this.colorSeasonProfiles[colorSeason];
   }
 
   getFlatteringColors(skinTone: SkinTone): string[] {
@@ -464,7 +403,7 @@ export class MatchingTheoryService {
   calculateColorCompatibility(
     color1: string,
     color2: string,
-    colorSeason?: ColorSeason,
+    colorSeason?: ColorSeason
   ): { score: number; reasons: string[] } {
     let score = 0.5;
     const reasons: string[] = [];
@@ -481,12 +420,8 @@ export class MatchingTheoryService {
       const c1 = color1.toLowerCase();
       const c2 = color2.toLowerCase();
 
-      const isBest1 = profile?.bestColors.some(
-        (bc) => c1.includes(bc) || bc.includes(c1),
-      ) ?? false;
-      const isBest2 = profile?.bestColors.some(
-        (bc) => c2.includes(bc) || bc.includes(c2),
-      ) ?? false;
+      const isBest1 = profile?.bestColors.some((bc) => c1.includes(bc) || bc.includes(c1)) ?? false;
+      const isBest2 = profile?.bestColors.some((bc) => c2.includes(bc) || bc.includes(c2)) ?? false;
 
       if (isBest1 && isBest2) {
         score += 0.2;
@@ -495,12 +430,10 @@ export class MatchingTheoryService {
         score += 0.1;
       }
 
-      const isAvoid1 = profile?.avoidColors.some(
-        (ac) => c1.includes(ac) || ac.includes(c1),
-      ) ?? false;
-      const isAvoid2 = profile?.avoidColors.some(
-        (ac) => c2.includes(ac) || ac.includes(c2),
-      ) ?? false;
+      const isAvoid1 =
+        profile?.avoidColors.some((ac) => c1.includes(ac) || ac.includes(c1)) ?? false;
+      const isAvoid2 =
+        profile?.avoidColors.some((ac) => c2.includes(ac) || ac.includes(c2)) ?? false;
 
       if (isAvoid1 || isAvoid2) {
         score -= 0.1;
@@ -534,10 +467,10 @@ export class MatchingTheoryService {
     if (params.bodyType) {
       const rec = this.bodyTypeRecommendations[params.bodyType];
       const styleMatch = params.itemStyles.filter((s) =>
-        rec?.suitableStyles.includes(s.toLowerCase()),
+        rec?.suitableStyles.includes(s.toLowerCase())
       ).length;
       const styleAvoid = params.itemStyles.filter((s) =>
-        rec?.avoidStyles.includes(s.toLowerCase()),
+        rec?.avoidStyles.includes(s.toLowerCase())
       ).length;
 
       const bodyScore = Math.max(0, 0.5 + styleMatch * 0.1 - styleAvoid * 0.15);
@@ -546,7 +479,7 @@ export class MatchingTheoryService {
       factorCount++;
 
       if (styleAvoid > 0) {
-        suggestions.push(`建议避免: ${rec?.avoidStyles.join(", ")}`);
+        suggestions.push(`推荐选择: ${rec?.suitableStyles.join(", ")}`);
       }
     }
 
@@ -566,7 +499,7 @@ export class MatchingTheoryService {
     if (params.colorSeason && params.itemColors.length > 0) {
       const profile = this.colorSeasonProfiles[params.colorSeason];
       const goodColors = params.itemColors.filter((c) =>
-        profile?.bestColors.some((bc) => c.includes(bc) || bc.includes(c)),
+        profile?.bestColors.some((bc) => c.includes(bc) || bc.includes(c))
       ).length;
 
       const seasonScore = goodColors / params.itemColors.length;
@@ -575,16 +508,14 @@ export class MatchingTheoryService {
       factorCount++;
 
       if (goodColors < params.itemColors.length) {
-        suggestions.push(
-          `推荐颜色: ${profile?.bestColors.slice(0, 5).join(", ")}`,
-        );
+        suggestions.push(`推荐颜色: ${profile?.bestColors.slice(0, 5).join(", ")}`);
       }
     }
 
     if (params.skinTone && params.itemColors.length > 0) {
       const flattering = this.skinToneColors[params.skinTone];
       const matchedColors = params.itemColors.filter((c) =>
-        flattering?.some((fc) => c.includes(fc) || fc.includes(c)),
+        flattering?.some((fc) => c.includes(fc) || fc.includes(c))
       ).length;
 
       const skinScore = matchedColors / params.itemColors.length;
@@ -613,7 +544,7 @@ export class MatchingTheoryService {
       [ColorSeason.winter_cool]: "冬季冷型",
       [ColorSeason.winter_deep]: "冬季深型",
     };
-    return names[season]!;
+    return names[season];
   }
 
   getOccasionStyleGuide(occasion: string): {
@@ -638,11 +569,7 @@ export class MatchingTheoryService {
       party: {
         suitableStyles: ["trendy", "glamorous", "edgy", "chic"],
         suitableColors: ["black", "gold", "silver", "red", "jewel tones"],
-        tips: [
-          "可以大胆尝试亮片或金属元素",
-          "配饰可以夸张一些",
-          "颜色可以更鲜艳",
-        ],
+        tips: ["可以大胆尝试亮片或金属元素", "配饰可以夸张一些", "颜色可以更鲜艳"],
       },
       sport: {
         suitableStyles: ["sporty", "casual", "athleisure"],
@@ -676,7 +603,7 @@ export class MatchingTheoryService {
       bodyType?: BodyType | null;
       colorSeason?: ColorSeason | null;
     } | null,
-    context?: { occasion?: string },
+    context?: { occasion?: string }
   ): number {
     let score = 0.5;
     const itemColors = Array.isArray(item.colors)
@@ -684,9 +611,7 @@ export class MatchingTheoryService {
       : [];
     const attributes = item.attributes as { style?: unknown } | null | undefined;
     const itemStyles = Array.isArray(attributes?.style)
-      ? attributes.style.filter(
-          (style: unknown): style is string => typeof style === "string",
-        )
+      ? attributes.style.filter((style: unknown): style is string => typeof style === "string")
       : [];
     const itemTags = Array.isArray(item.tags)
       ? item.tags.filter((tag: unknown): tag is string => typeof tag === "string")
@@ -697,15 +622,13 @@ export class MatchingTheoryService {
       const rec = this.bodyTypeRecommendations[bodyType];
       const styleMatch = [...itemStyles, ...itemTags].filter((s: string) =>
         rec?.suitableStyles.some(
-          (rs: string) =>
-            s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase()),
-        ),
+          (rs: string) => s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase())
+        )
       ).length;
       const styleAvoid = [...itemStyles, ...itemTags].filter((s: string) =>
         rec?.avoidStyles.some(
-          (rs: string) =>
-            s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase()),
-        ),
+          (rs: string) => s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase())
+        )
       ).length;
 
       score += styleMatch * 0.05 - styleAvoid * 0.1;
@@ -717,9 +640,8 @@ export class MatchingTheoryService {
       const profile = this.colorSeasonProfiles[colorSeason];
       const goodColors = itemColors.filter((c: string) =>
         profile?.bestColors.some(
-          (bc: string) =>
-            c.toLowerCase().includes(bc) || bc.includes(c.toLowerCase()),
-        ),
+          (bc: string) => c.toLowerCase().includes(bc) || bc.includes(c.toLowerCase())
+        )
       ).length;
 
       score += (goodColors / itemColors.length) * 0.2;
@@ -729,8 +651,8 @@ export class MatchingTheoryService {
       const guide = this.getOccasionStyleGuide(context.occasion);
       const styleMatch = [...itemStyles, ...itemTags].filter((s: string) =>
         guide.suitableStyles.some(
-          (gs) => s.toLowerCase().includes(gs) || gs.includes(s.toLowerCase()),
-        ),
+          (gs) => s.toLowerCase().includes(gs) || gs.includes(s.toLowerCase())
+        )
       ).length;
 
       score += styleMatch * 0.05;

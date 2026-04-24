@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface LabColor {
   L: number;
   a: number;
@@ -64,10 +63,8 @@ export function ciede2000(lab1: LabColor, lab2: LabColor): number {
   const C1p = Math.sqrt(a1p * a1p + b1 * b1);
   const C2p = Math.sqrt(a2p * a2p + b2 * b2);
 
-  const h1p =
-    C1p === 0 ? 0 : (rad2deg(Math.atan2(b1, a1p)) + 360) % 360;
-  const h2p =
-    C2p === 0 ? 0 : (rad2deg(Math.atan2(b2, a2p)) + 360) % 360;
+  const h1p = C1p === 0 ? 0 : (rad2deg(Math.atan2(b1, a1p)) + 360) % 360;
+  const h2p = C2p === 0 ? 0 : (rad2deg(Math.atan2(b2, a2p)) + 360) % 360;
 
   const dLp = L2 - L1;
   const dCp = C2p - C1p;
@@ -125,9 +122,7 @@ export function ciede2000(lab1: LabColor, lab2: LabColor): number {
   const term2 = dCp / (kC * SC);
   const term3 = dHp / (kH * SH);
 
-  return Math.sqrt(
-    term1 * term1 + term2 * term2 + term3 * term3 + RT * term2 * term3,
-  );
+  return Math.sqrt(term1 * term1 + term2 * term2 + term3 * term3 + RT * term2 * term3);
 }
 
 export function colorSimilarity(rgb1: RGBColor, rgb2: RGBColor): number {
@@ -152,7 +147,7 @@ export function hexToRgb(hex: string): RGBColor {
 export function findHarmoniousColors(
   baseHex: string,
   candidates: Array<{ id: string; hex: string }>,
-  maxDelta: number = 30,
+  maxDelta: number = 30
 ): Array<{ id: string; hex: string; delta: number }> {
   const baseLab = rgbToLab(hexToRgb(baseHex));
 

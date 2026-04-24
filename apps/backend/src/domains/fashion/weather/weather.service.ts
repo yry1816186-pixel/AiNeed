@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -40,7 +39,7 @@ export class WeatherService {
       "QWEATHER_BASE_URL",
       this.configService.get<string>("NODE_ENV") === "production"
         ? "https://api.qweather.com/v7"
-        : "https://devapi.qweather.com/v7",
+        : "https://devapi.qweather.com/v7"
     );
   }
 
@@ -49,7 +48,7 @@ export class WeatherService {
    */
   async getWeatherByLocationQWeather(
     latitude: number,
-    longitude: number,
+    longitude: number
   ): Promise<WeatherData | null> {
     if (!this.qweatherApiKey) {
       return null;
@@ -90,10 +89,7 @@ export class WeatherService {
     }
   }
 
-  async getWeatherByLocation(
-    latitude: number,
-    longitude: number,
-  ): Promise<WeatherData | null> {
+  async getWeatherByLocation(latitude: number, longitude: number): Promise<WeatherData | null> {
     const qweatherResult = await this.getWeatherByLocationQWeather(latitude, longitude);
     if (qweatherResult) {
       return qweatherResult;
@@ -106,7 +102,7 @@ export class WeatherService {
 
     try {
       const response = await fetch(
-        `${this.baseUrl}?lat=${latitude}&lon=${longitude}&appid=${this.apiKey}&units=metric&lang=zh_cn`,
+        `${this.baseUrl}?lat=${latitude}&lon=${longitude}&appid=${this.apiKey}&units=metric&lang=zh_cn`
       );
 
       if (!response.ok) {
@@ -129,7 +125,7 @@ export class WeatherService {
 
     try {
       const response = await fetch(
-        `${this.baseUrl}?q=${encodeURIComponent(city)}&appid=${this.apiKey}&units=metric&lang=zh_cn`,
+        `${this.baseUrl}?q=${encodeURIComponent(city)}&appid=${this.apiKey}&units=metric&lang=zh_cn`
       );
 
       if (!response.ok) {

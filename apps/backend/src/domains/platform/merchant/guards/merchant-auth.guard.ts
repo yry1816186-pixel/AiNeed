@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
@@ -17,10 +11,7 @@ interface MerchantJwtPayload extends JwtUserPayload {
 
 @Injectable()
 export class MerchantAuthGuard implements CanActivate {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -51,10 +42,14 @@ export class MerchantAuthGuard implements CanActivate {
 
   private extractToken(request: Request): string | null {
     const authHeader = request.headers.authorization;
-    if (!authHeader) {return null;}
+    if (!authHeader) {
+      return null;
+    }
 
     const parts = authHeader.split(" ");
-    if (parts.length !== 2 || parts[0] !== "Bearer") {return null;}
+    if (parts.length !== 2 || parts[0] !== "Bearer") {
+      return null;
+    }
 
     return parts[1] ?? null;
   }

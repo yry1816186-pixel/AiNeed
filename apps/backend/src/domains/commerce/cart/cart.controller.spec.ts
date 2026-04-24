@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Test, TestingModule } from "@nestjs/testing";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
@@ -89,17 +89,11 @@ describe("CartController", () => {
 
       const result = await controller.addItem(
         { user: mockUser },
-        { itemId: "item-1", color: "black", size: "M", quantity: 1 },
+        { itemId: "item-1", color: "black", size: "M", quantity: 1 }
       );
 
       expect(result).toEqual(mockCartItem);
-      expect(service.addItem).toHaveBeenCalledWith(
-        mockUser.id,
-        "item-1",
-        "black",
-        "M",
-        1,
-      );
+      expect(service.addItem).toHaveBeenCalledWith(mockUser.id, "item-1", "black", "M", 1);
     });
 
     it("should use default quantity of 1", async () => {
@@ -107,16 +101,10 @@ describe("CartController", () => {
 
       await controller.addItem(
         { user: mockUser },
-        { itemId: "item-1", color: "black", size: "M", quantity: 1 },
+        { itemId: "item-1", color: "black", size: "M", quantity: 1 }
       );
 
-      expect(service.addItem).toHaveBeenCalledWith(
-        mockUser.id,
-        "item-1",
-        "black",
-        "M",
-        1,
-      );
+      expect(service.addItem).toHaveBeenCalledWith(mockUser.id, "item-1", "black", "M", 1);
     });
   });
 
@@ -157,10 +145,7 @@ describe("CartController", () => {
     it("should select all items", async () => {
       mockCartService.selectAll.mockResolvedValue(undefined);
 
-      const result = await controller.selectAll(
-        { user: mockUser },
-        { selected: true },
-      );
+      const result = await controller.selectAll({ user: mockUser }, { selected: true });
 
       expect(result).toEqual({ success: true });
       expect(service.selectAll).toHaveBeenCalledWith(mockUser.id, true);

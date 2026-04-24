@@ -14,11 +14,11 @@ import axios, { AxiosInstance } from "axios";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
 import {
   RecommendationsService,
   type RecommendedItem,
 } from "../../platform/recommendations/recommendations.service";
+import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
 
 import { SystemContextService } from "./system-context.service";
 
@@ -288,7 +288,6 @@ export class AgentToolsService {
   // Tool 2: Search Clothing
   async searchClothing(input: SearchClothingInput): Promise<ClothingSearchResult> {
     const { query, filters = {}, limit = 20, offset = 0 } = input;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { isActive: true };
     if (filters.category) {
       where.category = filters.category;

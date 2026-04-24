@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
 import { PrismaClient } from "@prisma/client";
-import { OrderStatus } from "../../../types/prisma-enums";
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+import { OrderStatus } from "../../../types/prisma-enums";
 
 import {
   CreatePaymentDto,

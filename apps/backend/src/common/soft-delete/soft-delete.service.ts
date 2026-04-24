@@ -5,7 +5,6 @@ import { PrismaClient } from "@prisma/client";
  * Prisma 客户端接口（支持动态模型访问）
  * Dynamic model access via string index requires any due to Prisma's type system.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PrismaClientWithModels = PrismaClient & Record<string, any>;
 
 /**

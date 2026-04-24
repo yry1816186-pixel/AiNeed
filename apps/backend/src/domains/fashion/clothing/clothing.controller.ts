@@ -22,10 +22,10 @@ import {
 } from "@nestjs/swagger";
 
 import { CacheKey, CacheTTL } from "../../../common/decorators/cache.decorators";
-import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
-import { Public } from "../../../domains/identity/auth/decorators/public.decorator";
-import { RolesGuard } from "../../../common/guards/roles.guard";
 import { Roles } from "../../../common/decorators/roles.decorator";
+import { RolesGuard } from "../../../common/guards/roles.guard";
+import { Public } from "../../../domains/identity/auth/decorators/public.decorator";
+import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import { ClothingService } from "./clothing.service";
 import {
@@ -50,7 +50,7 @@ import {
     forbidNonWhitelisted: true,
     transform: true,
     transformOptions: { enableImplicitConversion: true },
-  }),
+  })
 )
 export class ClothingController {
   constructor(private clothingService: ClothingService) {}
@@ -79,9 +79,18 @@ export class ClothingController {
       brandId: query.brandId,
       minPrice: query.minPrice,
       maxPrice: query.maxPrice,
-      colors: query.colors?.split(",").map((s) => s.trim()).filter(Boolean),
-      sizes: query.sizes?.split(",").map((s) => s.trim()).filter(Boolean),
-      tags: query.tags?.split(",").map((s) => s.trim()).filter(Boolean),
+      colors: query.colors
+        ?.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      sizes: query.sizes
+        ?.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      tags: query.tags
+        ?.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
       page: query.page,
       limit: query.limit,
       sortBy: query.sortBy,
@@ -108,9 +117,7 @@ export class ClothingController {
     type: [ClothingItemDto],
   })
   async getFeatured(@Query("limit") limit?: string) {
-    return this.clothingService.getFeaturedItems(
-      limit ? parseInt(limit, 10) : 10,
-    );
+    return this.clothingService.getFeaturedItems(limit ? parseInt(limit, 10) : 10);
   }
 
   @Get("categories")
@@ -149,9 +156,7 @@ export class ClothingController {
     type: [PopularTagDto],
   })
   async getPopularTags(@Query("limit") limit?: string) {
-    return this.clothingService.getPopularTags(
-      limit ? parseInt(limit, 10) : 20,
-    );
+    return this.clothingService.getPopularTags(limit ? parseInt(limit, 10) : 20);
   }
 
   @Get("stats")
@@ -204,14 +209,8 @@ export class ClothingController {
   @ApiOperation({ summary: "获取搭配推荐", description: "获取与指定商品搭配的推荐组合" })
   @ApiParam({ name: "id", description: "商品 ID", type: String })
   @ApiQuery({ name: "limit", required: false, type: Number, description: "推荐数量，默认5" })
-  async getOutfitRecommendations(
-    @Param("id") id: string,
-    @Query("limit") limit?: string,
-  ) {
-    return this.clothingService.getOutfitRecommendations(
-      id,
-      limit ? parseInt(limit, 10) : 5,
-    );
+  async getOutfitRecommendations(@Param("id") id: string, @Query("limit") limit?: string) {
+    return this.clothingService.getOutfitRecommendations(id, limit ? parseInt(limit, 10) : 5);
   }
 
   @Get("subcategories")
@@ -230,10 +229,7 @@ export class ClothingController {
   @ApiResponse({ status: 201, description: "创建成功", type: ClothingItemDto })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async createItem(
-    @Request() req: { user: { id: string } },
-    @Body() body: CreateClothingItemDto,
-  ) {
+  async createItem(@Request() req: { user: { id: string } }, @Body() body: CreateClothingItemDto) {
     return this.clothingService.create(req.user.id, body);
   }
 
@@ -247,10 +243,7 @@ export class ClothingController {
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "商品不存在" })
-  async updateItem(
-    @Param("id") id: string,
-    @Body() body: UpdateClothingItemDto,
-  ) {
+  async updateItem(@Param("id") id: string, @Body() body: UpdateClothingItemDto) {
     return this.clothingService.update(id, body);
   }
 
@@ -271,7 +264,10 @@ export class ClothingController {
   @Post("search")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "搜索服装商品", description: "全文搜索服装商品，支持按分类、价格、尺码筛选" })
+  @ApiOperation({
+    summary: "搜索服装商品",
+    description: "全文搜索服装商品，支持按分类、价格、尺码筛选",
+  })
   @ApiResponse({ status: 200, description: "搜索成功", type: [ClothingItemDto] })
   @ApiResponse({ status: 401, description: "未授权" })
   async searchItems(@Body() body: SearchClothingQueryDto) {
@@ -291,10 +287,7 @@ export class ClothingController {
   @ApiResponse({ status: 200, description: "操作成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "商品不存在" })
-  async toggleFavorite(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async toggleFavorite(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     return this.clothingService.toggleFavorite(req.user.id, id);
   }
 

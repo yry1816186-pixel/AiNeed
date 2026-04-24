@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
+import { SUBSCRIPTION_EVENTS, SubscriptionRenewalPayload } from "@xuno/types";
 
-import { SUBSCRIPTION_EVENTS, SubscriptionRenewalPayload } from '@xuno/types';
 import { CreatePaymentDto, PaymentProvider, PaymentMethod } from "../dto";
 import { PaymentService } from "../payment.service";
 
@@ -13,17 +12,14 @@ export class SubscriptionRenewalListener {
   constructor(private readonly paymentService: PaymentService) {}
 
   @OnEvent(SUBSCRIPTION_EVENTS.RENEWAL_REQUIRED)
-  async handleRenewalPayment(
-    payload: SubscriptionRenewalPayload,
-  ): Promise<void> {
+  async handleRenewalPayment(payload: SubscriptionRenewalPayload): Promise<void> {
     this.logger.log(
-      `Processing renewal payment for user ${payload.userId}, plan ${payload.planName}`,
+      `Processing renewal payment for user ${payload.userId}, plan ${payload.planName}`
     );
 
     try {
-      const provider = payload.paymentMethod === "wechat"
-        ? PaymentProvider.WECHAT
-        : PaymentProvider.ALIPAY;
+      const provider =
+        payload.paymentMethod === "wechat" ? PaymentProvider.WECHAT : PaymentProvider.ALIPAY;
 
       const dto: CreatePaymentDto = {
         orderId: `renewal_${payload.subscriptionId}_${Date.now()}`,
@@ -35,25 +31,20 @@ export class SubscriptionRenewalListener {
         expireMinutes: 30,
       };
 
-      const result = await this.paymentService.createPayment(
-        payload.userId,
-        dto,
-      );
+      const result = await this.paymentService.createPayment(payload.userId, dto);
 
       if (result.success) {
         this.logger.log(
-          `Renewal payment created for user ${payload.userId}, orderId: ${result.orderId}`,
+          `Renewal payment created for user ${payload.userId}, orderId: ${result.orderId}`
         );
       } else {
         this.logger.error(
-          `Renewal payment creation failed for user ${payload.userId}: ${result.error?.message}`,
+          `Renewal payment creation failed for user ${payload.userId}: ${result.error?.message}`
         );
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(
-        `Failed to process renewal payment for user ${payload.userId}: ${message}`,
-      );
+      this.logger.error(`Failed to process renewal payment for user ${payload.userId}: ${message}`);
     }
   }
 }

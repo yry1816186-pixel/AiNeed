@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import sharp from "sharp";
 
@@ -56,8 +55,8 @@ export class PhotoQualityValidator {
 
     const overall = Math.round(
       clarity * PhotoQualityValidator.SCORE_WEIGHTS.clarity +
-      brightness * PhotoQualityValidator.SCORE_WEIGHTS.brightness +
-      composition * PhotoQualityValidator.SCORE_WEIGHTS.composition,
+        brightness * PhotoQualityValidator.SCORE_WEIGHTS.brightness +
+        composition * PhotoQualityValidator.SCORE_WEIGHTS.composition
     );
 
     const passed = overall >= PhotoQualityValidator.OVERALL_THRESHOLD;
@@ -107,7 +106,7 @@ export class PhotoQualityValidator {
     }
 
     const mean = sum / count;
-    const variance = (sumSq / count) - (mean * mean);
+    const variance = sumSq / count - mean * mean;
 
     // Normalize variance to 0-100 scale
     // Typical Laplacian variance for clear images: 500-5000

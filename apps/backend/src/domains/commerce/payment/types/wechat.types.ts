@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 微信支付类型定义
  * 金融级安全类型，确保支付数据类型安全
@@ -141,9 +140,7 @@ export interface WechatV3RequestDataH5 extends WechatV3RequestDataBase {
 /**
  * 微信支付 V3 请求数据（统一类型）
  */
-export type WechatV3RequestData =
-  | WechatV3RequestDataBase
-  | WechatV3RequestDataH5;
+export type WechatV3RequestData = WechatV3RequestDataBase | WechatV3RequestDataH5;
 
 /**
  * 微信支付 APP 支付参数
@@ -161,6 +158,4 @@ export interface WechatAppPayload {
 /**
  * 微信支付 API 响应（统一包装）
  */
-export type WechatApiResponse<T = unknown> =
-  | (T & { code?: never })
-  | WechatV3BaseResponse;
+export type WechatApiResponse<T = unknown> = (T & { code?: never }) | WechatV3BaseResponse;

@@ -1,5 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Controller, Get, Put, Post, Body, UseGuards, UseInterceptors, Request, UploadedFile, BadRequestException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  Request,
+  UploadedFile,
+  BadRequestException,
+} from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
@@ -27,7 +37,10 @@ import {
 import { ProfileService, UpdateProfileDto as ServiceUpdateProfileDto } from "./profile.service";
 import { ProfileCompletenessService } from "./services/profile-completeness.service";
 import { SharePosterService } from "./services/share-poster.service";
-import { UserProfileService, UpdateProfileDto as UserUpdateProfileDto } from "./services/user-profile.service";
+import {
+  UserProfileService,
+  UpdateProfileDto as UserUpdateProfileDto,
+} from "./services/user-profile.service";
 
 /**
  * 认证请求接口
@@ -58,7 +71,7 @@ export class ProfileController {
     private profileService: ProfileService,
     private userProfileService: UserProfileService,
     private completenessService: ProfileCompletenessService,
-    private sharePosterService: SharePosterService,
+    private sharePosterService: SharePosterService
   ) {}
 
   @Get()
@@ -102,10 +115,7 @@ export class ProfileController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async updateProfile(
-    @Request() req: AuthenticatedRequest,
-    @Body() dto: ServiceUpdateProfileDto,
-  ) {
+  async updateProfile(@Request() req: AuthenticatedRequest, @Body() dto: ServiceUpdateProfileDto) {
     return this.profileService.updateProfile(req.user.id, dto);
   }
 
@@ -182,7 +192,7 @@ export class ProfileController {
   })
   async uploadBodyAnalysis(
     @Request() req: AuthenticatedRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File
   ) {
     if (!file) {
       throw new BadRequestException("请选择要上传的照片");
@@ -190,9 +200,7 @@ export class ProfileController {
 
     const allowedMimeTypes = ["image/jpeg", "image/png"];
     if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException(
-        "不支持的文件格式，仅支持 JPEG、PNG 格式",
-      );
+      throw new BadRequestException("不支持的文件格式，仅支持 JPEG、PNG 格式");
     }
 
     const maxSize = 10 * 1024 * 1024; // 10MB
@@ -219,7 +227,7 @@ export class ProfileController {
         },
       ],
       idealStyles: ["casual", "business", "minimalist"],
-      avoidStyles: ["oversized"],
+      recommendStyles: ["structured_blazer", "v_neck_tops", "straight_leg_pants"],
     };
   }
 
@@ -260,7 +268,7 @@ export class ProfileController {
   })
   async uploadColorAnalysis(
     @Request() req: AuthenticatedRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File
   ) {
     if (!file) {
       throw new BadRequestException("请选择要上传的照片");
@@ -268,9 +276,7 @@ export class ProfileController {
 
     const allowedMimeTypes = ["image/jpeg", "image/png"];
     if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException(
-        "不支持的文件格式，仅支持 JPEG、PNG 格式",
-      );
+      throw new BadRequestException("不支持的文件格式，仅支持 JPEG、PNG 格式");
     }
 
     const maxSize = 10 * 1024 * 1024; // 10MB
@@ -359,9 +365,7 @@ export class ProfileController {
   })
   async getPreferences(@Request() req: AuthenticatedRequest) {
     const profile = await this.userProfileService.getBodyProfile(req.user.id);
-    const summary = await this.userProfileService.getUserProfileSummary(
-      req.user.id,
-    );
+    const summary = await this.userProfileService.getUserProfileSummary(req.user.id);
 
     return {
       styles: profile?.stylePreferences || [],
@@ -388,10 +392,7 @@ export class ProfileController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async updatePreferences(
-    @Request() req: AuthenticatedRequest,
-    @Body() dto: UserUpdateProfileDto,
-  ) {
+  async updatePreferences(@Request() req: AuthenticatedRequest, @Body() dto: UserUpdateProfileDto) {
     return this.userProfileService.updateProfile(req.user.id, dto);
   }
 
@@ -416,12 +417,9 @@ export class ProfileController {
   })
   async updateStylePreferences(
     @Request() req: AuthenticatedRequest,
-    @Body() body: UpdateStylePreferencesDto,
+    @Body() body: UpdateStylePreferencesDto
   ) {
-    await this.userProfileService.updateStylePreferences(
-      req.user.id,
-      body.styles,
-    );
+    await this.userProfileService.updateStylePreferences(req.user.id, body.styles);
     return { success: true };
   }
 
@@ -446,12 +444,9 @@ export class ProfileController {
   })
   async updateColorPreferences(
     @Request() req: AuthenticatedRequest,
-    @Body() body: UpdateColorPreferencesDto,
+    @Body() body: UpdateColorPreferencesDto
   ) {
-    await this.userProfileService.updateColorPreferences(
-      req.user.id,
-      body.colors,
-    );
+    await this.userProfileService.updateColorPreferences(req.user.id, body.colors);
     return { success: true };
   }
 
@@ -474,15 +469,8 @@ export class ProfileController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async updatePriceRange(
-    @Request() req: AuthenticatedRequest,
-    @Body() body: UpdatePriceRangeDto,
-  ) {
-    await this.userProfileService.updatePriceRange(
-      req.user.id,
-      body.min ?? null,
-      body.max ?? null,
-    );
+  async updatePriceRange(@Request() req: AuthenticatedRequest, @Body() body: UpdatePriceRangeDto) {
+    await this.userProfileService.updatePriceRange(req.user.id, body.min ?? null, body.max ?? null);
     return { success: true };
   }
 
@@ -530,8 +518,8 @@ export class ProfileController {
       weight: profile.profile?.weight ?? null,
       bodyType: profile.profile?.bodyType ?? null,
       colorSeason: profile.profile?.colorSeason ?? null,
-      styleProfiles: profile.profile?.stylePreferences as unknown[] ?? [],
-      stylePreferences: profile.profile?.stylePreferences as unknown[] ?? [],
+      styleProfiles: (profile.profile?.stylePreferences as unknown[]) ?? [],
+      stylePreferences: (profile.profile?.stylePreferences as unknown[]) ?? [],
       colorPreferences: (profile.profile?.colorPreferences ?? []) as unknown[],
       photos: [],
     });

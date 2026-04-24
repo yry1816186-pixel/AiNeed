@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
@@ -115,7 +114,11 @@ export class UpdateQuizQuestionDto {
   @IsString({ each: true })
   imageUrls?: string[];
 
-  @ApiPropertyOptional({ description: "题目类型", example: "visual_choice", enum: QuizQuestionType })
+  @ApiPropertyOptional({
+    description: "题目类型",
+    example: "visual_choice",
+    enum: QuizQuestionType,
+  })
   @IsOptional()
   @IsEnum(QuizQuestionType)
   questionType?: QuizQuestionType;
@@ -233,7 +236,11 @@ export class QuizQuestionQueryDto {
   @IsString()
   dimension?: string;
 
-  @ApiPropertyOptional({ description: "题目类型", example: "visual_choice", enum: QuizQuestionType })
+  @ApiPropertyOptional({
+    description: "题目类型",
+    example: "visual_choice",
+    enum: QuizQuestionType,
+  })
   @IsOptional()
   @IsEnum(QuizQuestionType)
   questionType?: QuizQuestionType;

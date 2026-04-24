@@ -1,22 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { InjectQueue } from '@nestjs/bullmq';
+import { InjectQueue } from "@nestjs/bullmq";
 import {
   BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
   OnModuleInit,
-} from '@nestjs/common';
-import { Queue, Job } from 'bullmq';
-import { v4 as uuidv4 } from 'uuid';
+} from "@nestjs/common";
+import { Queue, Job } from "bullmq";
+import { v4 as uuidv4 } from "uuid";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-import {
-  JOB_STATUS,
-} from './queue.constants';
-import type { JobStatus } from './queue.constants';
-import { QueueName } from './queue-config';
+import { QueueName } from "./queue-config";
+import { JOB_STATUS } from "./queue.constants";
+import type { JobStatus } from "./queue.constants";
 import {
   JobResult,
   TaskCreatedResponse,
@@ -26,7 +23,7 @@ import {
   RecommendationJobData,
   ImageAnalysisJobData,
   BodyAnalysisJobData,
-} from './queue.interfaces';
+} from "./queue.interfaces";
 
 @Injectable()
 export class QueueService implements OnModuleInit {
@@ -43,11 +40,11 @@ export class QueueService implements OnModuleInit {
     @InjectQueue(QueueName.NOTIFICATION) private notificationQueue: Queue,
     @InjectQueue(QueueName.DATA_EXPORT) private dataExportQueue: Queue,
     @InjectQueue(QueueName.CONTENT_MODERATION) private contentModerationQueue: Queue,
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {}
 
   async onModuleInit() {
-    this.logger.log('Queue service initialized with BullMQ');
+    this.logger.log("Queue service initialized with BullMQ");
 
     // Log queue status on startup - includes all queues from QueueName enum
     const queues = [
@@ -75,22 +72,22 @@ export class QueueService implements OnModuleInit {
   async addStyleAnalysisTask(
     userId: string,
     userInput: string,
-    userProfile?: StyleAnalysisJobData['userProfile'],
+    userProfile?: StyleAnalysisJobData["userProfile"]
   ): Promise<TaskCreatedResponse> {
     const jobId = uuidv4();
     const jobData: StyleAnalysisJobData = {
       jobId,
       userId,
-      type: 'style_analysis',
+      type: "style_analysis",
       userInput,
       userProfile,
       createdAt: new Date().toISOString(),
     };
 
-    await this.styleAnalysisQueue.add('style-analysis', jobData, {
+    await this.styleAnalysisQueue.add("style-analysis", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Style analysis job ${jobId} added to queue`);
@@ -99,7 +96,7 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 10,
-      message: 'Style analysis task queued successfully',
+      message: "Style analysis task queued successfully",
     };
   }
 
@@ -110,7 +107,7 @@ export class QueueService implements OnModuleInit {
     userId: string,
     photoId: string,
     itemId: string,
-    category?: string,
+    category?: string
   ): Promise<TaskCreatedResponse> {
     const [photo, item] = await Promise.all([
       this.prisma.userPhoto.findFirst({
@@ -124,23 +121,23 @@ export class QueueService implements OnModuleInit {
     ]);
 
     if (!photo) {
-      throw new NotFoundException('Photo not found');
+      throw new NotFoundException("Photo not found");
     }
 
     if (!item) {
-      throw new NotFoundException('Clothing item not found');
+      throw new NotFoundException("Clothing item not found");
     }
 
     const clothingImageUrl = item.mainImage || item.images[0] || "";
     if (!clothingImageUrl) {
-      throw new BadRequestException('Clothing item has no usable image');
+      throw new BadRequestException("Clothing item has no usable image");
     }
 
     const jobId = uuidv4();
     const jobData: VirtualTryOnJobData = {
       jobId,
       userId,
-      type: 'virtual_tryon',
+      type: "virtual_tryon",
       photoId,
       userPhotoUrl: photo.url,
       itemId,
@@ -149,10 +146,10 @@ export class QueueService implements OnModuleInit {
       createdAt: new Date().toISOString(),
     };
 
-    await this.virtualTryOnQueue.add('virtual-tryon', jobData, {
+    await this.virtualTryOnQueue.add("virtual-tryon", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Virtual try-on job ${jobId} added to queue`);
@@ -161,7 +158,7 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 45,
-      message: 'Virtual try-on task queued successfully',
+      message: "Virtual try-on task queued successfully",
     };
   }
 
@@ -173,13 +170,13 @@ export class QueueService implements OnModuleInit {
     wardrobeItems: string[],
     targetStyle?: string,
     occasion?: string,
-    season?: string,
+    season?: string
   ): Promise<TaskCreatedResponse> {
     const jobId = uuidv4();
     const jobData: WardrobeMatchJobData = {
       jobId,
       userId,
-      type: 'wardrobe_match',
+      type: "wardrobe_match",
       wardrobeItems,
       targetStyle,
       occasion,
@@ -187,10 +184,10 @@ export class QueueService implements OnModuleInit {
       createdAt: new Date().toISOString(),
     };
 
-    await this.wardrobeMatchQueue.add('wardrobe-match', jobData, {
+    await this.wardrobeMatchQueue.add("wardrobe-match", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Wardrobe match job ${jobId} added to queue`);
@@ -199,7 +196,7 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 5,
-      message: 'Wardrobe match task queued successfully',
+      message: "Wardrobe match task queued successfully",
     };
   }
 
@@ -212,13 +209,13 @@ export class QueueService implements OnModuleInit {
     userProfile?: Record<string, unknown>,
     occasion?: string,
     category?: string,
-    topK?: number,
+    topK?: number
   ): Promise<TaskCreatedResponse> {
     const jobId = uuidv4();
     const jobData: RecommendationJobData = {
       jobId,
       userId,
-      type: 'recommendation',
+      type: "recommendation",
       userInput,
       userProfile,
       occasion,
@@ -227,10 +224,10 @@ export class QueueService implements OnModuleInit {
       createdAt: new Date().toISOString(),
     };
 
-    await this.aiTasksQueue.add('recommendation', jobData, {
+    await this.aiTasksQueue.add("recommendation", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Recommendation job ${jobId} added to queue`);
@@ -239,7 +236,7 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 15,
-      message: 'Recommendation task queued successfully',
+      message: "Recommendation task queued successfully",
     };
   }
 
@@ -249,22 +246,22 @@ export class QueueService implements OnModuleInit {
   async addImageAnalysisTask(
     userId: string,
     imagePath: string,
-    analysisType: ImageAnalysisJobData['analysisType'] = 'full',
+    analysisType: ImageAnalysisJobData["analysisType"] = "full"
   ): Promise<TaskCreatedResponse> {
     const jobId = uuidv4();
     const jobData: ImageAnalysisJobData = {
       jobId,
       userId,
-      type: 'image_analysis',
+      type: "image_analysis",
       imagePath,
       analysisType,
       createdAt: new Date().toISOString(),
     };
 
-    await this.aiTasksQueue.add('image-analysis', jobData, {
+    await this.aiTasksQueue.add("image-analysis", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Image analysis job ${jobId} added to queue`);
@@ -273,30 +270,27 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 10,
-      message: 'Image analysis task queued successfully',
+      message: "Image analysis task queued successfully",
     };
   }
 
   /**
    * Add a body analysis task to the queue
    */
-  async addBodyAnalysisTask(
-    userId: string,
-    imagePath: string,
-  ): Promise<TaskCreatedResponse> {
+  async addBodyAnalysisTask(userId: string, imagePath: string): Promise<TaskCreatedResponse> {
     const jobId = uuidv4();
     const jobData: BodyAnalysisJobData = {
       jobId,
       userId,
-      type: 'body_analysis',
+      type: "body_analysis",
       imagePath,
       createdAt: new Date().toISOString(),
     };
 
-    await this.aiTasksQueue.add('body-analysis', jobData, {
+    await this.aiTasksQueue.add("body-analysis", jobData, {
       jobId,
       attempts: 3,
-      backoff: { type: 'exponential', delay: 1000 },
+      backoff: { type: "exponential", delay: 1000 },
     });
 
     this.logger.log(`Body analysis job ${jobId} added to queue`);
@@ -305,7 +299,7 @@ export class QueueService implements OnModuleInit {
       jobId,
       status: JOB_STATUS.PENDING,
       estimatedWaitTime: 15,
-      message: 'Body analysis task queued successfully',
+      message: "Body analysis task queued successfully",
     };
   }
 
@@ -344,18 +338,18 @@ export class QueueService implements OnModuleInit {
     let status: string;
 
     switch (state) {
-      case 'completed':
+      case "completed":
         status = JOB_STATUS.COMPLETED;
         break;
-      case 'failed':
+      case "failed":
         status = JOB_STATUS.FAILED;
         break;
-      case 'delayed':
-      case 'waiting':
-      case 'pending':
+      case "delayed":
+      case "waiting":
+      case "pending":
         status = JOB_STATUS.PENDING;
         break;
-      case 'active':
+      case "active":
         status = JOB_STATUS.PROCESSING;
         break;
       default:
@@ -370,7 +364,7 @@ export class QueueService implements OnModuleInit {
     }
 
     return {
-      jobId: job.id || '',
+      jobId: job.id || "",
       status: status as JobStatus,
       result: job.returnvalue,
       error: job.failedReason,
@@ -435,7 +429,7 @@ export class QueueService implements OnModuleInit {
       const job = await queue.getJob(jobId);
       if (job?.data.userId === userId) {
         const state = await job.getState();
-        if (state === 'waiting' || state === 'delayed') {
+        if (state === "waiting" || state === "delayed") {
           await job.remove();
           this.logger.log(`Job ${jobId} cancelled by user ${userId}`);
           return true;
@@ -467,7 +461,7 @@ export class QueueService implements OnModuleInit {
       const job = await queue.getJob(jobId);
       if (job?.data.userId === userId) {
         const state = await job.getState();
-        if (state === 'failed') {
+        if (state === "failed") {
           await job.retry();
           this.logger.log(`Job ${jobId} retried by user ${userId}`);
           return true;
@@ -499,11 +493,11 @@ export class QueueService implements OnModuleInit {
 
     for (const { name, queue } of queues) {
       const counts = await queue.getJobCounts(
-        'waiting',
-        'active',
-        'completed',
-        'failed',
-        'delayed',
+        "waiting",
+        "active",
+        "completed",
+        "failed",
+        "delayed"
       );
       stats[name] = counts;
     }

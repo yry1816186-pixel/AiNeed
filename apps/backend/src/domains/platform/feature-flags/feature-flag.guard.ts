@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { CanActivate, Injectable, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { CanActivate, Injectable, ExecutionContext } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 
-import { FEATURE_FLAG_KEY } from './feature-flag.decorator';
-import { FeatureFlagService } from './feature-flag.service';
+import { FEATURE_FLAG_KEY } from "./feature-flag.decorator";
+import { FeatureFlagService } from "./feature-flag.service";
 
 @Injectable()
 export class FeatureFlagGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly featureFlagService: FeatureFlagService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -17,7 +16,9 @@ export class FeatureFlagGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!flagKey) {return true;}
+    if (!flagKey) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;

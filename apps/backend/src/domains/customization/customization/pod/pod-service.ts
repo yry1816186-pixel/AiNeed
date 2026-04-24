@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { CustomizationStatus } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { CustomizationStatus } from "../../../../types/prisma-enums";
 
 import { MockPODProvider } from "./mock-pod-provider";
 import type { PODProvider } from "./pod-provider.interface";
@@ -34,7 +34,7 @@ export class PODService {
     const result = await this.provider.submitOrder(
       request.design.canvasData as Record<string, unknown>,
       { type: request.design.template.type, name: request.design.template.name },
-      {},
+      {}
     );
 
     const estimatedDeliveryDate = new Date(result.estimatedDelivery);

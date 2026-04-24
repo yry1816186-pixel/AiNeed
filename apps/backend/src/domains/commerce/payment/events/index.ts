@@ -1,2 +1,1 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export * from './payment.events';
+export * from "./payment.events";

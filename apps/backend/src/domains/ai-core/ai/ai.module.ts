@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
@@ -12,15 +11,7 @@ import { StyleUnderstandingService } from "./services/style-understanding.servic
 @Module({
   imports: [ConfigModule, PrismaModule],
   controllers: [AIController],
-  providers: [
-    AIIntegrationService,
-    CloudCommunicationService,
-    StyleUnderstandingService,
-  ],
-  exports: [
-    AIIntegrationService,
-    CloudCommunicationService,
-    StyleUnderstandingService,
-  ],
+  providers: [AIIntegrationService, CloudCommunicationService, StyleUnderstandingService],
+  exports: [AIIntegrationService, CloudCommunicationService, StyleUnderstandingService],
 })
 export class AIModule {}

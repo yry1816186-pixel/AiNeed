@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -92,7 +91,7 @@ export class LearningToRankService {
   async rankItems(
     userId: string,
     items: RankingFeatures[],
-    _context: { occasion?: string; season?: string; timeOfDay?: string } = {},
+    _context: { occasion?: string; season?: string; timeOfDay?: string } = {}
   ): Promise<RankingResult[]> {
     const results: RankingResult[] = [];
 
@@ -117,7 +116,7 @@ export class LearningToRankService {
   private calculateFinalScore(
     features: RankingFeatures,
     _seenCategories: Set<string>,
-    _seenBrands: Set<string>,
+    _seenBrands: Set<string>
   ): number {
     let score = 0;
 
@@ -132,10 +131,7 @@ export class LearningToRankService {
     return Math.max(0, Math.min(100, score));
   }
 
-  private generateExplanation(
-    features: RankingFeatures,
-    _score: number,
-  ): string[] {
+  private generateExplanation(features: RankingFeatures, _score: number): string[] {
     const explanations: string[] = [];
 
     if (features.contentScore > 0.7) {
@@ -168,7 +164,9 @@ export class LearningToRankService {
   async updateFromFeedback(feedback: UserFeedback): Promise<void> {
     const feedbackWeight = this.getFeedbackWeight(feedback.action);
 
-    if (feedbackWeight === 0) {return;}
+    if (feedbackWeight === 0) {
+      return;
+    }
 
     await this.prisma.rankingFeedback.create({
       data: {
@@ -206,7 +204,9 @@ export class LearningToRankService {
       orderBy: { createdAt: "desc" },
     });
 
-    if (feedbacks.length < this.MIN_SAMPLES) {return;}
+    if (feedbacks.length < this.MIN_SAMPLES) {
+      return;
+    }
 
     const gradientAccumulator: FeatureWeights = {
       contentScore: 0,
@@ -219,23 +219,16 @@ export class LearningToRankService {
     };
 
     for (const feedback of feedbacks) {
-      const features = await this.getItemFeatures(
-        feedback.itemId,
-        feedback.userId,
-      );
-      if (!features) {continue;}
+      const features = await this.getItemFeatures(feedback.itemId, feedback.userId);
+      if (!features) {
+        continue;
+      }
 
-      const predicted = this.calculateFinalScore(
-        features,
-        new Set(),
-        new Set(),
-      );
+      const predicted = this.calculateFinalScore(features, new Set(), new Set());
       const actual = Number(feedback.weight) > 0 ? 1 : 0;
       const error = actual - predicted / 100;
 
-      const featureKeys = Object.keys(
-        gradientAccumulator,
-      ) as (keyof FeatureWeights)[];
+      const featureKeys = Object.keys(gradientAccumulator) as (keyof FeatureWeights)[];
       for (const key of featureKeys) {
         gradientAccumulator[key] += error * features[key];
       }
@@ -278,10 +271,7 @@ export class LearningToRankService {
     }
   }
 
-  private async getItemFeatures(
-    itemId: string,
-    _userId: string,
-  ): Promise<RankingFeatures | null> {
+  private async getItemFeatures(itemId: string, _userId: string): Promise<RankingFeatures | null> {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
       select: {
@@ -291,7 +281,9 @@ export class LearningToRankService {
       },
     });
 
-    if (!item) {return null;}
+    if (!item) {
+      return null;
+    }
 
     const maxViews = 10000;
     const maxLikes = 1000;
@@ -301,8 +293,7 @@ export class LearningToRankService {
       contentScore: 0.5,
       collaborativeScore: 0.5,
       popularityScore:
-        Math.min(item.viewCount / maxViews, 1) * 0.5 +
-        Math.min(item.likeCount / maxLikes, 1) * 0.5,
+        Math.min(item.viewCount / maxViews, 1) * 0.5 + Math.min(item.likeCount / maxLikes, 1) * 0.5,
       freshnessScore: this.calculateFreshness(item.createdAt),
       diversityScore: 0.5,
       personalizationScore: 0.5,
@@ -311,13 +302,20 @@ export class LearningToRankService {
   }
 
   private calculateFreshness(createdAt: Date): number {
-    const ageInDays =
-      (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    const ageInDays = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (ageInDays < 7) {return 1.0;}
-    if (ageInDays < 30) {return 0.8;}
-    if (ageInDays < 90) {return 0.6;}
-    if (ageInDays < 180) {return 0.4;}
+    if (ageInDays < 7) {
+      return 1.0;
+    }
+    if (ageInDays < 30) {
+      return 0.8;
+    }
+    if (ageInDays < 90) {
+      return 0.6;
+    }
+    if (ageInDays < 180) {
+      return 0.4;
+    }
     return 0.2;
   }
 
@@ -359,17 +357,13 @@ export class LearningToRankService {
     this.normalizeWeights();
   }
 
-  predict(
-    features: Record<string, number>,
-    config?: Partial<LTRConfig>,
-  ): number {
+  predict(features: Record<string, number>, config?: Partial<LTRConfig>): number {
     const cfg = { ...this.defaultConfig, ...config };
     let score = 0;
     for (const feature of cfg.features) {
       const value = features[feature.name] || 0;
       const normalized = feature.normalize
-        ? (value - feature.minValue) /
-          (feature.maxValue - feature.minValue || 1)
+        ? (value - feature.minValue) / (feature.maxValue - feature.minValue || 1)
         : value;
       score += feature.weight * Math.max(0, Math.min(1, normalized));
     }
@@ -380,7 +374,7 @@ export class LearningToRankService {
     feedbackData: Array<{
       features: Record<string, number>;
       label: number;
-    }>,
+    }>
   ): Promise<void> {
     const cfg = this.defaultConfig;
     for (let iter = 0; iter < cfg.maxIterations; iter++) {
@@ -392,16 +386,16 @@ export class LearningToRankService {
         for (const feature of cfg.features) {
           const value = sample.features[feature.name] || 0;
           const normalized = feature.normalize
-            ? (value - feature.minValue) /
-              (feature.maxValue - feature.minValue || 1)
+            ? (value - feature.minValue) / (feature.maxValue - feature.minValue || 1)
             : value;
           feature.weight -=
-            cfg.learningRate *
-            (error * normalized + cfg.regularization * feature.weight);
+            cfg.learningRate * (error * normalized + cfg.regularization * feature.weight);
           feature.weight = Math.max(0, feature.weight);
         }
       }
-      if (totalLoss / feedbackData.length < 0.001) {break;}
+      if (totalLoss / feedbackData.length < 0.001) {
+        break;
+      }
     }
     const totalWeight = cfg.features.reduce((sum, f) => sum + f.weight, 0);
     if (totalWeight > 0) {
@@ -410,8 +404,6 @@ export class LearningToRankService {
   }
 
   getFeatureWeights(): Record<string, number> {
-    return Object.fromEntries(
-      this.defaultConfig.features.map((f) => [f.name, f.weight]),
-    );
+    return Object.fromEntries(this.defaultConfig.features.map((f) => [f.name, f.weight]));
   }
 }

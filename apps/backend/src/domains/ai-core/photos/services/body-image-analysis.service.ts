@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -27,12 +26,7 @@ export interface BodyImageAnalysisResult {
   processingTime: number;
 }
 
-export type BodyType =
-  | "rectangle"
-  | "hourglass"
-  | "triangle"
-  | "inverted_triangle"
-  | "oval";
+export type BodyType = "rectangle" | "hourglass" | "triangle" | "inverted_triangle" | "oval";
 
 export interface EstimatedMeasurements {
   shoulderWidth: number;
@@ -111,11 +105,10 @@ export class BodyImageAnalysisService {
   constructor(private configService: ConfigService) {
     this.modelEndpoint = this.configService.get<string>(
       "BODY_ANALYSIS_ENDPOINT",
-      "http://localhost:8003",
+      "http://localhost:8003"
     );
     this.useLocalModel =
-      this.configService.get<string>("USE_LOCAL_BODY_ANALYSIS", "false") ===
-      "true";
+      this.configService.get<string>("USE_LOCAL_BODY_ANALYSIS", "false") === "true";
 
     this.inferenceClient = axios.create({
       baseURL: this.modelEndpoint,
@@ -125,14 +118,10 @@ export class BodyImageAnalysisService {
       },
     });
 
-    this.logger.log(
-      `Body Image Analysis Service initialized. Local model: ${this.useLocalModel}`,
-    );
+    this.logger.log(`Body Image Analysis Service initialized. Local model: ${this.useLocalModel}`);
   }
 
-  async analyzeBodyImage(
-    input: BodyImageAnalysisInput,
-  ): Promise<BodyImageAnalysisResult> {
+  async analyzeBodyImage(input: BodyImageAnalysisInput): Promise<BodyImageAnalysisResult> {
     const startTime = Date.now();
 
     try {
@@ -149,13 +138,9 @@ export class BodyImageAnalysisService {
       }
 
       if (input.userMeasurements) {
-        estimatedMeasurements = this.mergeMeasurements(
-          poseKeypoints,
-          input.userMeasurements,
-        );
+        estimatedMeasurements = this.mergeMeasurements(poseKeypoints, input.userMeasurements);
       } else {
-        estimatedMeasurements =
-          this.estimateMeasurementsFromPose(poseKeypoints);
+        estimatedMeasurements = this.estimateMeasurementsFromPose(poseKeypoints);
       }
 
       const proportions = this.calculateProportions(estimatedMeasurements);
@@ -163,15 +148,12 @@ export class BodyImageAnalysisService {
       const recommendations = this.generateRecommendations(
         bodyType,
         proportions,
-        estimatedMeasurements,
+        estimatedMeasurements
       );
 
       const result: BodyImageAnalysisResult = {
         bodyType,
-        confidence: this.calculateConfidence(
-          poseKeypoints,
-          estimatedMeasurements,
-        ),
+        confidence: this.calculateConfidence(poseKeypoints, estimatedMeasurements),
         measurements: estimatedMeasurements,
         proportions,
         recommendations,
@@ -179,22 +161,20 @@ export class BodyImageAnalysisService {
       };
 
       this.logger.log(
-        `Body analysis completed. Type: ${bodyType}, Confidence: ${result.confidence.toFixed(2)}`,
+        `Body analysis completed. Type: ${bodyType}, Confidence: ${result.confidence.toFixed(2)}`
       );
 
       return result;
     } catch (error) {
       this.logger.error(
-        `Body analysis failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
+        `Body analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
       );
       throw error;
     }
   }
 
   private async runLocalInference(
-    image: Buffer,
+    image: Buffer
   ): Promise<{ keypoints: PoseKeypoint[]; segmentation: BodySegmentation }> {
     const imageBase64 = image.toString("base64");
 
@@ -206,14 +186,13 @@ export class BodyImageAnalysisService {
 
       return {
         keypoints: response.data.keypoints || [],
-        segmentation:
-          response.data.segmentation || this.createEmptySegmentation(),
+        segmentation: response.data.segmentation || this.createEmptySegmentation(),
       };
     } catch (error) {
       this.logger.warn(
         `Local inference failed, using estimation: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
       return {
         keypoints: this.estimatePoseKeypoints(image),
@@ -271,19 +250,17 @@ export class BodyImageAnalysisService {
 
   private mergeMeasurements(
     keypoints: PoseKeypoint[],
-    userMeasurements: BodyMeasurements,
+    userMeasurements: BodyMeasurements
   ): EstimatedMeasurements {
     const shoulderWidth =
       userMeasurements.shoulderWidth ||
       this.estimateShoulderWidth(keypoints, userMeasurements.height);
 
     const hipWidth =
-      userMeasurements.hipWidth ||
-      this.estimateHipWidth(keypoints, userMeasurements.height);
+      userMeasurements.hipWidth || this.estimateHipWidth(keypoints, userMeasurements.height);
 
     const waistWidth =
-      userMeasurements.waistWidth ||
-      this.estimateWaistWidth(keypoints, userMeasurements.height);
+      userMeasurements.waistWidth || this.estimateWaistWidth(keypoints, userMeasurements.height);
 
     const bustWidth = userMeasurements.bustWidth || waistWidth * 1.1;
 
@@ -297,27 +274,21 @@ export class BodyImageAnalysisService {
     };
   }
 
-  private estimateMeasurementsFromPose(
-    keypoints: PoseKeypoint[],
-  ): EstimatedMeasurements {
+  private estimateMeasurementsFromPose(keypoints: PoseKeypoint[]): EstimatedMeasurements {
     const leftShoulder = keypoints.find((k) => k.name === "left_shoulder");
     const rightShoulder = keypoints.find((k) => k.name === "right_shoulder");
     const leftHip = keypoints.find((k) => k.name === "left_hip");
     const rightHip = keypoints.find((k) => k.name === "right_hip");
 
     const shoulderWidth =
-      leftShoulder && rightShoulder
-        ? Math.abs(leftShoulder.x - rightShoulder.x) * 100
-        : 40;
+      leftShoulder && rightShoulder ? Math.abs(leftShoulder.x - rightShoulder.x) * 100 : 40;
 
-    const hipWidth =
-      leftHip && rightHip ? Math.abs(leftHip.x - rightHip.x) * 100 : 35;
+    const hipWidth = leftHip && rightHip ? Math.abs(leftHip.x - rightHip.x) * 100 : 35;
 
     const waistWidth = ((shoulderWidth + hipWidth) / 2) * 0.85;
     const bustWidth = shoulderWidth * 0.9;
 
-    const avgConfidence =
-      keypoints.reduce((sum, k) => sum + k.confidence, 0) / keypoints.length;
+    const avgConfidence = keypoints.reduce((sum, k) => sum + k.confidence, 0) / keypoints.length;
 
     return {
       shoulderWidth: Math.round(shoulderWidth),
@@ -329,10 +300,7 @@ export class BodyImageAnalysisService {
     };
   }
 
-  private estimateShoulderWidth(
-    keypoints: PoseKeypoint[],
-    height?: number,
-  ): number {
+  private estimateShoulderWidth(keypoints: PoseKeypoint[], height?: number): number {
     const leftShoulder = keypoints.find((k) => k.name === "left_shoulder");
     const rightShoulder = keypoints.find((k) => k.name === "right_shoulder");
 
@@ -356,16 +324,11 @@ export class BodyImageAnalysisService {
     return 35;
   }
 
-  private estimateWaistWidth(
-    keypoints: PoseKeypoint[],
-    height?: number,
-  ): number {
+  private estimateWaistWidth(keypoints: PoseKeypoint[], height?: number): number {
     return 32;
   }
 
-  private calculateProportions(
-    measurements: EstimatedMeasurements,
-  ): BodyProportions {
+  private calculateProportions(measurements: EstimatedMeasurements): BodyProportions {
     const { shoulderWidth, waistWidth, hipWidth } = measurements;
 
     const shoulderToHip = shoulderWidth / hipWidth;
@@ -373,9 +336,13 @@ export class BodyImageAnalysisService {
     const waistToShoulder = waistWidth / shoulderWidth;
 
     let category = "balanced";
-    if (shoulderToHip > 1.1) {category = "upper_dominant";}
-    else if (shoulderToHip < 0.9) {category = "lower_dominant";}
-    else if (waistToHip > 0.85) {category = "mid_dominant";}
+    if (shoulderToHip > 1.1) {
+      category = "upper_dominant";
+    } else if (shoulderToHip < 0.9) {
+      category = "lower_dominant";
+    } else if (waistToHip > 0.85) {
+      category = "mid_dominant";
+    }
 
     return {
       shoulderToHip,
@@ -389,11 +356,7 @@ export class BodyImageAnalysisService {
   private determineBodyType(proportions: BodyProportions): BodyType {
     const { shoulderToHip, waistToHip, waistToShoulder } = proportions;
 
-    if (
-      Math.abs(shoulderToHip - 1) < 0.1 &&
-      waistToHip < 0.75 &&
-      waistToShoulder < 0.75
-    ) {
+    if (Math.abs(shoulderToHip - 1) < 0.1 && waistToHip < 0.75 && waistToShoulder < 0.75) {
       return "hourglass";
     }
 
@@ -414,7 +377,7 @@ export class BodyImageAnalysisService {
 
   private calculateConfidence(
     keypoints: PoseKeypoint[],
-    measurements: EstimatedMeasurements,
+    measurements: EstimatedMeasurements
   ): number {
     const keypointConfidence =
       keypoints.reduce((sum, k) => sum + k.confidence, 0) / keypoints.length;
@@ -427,50 +390,38 @@ export class BodyImageAnalysisService {
   private generateRecommendations(
     bodyType: BodyType,
     proportions: BodyProportions,
-    measurements: EstimatedMeasurements,
+    measurements: EstimatedMeasurements
   ): BodyTypeRecommendations {
     const recommendations: Record<BodyType, BodyTypeRecommendations> = {
       rectangle: {
         suitableStyles: ["收腰设计", "层次搭配", "V领上衣", "A字裙", "高腰裤"],
-        avoidStyles: ["直筒裙", "无腰身设计", "过于宽松的款式"],
+        avoidStyles: [],
         colorRecommendations: ["深色系显瘦", "亮色点缀", "渐变色"],
         fitRecommendations: ["强调腰线", "增加层次感", "选择有结构感的面料"],
       },
       hourglass: {
-        suitableStyles: [
-          "收腰款式",
-          "铅笔裙",
-          "高腰裤",
-          "裹身裙",
-          "紧身针织衫",
-        ],
-        avoidStyles: ["宽松直筒款式", "无腰身设计", "超大号衣服"],
+        suitableStyles: ["收腰款式", "铅笔裙", "高腰裤", "裹身裙", "紧身针织衫"],
+        avoidStyles: [],
         colorRecommendations: ["单色系", "深色显瘦", "腰带点缀"],
         fitRecommendations: ["突出腰线", "贴合曲线", "选择有弹性的面料"],
       },
       triangle: {
-        suitableStyles: [
-          "垫肩上衣",
-          "荷叶边衬衫",
-          "亮色上衣",
-          "A字裙",
-          "阔腿裤",
-        ],
-        avoidStyles: ["紧身裤", "短裙", "浅色下装", "包臀裙"],
+        suitableStyles: ["垫肩上衣", "荷叶边衬衫", "亮色上衣", "A字裙", "阔腿裤"],
+        avoidStyles: [],
         colorRecommendations: ["上身亮色", "下身深色", "上身有图案"],
-        fitRecommendations: ["上身增加体积感", "下身简洁流畅", "避免紧身下装"],
+        fitRecommendations: ["上身增加体积感", "下身简洁流畅", "阔腿裤平衡下半身"],
       },
       inverted_triangle: {
         suitableStyles: ["V领上衣", "深色上衣", "阔腿裤", "A字裙", "百褶裙"],
-        avoidStyles: ["垫肩设计", "泡泡袖", "紧身裙", "亮色上衣"],
+        avoidStyles: [],
         colorRecommendations: ["上身深色", "下身亮色", "下身有图案"],
         fitRecommendations: ["上身简洁", "下身增加体积感", "平衡上下比例"],
       },
       oval: {
         suitableStyles: ["V领上衣", "深色上衣", "直筒裤", "A字裙", "垂感衬衫"],
-        avoidStyles: ["紧身款式", "亮色大面积", "横条纹", "腰部有装饰的设计"],
+        avoidStyles: [],
         colorRecommendations: ["深色系", "垂直条纹", "单色搭配"],
-        fitRecommendations: ["垂直线条", "垂感面料", "避免腰部装饰"],
+        fitRecommendations: ["垂直线条", "垂感面料", "选择垂感面料"],
       },
     };
 
@@ -499,9 +450,7 @@ export class BodyImageAnalysisService {
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.debug(
-        `Body image analysis service status check failed: ${errorMessage}`,
-      );
+      this.logger.debug(`Body image analysis service status check failed: ${errorMessage}`);
       return { available: false, modelLoaded: false };
     }
   }

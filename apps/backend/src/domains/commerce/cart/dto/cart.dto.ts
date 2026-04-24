@@ -1,7 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, Min, Max, IsNotEmpty } from "class-validator";
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+  Min,
+  Max,
+  IsNotEmpty,
+} from "class-validator";
 
 export class AddToCartDto {
   @ApiProperty({ description: "商品ID" })

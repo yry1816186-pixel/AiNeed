@@ -1,18 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
-import {
-  CloudCommunicationService,
-  CloudTask,
-} from "./cloud-communication.service";
-import {
-  HybridProcessingService,
-  HybridProcessingRequest,
-} from "./hybrid-processing.service";
-import {
-  UNetSegmentationService,
-  SegmentationResult,
-} from "./unet-segmentation.service";
+import { CloudCommunicationService, CloudTask } from "./cloud-communication.service";
+import { HybridProcessingService, HybridProcessingRequest } from "./hybrid-processing.service";
+import { UNetSegmentationService, SegmentationResult } from "./unet-segmentation.service";
 
 export interface AlgorithmPipelineConfig {
   enableLocalProcessing: boolean;
@@ -81,21 +71,17 @@ export class AlgorithmOrchestratorService {
   constructor(
     private unetSegmentation: UNetSegmentationService,
     private hybridProcessing: HybridProcessingService,
-    private cloudCommunication: CloudCommunicationService,
+    private cloudCommunication: CloudCommunicationService
   ) {}
 
-  async executeTryOnPipeline(
-    input: TryOnPipelineInput,
-  ): Promise<PipelineResult> {
+  async executeTryOnPipeline(input: TryOnPipelineInput): Promise<PipelineResult> {
     const startTime = Date.now();
     const config = { ...this.defaultConfig, ...input.options };
 
     this.logger.log(`Starting try-on pipeline for user ${input.userId}`);
 
     try {
-      const segmentationResult = await this.unetSegmentation.segmentClothing(
-        input.personImage,
-      );
+      const segmentationResult = await this.unetSegmentation.segmentClothing(input.personImage);
 
       const hybridRequest: HybridProcessingRequest = {
         requestId: `tryon_${Date.now()}`,
@@ -144,15 +130,11 @@ export class AlgorithmOrchestratorService {
     }
   }
 
-  async executeRecommendationPipeline(
-    input: RecommendationPipelineInput,
-  ): Promise<PipelineResult> {
+  async executeRecommendationPipeline(input: RecommendationPipelineInput): Promise<PipelineResult> {
     const startTime = Date.now();
     const config = { ...this.defaultConfig, ...input.options };
 
-    this.logger.log(
-      `Starting recommendation pipeline for user ${input.userId}`,
-    );
+    this.logger.log(`Starting recommendation pipeline for user ${input.userId}`);
 
     try {
       const taskType: CloudTask["type"] = "recommendation";
@@ -164,13 +146,10 @@ export class AlgorithmOrchestratorService {
             userId: input.userId,
             context: input.context,
           },
-          "normal",
+          "normal"
         );
 
-        const result = await this.cloudCommunication.getTaskResult(
-          taskId,
-          config.maxLatency,
-        );
+        const result = await this.cloudCommunication.getTaskResult(taskId, config.maxLatency);
 
         const latency = Date.now() - startTime;
 
@@ -186,7 +165,7 @@ export class AlgorithmOrchestratorService {
       }
 
       throw new Error(
-        "Recommendation pipeline requires cloud processing or a verified local recommender",
+        "Recommendation pipeline requires cloud processing or a verified local recommender"
       );
     } catch (error) {
       const latency = Date.now() - startTime;
@@ -206,15 +185,11 @@ export class AlgorithmOrchestratorService {
     }
   }
 
-  async executeSegmentationPipeline(
-    input: SegmentationPipelineInput,
-  ): Promise<PipelineResult> {
+  async executeSegmentationPipeline(input: SegmentationPipelineInput): Promise<PipelineResult> {
     const startTime = Date.now();
     const config = { ...this.defaultConfig, ...input.options };
 
-    this.logger.log(
-      `Starting segmentation pipeline for category ${input.category}`,
-    );
+    this.logger.log(`Starting segmentation pipeline for category ${input.category}`);
 
     try {
       const result = await this.unetSegmentation.segmentClothing(input.image);
@@ -254,15 +229,11 @@ export class AlgorithmOrchestratorService {
     }
   }
 
-  async executeCompatibilityPipeline(
-    input: CompatibilityPipelineInput,
-  ): Promise<PipelineResult> {
+  async executeCompatibilityPipeline(input: CompatibilityPipelineInput): Promise<PipelineResult> {
     const startTime = Date.now();
     const config = { ...this.defaultConfig, ...input.options };
 
-    this.logger.log(
-      `Starting compatibility pipeline for ${input.items.length} items`,
-    );
+    this.logger.log(`Starting compatibility pipeline for ${input.items.length} items`);
 
     try {
       if (config.enableCloudProcessing) {
@@ -271,13 +242,10 @@ export class AlgorithmOrchestratorService {
           {
             items: input.items,
           },
-          "normal",
+          "normal"
         );
 
-        const result = await this.cloudCommunication.getTaskResult(
-          taskId,
-          config.maxLatency,
-        );
+        const result = await this.cloudCommunication.getTaskResult(taskId, config.maxLatency);
 
         const latency = Date.now() - startTime;
 
@@ -353,17 +321,17 @@ export class AlgorithmOrchestratorService {
         },
         { id: 3, x: x + width / 2, y: y + height, z: 0, visibility: 0.9 },
         { id: 4, x: x, y: y + height / 2, z: 0, visibility: 0.8 },
-        { id: 5, x: x + width, y: y + height / 2, z: 0, visibility: 0.8 },
+        { id: 5, x: x + width, y: y + height / 2, z: 0, visibility: 0.8 }
       );
     }
 
     return keypoints;
   }
 
-  private calculateLocalCompatibility(
-    items: CompatibilityPipelineInput["items"],
-  ): number {
-    if (items.length < 2) {return 1.0;}
+  private calculateLocalCompatibility(items: CompatibilityPipelineInput["items"]): number {
+    if (items.length < 2) {
+      return 1.0;
+    }
 
     let totalScore = 0;
     let pairCount = 0;
@@ -375,12 +343,8 @@ export class AlgorithmOrchestratorService {
         if (!currentItem || !compareItem) {
           continue;
         }
-        const similarity = this.cosineSimilarity(
-          currentItem.features,
-          compareItem.features,
-        );
-        const categoryBonus =
-          currentItem.category !== compareItem.category ? 0.1 : -0.1;
+        const similarity = this.cosineSimilarity(currentItem.features, compareItem.features);
+        const categoryBonus = currentItem.category !== compareItem.category ? 0.1 : -0.1;
         totalScore += similarity + categoryBonus;
         pairCount++;
       }
@@ -390,7 +354,9 @@ export class AlgorithmOrchestratorService {
   }
 
   private cosineSimilarity(vec1: number[], vec2: number[]): number {
-    if (vec1.length !== vec2.length) {return 0;}
+    if (vec1.length !== vec2.length) {
+      return 0;
+    }
 
     let dotProduct = 0;
     let norm1 = 0;
@@ -404,7 +370,9 @@ export class AlgorithmOrchestratorService {
       norm2 += value2 * value2;
     }
 
-    if (norm1 === 0 || norm2 === 0) {return 0;}
+    if (norm1 === 0 || norm2 === 0) {
+      return 0;
+    }
 
     return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
   }
@@ -443,8 +411,12 @@ export class AlgorithmOrchestratorService {
   async batchProcess(
     tasks: Array<{
       type: "tryon" | "recommendation" | "segmentation" | "compatibility";
-      input: TryOnPipelineInput | RecommendationPipelineInput | SegmentationPipelineInput | CompatibilityPipelineInput;
-    }>,
+      input:
+        | TryOnPipelineInput
+        | RecommendationPipelineInput
+        | SegmentationPipelineInput
+        | CompatibilityPipelineInput;
+    }>
   ): Promise<PipelineResult[]> {
     const results: PipelineResult[] = [];
 
@@ -456,13 +428,17 @@ export class AlgorithmOrchestratorService {
           result = await this.executeTryOnPipeline(task.input as TryOnPipelineInput);
           break;
         case "recommendation":
-          result = await this.executeRecommendationPipeline(task.input as RecommendationPipelineInput);
+          result = await this.executeRecommendationPipeline(
+            task.input as RecommendationPipelineInput
+          );
           break;
         case "segmentation":
           result = await this.executeSegmentationPipeline(task.input as SegmentationPipelineInput);
           break;
         case "compatibility":
-          result = await this.executeCompatibilityPipeline(task.input as CompatibilityPipelineInput);
+          result = await this.executeCompatibilityPipeline(
+            task.input as CompatibilityPipelineInput
+          );
           break;
         default:
           result = {

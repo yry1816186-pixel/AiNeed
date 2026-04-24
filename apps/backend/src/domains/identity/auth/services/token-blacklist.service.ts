@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -51,7 +50,9 @@ export class TokenBlacklistService {
     }
 
     await this.redisService.del(userTokensKey);
-    this.logger.log(`All tokens blacklisted for user: ${userId.substring(0, 8)}... (${jtis.length} tokens)`);
+    this.logger.log(
+      `All tokens blacklisted for user: ${userId.substring(0, 8)}... (${jtis.length} tokens)`
+    );
   }
 
   async trackUserToken(userId: string, jti: string, expiresInSeconds: number): Promise<void> {

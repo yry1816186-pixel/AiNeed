@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Knowledge-Based Submodule
  * Handles knowledge-driven recommendations:

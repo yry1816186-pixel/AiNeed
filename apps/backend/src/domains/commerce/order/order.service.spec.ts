@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -144,17 +144,15 @@ describe("OrderService", () => {
     };
 
     it("should throw error when items is empty", async () => {
-      await expect(
-        service.create(userId, { ...createDto, items: [] }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.create(userId, { ...createDto, items: [] })).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw error when address not found", async () => {
       mockPrismaService.userAddress.findFirst.mockResolvedValue(null);
 
-      await expect(service.create(userId, createDto)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.create(userId, createDto)).rejects.toThrow(NotFoundException);
     });
 
     it("should throw error when item not found", async () => {
@@ -164,9 +162,7 @@ describe("OrderService", () => {
       });
       mockPrismaService.clothingItem.findMany.mockResolvedValue([]);
 
-      await expect(service.create(userId, createDto)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.create(userId, createDto)).rejects.toThrow(NotFoundException);
     });
 
     it("should throw error when item is inactive", async () => {
@@ -174,17 +170,17 @@ describe("OrderService", () => {
         id: "address-1",
         name: "Test User",
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([{
-        id: "item-1",
-        name: "Test Item",
-        isActive: false,
-        price: 100,
-        images: [],
-      }]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([
+        {
+          id: "item-1",
+          name: "Test Item",
+          isActive: false,
+          price: 100,
+          images: [],
+        },
+      ]);
 
-      await expect(service.create(userId, createDto)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.create(userId, createDto)).rejects.toThrow(BadRequestException);
     });
 
     it("should create order successfully", async () => {
@@ -197,13 +193,15 @@ describe("OrderService", () => {
         district: "Chaoyang",
         address: "Test Address",
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([{
-        id: "item-1",
-        name: "Test Item",
-        isActive: true,
-        price: 100,
-        images: ["image1.jpg"],
-      }]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([
+        {
+          id: "item-1",
+          name: "Test Item",
+          isActive: true,
+          price: 100,
+          images: ["image1.jpg"],
+        },
+      ]);
       mockPrismaService.order.create.mockResolvedValue({
         id: "order-1",
         orderNo: "SM240101000001",
@@ -252,7 +250,7 @@ describe("OrderService", () => {
           where: expect.objectContaining({
             status: "pending",
           }),
-        }),
+        })
       );
     });
   });
@@ -261,9 +259,7 @@ describe("OrderService", () => {
     it("should throw error when order not found", async () => {
       mockPrismaService.order.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne("user-1", "order-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne("user-1", "order-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should return order when found", async () => {
@@ -291,9 +287,7 @@ describe("OrderService", () => {
         status: "shipped",
       });
 
-      await expect(service.cancel("user-1", "order-1")).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.cancel("user-1", "order-1")).rejects.toThrow(BadRequestException);
     });
 
     it("should cancel pending order", async () => {
@@ -322,9 +316,7 @@ describe("OrderService", () => {
         status: "pending",
       });
 
-      await expect(service.confirm("user-1", "order-1")).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.confirm("user-1", "order-1")).rejects.toThrow(BadRequestException);
     });
 
     it("should confirm shipped order", async () => {

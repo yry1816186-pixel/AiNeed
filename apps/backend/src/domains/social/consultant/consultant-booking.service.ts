@@ -5,11 +5,12 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
-import Decimal from "decimal.js";
-import { ConsultantStatus, BookingStatus, EarningStatus } from "../../../types/prisma-enums";
-import { PrismaService } from "../../../common/prisma/prisma.service";
-import { PaymentService } from "../../commerce/payment/payment.service";
 import { Prisma } from "@prisma/client";
+import Decimal from "decimal.js";
+
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { ConsultantStatus, BookingStatus, EarningStatus } from "../../../types/prisma-enums";
+import { PaymentService } from "../../commerce/payment/payment.service";
 
 import {
   CreateServiceBookingDto,
@@ -429,7 +430,9 @@ export class ConsultantBookingService {
     });
 
     this.logger.log(
-      `预约 ${bookingId} 尾款确认，平台佣金: ${platformFee.toFixed(2)}，顾问结算: ${consultantPayout.toFixed(2)}`
+      `预约 ${bookingId} 尾款确认，平台佣金: ${platformFee.toFixed(
+        2
+      )}，顾问结算: ${consultantPayout.toFixed(2)}`
     );
 
     return updated;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -23,7 +22,7 @@ export class WechatAuthStrategy {
 
   constructor(
     private readonly wechatService: WechatService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     this.appId = this.configService.get<string>("WECHAT_APP_ID", "");
     this.appSecret = this.configService.get<string>("WECHAT_APP_SECRET", "");
@@ -74,7 +73,7 @@ export class WechatAuthStrategy {
     const tokenResponse = await this.wechatService.getAccessToken(code);
     const userInfo = await this.wechatService.getUserInfo(
       tokenResponse.access_token,
-      tokenResponse.openid,
+      tokenResponse.openid
     );
     return userInfo;
   }

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StyleUnderstandingService } from "../../ai/services/style-understanding.service";
 import {
   RecommendationsService,
   type RecommendedItem,
 } from "../../../platform/recommendations/recommendations.service";
+import { StyleUnderstandingService } from "../../ai/services/style-understanding.service";
 import { DecisionEngineService } from "../decision-engine.service";
 import { LlmProviderService } from "../llm-provider.service";
 import type {
@@ -426,7 +426,9 @@ export class AiStylistRecommendationService {
       return scoredOutfits.map((s) => s.outfit);
     } catch (error) {
       this.logger.warn(
-        `DecisionEngine ranking failed, using original order: ${error instanceof Error ? error.message : "Unknown error"}`
+        `DecisionEngine ranking failed, using original order: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
       );
       return outfits;
     }
@@ -564,8 +566,8 @@ export class AiStylistRecommendationService {
               typeof dbItem?.price === "number"
                 ? dbItem.price
                 : typeof item.price === "number"
-                  ? item.price
-                  : null,
+                ? item.price
+                : null,
             brand: (dbItem?.brand as { name: string } | null)?.name || item.brand || null,
             score: typeof item.score === "number" ? item.score : undefined,
           };
@@ -674,7 +676,9 @@ export class AiStylistRecommendationService {
 
     if (session.state.slots.occasion) {
       reasons.push(
-        `场景优先按${this.contextService.getOccasionName(session.state.slots.occasion)}来控制正式度和单品噪点。`
+        `场景优先按${this.contextService.getOccasionName(
+          session.state.slots.occasion
+        )}来控制正式度和单品噪点。`
       );
     }
     if (session.state.slots.fitGoals.length > 0) {

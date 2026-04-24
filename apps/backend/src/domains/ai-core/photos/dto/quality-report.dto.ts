@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsBoolean, IsNumber, IsOptional, IsString, IsArray, Min, Max } from "class-validator";
 
@@ -19,17 +18,20 @@ export class CompositionDto {
 export class QualityReportDto {
   @ApiProperty({ description: "清晰度分数 (0-100)", minimum: 0, maximum: 100 })
   @IsNumber()
-  @Min(0) @Max(100)
+  @Min(0)
+  @Max(100)
   sharpness!: number;
 
   @ApiProperty({ description: "亮度分数 (0-100)", minimum: 0, maximum: 100 })
   @IsNumber()
-  @Min(0) @Max(100)
+  @Min(0)
+  @Max(100)
   brightness!: number;
 
   @ApiProperty({ description: "对比度分数 (0-100)", minimum: 0, maximum: 100 })
   @IsNumber()
-  @Min(0) @Max(100)
+  @Min(0)
+  @Max(100)
   contrast!: number;
 
   @ApiProperty({ description: "构图分析", type: CompositionDto })
@@ -37,7 +39,8 @@ export class QualityReportDto {
 
   @ApiProperty({ description: "综合评分 (0-100)", minimum: 0, maximum: 100 })
   @IsNumber()
-  @Min(0) @Max(100)
+  @Min(0)
+  @Max(100)
   overallScore!: number;
 
   @ApiProperty({ description: "是否通过质量检测" })

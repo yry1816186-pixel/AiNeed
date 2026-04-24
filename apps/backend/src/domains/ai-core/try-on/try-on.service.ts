@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { TryOnStatus } from "../../../types/prisma-enums";
 import { Prisma } from "@prisma/client";
 import axios from "axios";
 import Redis from "ioredis";
@@ -10,6 +9,7 @@ import { StructuredLoggerService, ContextualLogger } from "../../../common/loggi
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 import { StorageService } from "../../../common/storage/storage.service";
+import { TryOnStatus } from "../../../types/prisma-enums";
 import { QueueService } from "../../platform/queue/queue.service";
 
 import { generateStableCacheKey } from "./services/ai-tryon-provider.interface";
@@ -391,10 +391,10 @@ export class TryOnService {
     if (dateFrom || dateTo) {
       where.createdAt = {};
       if (dateFrom) {
-        (where.createdAt as any).gte = new Date(dateFrom);
+        where.createdAt.gte = new Date(dateFrom);
       }
       if (dateTo) {
-        (where.createdAt as any).lte = new Date(dateTo);
+        where.createdAt.lte = new Date(dateTo);
       }
     }
 
@@ -570,7 +570,9 @@ export class TryOnService {
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to build inline try-on result asset: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to build inline try-on result asset: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       return {
         ...tryOn,

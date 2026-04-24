@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  OnModuleInit,
-  OnModuleDestroy,
-} from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -39,11 +33,7 @@ export interface CloudConnection {
 }
 
 export interface SyncMessage {
-  type:
-    | "sync_request"
-    | "sync_response"
-    | "delta_update"
-    | "conflict_resolution";
+  type: "sync_request" | "sync_response" | "delta_update" | "conflict_resolution";
   timestamp: Date;
   deviceId: string;
   data: Record<string, unknown>;
@@ -65,9 +55,7 @@ export interface CommunicationProtocol {
 }
 
 @Injectable()
-export class CloudCommunicationService
-  implements OnModuleInit, OnModuleDestroy
-{
+export class CloudCommunicationService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(CloudCommunicationService.name);
 
   private readonly PROTOCOL: CommunicationProtocol = {
@@ -105,10 +93,7 @@ export class CloudCommunicationService
   private taskProcessorInterval?: NodeJS.Timeout;
   private readonly DEVICE_ID = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  constructor(
-    private configService: ConfigService,
-    private redisService: RedisService,
-  ) {}
+  constructor(private configService: ConfigService, private redisService: RedisService) {}
 
   async onModuleInit() {
     this.logger.log("Initializing Cloud Communication Service");
@@ -137,9 +122,7 @@ export class CloudCommunicationService
       this.connectionStatus.latency = Date.now() - start;
       this.connectionStatus.connected = true;
       this.connectionStatus.lastHeartbeat = new Date();
-      this.logger.log(
-        `Cloud connection established. Latency: ${this.connectionStatus.latency}ms`,
-      );
+      this.logger.log(`Cloud connection established. Latency: ${this.connectionStatus.latency}ms`);
     } catch (error) {
       this.logger.error("Failed to establish cloud connection:", error);
       this.connectionStatus.connected = false;
@@ -176,7 +159,7 @@ export class CloudCommunicationService
   async submitTask(
     type: CloudTask["type"],
     payload: Record<string, any>,
-    priority: CloudTask["priority"] = "normal",
+    priority: CloudTask["priority"] = "normal"
   ): Promise<string> {
     const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -194,9 +177,7 @@ export class CloudCommunicationService
     this.taskQueue.set(taskId, task);
     await this.persistTask(task);
 
-    this.logger.log(
-      `Task ${taskId} submitted: ${type} with priority ${priority}`,
-    );
+    this.logger.log(`Task ${taskId} submitted: ${type} with priority ${priority}`);
     return taskId;
   }
 
@@ -256,11 +237,7 @@ export class CloudCommunicationService
 
     const pendingTasks = Array.from(this.taskQueue.values())
       .filter((t) => t.status === "pending")
-      .sort(
-        (a, b) =>
-          this.getPriorityWeight(b.priority) -
-          this.getPriorityWeight(a.priority),
-      );
+      .sort((a, b) => this.getPriorityWeight(b.priority) - this.getPriorityWeight(a.priority));
 
     for (const task of pendingTasks.slice(0, 5)) {
       await this.processTask(task);
@@ -311,8 +288,7 @@ export class CloudCommunicationService
   }
 
   private calculateBackoffDelay(retryCount: number): number {
-    const { initialDelay, backoffMultiplier, maxDelay } =
-      this.PROTOCOL.retryPolicy;
+    const { initialDelay, backoffMultiplier, maxDelay } = this.PROTOCOL.retryPolicy;
     const delay = initialDelay * Math.pow(backoffMultiplier, retryCount - 1);
     return Math.min(delay, maxDelay);
   }
@@ -374,7 +350,9 @@ export class CloudCommunicationService
 
   async getTaskProgress(taskId: string): Promise<TaskProgress | null> {
     const task = this.taskQueue.get(taskId);
-    if (!task) {return null;}
+    if (!task) {
+      return null;
+    }
 
     let progress = 0;
     let stage = "pending";
@@ -400,10 +378,7 @@ export class CloudCommunicationService
     };
   }
 
-  private getProcessingStage(
-    type: CloudTask["type"],
-    progress: number,
-  ): string {
+  private getProcessingStage(type: CloudTask["type"], progress: number): string {
     const stages: Record<CloudTask["type"], string[]> = {
       tryon: [
         "preprocessing",
@@ -412,24 +387,9 @@ export class CloudCommunicationService
         "image_synthesis",
         "postprocessing",
       ],
-      segmentation: [
-        "image_loading",
-        "feature_extraction",
-        "mask_generation",
-        "refinement",
-      ],
-      recommendation: [
-        "user_profiling",
-        "item_retrieval",
-        "ranking",
-        "diversification",
-      ],
-      compatibility: [
-        "feature_extraction",
-        "graph_construction",
-        "gnn_propagation",
-        "scoring",
-      ],
+      segmentation: ["image_loading", "feature_extraction", "mask_generation", "refinement"],
+      recommendation: ["user_profiling", "item_retrieval", "ranking", "diversification"],
+      compatibility: ["feature_extraction", "graph_construction", "gnn_propagation", "scoring"],
     };
 
     const typeStages = stages[type] ?? ["queued"];
@@ -439,7 +399,9 @@ export class CloudCommunicationService
 
   async cancelTask(taskId: string): Promise<boolean> {
     const task = this.taskQueue.get(taskId);
-    if (!task) {return false;}
+    if (!task) {
+      return false;
+    }
 
     if (task.status === "pending" || task.status === "processing") {
       task.status = "failed";
@@ -473,9 +435,7 @@ export class CloudCommunicationService
   }
 
   async requestDeltaSync(lastSyncTime: Date, dataType: string): Promise<any> {
-    this.logger.log(
-      `Requesting delta sync for ${dataType} since ${lastSyncTime.toISOString()}`,
-    );
+    this.logger.log(`Requesting delta sync for ${dataType} since ${lastSyncTime.toISOString()}`);
 
     const client = this.redisService.getClient();
     const deltaKey = `delta:${dataType}:${this.DEVICE_ID}`;
@@ -539,7 +499,7 @@ export class CloudCommunicationService
         deviceId: this.DEVICE_ID,
       }),
       "EX",
-      300,
+      300
     );
   }
 
@@ -548,26 +508,19 @@ export class CloudCommunicationService
       type: CloudTask["type"];
       payload: Record<string, any>;
       priority?: CloudTask["priority"];
-    }>,
+    }>
   ): Promise<string[]> {
     const taskIds: string[] = [];
 
     for (const task of tasks) {
-      const taskId = await this.submitTask(
-        task.type,
-        task.payload,
-        task.priority,
-      );
+      const taskId = await this.submitTask(task.type, task.payload, task.priority);
       taskIds.push(taskId);
     }
 
     return taskIds;
   }
 
-  async getBatchResults(
-    taskIds: string[],
-    timeout: number = 60000,
-  ): Promise<Map<string, any>> {
+  async getBatchResults(taskIds: string[], timeout: number = 60000): Promise<Map<string, any>> {
     const results = new Map<string, any>();
     const startTime = Date.now();
 

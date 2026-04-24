@@ -135,6 +135,9 @@ describe("OnboardingService", () => {
       ageRange: "25_34",
       height: 175,
       weight: 70,
+      primaryScenarios: ["work", "casual"],
+      styleExpression: ["minimalist", "classic"],
+      garmentPreference: { lowerBody: "both" as const, upperFit: "regular" as const },
     };
 
     it("应该成功完成基本信息并推进到 PHOTO", async () => {
@@ -180,7 +183,13 @@ describe("OnboardingService", () => {
     });
 
     it("应该成功完成基本信息（不含 height 和 weight）", async () => {
-      const minimalDto = { gender: "female", ageRange: "18_24" };
+      const minimalDto = {
+        gender: "female",
+        ageRange: "18_24",
+        primaryScenarios: ["casual"],
+        styleExpression: ["romantic"],
+        garmentPreference: { lowerBody: "skirts" as const, upperFit: "fitted" as const },
+      };
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockPrismaService.userProfile.findUnique.mockResolvedValue({

@@ -20,21 +20,25 @@ import { ConfigModule } from "@nestjs/config";
 
 import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { RedisModule } from "../../../common/redis/redis.module";
-import { AIModule } from "../../ai-core/ai/ai.module";
 import { CacheModule } from "../../../modules/cache/cache.module";
+import { AIModule } from "../../ai-core/ai/ai.module";
 
 import { RecommendationOrchestrator } from "./orchestrator";
 import { RecommendationsController } from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
+import { BodyMetricsService } from "./services/body-metrics.service";
+import { GoldenRecommendationService } from "./services/golden-recommendation.service";
 import { Neo4jService } from "./services/neo4j.service";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
+import { ProfileCompletenessService } from "./services/profile-completeness.service";
 import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { QdrantService } from "./services/qdrant.service";
 import { RecommendationCacheService } from "./services/recommendation-cache.service";
 import { RecommendationExplainerService } from "./services/recommendation-explainer.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
+import { RuleEngineService } from "./services/rule-engine.service";
 import { SASRecClientService } from "./services/sasrec-client.service";
 import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
 import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./submodules";
@@ -79,6 +83,14 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     SASRecClientService,
     // Feed service
     RecommendationFeedService,
+    // Golden recommendation service
+    GoldenRecommendationService,
+    // Rule engine (JSON-based fashion rules)
+    RuleEngineService,
+    // Body metrics
+    BodyMetricsService,
+    // Profile completeness
+    ProfileCompletenessService,
   ],
   exports: [
     // Primary exports - use orchestrator for new code
@@ -103,6 +115,10 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     SASRecClientService,
     // Feed service
     RecommendationFeedService,
+    // Golden recommendation service
+    GoldenRecommendationService,
+    // Rule engine
+    RuleEngineService,
   ],
 })
 export class RecommendationsModule {}

@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, Inject, Optional } from "@nestjs/common";
-import Redis from "ioredis";
 import { Prisma } from "@prisma/client";
+import Redis from "ioredis";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../../common/redis/redis.service";

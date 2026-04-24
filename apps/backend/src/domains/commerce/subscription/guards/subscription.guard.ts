@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 
 import { SubscriptionService } from "../subscription.service";
@@ -19,15 +13,15 @@ export const FEATURE_KEY = "feature";
 export class SubscriptionGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly subscriptionService: SubscriptionService,
+    private readonly subscriptionService: SubscriptionService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // 获取所需功能
-    const requiredFeature = this.reflector.getAllAndOverride<string>(
-      FEATURE_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredFeature = this.reflector.getAllAndOverride<string>(FEATURE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!requiredFeature) {
       return true; // 没有功能要求，放行
@@ -41,15 +35,10 @@ export class SubscriptionGuard implements CanActivate {
     }
 
     // 检查权限
-    const result = await this.subscriptionService.checkPermission(
-      user.id,
-      requiredFeature,
-    );
+    const result = await this.subscriptionService.checkPermission(user.id, requiredFeature);
 
     if (!result.allowed) {
-      throw new ForbiddenException(
-        `您已达到使用上限（${result.limit}次/月），请升级会员`,
-      );
+      throw new ForbiddenException(`您已达到使用上限（${result.limit}次/月），请升级会员`);
     }
 
     // 记录使用

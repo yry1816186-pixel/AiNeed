@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { SubscriptionService } from "./subscription.service";
-
 
 describe("SubscriptionService", () => {
   let service: SubscriptionService;
@@ -200,9 +199,7 @@ describe("SubscriptionService", () => {
     it("should throw error if plan not found", async () => {
       prisma.membershipPlan.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.subscribe("user-123", "invalid-plan", "alipay"),
-      ).rejects.toThrow();
+      await expect(service.subscribe("user-123", "invalid-plan", "alipay")).rejects.toThrow();
     });
   });
 

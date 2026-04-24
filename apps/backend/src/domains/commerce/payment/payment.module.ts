@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -12,7 +11,6 @@ import { PaymentController } from "./payment.controller";
 import { PaymentService } from "./payment.service";
 import { AlipayProvider } from "./providers/alipay.provider";
 import { WechatProvider } from "./providers/wechat.provider";
-
 
 @Module({
   imports: [ConfigModule, EventEmitterModule, ScheduleModule.forRoot(), PrismaModule, RedisModule],

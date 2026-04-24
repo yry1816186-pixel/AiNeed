@@ -1,11 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheService } from "../../../modules/cache/cache.service";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { ClothingService } from "./clothing.service";
-
 
 describe("ClothingService", () => {
   let service: ClothingService;
@@ -91,9 +90,7 @@ describe("ClothingService", () => {
 
   describe("getItems", () => {
     it("应该返回商品列表", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       const result = await service.getItems({});
@@ -105,14 +102,12 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { isActive: true, isDeleted: false },
-        }),
+        })
       );
     });
 
     it("应该按分类过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ category: ClothingCategory.tops });
@@ -122,14 +117,12 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             category: ClothingCategory.tops,
           }),
-        }),
+        })
       );
     });
 
     it("应该按品牌过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ brandId: "brand-id" });
@@ -139,14 +132,12 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             brandId: "brand-id",
           }),
-        }),
+        })
       );
     });
 
     it("应该按价格范围过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ minPrice: 100, maxPrice: 500 });
@@ -156,14 +147,12 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             price: { gte: 100, lte: 500 },
           }),
-        }),
+        })
       );
     });
 
     it("应该按颜色过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ colors: ["红色"] });
@@ -173,7 +162,7 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             colors: { hasSome: ["红色"] },
           }),
-        }),
+        })
       );
     });
 
@@ -190,7 +179,7 @@ describe("ClothingService", () => {
         expect.objectContaining({
           skip: 10,
           take: 10,
-        }),
+        })
       );
     });
 
@@ -203,7 +192,7 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { price: "asc" },
-        }),
+        })
       );
     });
 
@@ -221,9 +210,7 @@ describe("ClothingService", () => {
 
   describe("getItemById", () => {
     it("应该返回商品详情", async () => {
-      mockPrismaService.clothingItem.findFirst.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findFirst.mockResolvedValue(mockClothingItem);
       mockPrismaService.clothingItem.update.mockResolvedValue({
         ...mockClothingItem,
         viewCount: 101,
@@ -258,7 +245,7 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "item-id", isDeleted: false },
-        }),
+        })
       );
     });
 
@@ -286,7 +273,7 @@ describe("ClothingService", () => {
         expect.objectContaining({
           where: { isActive: true, isFeatured: true, isDeleted: false },
           take: 5,
-        }),
+        })
       );
     });
 
@@ -298,7 +285,7 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 10,
-        }),
+        })
       );
     });
 
@@ -446,9 +433,7 @@ describe("ClothingService", () => {
 
   describe("尺寸和标签过滤", () => {
     it("应该按尺寸过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ sizes: ["M", "L"] });
@@ -458,14 +443,12 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             sizes: { hasSome: ["M", "L"] },
           }),
-        }),
+        })
       );
     });
 
     it("应该按标签过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({ tags: ["夏季", "休闲"] });
@@ -475,14 +458,12 @@ describe("ClothingService", () => {
           where: expect.objectContaining({
             tags: { hasSome: ["夏季", "休闲"] },
           }),
-        }),
+        })
       );
     });
 
     it("应该组合多个过滤条件", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.getItems({
@@ -503,7 +484,7 @@ describe("ClothingService", () => {
             tags: { hasSome: ["夏季"] },
             price: { gte: 100, lte: 500 },
           }),
-        }),
+        })
       );
     });
   });
@@ -515,9 +496,7 @@ describe("ClothingService", () => {
         price: { toString: () => "199.99", toNumber: () => 199.99 },
         originalPrice: { toString: () => "299.99", toNumber: () => 299.99 },
       };
-      mockPrismaService.clothingItem.findFirst.mockResolvedValue(
-        itemWithDecimalPrice,
-      );
+      mockPrismaService.clothingItem.findFirst.mockResolvedValue(itemWithDecimalPrice);
 
       const result = await service.getItemById("item-id");
 
@@ -531,9 +510,7 @@ describe("ClothingService", () => {
         ...mockClothingItem,
         originalPrice: null,
       };
-      mockPrismaService.clothingItem.findFirst.mockResolvedValue(
-        itemWithNullPrice,
-      );
+      mockPrismaService.clothingItem.findFirst.mockResolvedValue(itemWithNullPrice);
 
       const result = await service.getItemById("item-id");
 
@@ -552,7 +529,7 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { viewCount: "desc" },
-        }),
+        })
       );
     });
 
@@ -565,7 +542,7 @@ describe("ClothingService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { likeCount: "asc" },
-        }),
+        })
       );
     });
   });
@@ -595,9 +572,7 @@ describe("ClothingService", () => {
         images: [],
         mainImage: null,
       };
-      mockPrismaService.clothingItem.findFirst.mockResolvedValue(
-        itemWithEmptyImages,
-      );
+      mockPrismaService.clothingItem.findFirst.mockResolvedValue(itemWithEmptyImages);
 
       const result = await service.getItemById("item-id");
 
@@ -613,9 +588,7 @@ describe("ClothingService", () => {
         sizes: null,
         tags: null,
       };
-      mockPrismaService.clothingItem.findFirst.mockResolvedValue(
-        itemWithEmptyArrays,
-      );
+      mockPrismaService.clothingItem.findFirst.mockResolvedValue(itemWithEmptyArrays);
 
       const result = await service.getItemById("item-id");
 
@@ -628,17 +601,13 @@ describe("ClothingService", () => {
 
   describe("异常处理", () => {
     it("应该处理数据库查询错误", async () => {
-      mockPrismaService.clothingItem.findMany.mockRejectedValue(
-        new Error("Database error"),
-      );
+      mockPrismaService.clothingItem.findMany.mockRejectedValue(new Error("Database error"));
 
       await expect(service.getItems({})).rejects.toThrow("Database error");
     });
 
     it("应该处理原始查询错误", async () => {
-      mockPrismaService.$queryRaw.mockRejectedValue(
-        new Error("Raw query error"),
-      );
+      mockPrismaService.$queryRaw.mockRejectedValue(new Error("Raw query error"));
 
       await expect(service.getPopularTags()).rejects.toThrow("Raw query error");
     });

@@ -1,8 +1,25 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBearerAuth } from "@nestjs/swagger";
-import { ClothingCategory, PriceRange } from '../../../types/prisma-enums';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+  Request,
+} from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 
 import { MerchantAuthGuard } from "../../../domains/platform/merchant/guards/merchant-auth.guard";
+import { ClothingCategory, PriceRange } from "../../../types/prisma-enums";
 
 import { BrandsService } from "./brands.service";
 import { GenerateQRCodeDto, BatchGenerateQRCodeDto } from "./dto/qr-code.dto";
@@ -23,7 +40,7 @@ export class BrandsController {
     @Query("category") category?: ClothingCategory,
     @Query("priceRange") priceRange?: PriceRange,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.brandsService.getAllBrands({
       category,
@@ -38,9 +55,7 @@ export class BrandsController {
   @ApiResponse({ status: 200, description: "获取成功" })
   @ApiQuery({ name: "limit", type: Number, required: false })
   async getFeaturedBrands(@Query("limit") limit?: string) {
-    return this.brandsService.getFeaturedBrands(
-      limit ? parseInt(limit, 10) : 10,
-    );
+    return this.brandsService.getFeaturedBrands(limit ? parseInt(limit, 10) : 10);
   }
 
   @Get("price-ranges")
@@ -61,13 +76,14 @@ export class BrandsController {
   // ==================== QR Code Scan (Public) ====================
 
   @Get("qr-codes/:code")
-  @ApiOperation({ summary: "扫码获取商品信息（公开）", description: "扫描品牌二维码获取关联的商品数据，无需认证" })
+  @ApiOperation({
+    summary: "扫码获取商品信息（公开）",
+    description: "扫描品牌二维码获取关联的商品数据，无需认证",
+  })
   @ApiParam({ name: "code", description: "二维码编码" })
   @ApiResponse({ status: 200, description: "商品信息" })
   @ApiResponse({ status: 404, description: "二维码不存在" })
-  async scanQRCode(
-    @Param("code") code: string,
-  ) {
+  async scanQRCode(@Param("code") code: string) {
     const qrCode = await this.brandsService.getQRCodeByCode(code);
     if (!qrCode?.isActive) {
       return { success: false, error: "二维码无效或已停用" };
@@ -81,12 +97,15 @@ export class BrandsController {
   }
 
   @Post("qr-codes/:code/scan")
-  @ApiOperation({ summary: "记录扫码并导入衣橱", description: "记录扫码事件，已登录用户可自动导入到衣橱" })
+  @ApiOperation({
+    summary: "记录扫码并导入衣橱",
+    description: "记录扫码事件，已登录用户可自动导入到衣橱",
+  })
   @ApiParam({ name: "code", description: "二维码编码" })
   @ApiResponse({ status: 200, description: "扫码成功" })
   async recordScanAndImport(
     @Param("code") code: string,
-    @Body() body: { userId?: string; platform?: string },
+    @Body() body: { userId?: string; platform?: string }
   ) {
     const qrCode = await this.brandsService.getQRCodeByCode(code);
     if (!qrCode?.isActive) {
@@ -111,7 +130,7 @@ export class BrandsController {
   @ApiResponse({ status: 201, description: "二维码生成成功" })
   async generateQRCode(
     @Request() req: { merchant: { brandId: string } },
-    @Body() dto: GenerateQRCodeDto,
+    @Body() dto: GenerateQRCodeDto
   ) {
     return this.brandsService.generateQRCode(req.merchant.brandId, dto.productId, {
       productName: dto.productName,
@@ -132,12 +151,12 @@ export class BrandsController {
   async getBrandQRCodes(
     @Request() req: { merchant: { brandId: string } },
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.brandsService.getBrandQRCodes(
       req.merchant.brandId,
       page ? parseInt(page, 10) : 1,
-      limit ? parseInt(limit, 10) : 20,
+      limit ? parseInt(limit, 10) : 20
     );
   }
 
@@ -148,7 +167,7 @@ export class BrandsController {
   @ApiParam({ name: "id", description: "二维码ID" })
   async deactivateQRCode(
     @Request() req: { merchant: { brandId: string } },
-    @Param("id") qrCodeId: string,
+    @Param("id") qrCodeId: string
   ) {
     return this.brandsService.deactivateQRCode(qrCodeId, req.merchant.brandId);
   }
@@ -183,7 +202,7 @@ export class BrandsController {
     @Query("sortBy") sortBy?: "price" | "createdAt" | "viewCount",
     @Query("sortOrder") sortOrder?: "asc" | "desc",
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.brandsService.getBrandProducts(slug, {
       category,

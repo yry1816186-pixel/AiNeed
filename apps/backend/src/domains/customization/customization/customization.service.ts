@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
   CustomizationType,
   CustomizationStatus,
   ProductTemplateType,
   DesignLayerType,
 } from "../../../types/prisma-enums";
-
-import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { PODService } from "./pod/pod-service";
 import { pricingEngine } from "./pricing/pricing-engine";
@@ -162,9 +161,7 @@ export class CustomizationService {
     }
 
     const layerCount = design.layers.length;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const hasTextLayers = design.layers.some((l: any) => l.type === "text");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const imageCount = design.layers.filter((l: any) => l.type === "image").length;
 
     const pricing = pricingEngine.calculatePrice({
@@ -307,7 +304,6 @@ export class CustomizationService {
     page: number = 1,
     limit: number = 10
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId };
     if (status) {
       where.status = status;

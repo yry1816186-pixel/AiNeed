@@ -5,7 +5,6 @@ import {
   BadRequestException,
   Optional,
 } from "@nestjs/common";
-import { PriceRange } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -15,6 +14,7 @@ import {
 } from "../../../../common/types/api-response.types";
 import { OnboardingService } from "../../../../domains/identity/onboarding/onboarding.service";
 import { ProfileEventEmitter } from "../../../../domains/identity/profile/services/profile-event-emitter.service";
+import { PriceRange } from "../../../../types/prisma-enums";
 
 import {
   CreateStyleQuizDto,

@@ -1,15 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  NotFoundException,
-  ForbiddenException,
-  BadRequestException,
-} from "@nestjs/common";
+import { NotFoundException, ForbiddenException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import * as bcrypt from "../../../common/security/bcrypt";
-
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { MerchantService } from "./merchant.service";
 
@@ -135,22 +130,16 @@ describe("MerchantService", () => {
 
     it("应该拒绝已注册的邮箱", async () => {
       mockPrismaService.brand.findFirst.mockResolvedValue(null);
-      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
-        mockMerchant,
-      );
+      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(mockMerchant);
 
-      await expect(service.applyForMerchant(applyData)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(service.applyForMerchant(applyData)).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe("login", () => {
     it("应该成功登录", async () => {
       mockPrismaService.brand.findFirst.mockResolvedValue(null);
-      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
-        mockMerchant,
-      );
+      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(mockMerchant);
       mockedBcrypt.compare.mockResolvedValue(true as never);
       mockPrismaService.brandMerchant.update.mockResolvedValue(mockMerchant);
 
@@ -164,21 +153,19 @@ describe("MerchantService", () => {
       mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.login("nonexistent@test.com", "Password123"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.login("nonexistent@test.com", "Password123")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该拒绝错误的密码", async () => {
       mockPrismaService.brand.findFirst.mockResolvedValue(null);
-      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
-        mockMerchant,
-      );
+      mockPrismaService.brandMerchant.findUnique.mockResolvedValue(mockMerchant);
       mockedBcrypt.compare.mockResolvedValue(false as never);
 
-      await expect(
-        service.login("merchant@test.com", "wrong-password"),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.login("merchant@test.com", "wrong-password")).rejects.toThrow(
+        ForbiddenException
+      );
     });
   });
 
@@ -202,7 +189,7 @@ describe("MerchantService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ isActive: true }),
-        }),
+        })
       );
     });
 
@@ -216,7 +203,7 @@ describe("MerchantService", () => {
         expect.objectContaining({
           take: 10,
           skip: 20,
-        }),
+        })
       );
     });
   });
@@ -249,9 +236,9 @@ describe("MerchantService", () => {
     it("应该拒绝不存在的品牌", async () => {
       mockPrismaService.brand.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createProduct("non-existent-brand", createData),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createProduct("non-existent-brand", createData)).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -276,7 +263,7 @@ describe("MerchantService", () => {
       await expect(
         service.updateProduct("brand-id", "non-existent-product", {
           name: "新名称",
-        }),
+        })
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -294,20 +281,16 @@ describe("MerchantService", () => {
     it("应该拒绝不存在的商品", async () => {
       mockPrismaService.clothingItem.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.deleteProduct("brand-id", "non-existent-product"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.deleteProduct("brand-id", "non-existent-product")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("getSettlements", () => {
     it("应该返回结算记录", async () => {
-      const mockSettlements = [
-        { id: "settlement-1", brandId: "brand-id", amount: 1000 },
-      ];
-      mockPrismaService.brandSettlement.findMany.mockResolvedValue(
-        mockSettlements,
-      );
+      const mockSettlements = [{ id: "settlement-1", brandId: "brand-id", amount: 1000 }];
+      mockPrismaService.brandSettlement.findMany.mockResolvedValue(mockSettlements);
 
       const result = await service.getSettlements("brand-id");
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -65,7 +64,10 @@ export class MerchantController {
   @Get("dashboard")
   @UseGuards(MerchantAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "获取数据看板", description: "获取商家数据看板，包含销售、流量等关键指标" })
+  @ApiOperation({
+    summary: "获取数据看板",
+    description: "获取商家数据看板，包含销售、流量等关键指标",
+  })
   @ApiResponse({ status: 200, description: "成功返回看板数据" })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiQuery({ name: "start", required: false, description: "开始日期，默认30天前", type: String })
@@ -73,14 +75,13 @@ export class MerchantController {
   async getDashboard(
     @Request() req: { merchant: { brandId: string } },
     @Query("start") start?: string,
-    @Query("end") end?: string,
+    @Query("end") end?: string
   ) {
     // 安全解析日期，防止无效输入
-    const parseDate = (
-      dateStr: string | undefined,
-      defaultDate: Date,
-    ): Date => {
-      if (!dateStr) {return defaultDate;}
+    const parseDate = (dateStr: string | undefined, defaultDate: Date): Date => {
+      if (!dateStr) {
+        return defaultDate;
+      }
       const parsed = new Date(dateStr);
       return isNaN(parsed.getTime()) ? defaultDate : parsed;
     };
@@ -109,7 +110,7 @@ export class MerchantController {
   @ApiResponse({ status: 401, description: "未授权" })
   async getProducts(
     @Request() req: { merchant: { brandId: string } },
-    @Query() query: ProductQueryDto,
+    @Query() query: ProductQueryDto
   ) {
     return this.merchantService.getProducts(req.merchant.brandId, {
       limit: query.limit ?? 20,
@@ -130,7 +131,7 @@ export class MerchantController {
   @ApiResponse({ status: 401, description: "未授权" })
   async createProduct(
     @Request() req: { merchant: { brandId: string } },
-    @Body() data: CreateProductDto,
+    @Body() data: CreateProductDto
   ) {
     return this.merchantService.createProduct(req.merchant.brandId, data);
   }
@@ -150,13 +151,9 @@ export class MerchantController {
   async updateProduct(
     @Request() req: { merchant: { brandId: string } },
     @Param("id", ParseUUIDPipe) productId: string,
-    @Body() data: UpdateProductDto,
+    @Body() data: UpdateProductDto
   ) {
-    return this.merchantService.updateProduct(
-      req.merchant.brandId,
-      productId,
-      data,
-    );
+    return this.merchantService.updateProduct(req.merchant.brandId, productId, data);
   }
 
   /**
@@ -172,7 +169,7 @@ export class MerchantController {
   @ApiParam({ name: "id", description: "商品ID (UUID)" })
   async deleteProduct(
     @Request() req: { merchant: { brandId: string } },
-    @Param("id", ParseUUIDPipe) productId: string,
+    @Param("id", ParseUUIDPipe) productId: string
   ) {
     return this.merchantService.deleteProduct(req.merchant.brandId, productId);
   }
@@ -204,13 +201,12 @@ export class MerchantController {
   async getTrends(
     @Request() req: { merchant: { brandId: string } },
     @Query("start") start?: string,
-    @Query("end") end?: string,
+    @Query("end") end?: string
   ) {
-    const parseDate = (
-      dateStr: string | undefined,
-      defaultDate: Date,
-    ): Date => {
-      if (!dateStr) {return defaultDate;}
+    const parseDate = (dateStr: string | undefined, defaultDate: Date): Date => {
+      if (!dateStr) {
+        return defaultDate;
+      }
       const parsed = new Date(dateStr);
       return isNaN(parsed.getTime()) ? defaultDate : parsed;
     };
@@ -270,10 +266,7 @@ export class MerchantController {
   @UseGuards(MerchantAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "拒绝商家申请 (admin)" })
-  async rejectMerchant(
-    @Param("id") id: string,
-    @Body() body: { reason: string },
-  ) {
+  async rejectMerchant(@Param("id") id: string, @Body() body: { reason: string }) {
     return this.merchantService.rejectMerchant(id, body.reason);
   }
 
@@ -285,7 +278,7 @@ export class MerchantController {
     @Param("id") id: string,
     @Query("status") status?: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.merchantService.getMerchantOrders(id, {
       status,
@@ -301,14 +294,9 @@ export class MerchantController {
   async shipOrder(
     @Param("id") id: string,
     @Param("orderId") orderId: string,
-    @Body() body: { trackingNumber: string; carrier: string },
+    @Body() body: { trackingNumber: string; carrier: string }
   ) {
-    return this.merchantService.shipOrder(
-      id,
-      orderId,
-      body.trackingNumber,
-      body.carrier,
-    );
+    return this.merchantService.shipOrder(id, orderId, body.trackingNumber, body.carrier);
   }
 
   @Patch(":id/items/:itemId/stock")
@@ -318,7 +306,7 @@ export class MerchantController {
   async updateStock(
     @Param("id") id: string,
     @Param("itemId") itemId: string,
-    @Body() body: { stock: number },
+    @Body() body: { stock: number }
   ) {
     return this.merchantService.updateStock(id, itemId, body.stock);
   }

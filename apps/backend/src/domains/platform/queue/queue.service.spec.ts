@@ -1,10 +1,11 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 
-import { QueueService } from "./queue.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { QueueName } from "./queue-config";
 import { JOB_STATUS } from "./queue.constants";
+import { QueueService } from "./queue.service";
 
 function createMockQueue() {
   return {

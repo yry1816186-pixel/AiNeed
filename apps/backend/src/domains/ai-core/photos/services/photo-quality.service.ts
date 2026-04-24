@@ -1,9 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
-import { QualityReportDto, CompositionDto, QualityCheckResponseDto, EnhanceResponseDto } from "../dto/quality-report.dto";
+import {
+  QualityReportDto,
+  CompositionDto,
+  QualityCheckResponseDto,
+  EnhanceResponseDto,
+} from "../dto/quality-report.dto";
 
 interface PythonQualityResponse {
   sharpness?: number;
@@ -56,10 +60,7 @@ export class PhotoQualityService {
   };
 
   constructor(private configService: ConfigService) {
-    const aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    const aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
 
     this.aiClient = axios.create({
       baseURL: aiServiceUrl,
@@ -80,7 +81,7 @@ export class PhotoQualityService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `Python AI Service not available for quality analysis: ${errorMessage}. Will use local fallback.`,
+        `Python AI Service not available for quality analysis: ${errorMessage}. Will use local fallback.`
       );
     }
   }
@@ -140,7 +141,7 @@ export class PhotoQualityService {
     const response = await this.aiClient.post(
       "/api/photo-quality/analyze",
       { image_base64: base64Image },
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json" } }
     );
 
     const data = response.data?.data;
@@ -153,7 +154,7 @@ export class PhotoQualityService {
 
   private async callPythonEnhanceService(
     imageBuffer: Buffer,
-    issues?: string[],
+    issues?: string[]
   ): Promise<{ enhancedImage: string; enhancedReport: QualityReportDto }> {
     const base64Image = imageBuffer.toString("base64");
 
@@ -163,7 +164,7 @@ export class PhotoQualityService {
         image_base64: base64Image,
         issues: issues || [],
       },
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json" } }
     );
 
     const data = response.data?.data;
@@ -204,9 +205,9 @@ export class PhotoQualityService {
     const compositionScore = this.calculateCompositionScore(composition);
     const overallScore = Math.round(
       sharpness * this.SCORE_WEIGHTS.sharpness +
-      brightness * this.SCORE_WEIGHTS.brightness +
-      contrast * this.SCORE_WEIGHTS.contrast +
-      compositionScore * this.SCORE_WEIGHTS.composition,
+        brightness * this.SCORE_WEIGHTS.brightness +
+        contrast * this.SCORE_WEIGHTS.contrast +
+        compositionScore * this.SCORE_WEIGHTS.composition
     );
 
     const passed = this.evaluateQualityPass(sharpness, brightness, contrast, composition);
@@ -272,7 +273,9 @@ export class PhotoQualityService {
       }
     }
 
-    if (count === 0) {return 50;}
+    if (count === 0) {
+      return 50;
+    }
 
     const avgBrightness = totalBrightness / count;
     return Math.round((avgBrightness / 255) * 100);
@@ -291,7 +294,9 @@ export class PhotoQualityService {
       }
     }
 
-    if (luminances.length < 2) {return 50;}
+    if (luminances.length < 2) {
+      return 50;
+    }
 
     const mean = luminances.reduce((a, b) => a + b, 0) / luminances.length;
     const variance = luminances.reduce((sum, l) => sum + (l - mean) ** 2, 0) / luminances.length;
@@ -319,9 +324,15 @@ export class PhotoQualityService {
     fullBody: boolean;
   }): number {
     let score = 0;
-    if (composition.hasPerson) {score += 50;}
-    if (composition.personCentered) {score += 25;}
-    if (composition.fullBody) {score += 25;}
+    if (composition.hasPerson) {
+      score += 50;
+    }
+    if (composition.personCentered) {
+      score += 25;
+    }
+    if (composition.fullBody) {
+      score += 25;
+    }
     return score;
   }
 
@@ -329,7 +340,7 @@ export class PhotoQualityService {
     sharpness: number,
     brightness: number,
     contrast: number,
-    composition: { hasPerson: boolean },
+    composition: { hasPerson: boolean }
   ): boolean {
     return (
       sharpness > this.QUALITY_THRESHOLDS.sharpness &&
@@ -344,7 +355,7 @@ export class PhotoQualityService {
     sharpness: number,
     brightness: number,
     contrast: number,
-    composition: { hasPerson: boolean; personCentered: boolean; fullBody: boolean },
+    composition: { hasPerson: boolean; personCentered: boolean; fullBody: boolean }
   ): string[] {
     const suggestions: string[] = [];
 

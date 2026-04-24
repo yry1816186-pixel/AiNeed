@@ -1,5 +1,5 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 
 jest.mock("@prisma/client", () => ({
   ...jest.requireActual("@prisma/client"),

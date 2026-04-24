@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import crypto from "crypto";
 
 import {
@@ -10,13 +9,13 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Cron } from "@nestjs/schedule";
-import { AnalysisStatus, PhotoType } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { stripExifFromBuffer } from "../../../common/security/image-sanitizer";
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
 import { validateImageFile as sharedValidateImageFile } from "../../../common/security/upload-validator";
 import { StorageService } from "../../../common/storage/storage.service";
+import { AnalysisStatus, PhotoType } from "../../../types/prisma-enums";
 import { OnboardingService } from "../../identity/onboarding/onboarding.service";
 import { QueueService } from "../../platform/queue/queue.service";
 
@@ -144,7 +143,9 @@ export class PhotosService {
           };
         } catch (error) {
           this.logger.warn(
-            `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`
+            `Failed to build inline thumbnail for ${photo.id}: ${
+              error instanceof Error ? error.message : String(error)
+            }`
           );
           return { ...photo, thumbnailDataUri: undefined };
         }
@@ -176,7 +177,9 @@ export class PhotosService {
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to build inline thumbnail for ${photo.id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       return photo;
     }
@@ -203,7 +206,7 @@ export class PhotosService {
       throw new NotFoundException("照片不存在");
     }
 
-    const assetUrl = variant === "thumbnail" ? (photo.thumbnailUrl ?? photo.url) : photo.url;
+    const assetUrl = variant === "thumbnail" ? photo.thumbnailUrl ?? photo.url : photo.url;
 
     if (!assetUrl) {
       throw new NotFoundException("照片资产不存在");
@@ -387,7 +390,9 @@ export class PhotosService {
       return parts.slice(-2).join("/");
     } catch (error) {
       this.logger.warn(
-        `Failed to extract filename from URL '${url.substring(0, 100)}': ${error instanceof Error ? error.message : String(error)}. Using original value as fallback.`
+        `Failed to extract filename from URL '${url.substring(0, 100)}': ${
+          error instanceof Error ? error.message : String(error)
+        }. Using original value as fallback.`
       );
       return url; // Return original URL as fallback instead of null
     }

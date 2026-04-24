@@ -1,12 +1,11 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-
-import { MerchantProductService } from "./merchant-product.service";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import type { CreateProductDto, UpdateProductDto } from "./dto";
+import { MerchantProductService } from "./merchant-product.service";
 
 describe("MerchantProductService", () => {
   let service: MerchantProductService;

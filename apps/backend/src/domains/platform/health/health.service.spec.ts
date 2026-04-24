@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -86,9 +86,7 @@ describe("HealthService", () => {
       mockRedisService.set.mockResolvedValue(undefined);
       mockRedisService.get.mockResolvedValue("ok");
       mockRedisService.del.mockResolvedValue(undefined);
-      mockStorageService.getFileUrl.mockResolvedValue(
-        "http://example.com/file",
-      );
+      mockStorageService.getFileUrl.mockResolvedValue("http://example.com/file");
 
       const result = await service.checkHealth();
 
@@ -109,9 +107,7 @@ describe("HealthService", () => {
       mockRedisService.get.mockResolvedValue("ok");
       mockRedisService.del.mockResolvedValue(undefined);
       // Mock storage as down
-      mockStorageService.getFileUrl.mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockStorageService.getFileUrl.mockRejectedValue(new Error("Connection refused"));
 
       const result = await service.checkHealth();
 
@@ -123,16 +119,10 @@ describe("HealthService", () => {
 
     it("should return unhealthy status when all services are down", async () => {
       // Mock all services as down
-      mockPrismaService.$queryRaw.mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockPrismaService.$queryRaw.mockRejectedValue(new Error("Connection refused"));
       mockRedisService.set.mockRejectedValue(new Error("Connection refused"));
-      mockStorageService.getFileUrl.mockRejectedValue(
-        new Error("Connection refused"),
-      );
-      (globalThis.fetch as jest.Mock).mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockStorageService.getFileUrl.mockRejectedValue(new Error("Connection refused"));
+      (globalThis.fetch as jest.Mock).mockRejectedValue(new Error("Connection refused"));
 
       const result = await service.checkHealth();
 
@@ -156,9 +146,7 @@ describe("HealthService", () => {
     });
 
     it("should return down status when database connection fails", async () => {
-      mockPrismaService.$queryRaw.mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockPrismaService.$queryRaw.mockRejectedValue(new Error("Connection refused"));
 
       const result = await service.checkDatabase();
 
@@ -202,9 +190,7 @@ describe("HealthService", () => {
 
   describe("checkStorage", () => {
     it("should return up status when storage service is available", async () => {
-      mockStorageService.getFileUrl.mockResolvedValue(
-        "http://example.com/file",
-      );
+      mockStorageService.getFileUrl.mockResolvedValue("http://example.com/file");
 
       const result = await service.checkStorage();
 
@@ -213,9 +199,7 @@ describe("HealthService", () => {
     });
 
     it("should return down status when storage service fails", async () => {
-      mockStorageService.getFileUrl.mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockStorageService.getFileUrl.mockRejectedValue(new Error("Connection refused"));
 
       const result = await service.checkStorage();
 
@@ -239,9 +223,7 @@ describe("HealthService", () => {
       mockRedisService.set.mockResolvedValue(undefined);
       mockRedisService.get.mockResolvedValue("ok");
       mockRedisService.del.mockResolvedValue(undefined);
-      mockStorageService.getFileUrl.mockResolvedValue(
-        "http://example.com/file",
-      );
+      mockStorageService.getFileUrl.mockResolvedValue("http://example.com/file");
 
       const result = await service.getReadiness();
 
@@ -252,15 +234,11 @@ describe("HealthService", () => {
     });
 
     it("should return ready: false when any service is down", async () => {
-      mockPrismaService.$queryRaw.mockRejectedValue(
-        new Error("Connection refused"),
-      );
+      mockPrismaService.$queryRaw.mockRejectedValue(new Error("Connection refused"));
       mockRedisService.set.mockResolvedValue(undefined);
       mockRedisService.get.mockResolvedValue("ok");
       mockRedisService.del.mockResolvedValue(undefined);
-      mockStorageService.getFileUrl.mockResolvedValue(
-        "http://example.com/file",
-      );
+      mockStorageService.getFileUrl.mockResolvedValue("http://example.com/file");
 
       const result = await service.getReadiness();
 

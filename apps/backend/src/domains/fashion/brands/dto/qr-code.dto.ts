@@ -1,7 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsString, IsOptional, IsNumber, IsBoolean, IsArray, ValidateNested } from "class-validator";
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsArray,
+  ValidateNested,
+} from "class-validator";
 
 export class GenerateQRCodeDto {
   @ApiProperty({ description: "商品ID" })

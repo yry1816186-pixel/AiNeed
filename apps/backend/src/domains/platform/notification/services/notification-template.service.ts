@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import {
@@ -42,10 +41,7 @@ export class NotificationTemplateService {
    * @param variables - Key-value pairs to substitute in the template
    * @returns Rendered notification content, or undefined if template not found
    */
-  render(
-    key: string,
-    variables: Record<string, string> = {},
-  ): RenderedNotification | undefined {
+  render(key: string, variables: Record<string, string> = {}): RenderedNotification | undefined {
     const template = NOTIFICATION_TEMPLATES[key];
     if (!template) {
       this.logger.warn(`Notification template not found: ${key}`);
@@ -70,10 +66,7 @@ export class NotificationTemplateService {
   /**
    * Render a template, throwing an error if not found.
    */
-  renderOrThrow(
-    key: string,
-    variables: Record<string, string> = {},
-  ): RenderedNotification {
+  renderOrThrow(key: string, variables: Record<string, string> = {}): RenderedNotification {
     const result = this.render(key, variables);
     if (!result) {
       throw new Error(`Notification template not found: ${key}`);
@@ -112,9 +105,7 @@ export class NotificationTemplateService {
       if (varName in variables && variables[varName] !== undefined) {
         return variables[varName];
       }
-      this.logger.debug(
-        `Template variable {${varName}} not provided, leaving placeholder`,
-      );
+      this.logger.debug(`Template variable {${varName}} not provided, leaving placeholder`);
       return match;
     });
   }

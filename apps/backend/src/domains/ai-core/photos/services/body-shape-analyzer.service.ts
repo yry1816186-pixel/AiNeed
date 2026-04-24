@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -63,11 +62,7 @@ export class BodyShapeAnalyzer {
     const waistToShoulder = waistWidth / shoulderWidth;
 
     // 沙漏型: 肩臀相近，腰明显细
-    if (
-      Math.abs(shoulderToHip - 1) < 0.1 &&
-      waistToHip < 0.75 &&
-      waistToShoulder < 0.75
-    ) {
+    if (Math.abs(shoulderToHip - 1) < 0.1 && waistToHip < 0.75 && waistToShoulder < 0.75) {
       return "hourglass";
     }
 
@@ -94,10 +89,7 @@ export class BodyShapeAnalyzer {
    * 获取体型详情
    */
   getBodyTypeDetails(bodyType: string) {
-    return (
-      this.bodyTypes[bodyType as keyof typeof this.bodyTypes] ||
-      this.bodyTypes.rectangle
-    );
+    return this.bodyTypes[bodyType as keyof typeof this.bodyTypes] || this.bodyTypes.rectangle;
   }
 
   /**
@@ -106,13 +98,19 @@ export class BodyShapeAnalyzer {
   estimateBmiRange(
     height: number,
     weight?: number,
-    bodyType?: string,
+    bodyType?: string
   ): { range: string; category: string } {
     if (weight) {
       const bmi = weight / Math.pow(height / 100, 2);
-      if (bmi < 18.5) {return { range: "<18.5", category: "偏瘦" };}
-      if (bmi < 24) {return { range: "18.5-24", category: "正常" };}
-      if (bmi < 28) {return { range: "24-28", category: "偏胖" };}
+      if (bmi < 18.5) {
+        return { range: "<18.5", category: "偏瘦" };
+      }
+      if (bmi < 24) {
+        return { range: "18.5-24", category: "正常" };
+      }
+      if (bmi < 28) {
+        return { range: "24-28", category: "偏胖" };
+      }
       return { range: ">28", category: "肥胖" };
     }
 
@@ -136,7 +134,7 @@ export class BodyShapeAnalyzer {
    */
   getClothingRecommendations(
     bodyType: string,
-    _preferences?: string[],
+    _preferences?: string[]
   ): {
     tops: string[];
     bottoms: string[];
@@ -176,9 +174,6 @@ export class BodyShapeAnalyzer {
       },
     };
 
-    return (
-      recommendations[bodyType as keyof typeof recommendations] ||
-      recommendations.rectangle
-    );
+    return recommendations[bodyType as keyof typeof recommendations] || recommendations.rectangle;
   }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 
 import { type DecisionNodeType, type DecisionContext, type UserProfile } from "./types";

@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "../../../../types/prisma-enums";
 import { Prisma } from "@prisma/client";
 import axios, { AxiosInstance } from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../../common/config/runtime-flags";
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 export interface AIAnalysisResult {
   success: boolean;

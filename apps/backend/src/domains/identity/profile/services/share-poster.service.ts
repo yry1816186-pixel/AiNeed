@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import { v4 as uuidv4 } from "uuid";
@@ -25,7 +24,7 @@ export class SharePosterService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly storageService: StorageService,
+    private readonly storageService: StorageService
   ) {}
 
   async generatePoster(userId: string, profileData: UserProfileSummary): Promise<string> {
@@ -81,7 +80,7 @@ export class SharePosterService {
   private drawStyleInfo(
     ctx: CanvasRenderingContext2D,
     profileData: UserProfileSummary,
-    layoutConfig: Record<string, unknown>,
+    layoutConfig: Record<string, unknown>
   ): void {
     const styleSection = (layoutConfig.styleSection as Record<string, unknown>) ?? {};
 
@@ -104,10 +103,12 @@ export class SharePosterService {
   private drawColorPalette(
     ctx: CanvasRenderingContext2D,
     profileData: UserProfileSummary,
-    layoutConfig: Record<string, unknown>,
+    layoutConfig: Record<string, unknown>
   ): void {
     const colors = profileData.colorPalette ?? [];
-    if (colors.length === 0) {return;}
+    if (colors.length === 0) {
+      return;
+    }
 
     const paletteSection = (layoutConfig.paletteSection as Record<string, unknown>) ?? {};
     const circleRadius = (paletteSection.circleRadius as number) ?? 30;
@@ -132,7 +133,7 @@ export class SharePosterService {
   private drawUserInfo(
     ctx: CanvasRenderingContext2D,
     profileData: UserProfileSummary,
-    layoutConfig: Record<string, unknown>,
+    layoutConfig: Record<string, unknown>
   ): void {
     const userSection = (layoutConfig.userSection as Record<string, unknown>) ?? {};
     const avatarY = (userSection.avatarY as number) ?? 800;
@@ -157,7 +158,13 @@ export class SharePosterService {
         ctx.beginPath();
         ctx.arc(375, avatarY, avatarRadius, 0, Math.PI * 2);
         ctx.clip();
-        ctx.drawImage(img, 375 - avatarRadius, avatarY - avatarRadius, avatarRadius * 2, avatarRadius * 2);
+        ctx.drawImage(
+          img,
+          375 - avatarRadius,
+          avatarY - avatarRadius,
+          avatarRadius * 2,
+          avatarRadius * 2
+        );
         ctx.restore();
       } catch {
         // Avatar load failed, keep placeholder
@@ -174,7 +181,7 @@ export class SharePosterService {
 
   private drawQrCodePlaceholder(
     ctx: CanvasRenderingContext2D,
-    layoutConfig: Record<string, unknown>,
+    layoutConfig: Record<string, unknown>
   ): void {
     const qrSection = (layoutConfig.qrSection as Record<string, unknown>) ?? {};
     const qrSize = (qrSection.size as number) ?? 120;

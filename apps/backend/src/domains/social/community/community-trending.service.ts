@@ -7,8 +7,8 @@ import {
   Optional,
 } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import Redis from "ioredis";
 import { Prisma } from "@prisma/client";
+import Redis from "ioredis";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { REDIS_CLIENT, RedisKeyBuilder } from "../../../common/redis/redis.service";

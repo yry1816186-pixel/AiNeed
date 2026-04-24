@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * AI Stylist Module - Type Definitions
- * 
+ *
  * This file exports all type definitions used across the AI stylist module.
  * Types are organized by domain for better maintainability.
  */
@@ -75,7 +74,13 @@ export interface GLM5Response {
 
 // ==================== Clothing Item Types ====================
 
-import { ClothingCategory , TryOnStatus , BodyType, SkinTone, ColorSeason } from "../../../../types/prisma-enums";
+import {
+  ClothingCategory,
+  TryOnStatus,
+  BodyType,
+  SkinTone,
+  ColorSeason,
+} from "../../../../types/prisma-enums";
 
 export interface ClothingItemBasic {
   id: string;
@@ -107,8 +112,6 @@ export interface StyleAnalysisResult {
 
 // ==================== Try-On Response Types ====================
 
-
-
 export interface TryOnServiceResponse {
   success: boolean;
   result_image_url?: string;
@@ -131,8 +134,6 @@ export interface AgentLoopResult {
 }
 
 // ==================== Tool Input/Output Types ====================
-
-
 
 export interface GetUserProfileInput {
   userId: string;

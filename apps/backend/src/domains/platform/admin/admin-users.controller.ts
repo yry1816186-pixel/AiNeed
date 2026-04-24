@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -12,11 +11,11 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
-import { UserRole } from "../../../types/prisma-enums";
 
 import { AdminGuard } from "../../../common/guards/admin.guard";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RequestWithUser } from "../../../common/types/common.types";
+import { UserRole } from "../../../types/prisma-enums";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import {

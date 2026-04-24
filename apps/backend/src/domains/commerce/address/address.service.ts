@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { AddressData } from "../../../common/types/common.types";
@@ -47,10 +47,7 @@ export interface ShippingAddressResponse {
 
 @Injectable()
 export class AddressService {
-  constructor(
-    private prisma: PrismaService,
-    private encryptionService: EncryptionService
-  ) {}
+  constructor(private prisma: PrismaService, private encryptionService: EncryptionService) {}
 
   async findAll(userId: string): Promise<AddressResponse[]> {
     const addresses = await this.prisma.userAddress.findMany({

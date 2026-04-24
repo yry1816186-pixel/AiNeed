@@ -1,14 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from "class-validator";
+
 import { TryOnStatus } from "../../../../types/prisma-enums";
-import {
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-} from "class-validator";
 
 /**
  * 创建虚拟试衣请求 DTO

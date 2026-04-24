@@ -1,8 +1,12 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CustomizationType, CustomizationStatus, ProductTemplateType } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import {
+  CustomizationType,
+  CustomizationStatus,
+  ProductTemplateType,
+} from "../../../types/prisma-enums";
 
 import { CustomizationService } from "./customization.service";
 import { PODService } from "./pod/pod-service";
@@ -116,9 +120,7 @@ describe("CustomizationService", () => {
 
   describe("createRequest", () => {
     it("应该成功创建定制请求", async () => {
-      mockPrismaService.customizationRequest.create.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.create.mockResolvedValue(mockRequest);
 
       const result = await service.createRequest("test-user-id", {
         type: CustomizationType.tailored,
@@ -127,9 +129,7 @@ describe("CustomizationService", () => {
 
       expect(result.id).toBe("request-id");
       expect(result.status).toBe(CustomizationStatus.draft);
-      expect(
-        mockPrismaService.customizationRequest.create,
-      ).toHaveBeenCalledWith({
+      expect(mockPrismaService.customizationRequest.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           userId: "test-user-id",
           type: CustomizationType.tailored,
@@ -139,9 +139,7 @@ describe("CustomizationService", () => {
     });
 
     it("应该处理可选参数", async () => {
-      mockPrismaService.customizationRequest.create.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.create.mockResolvedValue(mockRequest);
 
       await service.createRequest("test-user-id", {
         type: CustomizationType.tailored,
@@ -151,9 +149,7 @@ describe("CustomizationService", () => {
         preferences: { key: "value" },
       });
 
-      expect(
-        mockPrismaService.customizationRequest.create,
-      ).toHaveBeenCalledWith({
+      expect(mockPrismaService.customizationRequest.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           title: "标题",
           referenceImages: ["img1.jpg"],
@@ -165,9 +161,7 @@ describe("CustomizationService", () => {
 
   describe("submitRequest", () => {
     it("应该成功提交请求", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
       mockPrismaService.customizationRequest.update.mockResolvedValue({
         ...mockRequest,
         status: CustomizationStatus.submitted,
@@ -181,17 +175,15 @@ describe("CustomizationService", () => {
     it("应该抛出 NotFoundException 当请求不存在", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.submitRequest("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.submitRequest("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("getUserRequests", () => {
     it("应该返回用户请求列表", async () => {
-      mockPrismaService.customizationRequest.findMany.mockResolvedValue([
-        mockRequest,
-      ]);
+      mockPrismaService.customizationRequest.findMany.mockResolvedValue([mockRequest]);
       mockPrismaService.customizationRequest.count.mockResolvedValue(1);
 
       const result = await service.getUserRequests("test-user-id");
@@ -204,19 +196,14 @@ describe("CustomizationService", () => {
       mockPrismaService.customizationRequest.findMany.mockResolvedValue([]);
       mockPrismaService.customizationRequest.count.mockResolvedValue(0);
 
-      await service.getUserRequests(
-        "test-user-id",
-        CustomizationStatus.submitted,
-      );
+      await service.getUserRequests("test-user-id", CustomizationStatus.submitted);
 
-      expect(
-        mockPrismaService.customizationRequest.findMany,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.customizationRequest.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             status: CustomizationStatus.submitted,
           }),
-        }),
+        })
       );
     });
 
@@ -224,12 +211,7 @@ describe("CustomizationService", () => {
       mockPrismaService.customizationRequest.findMany.mockResolvedValue([]);
       mockPrismaService.customizationRequest.count.mockResolvedValue(50);
 
-      const result = await service.getUserRequests(
-        "test-user-id",
-        undefined,
-        2,
-        10,
-      );
+      const result = await service.getUserRequests("test-user-id", undefined, 2, 10);
 
       expect(result.page).toBe(2);
       expect(result.limit).toBe(10);
@@ -239,9 +221,7 @@ describe("CustomizationService", () => {
 
   describe("getRequestById", () => {
     it("应该返回请求详情", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
 
       const result = await service.getRequestById("request-id", "test-user-id");
 
@@ -252,10 +232,7 @@ describe("CustomizationService", () => {
     it("应该返回 null 当请求不存在", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      const result = await service.getRequestById(
-        "non-existent-id",
-        "test-user-id",
-      );
+      const result = await service.getRequestById("non-existent-id", "test-user-id");
 
       expect(result).toBeNull();
     });
@@ -263,9 +240,7 @@ describe("CustomizationService", () => {
 
   describe("updateRequest", () => {
     it("应该成功更新请求", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
       mockPrismaService.customizationRequest.update.mockResolvedValue({
         ...mockRequest,
         title: "新标题",
@@ -284,30 +259,22 @@ describe("CustomizationService", () => {
       await expect(
         service.updateRequest("request-id", "test-user-id", {
           title: "新标题",
-        }),
+        })
       ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe("selectQuote", () => {
     it("应该成功选择报价", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
-      mockPrismaService.customizationQuote.findUnique.mockResolvedValue(
-        mockQuote,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
+      mockPrismaService.customizationQuote.findUnique.mockResolvedValue(mockQuote);
       mockPrismaService.customizationRequest.update.mockResolvedValue({
         ...mockRequest,
         selectedQuoteId: "quote-id",
         status: CustomizationStatus.confirmed,
       });
 
-      const result = await service.selectQuote(
-        "request-id",
-        "test-user-id",
-        "quote-id",
-      );
+      const result = await service.selectQuote("request-id", "test-user-id", "quote-id");
 
       expect(result.selectedQuoteId).toBe("quote-id");
       expect(result.status).toBe(CustomizationStatus.confirmed);
@@ -316,28 +283,24 @@ describe("CustomizationService", () => {
     it("应该抛出 NotFoundException 当请求不存在", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.selectQuote("request-id", "test-user-id", "quote-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.selectQuote("request-id", "test-user-id", "quote-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该抛出 NotFoundException 当报价不存在", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
       mockPrismaService.customizationQuote.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.selectQuote("request-id", "test-user-id", "quote-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.selectQuote("request-id", "test-user-id", "quote-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("cancelRequest", () => {
     it("应该成功取消请求", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
       mockPrismaService.customizationRequest.update.mockResolvedValue({
         ...mockRequest,
         status: CustomizationStatus.cancelled,
@@ -351,17 +314,15 @@ describe("CustomizationService", () => {
     it("应该抛出 NotFoundException 当请求不存在或状态不允许取消", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.cancelRequest("request-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.cancelRequest("request-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("createDesign", () => {
     it("应该成功创建设计", async () => {
-      mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(
-        mockTemplate,
-      );
+      mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(mockTemplate);
       mockPrismaService.customizationDesign.create.mockResolvedValue(mockDesign);
 
       const result = await service.createDesign("test-user-id", "template-1", {
@@ -369,9 +330,7 @@ describe("CustomizationService", () => {
       });
 
       expect(result.id).toBe("design-1");
-      expect(
-        mockPrismaService.customizationDesign.create,
-      ).toHaveBeenCalledWith({
+      expect(mockPrismaService.customizationDesign.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           userId: "test-user-id",
           templateId: "template-1",
@@ -383,36 +342,28 @@ describe("CustomizationService", () => {
       mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.createDesign("test-user-id", "nonexistent", { layers: [] }),
+        service.createDesign("test-user-id", "nonexistent", { layers: [] })
       ).rejects.toThrow("模板不存在");
     });
   });
 
   describe("updateDesign", () => {
     it("应该成功更新设计画布数据", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
       mockPrismaService.customizationDesign.update.mockResolvedValue({
         ...mockDesign,
         canvasData: { layers: ["updated"] },
       });
 
-      const result = await service.updateDesign(
-        "design-1",
-        "test-user-id",
-        { layers: ["updated"] },
-      );
+      const result = await service.updateDesign("design-1", "test-user-id", {
+        layers: ["updated"],
+      });
 
-      expect(
-        mockPrismaService.customizationDesign.update,
-      ).toHaveBeenCalled();
+      expect(mockPrismaService.customizationDesign.update).toHaveBeenCalled();
     });
 
     it("应该成功更新设计图层", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
       mockPrismaService.customizationDesignLayer.deleteMany.mockResolvedValue({
         count: 0,
       });
@@ -455,37 +406,26 @@ describe("CustomizationService", () => {
         },
       ];
 
-      await service.updateDesign(
-        "design-1",
-        "test-user-id",
-        { layers: [] },
-        layers,
-      );
+      await service.updateDesign("design-1", "test-user-id", { layers: [] }, layers);
 
-      expect(
-        mockPrismaService.customizationDesignLayer.deleteMany,
-      ).toHaveBeenCalledWith({
+      expect(mockPrismaService.customizationDesignLayer.deleteMany).toHaveBeenCalledWith({
         where: { designId: "design-1" },
       });
-      expect(
-        mockPrismaService.customizationDesignLayer.createMany,
-      ).toHaveBeenCalled();
+      expect(mockPrismaService.customizationDesignLayer.createMany).toHaveBeenCalled();
     });
 
     it("设计不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationDesign.findFirst.mockResolvedValue(null);
 
       await expect(
-        service.updateDesign("nonexistent", "test-user-id", { layers: [] }),
+        service.updateDesign("nonexistent", "test-user-id", { layers: [] })
       ).rejects.toThrow("设计不存在");
     });
   });
 
   describe("getDesign", () => {
     it("应该返回设计详情", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
 
       const result = await service.getDesign("design-1", "test-user-id");
 
@@ -495,9 +435,7 @@ describe("CustomizationService", () => {
     it("设计不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationDesign.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.getDesign("nonexistent", "test-user-id"),
-      ).rejects.toThrow("设计不存在");
+      await expect(service.getDesign("nonexistent", "test-user-id")).rejects.toThrow("设计不存在");
     });
   });
 
@@ -505,15 +443,10 @@ describe("CustomizationService", () => {
     it("应该成功计算报价", async () => {
       const designWithLayers = {
         ...mockDesign,
-        layers: [
-          { type: "text" },
-          { type: "image" },
-        ],
+        layers: [{ type: "text" }, { type: "image" }],
         template: mockTemplate,
       };
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        designWithLayers,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(designWithLayers);
       mockPrismaService.customizationQuote.create.mockResolvedValue({
         id: "quote-1",
         price: 150,
@@ -521,11 +454,7 @@ describe("CustomizationService", () => {
         estimatedDays: 3,
       });
 
-      const result = await service.calculateQuote(
-        "design-1",
-        "test-user-id",
-        "front",
-      );
+      const result = await service.calculateQuote("design-1", "test-user-id", "front");
 
       expect(result).toHaveProperty("pricing");
       expect(result).toHaveProperty("quoteId");
@@ -535,20 +464,16 @@ describe("CustomizationService", () => {
     it("设计不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationDesign.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.calculateQuote("nonexistent", "test-user-id"),
-      ).rejects.toThrow("设计不存在");
+      await expect(service.calculateQuote("nonexistent", "test-user-id")).rejects.toThrow(
+        "设计不存在"
+      );
     });
   });
 
   describe("createCustomizationFromDesign", () => {
     it("应该成功从设计创建定制请求", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
-      mockPrismaService.customizationQuote.findUnique.mockResolvedValue(
-        mockQuote,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
+      mockPrismaService.customizationQuote.findUnique.mockResolvedValue(mockQuote);
       mockPrismaService.customizationRequest.create.mockResolvedValue({
         id: "new-request-id",
         userId: "test-user-id",
@@ -566,18 +491,16 @@ describe("CustomizationService", () => {
       const result = await service.createCustomizationFromDesign(
         "test-user-id",
         "design-1",
-        "quote-id",
+        "quote-id"
       );
 
-      expect(
-        mockPrismaService.customizationRequest.create,
-      ).toHaveBeenCalledWith(
+      expect(mockPrismaService.customizationRequest.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             type: CustomizationType.pod,
             designId: "design-1",
           }),
-        }),
+        })
       );
     });
 
@@ -585,35 +508,23 @@ describe("CustomizationService", () => {
       mockPrismaService.customizationDesign.findFirst.mockResolvedValue(null);
 
       await expect(
-        service.createCustomizationFromDesign(
-          "test-user-id",
-          "nonexistent",
-          "quote-id",
-        ),
+        service.createCustomizationFromDesign("test-user-id", "nonexistent", "quote-id")
       ).rejects.toThrow("设计不存在");
     });
 
     it("报价不存在时应该抛出 NotFoundException", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
       mockPrismaService.customizationQuote.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.createCustomizationFromDesign(
-          "test-user-id",
-          "design-1",
-          "nonexistent",
-        ),
+        service.createCustomizationFromDesign("test-user-id", "design-1", "nonexistent")
       ).rejects.toThrow("报价不存在");
     });
   });
 
   describe("generatePreview", () => {
     it("应该成功生成预览", async () => {
-      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(
-        mockDesign,
-      );
+      mockPrismaService.customizationDesign.findFirst.mockResolvedValue(mockDesign);
       mockPrismaService.customizationDesign.update.mockResolvedValue({
         ...mockDesign,
         previewUrl: "/previews/design-1.png",
@@ -628,17 +539,15 @@ describe("CustomizationService", () => {
     it("设计不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationDesign.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.generatePreview("nonexistent", "test-user-id"),
-      ).rejects.toThrow("设计不存在");
+      await expect(service.generatePreview("nonexistent", "test-user-id")).rejects.toThrow(
+        "设计不存在"
+      );
     });
   });
 
   describe("getTemplateById", () => {
     it("应该返回模板详情", async () => {
-      mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(
-        mockTemplate,
-      );
+      mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(mockTemplate);
 
       const result = await service.getTemplateById("template-1");
 
@@ -648,9 +557,7 @@ describe("CustomizationService", () => {
     it("模板不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationTemplate.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getTemplateById("nonexistent"),
-      ).rejects.toThrow("模板不存在");
+      await expect(service.getTemplateById("nonexistent")).rejects.toThrow("模板不存在");
     });
   });
 
@@ -662,31 +569,21 @@ describe("CustomizationService", () => {
         selectedQuoteId: "quote-id",
         quotes: [mockQuote],
       };
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        confirmedRequest,
-      );
-      mockPrismaService.customizationRequest.update.mockResolvedValue(
-        confirmedRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(confirmedRequest);
+      mockPrismaService.customizationRequest.update.mockResolvedValue(confirmedRequest);
 
-      const result = await service.confirmAndPay(
-        "request-id",
-        "test-user-id",
-        "alipay",
-      );
+      const result = await service.confirmAndPay("request-id", "test-user-id", "alipay");
 
       expect(result).toHaveProperty("paymentId");
       expect(result).toHaveProperty("paymentMethod", "alipay");
     });
 
     it("非 confirmed 状态不允许付款", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(
-        mockRequest,
-      );
+      mockPrismaService.customizationRequest.findFirst.mockResolvedValue(mockRequest);
 
-      await expect(
-        service.confirmAndPay("request-id", "test-user-id", "alipay"),
-      ).rejects.toThrow("需求状态不允许付款");
+      await expect(service.confirmAndPay("request-id", "test-user-id", "alipay")).rejects.toThrow(
+        "需求状态不允许付款"
+      );
     });
 
     it("未选择报价时不允许付款", async () => {
@@ -697,17 +594,17 @@ describe("CustomizationService", () => {
         quotes: [],
       });
 
-      await expect(
-        service.confirmAndPay("request-id", "test-user-id", "alipay"),
-      ).rejects.toThrow("请先选择报价");
+      await expect(service.confirmAndPay("request-id", "test-user-id", "alipay")).rejects.toThrow(
+        "请先选择报价"
+      );
     });
 
     it("需求不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.confirmAndPay("nonexistent", "test-user-id", "alipay"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.confirmAndPay("nonexistent", "test-user-id", "alipay")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -725,9 +622,7 @@ describe("CustomizationService", () => {
       });
 
       expect(result.status).toBe("production_started");
-      expect(mockPODService.submitToProduction).toHaveBeenCalledWith(
-        "request-id",
-      );
+      expect(mockPODService.submitToProduction).toHaveBeenCalledWith("request-id");
     });
 
     it("支付失败时应该返回失败状态", async () => {
@@ -741,9 +636,7 @@ describe("CustomizationService", () => {
     });
 
     it("POD 提交失败时应该返回待处理状态", async () => {
-      mockPODService.submitToProduction.mockRejectedValue(
-        new Error("POD 服务不可用"),
-      );
+      mockPODService.submitToProduction.mockRejectedValue(new Error("POD 服务不可用"));
 
       const result = await service.handlePaymentCallback("request-id", {
         success: true,
@@ -767,15 +660,10 @@ describe("CustomizationService", () => {
         status: "in_production",
       });
 
-      const result = await service.getProductionStatus(
-        "request-id",
-        "test-user-id",
-      );
+      const result = await service.getProductionStatus("request-id", "test-user-id");
 
       expect(result.podStatus).toBeDefined();
-      expect(mockPODService.checkProductionStatus).toHaveBeenCalledWith(
-        "request-id",
-      );
+      expect(mockPODService.checkProductionStatus).toHaveBeenCalledWith("request-id");
     });
 
     it("没有 POD 订单时应该返回当前状态", async () => {
@@ -784,10 +672,7 @@ describe("CustomizationService", () => {
         podOrderId: null,
       });
 
-      const result = await service.getProductionStatus(
-        "request-id",
-        "test-user-id",
-      );
+      const result = await service.getProductionStatus("request-id", "test-user-id");
 
       expect(result).not.toHaveProperty("podStatus");
     });
@@ -795,9 +680,9 @@ describe("CustomizationService", () => {
     it("需求不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.getProductionStatus("nonexistent", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getProductionStatus("nonexistent", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("POD 查询失败时应该返回当前状态", async () => {
@@ -808,14 +693,9 @@ describe("CustomizationService", () => {
         carrier: null,
         estimatedDeliveryDate: null,
       });
-      mockPODService.checkProductionStatus.mockRejectedValue(
-        new Error("POD 服务不可用"),
-      );
+      mockPODService.checkProductionStatus.mockRejectedValue(new Error("POD 服务不可用"));
 
-      const result = await service.getProductionStatus(
-        "request-id",
-        "test-user-id",
-      );
+      const result = await service.getProductionStatus("request-id", "test-user-id");
 
       expect(result).not.toHaveProperty("podStatus");
     });
@@ -832,33 +712,30 @@ describe("CustomizationService", () => {
         status: CustomizationStatus.completed,
       });
 
-      const result = await service.confirmDelivery(
-        "request-id",
-        "test-user-id",
-      );
+      const result = await service.confirmDelivery("request-id", "test-user-id");
 
       expect(result.status).toBe(CustomizationStatus.completed);
     });
 
     it("非 shipped 状态不允许确认收货", async () => {
-      mockPrismaService.customizationRequest.findFirst.mockImplementation(
-        ({ where }) => {
-          if (where.status === CustomizationStatus.shipped) {return null;}
-          return mockRequest;
-        },
-      );
+      mockPrismaService.customizationRequest.findFirst.mockImplementation(({ where }) => {
+        if (where.status === CustomizationStatus.shipped) {
+          return null;
+        }
+        return mockRequest;
+      });
 
-      await expect(
-        service.confirmDelivery("request-id", "test-user-id"),
-      ).rejects.toThrow("定制需求不存在或状态不允许确认收货");
+      await expect(service.confirmDelivery("request-id", "test-user-id")).rejects.toThrow(
+        "定制需求不存在或状态不允许确认收货"
+      );
     });
 
     it("需求不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.customizationRequest.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.confirmDelivery("nonexistent", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.confirmDelivery("nonexistent", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 });

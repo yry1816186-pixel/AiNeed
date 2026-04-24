@@ -1,18 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
 import { CircuitBreakerModule } from "../../../common/circuit-breaker";
 import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { RedisModule } from "../../../common/redis/redis.module";
+import { WeatherModule } from "../../fashion/weather/weather.module";
+import { RecommendationsModule } from "../../platform/recommendations/recommendations.module";
 import { AIModule } from "../ai/ai.module";
 import { PhotosModule } from "../photos/photos.module";
-import { RecommendationsModule } from "../../platform/recommendations/recommendations.module";
-import { WeatherModule } from "../../fashion/weather/weather.module";
 
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";
+import { BodyPositiveFilter } from "./body-positive.filter";
 import { DecisionEngineService } from "./decision-engine.service";
+import { DialogStateService } from "./dialog-state.service";
 import { LlmProviderService } from "./llm-provider.service";
 import { NlSlotExtractorService } from "./nl-slot-extractor.service";
 import { AiStylistChatService } from "./services/chat.service";
@@ -28,7 +29,15 @@ import { WeatherIntegrationService } from "./services/weather-integration.servic
 import { SystemContextService } from "./system-context.service";
 
 @Module({
-  imports: [RecommendationsModule, PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
+  imports: [
+    RecommendationsModule,
+    PhotosModule,
+    AIModule,
+    RedisModule,
+    CircuitBreakerModule,
+    PrismaModule,
+    WeatherModule,
+  ],
   controllers: [AiStylistController],
   providers: [
     AiStylistService,
@@ -38,7 +47,9 @@ import { SystemContextService } from "./system-context.service";
     AiStylistRecommendationService,
     ProfileEventSubscriberService,
     AgentToolsService,
+    BodyPositiveFilter,
     DecisionEngineService,
+    DialogStateService,
     LlmProviderService,
     NlSlotExtractorService,
     SystemContextService,
@@ -55,7 +66,9 @@ import { SystemContextService } from "./system-context.service";
     AiStylistContextService,
     AiStylistRecommendationService,
     AgentToolsService,
+    BodyPositiveFilter,
     DecisionEngineService,
+    DialogStateService,
     LlmProviderService,
     SystemContextService,
     OutfitPlanService,

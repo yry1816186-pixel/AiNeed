@@ -1,12 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-import { NotificationType } from "../../../../types/prisma-enums";
-
-import { NotificationTemplateService } from "../services/notification-template.service";
-import { NotificationService } from "../services/notification.service";
-import { PushNotificationService } from "../services/push-notification.service";
-
 import {
   ORDER_EVENTS,
   OrderPaymentEvent,
@@ -14,7 +7,12 @@ import {
   OrderDeliveredEvent,
   OrderCancelledEvent,
   OrderRefundEvent,
-} from '@xuno/types';
+} from "@xuno/types";
+
+import { NotificationType } from "../../../../types/prisma-enums";
+import { NotificationTemplateService } from "../services/notification-template.service";
+import { NotificationService } from "../services/notification.service";
+import { PushNotificationService } from "../services/push-notification.service";
 
 /**
  * Listener for order-related events.
@@ -27,7 +25,7 @@ export class OrderEventNotificationListener {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly templateService: NotificationTemplateService,
-    private readonly pushService: PushNotificationService,
+    private readonly pushService: PushNotificationService
   ) {}
 
   @OnEvent(ORDER_EVENTS.ORDER_PAYMENT_SUCCESS)
@@ -94,7 +92,7 @@ export class OrderEventNotificationListener {
   private async sendTemplatedNotification(
     userId: string,
     templateKey: string,
-    variables: Record<string, string>,
+    variables: Record<string, string>
   ) {
     const rendered = this.templateService.render(templateKey, variables);
 
@@ -114,7 +112,7 @@ export class OrderEventNotificationListener {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to send in-app notification: ${error instanceof Error ? error.message : "Unknown"}`,
+        `Failed to send in-app notification: ${error instanceof Error ? error.message : "Unknown"}`
       );
     }
 
@@ -132,7 +130,7 @@ export class OrderEventNotificationListener {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to send push notification: ${error instanceof Error ? error.message : "Unknown"}`,
+        `Failed to send push notification: ${error instanceof Error ? error.message : "Unknown"}`
       );
     }
   }
@@ -140,9 +138,7 @@ export class OrderEventNotificationListener {
   /**
    * Map template key to NotificationType enum value.
    */
-  private mapTemplateKeyToNotificationType(
-    templateKey: string,
-  ): NotificationType {
+  private mapTemplateKeyToNotificationType(templateKey: string): NotificationType {
     const mapping: Record<string, NotificationType> = {
       order_payment_success: "system_update" as NotificationType,
       order_shipped: "system_update" as NotificationType,

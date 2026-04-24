@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { PhotoType } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsEnum,
@@ -17,6 +15,8 @@ import {
   Min,
   Max,
 } from "class-validator";
+
+import { PhotoType } from "../../../../types/prisma-enums";
 
 /**
  * 获取同类商品替代列表查询参数 DTO

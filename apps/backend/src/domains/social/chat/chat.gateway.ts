@@ -18,19 +18,20 @@ import {
   ConnectedSocket,
   MessageBody,
 } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
 import Redis from "ioredis";
+import { Server, Socket } from "socket.io";
 
-import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { EventBusService } from "../../../modules/ws/services/event-bus.service";
-import { ChatService } from "./chat.service";
-import { SenderTypeDto, MessageTypeDto } from "./dto";
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
 import {
   CHAT_EVENTS,
   ChatMessageCreatedPayload,
   ChatMessageReadPayload,
 } from "../../../modules/ws/events";
+import { EventBusService } from "../../../modules/ws/services/event-bus.service";
+
+import { ChatService } from "./chat.service";
+import { SenderTypeDto, MessageTypeDto } from "./dto";
 
 interface ChatUserConnection {
   socketId: string;
@@ -161,7 +162,9 @@ export class ChatGateway
   @SubscribeMessage("chat:join")
   async handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() data: { roomId: string }) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) {
+      return;
+    }
 
     // 验证用户有权访问此聊天室
     try {
@@ -204,12 +207,16 @@ export class ChatGateway
     }
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) {
+      return;
+    }
 
     try {
       // 确定发送者类型
       const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-      if (!room) {throw new Error("Room not found");}
+      if (!room) {
+        throw new Error("Room not found");
+      }
 
       const senderType =
         room.consultantId &&
@@ -247,10 +254,14 @@ export class ChatGateway
     @MessageBody() data: { roomId: string; isTyping: boolean }
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) {
+      return;
+    }
 
     const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-    if (!room) {return;}
+    if (!room) {
+      return;
+    }
 
     const senderType =
       room.consultantId &&
@@ -273,7 +284,9 @@ export class ChatGateway
     @MessageBody() data: { roomId: string; lastMessageId?: string }
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) {
+      return;
+    }
 
     try {
       await this.chatService.markAsRead(connection.userId, data.roomId, {
@@ -303,14 +316,18 @@ export class ChatGateway
   private extractUserId(client: Socket): string | null {
     const auth = client.handshake.auth;
     const token = auth?.token;
-    if (!token) {return null;}
+    if (!token) {
+      return null;
+    }
     return this.validateToken(token as string);
   }
 
   private validateToken(token: string): string | null {
     try {
       const jwtSecret = this.configService.get<string>("JWT_SECRET");
-      if (!jwtSecret) {return null;}
+      if (!jwtSecret) {
+        return null;
+      }
       const payload = this.jwtService.verify(token, { secret: jwtSecret });
       return payload.sub || payload.userId || null;
     } catch {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomUUID } from "crypto";
 
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";

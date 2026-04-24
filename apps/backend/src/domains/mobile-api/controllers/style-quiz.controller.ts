@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Request, UseGuards, Inject } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from "@nestjs/swagger";
 
-import { AuthenticatedRequest } from "../../../common/types/auth.types";
-import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
-import { StyleQuizService } from "../../fashion/style-assessment/quiz/style-quiz.service";
-import { BatchSubmitAnswersDto } from "../../fashion/style-assessment/quiz/dto/style-quiz.dto";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { AuthenticatedRequest } from "../../../common/types/auth.types";
+import { BatchSubmitAnswersDto } from "../../fashion/style-assessment/quiz/dto/style-quiz.dto";
+import { StyleQuizService } from "../../fashion/style-assessment/quiz/style-quiz.service";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 @ApiTags("StyleQuiz (Mobile)")
 @ApiBearerAuth()

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
+
 import { FaceShape, Gender } from "../../../../types/prisma-enums";
 
 export interface HairRecommendation {
@@ -13,14 +13,17 @@ export class HairAnalysisService {
   /**
    * 发型推荐（基于脸型）
    */
-  async recommendHairstyle(faceShape: FaceShape, gender: Gender): Promise<HairRecommendation[]> {
+  async recommendHairstyle(
+    faceShape: FaceShape,
+    gender?: Gender | null
+  ): Promise<HairRecommendation[]> {
     const recommendations = this.getRecommendationsByFaceShape(faceShape, gender);
     return recommendations;
   }
 
   private getRecommendationsByFaceShape(
     faceShape: FaceShape,
-    gender: Gender
+    gender?: Gender | null
   ): HairRecommendation[] {
     const maleRecommendations: Record<FaceShape, HairRecommendation[]> = {
       oval: [
@@ -114,8 +117,9 @@ export class HairAnalysisService {
       ],
     };
 
-    return gender === "male"
-      ? (maleRecommendations[faceShape] ?? maleRecommendations.oval)
-      : (femaleRecommendations[faceShape] ?? femaleRecommendations.oval);
+    if (gender === "male") {
+      return maleRecommendations[faceShape] ?? maleRecommendations.oval;
+    }
+    return femaleRecommendations[faceShape] ?? femaleRecommendations.oval;
   }
 }

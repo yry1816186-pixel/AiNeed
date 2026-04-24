@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -58,14 +57,8 @@ export class TransformerEncoderService {
       numHeads: this.configService.get<number>("TRANSFORMER_NUM_HEADS", 4),
       numLayers: this.configService.get<number>("TRANSFORMER_NUM_LAYERS", 2),
       dropout: this.configService.get<number>("TRANSFORMER_DROPOUT", 0.1),
-      maxSequenceLength: this.configService.get<number>(
-        "TRANSFORMER_MAX_SEQ_LEN",
-        50,
-      ),
-      feedForwardSize: this.configService.get<number>(
-        "TRANSFORMER_FF_SIZE",
-        256,
-      ),
+      maxSequenceLength: this.configService.get<number>("TRANSFORMER_MAX_SEQ_LEN", 50),
+      feedForwardSize: this.configService.get<number>("TRANSFORMER_FF_SIZE", 256),
     };
 
     this.initializeTransformer();
@@ -76,7 +69,7 @@ export class TransformerEncoderService {
 
     this.positionEmbeddings = this.createPositionEmbeddings(
       this.config.maxSequenceLength,
-      this.config.hiddenSize,
+      this.config.hiddenSize
     );
 
     this.layers = [];
@@ -86,14 +79,11 @@ export class TransformerEncoderService {
 
     this.isInitialized = true;
     this.logger.log(
-      `Transformer initialized: ${this.config.numLayers} layers, ${this.config.numHeads} heads`,
+      `Transformer initialized: ${this.config.numLayers} layers, ${this.config.numHeads} heads`
     );
   }
 
-  private createPositionEmbeddings(
-    maxLen: number,
-    hiddenSize: number,
-  ): number[][] {
+  private createPositionEmbeddings(maxLen: number, hiddenSize: number): number[][] {
     const embeddings: number[][] = [];
 
     for (let pos = 0; pos < maxLen; pos++) {
@@ -138,10 +128,7 @@ export class TransformerEncoderService {
         query: this.initRandomMatrix(headDim, hiddenSize),
         key: this.initRandomMatrix(headDim, hiddenSize),
         value: this.initRandomMatrix(headDim, hiddenSize),
-        output: this.initRandomMatrix(
-          hiddenSize,
-          headDim * this.config.numHeads,
-        ),
+        output: this.initRandomMatrix(hiddenSize, headDim * this.config.numHeads),
       });
     }
 
@@ -150,15 +137,9 @@ export class TransformerEncoderService {
 
   private initFeedForward(): FeedForwardNetwork {
     return {
-      weights1: this.initRandomMatrix(
-        this.config.feedForwardSize,
-        this.config.hiddenSize,
-      ),
+      weights1: this.initRandomMatrix(this.config.feedForwardSize, this.config.hiddenSize),
       bias1: new Array(this.config.feedForwardSize).fill(0),
-      weights2: this.initRandomMatrix(
-        this.config.hiddenSize,
-        this.config.feedForwardSize,
-      ),
+      weights2: this.initRandomMatrix(this.config.hiddenSize, this.config.feedForwardSize),
       bias2: new Array(this.config.hiddenSize).fill(0),
     };
   }
@@ -190,10 +171,7 @@ export class TransformerEncoderService {
     return new Array(length).fill(0);
   }
 
-  private createZeroMatrix(
-    rows: number,
-    cols: number = this.config.hiddenSize,
-  ): number[][] {
+  private createZeroMatrix(rows: number, cols: number = this.config.hiddenSize): number[][] {
     return Array.from({ length: rows }, () => this.createZeroVector(cols));
   }
 
@@ -240,25 +218,15 @@ export class TransformerEncoderService {
   private applyTransformerLayer(
     input: number[][],
     layer: TransformerLayer,
-    mask: number[][],
+    mask: number[][]
   ): number[][] {
-    const attentionOutput = this.applyMultiHeadAttention(
-      input,
-      layer.attention,
-      mask,
-    );
+    const attentionOutput = this.applyMultiHeadAttention(input, layer.attention, mask);
 
-    let output = this.applyLayerNorm(
-      this.addMatrices(input, attentionOutput),
-      layer.layerNorm1,
-    );
+    let output = this.applyLayerNorm(this.addMatrices(input, attentionOutput), layer.layerNorm1);
 
     const ffOutput = this.applyFeedForward(output, layer.feedForward);
 
-    output = this.applyLayerNorm(
-      this.addMatrices(output, ffOutput),
-      layer.layerNorm2,
-    );
+    output = this.applyLayerNorm(this.addMatrices(output, ffOutput), layer.layerNorm2);
 
     return output;
   }
@@ -266,7 +234,7 @@ export class TransformerEncoderService {
   private applyMultiHeadAttention(
     input: number[][],
     attention: MultiHeadAttention,
-    mask: number[][],
+    mask: number[][]
   ): number[][] {
     const seqLen = input.length;
     const headOutputs: number[][][] = [];
@@ -282,11 +250,7 @@ export class TransformerEncoderService {
       const keys = this.matmul(input, weights.key);
       const values = this.matmul(input, weights.value);
 
-      const scores = this.computeAttentionScores(
-        queries,
-        keys,
-        attention.headDim,
-      );
+      const scores = this.computeAttentionScores(queries, keys, attention.headDim);
 
       const maskedScores = this.applyMask(scores, mask);
 
@@ -309,7 +273,7 @@ export class TransformerEncoderService {
   private computeAttentionScores(
     queries: number[][],
     keys: number[][],
-    headDim: number,
+    headDim: number
   ): number[][] {
     const seqLen = queries.length;
     const scores: number[][] = [];
@@ -372,41 +336,27 @@ export class TransformerEncoderService {
     return result;
   }
 
-  private applyFeedForward(
-    input: number[][],
-    ff: FeedForwardNetwork,
-  ): number[][] {
+  private applyFeedForward(input: number[][], ff: FeedForwardNetwork): number[][] {
     const hidden = this.matmul(input, ff.weights1).map((row) =>
-      row.map((val, i) => this.gelu(val + (ff.bias1[i] ?? 0))),
+      row.map((val, i) => this.gelu(val + (ff.bias1[i] ?? 0)))
     );
 
     return this.matmul(hidden, ff.weights2).map((row) =>
-      row.map((val, i) => val + (ff.bias2[i] ?? 0)),
+      row.map((val, i) => val + (ff.bias2[i] ?? 0))
     );
   }
 
   private gelu(x: number): number {
-    return (
-      0.5 *
-      x *
-      (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * Math.pow(x, 3))))
-    );
+    return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * Math.pow(x, 3))));
   }
 
-  private applyLayerNorm(
-    input: number[][],
-    ln: LayerNormalization,
-  ): number[][] {
+  private applyLayerNorm(input: number[][], ln: LayerNormalization): number[][] {
     return input.map((row) => {
       const mean = row.reduce((a, b) => a + b, 0) / row.length;
-      const variance =
-        row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+      const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
       const std = Math.sqrt(variance + ln.epsilon);
 
-      return row.map(
-        (val, i) =>
-          (ln.gamma[i] ?? 1) * ((val - mean) / std) + (ln.beta[i] ?? 0),
-      );
+      return row.map((val, i) => (ln.gamma[i] ?? 1) * ((val - mean) / std) + (ln.beta[i] ?? 0));
     });
   }
 
@@ -434,7 +384,9 @@ export class TransformerEncoderService {
 
   private transpose(matrix: number[][]): number[][] {
     const firstRow = matrix[0];
-    if (!firstRow) {return [];}
+    if (!firstRow) {
+      return [];
+    }
     const result: number[][] = [];
 
     for (let j = 0; j < firstRow.length; j++) {

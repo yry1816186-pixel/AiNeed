@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
@@ -64,13 +63,13 @@ export class CreateProductDto {
   @MaxLength(20, { message: "最多支持20种尺码" })
   sizes!: string[];
 
-  @ApiProperty({ description: "价格（元）", example: 199.00 })
+  @ApiProperty({ description: "价格（元）", example: 199.0 })
   @IsNumber({}, { message: "价格必须是数字" })
   @Min(0, { message: "价格不能为负数" })
   @Max(9999999, { message: "价格超出范围" })
   price!: number;
 
-  @ApiPropertyOptional({ description: "原价（元）", example: 299.00 })
+  @ApiPropertyOptional({ description: "原价（元）", example: 299.0 })
   @IsOptional()
   @IsNumber({}, { message: "原价必须是数字" })
   @Min(0, { message: "原价不能为负数" })
@@ -136,19 +135,22 @@ export class UpdateProductDto {
   @IsString({ each: true, message: "尺码必须是字符串数组" })
   sizes?: string[];
 
-  @ApiPropertyOptional({ description: "价格（元）", example: 199.00 })
+  @ApiPropertyOptional({ description: "价格（元）", example: 199.0 })
   @IsOptional()
   @IsNumber({}, { message: "价格必须是数字" })
   @Min(0, { message: "价格不能为负数" })
   price?: number;
 
-  @ApiPropertyOptional({ description: "原价（元）", example: 299.00 })
+  @ApiPropertyOptional({ description: "原价（元）", example: 299.0 })
   @IsOptional()
   @IsNumber({}, { message: "原价必须是数字" })
   @Min(0, { message: "原价不能为负数" })
   originalPrice?: number;
 
-  @ApiPropertyOptional({ description: "商品图片URL列表", example: ["https://example.com/img1.jpg"] })
+  @ApiPropertyOptional({
+    description: "商品图片URL列表",
+    example: ["https://example.com/img1.jpg"],
+  })
   @IsOptional()
   @IsArray()
   @IsUrl({}, { each: true, message: "图片必须是有效的URL" })
@@ -185,7 +187,11 @@ export class ProductQueryDto {
   @Min(0)
   offset?: number;
 
-  @ApiPropertyOptional({ description: "商品状态", example: "active", enum: ["draft", "active", "inactive"] })
+  @ApiPropertyOptional({
+    description: "商品状态",
+    example: "active",
+    enum: ["draft", "active", "inactive"],
+  })
   @IsOptional()
   @IsIn(["draft", "active", "inactive"])
   status?: ProductStatus;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 

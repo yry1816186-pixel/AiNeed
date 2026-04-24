@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Body,
   Controller,
@@ -36,7 +35,10 @@ export class PhotoQualityController {
   constructor(private readonly photoQualityService: PhotoQualityService) {}
 
   @Post("quality-check")
-  @ApiOperation({ summary: "上传图片质量检测", description: "上传照片进行质量分析，返回清晰度、亮度、构图等维度的评分和改进建议。" })
+  @ApiOperation({
+    summary: "上传图片质量检测",
+    description: "上传照片进行质量分析，返回清晰度、亮度、构图等维度的评分和改进建议。",
+  })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -51,16 +53,16 @@ export class PhotoQualityController {
   @ApiResponse({ status: 400, description: "请上传图片文件" })
   @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   @UseInterceptors(FileInterceptor("file"))
-  async qualityCheck(
-    @CurrentUser("id") userId: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async qualityCheck(@CurrentUser("id") userId: string, @UploadedFile() file: Express.Multer.File) {
     this.logger.log(`Quality check requested by user ${userId}`);
     return this.photoQualityService.analyzeQuality(file.buffer);
   }
 
   @Post("enhance")
-  @ApiOperation({ summary: "自动增强照片质量", description: "上传照片进行自动增强处理，可指定需要修复的问题（如亮度、对比度、锐度等）。" })
+  @ApiOperation({
+    summary: "自动增强照片质量",
+    description: "上传照片进行自动增强处理，可指定需要修复的问题（如亮度、对比度、锐度等）。",
+  })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -79,7 +81,7 @@ export class PhotoQualityController {
   async enhance(
     @CurrentUser("id") userId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body("issues") issues?: string[],
+    @Body("issues") issues?: string[]
   ) {
     this.logger.log(`Enhance requested by user ${userId}`);
     const parsedIssues = typeof issues === "string" ? JSON.parse(issues) : issues;

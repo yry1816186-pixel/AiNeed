@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";
@@ -140,18 +140,16 @@ describe("AiStylistController", () => {
 
   const mockItemReplacementService = {
     // getAlternatives returns AlternativeItem[]
-    getAlternatives: jest
-      .fn()
-      .mockResolvedValue([
-        {
-          id: "alt-1",
-          name: "替代商品",
-          category: "tops",
-          imageUrl: "https://example.com/alt.jpg",
-          price: 299,
-          score: 85,
-        },
-      ]),
+    getAlternatives: jest.fn().mockResolvedValue([
+      {
+        id: "alt-1",
+        name: "替代商品",
+        category: "tops",
+        imageUrl: "https://example.com/alt.jpg",
+        price: 299,
+        score: 85,
+      },
+    ]),
     replaceItem: jest.fn().mockResolvedValue({
       success: true,
       message: "替换成功",
@@ -165,16 +163,14 @@ describe("AiStylistController", () => {
       { date: "2026-04-05", sessionCount: 1, hasOutfitPlan: false },
     ]),
     // getSessionsByDate returns ArchivedSession[]
-    getSessionsByDate: jest
-      .fn()
-      .mockResolvedValue([
-        {
-          id: "session-1",
-          status: "completed",
-          hasOutfitPlan: true,
-          createdAt: "2026-04-14T10:00:00Z",
-        },
-      ]),
+    getSessionsByDate: jest.fn().mockResolvedValue([
+      {
+        id: "session-1",
+        status: "completed",
+        hasOutfitPlan: true,
+        createdAt: "2026-04-14T10:00:00Z",
+      },
+    ]),
   };
 
   const mockPresetQuestionsService = {

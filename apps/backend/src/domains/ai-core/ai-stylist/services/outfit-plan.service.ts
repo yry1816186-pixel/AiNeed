@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import type { StylistResolution, StylistOutfitPlan, StylistOutfitItem } from "../types";
@@ -66,11 +65,13 @@ export class OutfitPlanService {
    * 从 weather 槽位字符串解析天气信息
    * 格式示例: "北京 22°C 晴 湿度55% 风速3m/s"
    */
-  private parseWeatherFromSlot(weatherSlot: string): {
-    temperature: number;
-    condition: string;
-    suggestion: string;
-  } | undefined {
+  private parseWeatherFromSlot(weatherSlot: string):
+    | {
+        temperature: number;
+        condition: string;
+        suggestion: string;
+      }
+    | undefined {
     try {
       const tempMatch = weatherSlot.match(/(-?\d+)°C/);
       const conditionMatch = weatherSlot.match(/(?:\d+°C\s+)([\u4e00-\u9fa5]+)/);

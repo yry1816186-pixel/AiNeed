@@ -1,12 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Queue, Job } from 'bullmq';
+import { InjectQueue } from "@nestjs/bullmq";
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
+import { Queue, Job } from "bullmq";
 
-import { RedisService , REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
+import {
+  RedisService,
+  REDIS_KEY_PREFIX,
+  REDIS_KEY_SEPARATOR,
+} from "../../../common/redis/redis.service";
 
-
-import { QueueName } from './queue-config';
+import { QueueName } from "./queue-config";
 
 export interface QueueMetrics {
   queueName: string;
@@ -44,7 +46,7 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
     @InjectQueue(QueueName.VIRTUAL_TRYON) private virtualTryonQueue: Queue,
     @InjectQueue(QueueName.STYLE_ANALYSIS) private styleAnalysisQueue: Queue,
     @InjectQueue(QueueName.WARDROBE_MATCH) private wardrobeMatchQueue: Queue,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {}
 
   onModuleInit() {
@@ -53,7 +55,7 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
         this.logger.error(`Failed to collect metrics: ${err.message}`);
       });
     }, MONITOR_INTERVAL_MS);
-    this.logger.log('Queue monitor started with 30s interval');
+    this.logger.log("Queue monitor started with 30s interval");
   }
 
   onModuleDestroy() {
@@ -61,7 +63,7 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
       clearInterval(this.monitorInterval);
       this.monitorInterval = null;
     }
-    this.logger.log('Queue monitor stopped');
+    this.logger.log("Queue monitor stopped");
   }
 
   async getQueueMetrics(queueName: string): Promise<QueueMetrics> {
@@ -70,7 +72,14 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
       throw new Error(`Queue not found: ${queueName}`);
     }
 
-    const counts = await queue.getJobCounts('active', 'waiting', 'completed', 'failed', 'delayed', 'paused');
+    const counts = await queue.getJobCounts(
+      "active",
+      "waiting",
+      "completed",
+      "failed",
+      "delayed",
+      "paused"
+    );
     return {
       queueName,
       active: counts.active ?? 0,
@@ -90,7 +99,7 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
       queues.map(async (queue) => {
         const metrics = await this.getQueueMetrics(queue.name);
         result[queue.name] = metrics;
-      }),
+      })
     );
 
     return result;
@@ -118,11 +127,15 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
         await job.retry();
         retriedCount++;
       } catch (err) {
-        this.logger.warn(`Failed to retry job ${job.id}: ${err instanceof Error ? err.message : String(err)}`);
+        this.logger.warn(
+          `Failed to retry job ${job.id}: ${err instanceof Error ? err.message : String(err)}`
+        );
       }
     }
 
-    this.logger.log(`Retried ${retriedCount}/${failedJobs.length} failed jobs in queue ${queueName}`);
+    this.logger.log(
+      `Retried ${retriedCount}/${failedJobs.length} failed jobs in queue ${queueName}`
+    );
     return retriedCount;
   }
 
@@ -140,7 +153,7 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
     const dlqKey = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}dlq${REDIS_KEY_SEPARATOR}${queueName}`;
     const deadLetterEntry = JSON.stringify({
       data: job.data,
-      failedReason: job.failedReason ?? 'Unknown',
+      failedReason: job.failedReason ?? "Unknown",
       attemptsMade: job.attemptsMade,
       timestamp: new Date().toISOString(),
     });
@@ -174,8 +187,22 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
 
     for (const queue of queues) {
       try {
-        const counts = await queue.getJobCounts('active', 'waiting', 'completed', 'failed', 'delayed', 'paused');
-        const statusFields = ['active', 'waiting', 'completed', 'failed', 'delayed', 'paused'] as const;
+        const counts = await queue.getJobCounts(
+          "active",
+          "waiting",
+          "completed",
+          "failed",
+          "delayed",
+          "paused"
+        );
+        const statusFields = [
+          "active",
+          "waiting",
+          "completed",
+          "failed",
+          "delayed",
+          "paused",
+        ] as const;
 
         for (const status of statusFields) {
           const field = `${queue.name}:${status}`;
@@ -183,11 +210,13 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
         }
 
         this.logger.debug(
-          `Queue ${queue.name}: active=${counts.active} waiting=${counts.waiting} failed=${counts.failed} delayed=${counts.delayed}`,
+          `Queue ${queue.name}: active=${counts.active} waiting=${counts.waiting} failed=${counts.failed} delayed=${counts.delayed}`
         );
       } catch (err) {
         this.logger.error(
-          `Failed to collect metrics for queue ${queue.name}: ${err instanceof Error ? err.message : String(err)}`,
+          `Failed to collect metrics for queue ${queue.name}: ${
+            err instanceof Error ? err.message : String(err)
+          }`
         );
       }
     }
@@ -197,25 +226,43 @@ export class QueueMonitorService implements OnModuleInit, OnModuleDestroy {
     const queues = this.getAllQueues();
     const lines: string[] = [];
 
-    lines.push('# HELP queue_jobs_total Total number of jobs by status');
-    lines.push('# TYPE queue_jobs_total gauge');
+    lines.push("# HELP queue_jobs_total Total number of jobs by status");
+    lines.push("# TYPE queue_jobs_total gauge");
 
     for (const queue of queues) {
       try {
-        const counts = await queue.getJobCounts('active', 'waiting', 'completed', 'failed', 'delayed', 'paused');
-        const statuses: (keyof typeof counts)[] = ['active', 'waiting', 'completed', 'failed', 'delayed', 'paused'];
+        const counts = await queue.getJobCounts(
+          "active",
+          "waiting",
+          "completed",
+          "failed",
+          "delayed",
+          "paused"
+        );
+        const statuses: (keyof typeof counts)[] = [
+          "active",
+          "waiting",
+          "completed",
+          "failed",
+          "delayed",
+          "paused",
+        ];
 
         for (const status of statuses) {
-          lines.push(`queue_jobs_total{queue="${queue.name}",status="${status}"} ${counts[status]}`);
+          lines.push(
+            `queue_jobs_total{queue="${queue.name}",status="${status}"} ${counts[status]}`
+          );
         }
       } catch (err) {
         this.logger.error(
-          `Failed to get metrics for queue ${queue.name}: ${err instanceof Error ? err.message : String(err)}`,
+          `Failed to get metrics for queue ${queue.name}: ${
+            err instanceof Error ? err.message : String(err)
+          }`
         );
       }
     }
 
-    return lines.join('\n') + '\n';
+    return lines.join("\n") + "\n";
   }
 
   private getAllQueues(): Queue[] {

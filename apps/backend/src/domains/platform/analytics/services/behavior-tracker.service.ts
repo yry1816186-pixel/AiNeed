@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 import { TrackEventDto } from "../dto/track-event.dto";
 
 export interface RecentBehaviorEvent {
@@ -143,10 +143,7 @@ export class BehaviorTrackerService {
     },
   };
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly redis: RedisService
-  ) {}
+  constructor(private readonly prisma: PrismaService, private readonly redis: RedisService) {}
 
   /**
    * 追踪用户行为事件

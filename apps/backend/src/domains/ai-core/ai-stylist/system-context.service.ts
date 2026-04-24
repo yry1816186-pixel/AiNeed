@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { cpus } from "os";
+import { cpus } from "os";
 
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -91,7 +90,7 @@ export class SystemContextService implements OnModuleInit {
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {
     this.startTime = Date.now();
   }
@@ -106,14 +105,13 @@ export class SystemContextService implements OnModuleInit {
       return this.cachedContext;
     }
 
-    const [git, database, services, resources, projectFiles] =
-      await Promise.all([
-        this.getGitInfo(),
-        this.getDatabaseStats(),
-        this.getServiceHealthStatus(),
-        this.getSystemResources(),
-        this.getProjectFileInfo(),
-      ]);
+    const [git, database, services, resources, projectFiles] = await Promise.all([
+      this.getGitInfo(),
+      this.getDatabaseStats(),
+      this.getServiceHealthStatus(),
+      this.getSystemResources(),
+      this.getProjectFileInfo(),
+    ]);
 
     const context: SystemContextResult = {
       timestamp: new Date().toISOString(),
@@ -158,20 +156,14 @@ export class SystemContextService implements OnModuleInit {
         }
       };
 
-      const branch =
-        runCmd('git rev-parse --abbrev-ref HEAD') || "unknown";
+      const branch = runCmd("git rev-parse --abbrev-ref HEAD") || "unknown";
       const lastCommit = runCmd("git rev-parse --short HEAD") || "unknown";
-      const lastCommitAuthor =
-        runCmd('git log -1 --format="%an"') || "unknown";
-      const lastCommitDate =
-        runCmd('git log -1 --format="%ai"') || "unknown";
-      const lastCommitMessage =
-        runCmd('git log -1 --format="%s"') || "no commits";
+      const lastCommitAuthor = runCmd('git log -1 --format="%an"') || "unknown";
+      const lastCommitDate = runCmd('git log -1 --format="%ai"') || "unknown";
+      const lastCommitMessage = runCmd('git log -1 --format="%s"') || "no commits";
       const statusOutput = runCmd("git status --porcelain");
-      const changedFiles = statusOutput
-        ? statusOutput.split("\n").filter(Boolean).length
-        : 0;
-      const totalCommits = runCmd('git rev-list --count HEAD') || "0";
+      const changedFiles = statusOutput ? statusOutput.split("\n").filter(Boolean).length : 0;
+      const totalCommits = runCmd("git rev-list --count HEAD") || "0";
       const remoteUrl = runCmd("git config --get remote.origin.url") || undefined;
 
       return {
@@ -186,7 +178,9 @@ export class SystemContextService implements OnModuleInit {
         remoteUrl,
       };
     } catch (error) {
-      this.logger.warn(`Failed to get Git info: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Failed to get Git info: ${error instanceof Error ? error.message : String(error)}`
+      );
       return defaultInfo;
     }
   }
@@ -241,20 +235,12 @@ export class SystemContextService implements OnModuleInit {
           .count({ where: { expiresAt: { gt: new Date() } } })
           .catch(() => 0),
         this.prisma.virtualTryOn.count().catch(() => 0),
-        this.prisma.virtualTryOn
-          .count({ where: { status: "completed" } })
-          .catch(() => 0),
+        this.prisma.virtualTryOn.count({ where: { status: "completed" } }).catch(() => 0),
         this.prisma.userPhoto.count().catch(() => 0),
-        this.prisma.userPhoto
-          .count({ where: { analysisStatus: "completed" } })
-          .catch(() => 0),
+        this.prisma.userPhoto.count({ where: { analysisStatus: "completed" } }).catch(() => 0),
         this.prisma.rankingFeedback.count().catch(() => 0),
-        this.prisma.user
-          .count({ where: { createdAt: { gte: yesterday } } })
-          .catch(() => 0),
-        this.prisma.virtualTryOn
-          .count({ where: { createdAt: { gte: yesterday } } })
-          .catch(() => 0),
+        this.prisma.user.count({ where: { createdAt: { gte: yesterday } } }).catch(() => 0),
+        this.prisma.virtualTryOn.count({ where: { createdAt: { gte: yesterday } } }).catch(() => 0),
       ]);
 
       return {
@@ -274,7 +260,9 @@ export class SystemContextService implements OnModuleInit {
         recentTryOns24h,
       };
     } catch (error) {
-      this.logger.warn(`Failed to get database stats: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Failed to get database stats: ${error instanceof Error ? error.message : String(error)}`
+      );
       return defaults;
     }
   }
@@ -312,10 +300,12 @@ export class SystemContextService implements OnModuleInit {
       await client.ping();
       redisLatency = Date.now() - start;
       try {
-        const info = (await client.info("clients"));
+        const info = await client.info("clients");
         if (typeof info === "string") {
           const match = info.match(/connected_clients:(\d+)/);
-          if (match?.[1]) {redisConnectedClients = parseInt(match[1], 10);}
+          if (match?.[1]) {
+            redisConnectedClients = parseInt(match[1], 10);
+          }
         }
       } catch {
         // optional field, ignore
@@ -326,41 +316,37 @@ export class SystemContextService implements OnModuleInit {
 
     let minioLatency = -1;
     const minioEndpoint =
-      this.configService.get<string>("MINIO_ENDPOINT", "localhost:9000") ||
-      "localhost:9000";
+      this.configService.get<string>("MINIO_ENDPOINT", "localhost:9000") || "localhost:9000";
     try {
       const start = Date.now();
-      const response = await fetch(
-        `http://${minioEndpoint}/minio/health/live`,
-        { signal: AbortSignal.timeout(3000) },
-      );
+      const response = await fetch(`http://${minioEndpoint}/minio/health/live`, {
+        signal: AbortSignal.timeout(3000),
+      });
       minioLatency = response.ok ? Date.now() - start : -1;
     } catch {
       // keep -1
     }
 
     let qdrantLatency = -1;
-    const qdrantHost =
-      this.configService.get<string>("QDRANT_HOST", "localhost") ||
-      "localhost";
+    const qdrantHost = this.configService.get<string>("QDRANT_HOST", "localhost") || "localhost";
     const qdrantPort = this.configService.get<number>("QDRANT_PORT", 6333);
     try {
       const start = Date.now();
-      const response = await fetch(
-        `http://${qdrantHost}:${qdrantPort}/`,
-        { signal: AbortSignal.timeout(3000) },
-      );
+      const response = await fetch(`http://${qdrantHost}:${qdrantPort}/`, {
+        signal: AbortSignal.timeout(3000),
+      });
       qdrantLatency = response.ok ? Date.now() - start : -1;
     } catch {
       // keep -1
     }
 
-    const llmKey = this.configService.get<string>("GLM_API_KEY", "") ||
+    const llmKey =
+      this.configService.get<string>("GLM_API_KEY", "") ||
       this.configService.get<string>("DEEPSEEK_API_KEY", "") ||
       this.configService.get<string>("AI_STYLIST_API_KEY", "");
     const llmProviderName = this.configService.get<string>(
       "AI_STYLIST_MODEL",
-      this.configService.get<string>("GLM_MODEL", "glm-5"),
+      this.configService.get<string>("GLM_MODEL", "glm-5")
     );
 
     return {
@@ -414,10 +400,10 @@ export class SystemContextService implements OnModuleInit {
       platform: process.platform,
       arch: process.arch,
       memoryUsageMb: {
-        rss: Math.round(memUsage.rss / 1024 / 1024 * 10) / 10,
-        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024 * 10) / 10,
-        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024 * 10) / 10,
-        external: Math.round(memUsage.external / 1024 / 1024 * 10) / 10,
+        rss: Math.round((memUsage.rss / 1024 / 1024) * 10) / 10,
+        heapUsed: Math.round((memUsage.heapUsed / 1024 / 1024) * 10) / 10,
+        heapTotal: Math.round((memUsage.heapTotal / 1024 / 1024) * 10) / 10,
+        external: Math.round((memUsage.external / 1024 / 1024) * 10) / 10,
       },
       cpuUsage,
       uptimeSeconds: Math.round(process.uptime()),
@@ -441,24 +427,22 @@ export class SystemContextService implements OnModuleInit {
       const path = await import("path");
       const rootDir = this.configService.get<string>("PROJECT_ROOT", "C:\\xuno");
 
-      const [tsFiles, pythonFiles, backendModules, mlServices] =
-        await Promise.all([
-          this.countFiles(rootDir, "**/*.ts").catch(() => 0),
-          this.countFiles(rootDir, "**/*.py").catch(() => 0),
-          fs.readdir(path.join(rootDir, "apps/backend/src/modules"))
-            .then((dirs) => dirs.length)
-            .catch(() => 0),
-          fs.readdir(path.join(rootDir, "ml/services"))
-            .then((dirs) => dirs.length)
-            .catch(() => 0),
-        ]);
+      const [tsFiles, pythonFiles, backendModules, mlServices] = await Promise.all([
+        this.countFiles(rootDir, "**/*.ts").catch(() => 0),
+        this.countFiles(rootDir, "**/*.py").catch(() => 0),
+        fs
+          .readdir(path.join(rootDir, "apps/backend/src/modules"))
+          .then((dirs) => dirs.length)
+          .catch(() => 0),
+        fs
+          .readdir(path.join(rootDir, "ml/services"))
+          .then((dirs) => dirs.length)
+          .catch(() => 0),
+      ]);
 
       let packageJsonDeps = 0;
       try {
-        const pkgContent = await fs.readFile(
-          path.join(rootDir, "package.json"),
-          "utf-8",
-        );
+        const pkgContent = await fs.readFile(path.join(rootDir, "package.json"), "utf-8");
         const pkg = JSON.parse(pkgContent);
         packageJsonDeps =
           Object.keys(pkg.dependencies || {}).length +
@@ -469,10 +453,7 @@ export class SystemContextService implements OnModuleInit {
 
       let prismaModels = 0;
       try {
-        const schemaPath = path.join(
-          rootDir,
-          "apps/backend/prisma/schema.prisma",
-        );
+        const schemaPath = path.join(rootDir, "apps/backend/prisma/schema.prisma");
         const schema = await fs.readFile(schemaPath, "utf-8");
         const modelMatches = schema.match(/^model\s+\w+/gm);
         prismaModels = modelMatches?.length || 0;
@@ -489,15 +470,14 @@ export class SystemContextService implements OnModuleInit {
         prismaModels,
       };
     } catch (error) {
-      this.logger.warn(`Failed to get project file info: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Failed to get project file info: ${error instanceof Error ? error.message : String(error)}`
+      );
       return defaults;
     }
   }
 
-  private async countFiles(
-    rootDir: string,
-    pattern: string,
-  ): Promise<number> {
+  private async countFiles(rootDir: string, pattern: string): Promise<number> {
     try {
       const fs = await import("fs/promises");
       const path = await import("path");
@@ -520,7 +500,7 @@ export class SystemContextService implements OnModuleInit {
           }
         }
         return results;
-      }
+      };
 
       const allFiles = await walk(rootDir);
       const ext = pattern.includes(".ts") ? ".ts" : ".py";
@@ -536,7 +516,9 @@ export class SystemContextService implements OnModuleInit {
         `## 系统环境快照 (${ctx.timestamp})`,
         ``,
         `### 项目信息`,
-        `- 分支: ${ctx.git.branch} | 最近提交: ${ctx.git.lastCommit} (${ctx.git.lastCommitMessage.slice(0, 60)})`,
+        `- 分支: ${ctx.git.branch} | 最近提交: ${
+          ctx.git.lastCommit
+        } (${ctx.git.lastCommitMessage.slice(0, 60)})`,
         `- 工作区: ${ctx.git.isCleanWorkingTree ? "干净" : `${ctx.git.changedFiles} 个文件未提交`}`,
         `- 环境: ${ctx.environment} | Node.js ${ctx.resources.nodeVersion}`,
         ``,
@@ -556,7 +538,9 @@ export class SystemContextService implements OnModuleInit {
         ``,
         `### 系统资源`,
         `- 内存 RSS: ${ctx.resources.memoryUsageMb.rss}MB | Heap: ${ctx.resources.memoryUsageMb.heapUsed}/${ctx.resources.memoryUsageMb.heapTotal}MB`,
-        `- 运行时间: ${Math.floor(ctx.resources.uptimeSeconds / 60)} 分钟 | PID: ${ctx.resources.processId}`,
+        `- 运行时间: ${Math.floor(ctx.resources.uptimeSeconds / 60)} 分钟 | PID: ${
+          ctx.resources.processId
+        }`,
       ];
       return parts.join("\n");
     });

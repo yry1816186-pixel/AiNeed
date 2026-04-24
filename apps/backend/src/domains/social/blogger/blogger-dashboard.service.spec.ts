@@ -1,9 +1,14 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import {
+  RedisService,
+  REDIS_KEY_PREFIX,
+  REDIS_KEY_SEPARATOR,
+} from "../../../common/redis/redis.service";
 
 import { BloggerDashboardService } from "./blogger-dashboard.service";
-import { PrismaService } from "../../../common/prisma/prisma.service";
-import { RedisService, REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
 
 const DASHBOARD_KEY_PREFIX = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}blogger${REDIS_KEY_SEPARATOR}dashboard`;
 
@@ -123,11 +128,7 @@ describe("BloggerDashboardService", () => {
         select: { bloggerLevel: true, followerCount: true },
       });
       expect(prismaService.communityPost.aggregate).toHaveBeenCalled();
-      expect(redisService.setex).toHaveBeenCalledWith(
-        cacheKey,
-        300,
-        expect.any(String),
-      );
+      expect(redisService.setex).toHaveBeenCalledWith(cacheKey, 300, expect.any(String));
       expect(result.period).toBe("7d");
       expect(result.basic).toEqual({
         viewTrend: 100,
@@ -145,7 +146,10 @@ describe("BloggerDashboardService", () => {
       (prismaService.bloggerProduct.aggregate as jest.Mock).mockResolvedValue(mockProductStats);
       (prismaService.bloggerProduct.findMany as jest.Mock).mockResolvedValue(mockBloggerProducts);
 
-      const result = await service.getDashboard(mockUserId, mockPeriod) as Record<string, unknown>;
+      const result = (await service.getDashboard(mockUserId, mockPeriod)) as Record<
+        string,
+        unknown
+      >;
 
       expect(result.enhanced).toBeDefined();
       const enhanced = result.enhanced as Record<string, unknown>;
@@ -173,11 +177,11 @@ describe("BloggerDashboardService", () => {
   describe("getTrendData", () => {
     it("should throw BadRequestException for invalid metric", async () => {
       await expect(
-        service.getTrendData(mockUserId, "invalid_metric" as never, "7d"),
+        service.getTrendData(mockUserId, "invalid_metric" as never, "7d")
       ).rejects.toThrow(BadRequestException);
 
       await expect(
-        service.getTrendData(mockUserId, "invalid_metric" as never, "7d"),
+        service.getTrendData(mockUserId, "invalid_metric" as never, "7d")
       ).rejects.toThrow("Invalid metric: invalid_metric");
     });
 
@@ -204,7 +208,7 @@ describe("BloggerDashboardService", () => {
             isDeleted: false,
           }),
           _sum: { viewCount: true },
-        }),
+        })
       );
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBe(7);

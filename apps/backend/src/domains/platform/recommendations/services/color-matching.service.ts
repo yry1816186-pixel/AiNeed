@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 export interface RGB {
@@ -42,11 +41,7 @@ export class ColorMatchingService {
     analogous: (h1: number) => [(h1 + 30) % 360, (h1 - 30 + 360) % 360],
     triadic: (h1: number) => [(h1 + 120) % 360, (h1 + 240) % 360],
     splitComplementary: (h1: number) => [(h1 + 150) % 360, (h1 + 210) % 360],
-    tetradic: (h1: number) => [
-      (h1 + 90) % 360,
-      (h1 + 180) % 360,
-      (h1 + 270) % 360,
-    ],
+    tetradic: (h1: number) => [(h1 + 90) % 360, (h1 + 180) % 360, (h1 + 270) % 360],
   };
 
   constructor() {
@@ -233,10 +228,7 @@ export class ColorMatchingService {
     const C2 = Math.sqrt(a2 * a2 + b2 * b2);
     const Cmean = (C1 + C2) / 2;
 
-    const G =
-      0.5 *
-      (1 -
-        Math.sqrt(Math.pow(Cmean, 7) / (Math.pow(Cmean, 7) + Math.pow(25, 7))));
+    const G = 0.5 * (1 - Math.sqrt(Math.pow(Cmean, 7) / (Math.pow(Cmean, 7) + Math.pow(25, 7))));
 
     const a1Prime = a1 * (1 + G);
     const a2Prime = a2 * (1 + G);
@@ -245,10 +237,14 @@ export class ColorMatchingService {
     const C2Prime = Math.sqrt(a2Prime * a2Prime + b2 * b2);
 
     let h1Prime = Math.atan2(b1, a1Prime) * (180 / Math.PI);
-    if (h1Prime < 0) {h1Prime += 360;}
+    if (h1Prime < 0) {
+      h1Prime += 360;
+    }
 
     let h2Prime = Math.atan2(b2, a2Prime) * (180 / Math.PI);
-    if (h2Prime < 0) {h2Prime += 360;}
+    if (h2Prime < 0) {
+      h2Prime += 360;
+    }
 
     const deltaLPrime = L2 - L1;
     const deltaCPrime = C2Prime - C1Prime;
@@ -264,10 +260,7 @@ export class ColorMatchingService {
       deltahPrime = h2Prime - h1Prime + 360;
     }
 
-    const deltaHPrime =
-      2 *
-      Math.sqrt(C1Prime * C2Prime) *
-      Math.sin((deltahPrime * Math.PI) / 360);
+    const deltaHPrime = 2 * Math.sqrt(C1Prime * C2Prime) * Math.sin((deltahPrime * Math.PI) / 360);
 
     const LPrimeMean = (L1 + L2) / 2;
     const CPrimeMean = (C1Prime + C2Prime) / 2;
@@ -291,19 +284,13 @@ export class ColorMatchingService {
       0.2 * Math.cos(((4 * HPrimeMean - 63) * Math.PI) / 180);
 
     const SL =
-      1 +
-      (0.015 * Math.pow(LPrimeMean - 50, 2)) /
-        Math.sqrt(20 + Math.pow(LPrimeMean - 50, 2));
+      1 + (0.015 * Math.pow(LPrimeMean - 50, 2)) / Math.sqrt(20 + Math.pow(LPrimeMean - 50, 2));
     const SC = 1 + 0.045 * CPrimeMean;
     const SH = 1 + 0.015 * CPrimeMean * T;
 
     const deltaTheta = 30 * Math.exp(-Math.pow((HPrimeMean - 275) / 25, 2));
 
-    const RC =
-      2 *
-      Math.sqrt(
-        Math.pow(CPrimeMean, 7) / (Math.pow(CPrimeMean, 7) + Math.pow(25, 7)),
-      );
+    const RC = 2 * Math.sqrt(Math.pow(CPrimeMean, 7) / (Math.pow(CPrimeMean, 7) + Math.pow(25, 7)));
 
     const RT = -RC * Math.sin((2 * deltaTheta * Math.PI) / 180);
 
@@ -311,7 +298,7 @@ export class ColorMatchingService {
       Math.pow(deltaLPrime / (kL * SL), 2) +
         Math.pow(deltaCPrime / (kC * SC), 2) +
         Math.pow(deltaHPrime / (kH * SH), 2) +
-        RT * (deltaCPrime / (kC * SC)) * (deltaHPrime / (kH * SH)),
+        RT * (deltaCPrime / (kC * SC)) * (deltaHPrime / (kH * SH))
     );
 
     return deltaE;
@@ -341,12 +328,16 @@ export class ColorMatchingService {
     return closestMatch!;
   }
 
-  private getCompatibility(
-    distance: number,
-  ): "excellent" | "good" | "acceptable" | "poor" {
-    if (distance < 2) {return "excellent";}
-    if (distance < 5) {return "good";}
-    if (distance < 10) {return "acceptable";}
+  private getCompatibility(distance: number): "excellent" | "good" | "acceptable" | "poor" {
+    if (distance < 2) {
+      return "excellent";
+    }
+    if (distance < 5) {
+      return "good";
+    }
+    if (distance < 10) {
+      return "acceptable";
+    }
     return "poor";
   }
 
@@ -359,9 +350,7 @@ export class ColorMatchingService {
     const hsl = this.rgbToHsl(colorData.rgb);
     const harmonies = new Map<string, string[]>();
 
-    for (const [harmonyType, calculator] of Object.entries(
-      this.colorHarmonyRules,
-    )) {
+    for (const [harmonyType, calculator] of Object.entries(this.colorHarmonyRules)) {
       const hueAngles = calculator(hsl.h);
       const harmonyColors: string[] = [];
 
@@ -385,7 +374,9 @@ export class ColorMatchingService {
     for (const [name, data] of this.colorDatabase) {
       const hsl = this.rgbToHsl(data.rgb);
       let hueDiff = Math.abs(hsl.h - targetHue);
-      if (hueDiff > 180) {hueDiff = 360 - hueDiff;}
+      if (hueDiff > 180) {
+        hueDiff = 360 - hueDiff;
+      }
 
       if (hueDiff < minHueDiff) {
         minHueDiff = hueDiff;
@@ -410,7 +401,9 @@ export class ColorMatchingService {
     const hsl2 = this.rgbToHsl(c2.rgb);
 
     let hueDiff = Math.abs(hsl1.h - hsl2.h);
-    if (hueDiff > 180) {hueDiff = 360 - hueDiff;}
+    if (hueDiff > 180) {
+      hueDiff = 360 - hueDiff;
+    }
 
     const isNeutral = (hsl: HSL) => hsl.s < 20;
     const neutral1 = isNeutral(hsl1);
@@ -485,7 +478,7 @@ export class ColorMatchingService {
 
   suggestOutfitColors(
     baseColor: string,
-    options: { count?: number; includeNeutrals?: boolean } = {},
+    options: { count?: number; includeNeutrals?: boolean } = {}
   ): ColorMatchResult[] {
     const { count = 3, includeNeutrals = true } = options;
 
@@ -493,7 +486,9 @@ export class ColorMatchingService {
     const suggestions: ColorMatchResult[] = [];
 
     const baseData = this.colorDatabase.get(baseColor);
-    if (!baseData) {return suggestions;}
+    if (!baseData) {
+      return suggestions;
+    }
 
     suggestions.push({
       color: baseColor,
@@ -535,7 +530,9 @@ export class ColorMatchingService {
             });
           }
         }
-        if (suggestions.length >= count + 1) {break;}
+        if (suggestions.length >= count + 1) {
+          break;
+        }
       }
     }
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 
 import { HSLColor, SelectedImageWithMeta } from "./question-selector";
@@ -18,7 +17,13 @@ export interface ColorPreferenceResult {
 }
 
 const HUE_SEGMENTS: { name: string; ranges: [number, number][] }[] = [
-  { name: "red", ranges: [[0, 30], [330, 360]] },
+  {
+    name: "red",
+    ranges: [
+      [0, 30],
+      [330, 360],
+    ],
+  },
   { name: "orange", ranges: [[30, 60]] },
   { name: "yellow", ranges: [[60, 90]] },
   { name: "yellow-green", ranges: [[90, 150]] },
@@ -30,28 +35,21 @@ const HUE_SEGMENTS: { name: string; ranges: [number, number][] }[] = [
 
 @Injectable()
 export class ColorDeriverService {
-  deriveColorPreferences(
-    selectedImages: SelectedImageWithMeta[],
-  ): ColorPreferenceResult {
-    const segmentData: Record<
-      string,
-      { colors: HSLColor[]; totalWeight: number }
-    > = {};
+  deriveColorPreferences(selectedImages: SelectedImageWithMeta[]): ColorPreferenceResult {
+    const segmentData: Record<string, { colors: HSLColor[]; totalWeight: number }> = {};
 
     for (const segment of HUE_SEGMENTS) {
       segmentData[segment.name] = { colors: [], totalWeight: 0 };
     }
 
     for (const image of selectedImages) {
-      const durationWeight =
-        image.duration > 0 ? Math.min(1.0, 3000 / image.duration) : 1.0;
+      const durationWeight = image.duration > 0 ? Math.min(1.0, 3000 / image.duration) : 1.0;
 
       for (const color of image.imageMeta.dominantColors) {
         const segmentName = this.getHueSegment(color.h);
         if (segmentName && segmentData[segmentName]) {
           segmentData[segmentName].colors.push(color);
-          segmentData[segmentName].totalWeight +=
-            (1 + (0.5 * color.s) / 100) * durationWeight;
+          segmentData[segmentName].totalWeight += (1 + (0.5 * color.s) / 100) * durationWeight;
         }
       }
     }
@@ -61,7 +59,9 @@ export class ColorDeriverService {
 
     for (const segment of HUE_SEGMENTS) {
       const data = segmentData[segment.name];
-      if (!data) {continue;}
+      if (!data) {
+        continue;
+      }
       hueDistribution[segment.name] = data.totalWeight;
 
       if (data.colors.length > 0) {
@@ -83,9 +83,7 @@ export class ColorDeriverService {
 
     const palette = [...primaryColors, ...secondaryColors]
       .filter((cw) => cw.medianHSL.s > 0 || cw.medianHSL.l > 0)
-      .map((cw) =>
-        this.hslToHex(cw.medianHSL.h, cw.medianHSL.s, cw.medianHSL.l),
-      );
+      .map((cw) => this.hslToHex(cw.medianHSL.h, cw.medianHSL.s, cw.medianHSL.l));
 
     return {
       primaryColors,
@@ -135,9 +133,7 @@ export class ColorDeriverService {
     }
 
     const toHex = (n: number) => {
-      const hex = Math.round(
-        Math.max(0, Math.min(255, (n + m) * 255)),
-      ).toString(16);
+      const hex = Math.round(Math.max(0, Math.min(255, (n + m) * 255))).toString(16);
       return hex.length === 1 ? "0" + hex : hex;
     };
 
@@ -159,9 +155,7 @@ export class ColorDeriverService {
     const sorted = [...colors].sort((a, b) => a.h - b.h);
     const mid = Math.floor(sorted.length / 2);
     const medianH =
-      sorted.length % 2 !== 0
-        ? sorted[mid]!.h
-        : (sorted[mid - 1]!.h + sorted[mid]!.h) / 2;
+      sorted.length % 2 !== 0 ? sorted[mid]!.h : (sorted[mid - 1]!.h + sorted[mid]!.h) / 2;
 
     const avgS = colors.reduce((sum, c) => sum + c.s, 0) / colors.length;
     const avgL = colors.reduce((sum, c) => sum + c.l, 0) / colors.length;
@@ -174,10 +168,7 @@ export class ColorDeriverService {
   }
 
   private deriveColorSeason(
-    segmentData: Record<
-      string,
-      { colors: HSLColor[]; totalWeight: number }
-    >,
+    segmentData: Record<string, { colors: HSLColor[]; totalWeight: number }>
   ): string {
     const warmSegments = ["red", "orange", "yellow"];
     const coolSegments = ["cyan-blue", "blue", "purple"];
@@ -191,23 +182,21 @@ export class ColorDeriverService {
 
     for (const seg of warmSegments) {
       const segData = segmentData[seg];
-      if (!segData) {continue;}
+      if (!segData) {
+        continue;
+      }
       warmWeight += segData.totalWeight;
-      warmSaturation += segData.colors.reduce(
-        (s, c) => s + c.s,
-        0,
-      );
+      warmSaturation += segData.colors.reduce((s, c) => s + c.s, 0);
       warmCount += segData.colors.length;
     }
 
     for (const seg of coolSegments) {
       const segData = segmentData[seg];
-      if (!segData) {continue;}
+      if (!segData) {
+        continue;
+      }
       coolWeight += segData.totalWeight;
-      coolSaturation += segData.colors.reduce(
-        (s, c) => s + c.s,
-        0,
-      );
+      coolSaturation += segData.colors.reduce((s, c) => s + c.s, 0);
       coolCount += segData.colors.length;
     }
 
@@ -217,9 +206,15 @@ export class ColorDeriverService {
     const avgSaturation = isWarm ? avgWarmSat : avgCoolSat;
     const isHighSaturation = avgSaturation >= 50;
 
-    if (isWarm && isHighSaturation) {return "spring";}
-    if (!isWarm && !isHighSaturation) {return "summer";}
-    if (isWarm && !isHighSaturation) {return "autumn";}
+    if (isWarm && isHighSaturation) {
+      return "spring";
+    }
+    if (!isWarm && !isHighSaturation) {
+      return "summer";
+    }
+    if (isWarm && !isHighSaturation) {
+      return "autumn";
+    }
     return "winter";
   }
 }

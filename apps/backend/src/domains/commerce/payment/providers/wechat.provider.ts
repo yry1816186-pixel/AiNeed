@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as https from "https";
@@ -7,9 +6,7 @@ import * as path from "path";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import {
-  PaymentRawCallbackData,
-} from "../types/common.types";
+import { PaymentRawCallbackData } from "../types/common.types";
 import {
   WechatV3CreatePaymentResponse,
   WechatV3QueryResponse,
@@ -31,7 +28,6 @@ import {
   RefundResult,
   PaymentQueryResult,
 } from "./payment-provider.interface";
-
 
 @Injectable()
 export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
@@ -64,9 +60,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     this.serialNo = this.configService.get<string>("WECHAT_SERIAL_NO") || "";
 
     if (!this.appId || !this.mchId || !this.apiKey) {
-      this.logger.warn(
-        "Wechat Pay configuration is incomplete. Payment will not work.",
-      );
+      this.logger.warn("Wechat Pay configuration is incomplete. Payment will not work.");
     }
   }
 
@@ -75,27 +69,14 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
    */
   async createPayment(options: CreatePaymentOptions): Promise<PaymentResult> {
     try {
-      const {
-        orderId,
-        amount,
-        subject,
-        body,
-        method,
-        expireMinutes = 30,
-      } = options;
+      const { orderId, amount, subject, body, method, expireMinutes = 30 } = options;
 
       const expireAt = new Date();
       expireAt.setMinutes(expireAt.getMinutes() + expireMinutes);
 
       // 使用 V3 API
       const endpoint = this.getV3Endpoint(method);
-      const requestData = this.buildV3RequestData(
-        orderId,
-        amount,
-        subject,
-        method,
-        expireMinutes,
-      );
+      const requestData = this.buildV3RequestData(orderId, amount, subject, method, expireMinutes);
 
       const response = await this.v3Request("POST", endpoint, requestData);
 
@@ -141,10 +122,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to create wechat payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to create wechat payment: ${errorMessage}`, errorStack);
       return {
         success: false,
         orderId: options.orderId,
@@ -187,18 +165,13 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
         tradeNo: queryResponse.transaction_id,
         amount: queryResponse.amount?.total ? queryResponse.amount.total / 100 : 0,
         status: statusMap[tradeState] || "failed",
-        paidAt: queryResponse.success_time
-          ? new Date(queryResponse.success_time)
-          : undefined,
+        paidAt: queryResponse.success_time ? new Date(queryResponse.success_time) : undefined,
         rawData: response as unknown as PaymentRawCallbackData,
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to query wechat payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to query wechat payment: ${errorMessage}`, errorStack);
       return {
         orderId,
         status: "failed",
@@ -210,9 +183,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
   /**
    * 处理支付回调
    */
-  async handleCallback(
-    callbackData: PaymentRawCallbackData,
-  ): Promise<PaymentCallbackData> {
+  async handleCallback(callbackData: PaymentRawCallbackData): Promise<PaymentCallbackData> {
     const actualBody = (callbackData.body ?? callbackData) as WechatCallbackData;
     const resource = actualBody.resource;
     const decryptedData = this.decryptResource(resource);
@@ -226,13 +197,9 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     const result: PaymentCallbackData = {
       orderId: decryptedData.out_trade_no,
       tradeNo: decryptedData.transaction_id,
-      amount: decryptedData.amount?.total
-        ? decryptedData.amount.total / 100
-        : 0,
+      amount: decryptedData.amount?.total ? decryptedData.amount.total / 100 : 0,
       status: statusMap[decryptedData.trade_state] || "failed",
-      paidAt: decryptedData.success_time
-        ? new Date(decryptedData.success_time)
-        : new Date(),
+      paidAt: decryptedData.success_time ? new Date(decryptedData.success_time) : new Date(),
       rawData: callbackData,
     };
     return result;
@@ -264,9 +231,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
       return this.verifySignature(message, signature, serial);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
-      this.logger.error(
-        `Failed to verify wechat callback sign: ${errorMessage}`,
-      );
+      this.logger.error(`Failed to verify wechat callback sign: ${errorMessage}`);
       return false;
     }
   }
@@ -296,7 +261,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
       const response = await this.v3Request(
         "POST",
         "/v3/refund/domestic/refunds",
-        requestData as unknown as WechatV3RequestData,
+        requestData as unknown as WechatV3RequestData
       );
 
       if (response.code) {
@@ -329,10 +294,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to refund wechat payment: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to refund wechat payment: ${errorMessage}`, errorStack);
       return {
         success: false,
         refundId: options.refundId,
@@ -356,15 +318,16 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
         mchid: this.mchId,
       };
 
-      const response = await this.v3Request("POST", endpoint, requestData as unknown as WechatV3RequestData);
+      const response = await this.v3Request(
+        "POST",
+        endpoint,
+        requestData as unknown as WechatV3RequestData
+      );
       return !response.code;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to close wechat order: ${errorMessage}`,
-        errorStack,
-      );
+      this.logger.error(`Failed to close wechat order: ${errorMessage}`, errorStack);
       return false;
     }
   }
@@ -392,7 +355,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     amount: number,
     description: string,
     method: string,
-    expireMinutes: number,
+    expireMinutes: number
   ): WechatV3RequestData {
     const baseData: WechatV3RequestData = {
       appid: this.appId,
@@ -454,7 +417,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
   private async v3Request(
     method: string,
     endpoint: string,
-    data?: WechatV3RequestData,
+    data?: WechatV3RequestData
   ): Promise<WechatApiResponse> {
     const url = `${this.v3Gateway}${endpoint}`;
     const timestamp = Math.floor(Date.now() / 1000).toString();
@@ -498,12 +461,14 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
                 // WeChat API may return non-JSON responses in some cases
                 // Log this for debugging but continue with raw response
                 this.logger.debug(
-                  `WeChat API returned non-JSON response (status: ${res.statusCode}). Response (truncated): ${responseData.substring(0, 200)}`,
+                  `WeChat API returned non-JSON response (status: ${
+                    res.statusCode
+                  }). Response (truncated): ${responseData.substring(0, 200)}`
                 );
                 resolve({ raw: responseData } as unknown as WechatApiResponse);
               }
             });
-          },
+          }
         );
 
         req.on("error", reject);
@@ -540,20 +505,14 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
   /**
    * 验证签名
    */
-  private verifySignature(
-    message: string,
-    signature: string,
-    serial: string,
-  ): boolean {
+  private verifySignature(message: string, signature: string, serial: string): boolean {
     try {
-      const platformCert = this.configService.get<string>(
-        "WECHAT_PLATFORM_CERT",
-      );
+      const platformCert = this.configService.get<string>("WECHAT_PLATFORM_CERT");
       if (!platformCert) {
         this.logger.error(
           "SECURITY ALERT: Platform certificate not configured. " +
             "Callback signature verification is DISABLED. " +
-            "This is a critical security risk - configure WECHAT_PLATFORM_CERT immediately.",
+            "This is a critical security risk - configure WECHAT_PLATFORM_CERT immediately."
         );
         return false;
       }
@@ -567,7 +526,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
       if (!isValid) {
         this.logger.error(
           `Signature verification failed for serial: ${serial}. ` +
-            "Possible callback forgery attempt detected.",
+            "Possible callback forgery attempt detected."
         );
       }
 
@@ -575,8 +534,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       this.logger.error(
-        `Verify signature error: ${errorMessage}. ` +
-          "Rejecting callback for security reasons.",
+        `Verify signature error: ${errorMessage}. ` + "Rejecting callback for security reasons."
       );
       return false;
     }
@@ -622,9 +580,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
         throw error;
       }
     }
-    return this.formatPrivateKey(
-      this.configService.get<string>("WECHAT_PRIVATE_KEY") || "",
-    );
+    return this.formatPrivateKey(this.configService.get<string>("WECHAT_PRIVATE_KEY") || "");
   }
 
   /**
@@ -648,7 +604,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
         }
 
         this.logger.warn(
-          `WeChat certificate files not found: cert=${certFilePath}, key=${keyFilePath}`,
+          `WeChat certificate files not found: cert=${certFilePath}, key=${keyFilePath}`
         );
       }
 
@@ -666,7 +622,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
       this.logger.warn(
         "WeChat merchant certificate not configured. " +
           "Set WECHAT_CERT_PATH/WECHAT_KEY_PATH or WECHAT_CERT_CONTENT/WECHAT_KEY_CONTENT. " +
-          "Using default Agent (some V3 API calls may fail).",
+          "Using default Agent (some V3 API calls may fail)."
       );
       return undefined;
     } catch (error) {

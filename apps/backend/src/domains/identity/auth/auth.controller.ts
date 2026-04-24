@@ -1,19 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Get,
-  Request,
-} from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiResponse,
-  ApiBody,
-} from "@nestjs/swagger";
+import { Controller, Post, Body, UseGuards, Get, Request } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
 import { AuthService } from "./auth.service";
@@ -161,9 +147,7 @@ export class AuthController {
     status: 429,
     description: "请求过于频繁",
   })
-  async loginWithWechat(
-    @Body() dto: WechatLoginDto,
-  ): Promise<AuthResponseDto> {
+  async loginWithWechat(@Body() dto: WechatLoginDto): Promise<AuthResponseDto> {
     return this.authService.loginWithWechat(dto.code);
   }
 
@@ -189,7 +173,7 @@ export class AuthController {
     description: "请求过于频繁，每分钟最多10次",
   })
   async refreshToken(
-    @Body() dto: RefreshTokenDto,
+    @Body() dto: RefreshTokenDto
   ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refreshToken(dto.refreshToken);
   }
@@ -224,7 +208,7 @@ export class AuthController {
   })
   async logout(
     @Request() req: RequestWithUser,
-    @Body() dto?: RefreshTokenDto,
+    @Body() dto?: RefreshTokenDto
   ): Promise<{ success: boolean }> {
     const authHeader = req.headers["authorization"];
     const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : undefined;
@@ -272,7 +256,7 @@ export class AuthController {
     description: "请求过于频繁，每分钟最多3次",
   })
   async forgotPassword(
-    @Body() dto: ForgotPasswordDto,
+    @Body() dto: ForgotPasswordDto
   ): Promise<{ success: boolean; message: string }> {
     await this.authService.sendPasswordResetEmail(dto.email);
     return {
@@ -286,8 +270,7 @@ export class AuthController {
   @Post("reset-password")
   @ApiOperation({
     summary: "重置密码",
-    description:
-      "使用邮件中的重置令牌设置新密码。新密码必须为8-32位，包含大小写字母和数字。",
+    description: "使用邮件中的重置令牌设置新密码。新密码必须为8-32位，包含大小写字母和数字。",
   })
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({
@@ -303,9 +286,7 @@ export class AuthController {
     status: 429,
     description: "请求过于频繁，每分钟最多5次",
   })
-  async resetPassword(
-    @Body() dto: ResetPasswordDto,
-  ): Promise<{ success: boolean }> {
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<{ success: boolean }> {
     await this.authService.resetPassword(dto.token, dto.newPassword);
     return { success: true };
   }
@@ -335,9 +316,7 @@ export class AuthController {
     status: 429,
     description: "请求过于频繁",
   })
-  async sendSmsCode(
-    @Body() dto: SendSmsCodeDto,
-  ): Promise<{ success: boolean; message: string }> {
+  async sendSmsCode(@Body() dto: SendSmsCodeDto): Promise<{ success: boolean; message: string }> {
     await this.authService.sendSmsCode(dto.phone);
     return { success: true, message: "验证码已发送" };
   }
@@ -366,9 +345,7 @@ export class AuthController {
     status: 429,
     description: "请求过于频繁",
   })
-  async loginWithPhone(
-    @Body() dto: SmsLoginDto,
-  ): Promise<AuthResponseDto> {
+  async loginWithPhone(@Body() dto: SmsLoginDto): Promise<AuthResponseDto> {
     return this.authService.loginWithPhone(dto.phone, dto.code);
   }
 
@@ -384,9 +361,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: "登录成功", type: AuthResponseDto })
   @ApiResponse({ status: 401, description: "验证码无效或已过期" })
   @ApiResponse({ status: 429, description: "请求过于频繁" })
-  async phoneLogin(
-    @Body() dto: PhoneLoginDto,
-  ): Promise<AuthResponseDto> {
+  async phoneLogin(@Body() dto: PhoneLoginDto): Promise<AuthResponseDto> {
     return this.authService.loginWithPhone(dto.phone, dto.code);
   }
 
@@ -402,9 +377,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: "验证码无效或已过期" })
   @ApiResponse({ status: 409, description: "手机号已注册" })
   @ApiResponse({ status: 429, description: "请求过于频繁" })
-  async phoneRegister(
-    @Body() dto: PhoneRegisterDto,
-  ): Promise<AuthResponseDto> {
+  async phoneRegister(@Body() dto: PhoneRegisterDto): Promise<AuthResponseDto> {
     return this.authService.registerWithPhone(dto);
   }
 
@@ -418,9 +391,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: "登录成功", type: AuthResponseDto })
   @ApiResponse({ status: 401, description: "微信授权失败" })
   @ApiResponse({ status: 429, description: "请求过于频繁" })
-  async wechatLogin(
-    @Body() dto: WechatLoginDto,
-  ): Promise<AuthResponseDto> {
+  async wechatLogin(@Body() dto: WechatLoginDto): Promise<AuthResponseDto> {
     return this.authService.loginWithWechat(dto.code);
   }
 
@@ -434,9 +405,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: "验证码已发送" })
   @ApiResponse({ status: 400, description: "手机号格式错误或发送过于频繁" })
   @ApiResponse({ status: 429, description: "请求过于频繁" })
-  async sendCode(
-    @Body() dto: SendSmsCodeDto,
-  ): Promise<{ success: boolean; message: string }> {
+  async sendCode(@Body() dto: SendSmsCodeDto): Promise<{ success: boolean; message: string }> {
     await this.authService.sendSmsCode(dto.phone);
     return { success: true, message: "验证码已发送" };
   }

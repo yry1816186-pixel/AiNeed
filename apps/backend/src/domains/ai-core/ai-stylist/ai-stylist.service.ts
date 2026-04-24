@@ -1,8 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+
 import { PhotoType } from "../../../types/prisma-enums";
 
+import { BodyPositiveFilter } from "./body-positive.filter";
+import { DialogStateService } from "./dialog-state.service";
+import {
+  DialogChatRequestDto,
+  DialogChatResponseDto,
+  DialogContextDto,
+  DialogState,
+} from "./dto/dialog.dto";
 import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";
 import { AiStylistRecommendationService } from "./services/recommendation.service";
@@ -46,14 +55,22 @@ export type { StylistSession } from "./services/session.service";
 @Injectable()
 export class AiStylistService {
   private readonly logger = new Logger(AiStylistService.name);
+  private readonly mlServiceUrl: string;
 
   constructor(
     private configService: ConfigService,
     private sessionService: AiStylistSessionService,
     private chatService: AiStylistChatService,
     private contextService: AiStylistContextService,
-    private recommendationService: AiStylistRecommendationService
-  ) {}
+    private recommendationService: AiStylistRecommendationService,
+    private dialogStateService: DialogStateService,
+    private bodyPositiveFilter: BodyPositiveFilter
+  ) {
+    this.mlServiceUrl = this.configService.get<string>(
+      "ML_SERVICE_URL",
+      "http://localhost:8001/api"
+    );
+  }
 
   async createSession(userId: string, input: CreateSessionInput = {}): Promise<ChatResult> {
     const context = await this.contextService.buildUserContext(userId);
@@ -274,6 +291,188 @@ export class AiStylistService {
 
   async generateDynamicOccasionOptions(): Promise<Array<{ id: string; label: string }>> {
     return this.recommendationService.generateDynamicOccasionOptions();
+  }
+
+  async createDialogSession(): Promise<{ sessionId: string }> {
+    const sessionId = crypto.randomUUID();
+    const context = new DialogContextDto();
+    await this.dialogStateService.saveContext(sessionId, context);
+    return { sessionId };
+  }
+
+  async dialogChat(request: DialogChatRequestDto, userId: string): Promise<DialogChatResponseDto> {
+    const context = await this.dialogStateService.getContext(request.sessionId);
+
+    try {
+      const mlResponse = await axios.post(
+        `${this.mlServiceUrl}/stylist/chat`,
+        {
+          message: request.message,
+          context,
+          user_id: userId,
+        },
+        {
+          timeout: 15000,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const updatedContext: DialogContextDto = mlResponse.data.context || context;
+      updatedContext.turnCount = (updatedContext.turnCount || 0) + 1;
+      await this.dialogStateService.saveContext(request.sessionId, updatedContext);
+
+      const filteredReply = this.bodyPositiveFilter.filter(mlResponse.data.reply || "");
+
+      return {
+        reply: filteredReply,
+        outfits: mlResponse.data.outfits,
+        quickReplies: mlResponse.data.quick_replies || this.generateQuickReplies(updatedContext),
+        state: mlResponse.data.state || updatedContext.state,
+        slots: mlResponse.data.slots || updatedContext.slots,
+      };
+    } catch (error) {
+      this.logger.warn(
+        `ML service unavailable, falling back to local dialog: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      return this.fallbackDialogChat(request, userId, context);
+    }
+  }
+
+  async endDialogSession(sessionId: string): Promise<void> {
+    await this.dialogStateService.clearContext(sessionId);
+  }
+
+  private generateQuickReplies(context: DialogContextDto): string[] {
+    switch (context.state) {
+      case DialogState.GREET:
+        return ["面试穿搭", "约会穿搭", "通勤穿搭", "出游穿搭"];
+      case DialogState.CONTEXT:
+        return ["极简风", "韩系风", "法式风", "轻正式"];
+      case DialogState.GENERATE:
+        return ["换一套", "调整预算", "换个风格", "确认这套"];
+      case DialogState.REFINE:
+        return ["换上衣", "换下装", "换个颜色", "就这样"];
+      case DialogState.ACTION:
+        return ["保存方案", "分享给朋友", "重新开始"];
+      case DialogState.WRAP:
+        return ["开始新咨询", "查看历史方案"];
+      default:
+        return ["面试穿搭", "约会穿搭", "通勤穿搭"];
+    }
+  }
+
+  private async fallbackDialogChat(
+    request: DialogChatRequestDto,
+    userId: string,
+    context: DialogContextDto
+  ): Promise<DialogChatResponseDto> {
+    const slotUpdates = this.contextService.extractSlotUpdates(request.message);
+    this.contextService.mergeSlots(
+      {
+        occasion: context.slots.occasion,
+        preferredStyles: context.slots.stylePreference || [],
+        styleAvoidances: context.slots.avoidItems || [],
+        fitGoals: [],
+        preferredColors: context.slots.colorPreference || [],
+        budgetMin: context.slots.budget?.min,
+        budgetMax: context.slots.budget?.max,
+      } as import("./types").StylistSlots,
+      slotUpdates
+    );
+
+    const updatedSlots: Partial<import("./dto/dialog.dto").DialogSlotDto> = {};
+    if (slotUpdates.occasion) {
+      updatedSlots.occasion = slotUpdates.occasion;
+    }
+    if (slotUpdates.preferredStyles?.length) {
+      updatedSlots.stylePreference = slotUpdates.preferredStyles;
+    }
+    if (slotUpdates.preferredColors?.length) {
+      updatedSlots.colorPreference = slotUpdates.preferredColors;
+    }
+    if (slotUpdates.budgetMax !== undefined) {
+      updatedSlots.budget = {
+        min: slotUpdates.budgetMin ?? context.slots.budget?.min ?? 0,
+        max: slotUpdates.budgetMax,
+      };
+    }
+
+    const newState = this.deriveDialogState(context, slotUpdates);
+    context.state = newState;
+    context.slots = { ...context.slots, ...updatedSlots };
+    context.turnCount += 1;
+    await this.dialogStateService.saveContext(request.sessionId, context);
+
+    const reply = this.buildFallbackReply(context, slotUpdates);
+    const filteredReply = this.bodyPositiveFilter.filter(reply);
+
+    return {
+      reply: filteredReply,
+      quickReplies: this.generateQuickReplies(context),
+      state: context.state,
+      slots: context.slots,
+    };
+  }
+
+  private deriveDialogState(
+    context: DialogContextDto,
+    slotUpdates: Partial<import("./types").StylistSlots>
+  ): DialogState {
+    const { state, slots } = context;
+    const hasOccasion = slots.occasion || slotUpdates.occasion;
+    const hasStyle =
+      (slots.stylePreference?.length ?? 0) > 0 || (slotUpdates.preferredStyles?.length ?? 0) > 0;
+
+    switch (state) {
+      case DialogState.GREET:
+        return hasOccasion ? DialogState.CONTEXT : DialogState.GREET;
+      case DialogState.CONTEXT:
+        return hasStyle ? DialogState.GENERATE : DialogState.CONTEXT;
+      case DialogState.GENERATE:
+        return DialogState.REFINE;
+      case DialogState.REFINE:
+        return DialogState.ACTION;
+      case DialogState.ACTION:
+        return DialogState.WRAP;
+      case DialogState.WRAP:
+        return DialogState.GREET;
+      default:
+        return DialogState.GREET;
+    }
+  }
+
+  private buildFallbackReply(
+    context: DialogContextDto,
+    slotUpdates: Partial<import("./types").StylistSlots>
+  ): string {
+    const occasionName = this.contextService.getOccasionName(context.slots.occasion);
+
+    switch (context.state) {
+      case DialogState.GREET:
+        if (slotUpdates.occasion) {
+          return `好的，${occasionName}场景，我来帮你搭配。你更偏好什么风格？`;
+        }
+        return "你好！我是你的AI造型师，告诉我你这次想为什么场景搭配？";
+      case DialogState.CONTEXT:
+        if (slotUpdates.preferredStyles?.length) {
+          return `收到，${slotUpdates.preferredStyles.join(
+            "、"
+          )}风格很适合你。我来为你生成穿搭方案。`;
+        }
+        return "你更偏好什么风格？比如极简、韩系、法式或者轻正式？";
+      case DialogState.GENERATE:
+        return "我正在为你搭配方案，稍等一下。";
+      case DialogState.REFINE:
+        return "方案已经准备好了，你想调整哪部分？";
+      case DialogState.ACTION:
+        return "这套方案你觉得怎么样？可以保存或者继续调整。";
+      case DialogState.WRAP:
+        return "希望你喜欢这次的推荐！有需要随时找我。";
+      default:
+        return "告诉我你的穿搭需求，我来帮你搭配。";
+    }
   }
 
   private buildSession(

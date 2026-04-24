@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export * from "./local-auth.guard";
 export * from "./jwt-auth.guard";
 export * from "./auth.guard";

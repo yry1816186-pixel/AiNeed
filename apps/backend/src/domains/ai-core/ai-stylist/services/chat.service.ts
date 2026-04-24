@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { PhotoType } from "../../../../types/prisma-enums";
 
+import { PhotoType } from "../../../../types/prisma-enums";
 import { PhotosService } from "../../photos/photos.service";
 import { LlmProviderService } from "../llm-provider.service";
 import { STYLIST_SYSTEM_PROMPT, buildConversationContextPrompt } from "../prompts/system-prompt";
@@ -347,7 +346,9 @@ export class AiStylistChatService {
       case "ask_question":
         return "你这次更偏向通勤、约会、面试还是出游？";
       case "show_preference_buttons":
-        return `收到${occasionName ? `，这次是${occasionName}场景` : ""}${budgetText}。你更想走哪种风格？`;
+        return `收到${
+          occasionName ? `，这次是${occasionName}场景` : ""
+        }${budgetText}。你更想走哪种风格？`;
       case "request_photo_upload":
         return "为了把版型和显高显瘦建议做准，建议上传一张全身正面照。你也可以跳过，我先给你基础方案。";
       case "poll_analysis":

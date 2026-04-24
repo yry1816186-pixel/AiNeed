@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ClothingCategory } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsEnum,
@@ -13,6 +11,8 @@ import {
   IsIn,
   ValidateNested,
 } from "class-validator";
+
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 /**
  * 获取推荐查询参数 DTO

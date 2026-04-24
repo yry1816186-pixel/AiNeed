@@ -1,14 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsNumber,
-  Min,
-  Max,
-  IsDateString,
-} from "class-validator";
+import { IsString, IsOptional, IsEnum, IsNumber, Min, Max, IsDateString } from "class-validator";
 
 export class AdminUserQueryDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })

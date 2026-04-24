@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -45,10 +44,13 @@ export class WechatService {
     const timeout = setTimeout(() => controller.abort(), 10000);
     try {
       const response = await fetch(url, { signal: controller.signal });
-      const data = await response.json() as Record<string, unknown>;
+      const data = (await response.json()) as Record<string, unknown>;
 
       if (data.errcode) {
-        this.logger.warn("微信获取access_token失败", { errcode: data.errcode, errmsg: data.errmsg });
+        this.logger.warn("微信获取access_token失败", {
+          errcode: data.errcode,
+          errmsg: data.errmsg,
+        });
         throw new UnauthorizedException("微信授权失败");
       }
 
@@ -65,7 +67,7 @@ export class WechatService {
     const timeout = setTimeout(() => controller.abort(), 10000);
     try {
       const response = await fetch(url, { signal: controller.signal });
-      const data = await response.json() as Record<string, unknown>;
+      const data = (await response.json()) as Record<string, unknown>;
 
       if (data.errcode) {
         this.logger.warn("微信获取用户信息失败", { errcode: data.errcode, errmsg: data.errmsg });

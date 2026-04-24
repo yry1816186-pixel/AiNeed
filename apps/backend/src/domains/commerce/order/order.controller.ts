@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -11,7 +10,14 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
@@ -35,7 +41,7 @@ export class OrderController {
     @Request() req: { user: { id: string } },
     @Query("status") status?: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.orderService.findAll(req.user.id, {
       status,
@@ -53,13 +59,13 @@ export class OrderController {
     @Request() req: { user: { id: string } },
     @Param("tab") tab: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.orderService.getOrdersByTab(
       req.user.id,
       tab,
       page ? parseInt(page, 10) : 1,
-      limit ? parseInt(limit, 10) : 10,
+      limit ? parseInt(limit, 10) : 10
     );
   }
 
@@ -69,10 +75,7 @@ export class OrderController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "订单不存在" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async findOne(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async findOne(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     return this.orderService.findOne(req.user.id, id);
   }
 
@@ -81,10 +84,7 @@ export class OrderController {
   @ApiResponse({ status: 201, description: "订单创建成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async create(
-    @Request() req: { user: { id: string } },
-    @Body() dto: CreateOrderDto,
-  ) {
+  async create(@Request() req: { user: { id: string } }, @Body() dto: CreateOrderDto) {
     return this.orderService.create(req.user.id, dto);
   }
 
@@ -98,7 +98,7 @@ export class OrderController {
   async pay(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() dto: PayOrderDto,
+    @Body() dto: PayOrderDto
   ) {
     return this.orderService.pay(req.user.id, id, dto.paymentMethod);
   }
@@ -110,10 +110,7 @@ export class OrderController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "订单不存在" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async cancel(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async cancel(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.orderService.cancel(req.user.id, id);
     return { success: true };
   }
@@ -125,10 +122,7 @@ export class OrderController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "订单不存在" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async confirm(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async confirm(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.orderService.confirm(req.user.id, id);
     return { success: true };
   }
@@ -140,10 +134,7 @@ export class OrderController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "订单不存在" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async getTracking(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async getTracking(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     return this.orderService.getTracking(req.user.id, id);
   }
 
@@ -152,10 +143,7 @@ export class OrderController {
   @Patch(":id/confirm")
   @ApiOperation({ summary: "确认收货 (Phase 5 enhanced)" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async confirmReceipt(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async confirmReceipt(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.orderService.confirmReceipt(req.user.id, id);
     return { success: true };
   }
@@ -163,10 +151,7 @@ export class OrderController {
   @Delete(":id")
   @ApiOperation({ summary: "软删除订单" })
   @ApiParam({ name: "id", description: "订单 ID" })
-  async softDelete(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async softDelete(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     return this.orderService.softDeleteOrder(req.user.id, id);
   }
 }

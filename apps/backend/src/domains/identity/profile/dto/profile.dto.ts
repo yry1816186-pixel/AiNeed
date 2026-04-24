@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@prisma/client";
 import { Type } from "class-transformer";
@@ -339,8 +338,8 @@ export class BodyAnalysisResultDto {
   @ApiProperty({ description: "适合风格", type: [String] })
   idealStyles!: string[];
 
-  @ApiProperty({ description: "避免风格", type: [String] })
-  avoidStyles!: string[];
+  @ApiProperty({ description: "推荐风格", type: [String] })
+  recommendStyles!: string[];
 }
 
 /**

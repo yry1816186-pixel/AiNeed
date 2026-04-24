@@ -1,9 +1,9 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Test, TestingModule } from "@nestjs/testing";
-import { TryOnStatus } from "../../../types/prisma-enums";
 
 import { AiQuotaGuard } from "../../../modules/security/rate-limit/ai-quota.guard";
+import { TryOnStatus } from "../../../types/prisma-enums";
 
 import { TryOnController } from "./try-on.controller";
 import { TryOnService } from "./try-on.service";
@@ -79,9 +79,7 @@ describe("TryOnController", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TryOnController],
-      providers: [
-        { provide: TryOnService, useValue: mockTryOnService },
-      ],
+      providers: [{ provide: TryOnService, useValue: mockTryOnService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: () => true })
@@ -111,7 +109,7 @@ describe("TryOnController", () => {
       expect(mockTryOnService.createTryOnRequest).toHaveBeenCalledWith(
         "user-123",
         "photo-id",
-        "item-id",
+        "item-id"
       );
     });
 
@@ -129,13 +127,13 @@ describe("TryOnController", () => {
       expect(mockTryOnService.createTryOnRequest).toHaveBeenCalledWith(
         "user-123",
         "photo-id",
-        "item-id",
+        "item-id"
       );
     });
 
     it("应该处理照片不存在的错误", async () => {
       mockTryOnService.createTryOnRequest.mockRejectedValueOnce(
-        new NotFoundException("照片不存在"),
+        new NotFoundException("照片不存在")
       );
 
       const body = {
@@ -143,14 +141,12 @@ describe("TryOnController", () => {
         itemId: "item-id",
       };
 
-      await expect(
-        controller.createTryOn("user-123", body),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.createTryOn("user-123", body)).rejects.toThrow(NotFoundException);
     });
 
     it("应该处理服装不存在的错误", async () => {
       mockTryOnService.createTryOnRequest.mockRejectedValueOnce(
-        new NotFoundException("服装商品不存在"),
+        new NotFoundException("服装商品不存在")
       );
 
       const body = {
@@ -158,14 +154,12 @@ describe("TryOnController", () => {
         itemId: "non-existent-item",
       };
 
-      await expect(
-        controller.createTryOn("user-123", body),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.createTryOn("user-123", body)).rejects.toThrow(NotFoundException);
     });
 
     it("应该处理并发限制错误", async () => {
       mockTryOnService.createTryOnRequest.mockRejectedValueOnce(
-        new BadRequestException("您已有 3 个试衣任务正在处理中，请等待完成后再试"),
+        new BadRequestException("您已有 3 个试衣任务正在处理中，请等待完成后再试")
       );
 
       const body = {
@@ -173,9 +167,7 @@ describe("TryOnController", () => {
         itemId: "item-id",
       };
 
-      await expect(
-        controller.createTryOn("user-123", body),
-      ).rejects.toThrow(BadRequestException);
+      await expect(controller.createTryOn("user-123", body)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -195,7 +187,7 @@ describe("TryOnController", () => {
         undefined,
         undefined,
         undefined,
-        undefined,
+        undefined
       );
     });
 
@@ -220,7 +212,7 @@ describe("TryOnController", () => {
         "tops",
         "通勤",
         "2026-01-01",
-        "2026-12-31",
+        "2026-12-31"
       );
     });
 
@@ -237,7 +229,7 @@ describe("TryOnController", () => {
         undefined,
         undefined,
         undefined,
-        undefined,
+        undefined
       );
     });
   });
@@ -259,109 +251,70 @@ describe("TryOnController", () => {
 
       expect(result.id).toBe("tryon-id");
       expect(result.status).toBe(TryOnStatus.pending);
-      expect(mockTryOnService.getTryOnStatus).toHaveBeenCalledWith(
-        "tryon-id",
-        "user-123",
-      );
+      expect(mockTryOnService.getTryOnStatus).toHaveBeenCalledWith("tryon-id", "user-123");
     });
 
     it("应该处理试衣记录不存在的错误", async () => {
       mockTryOnService.getTryOnStatus.mockRejectedValueOnce(
-        new NotFoundException("试衣记录不存在"),
+        new NotFoundException("试衣记录不存在")
       );
 
-      await expect(
-        controller.getTryOnStatus("user-123", "non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.getTryOnStatus("user-123", "non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("getTryOnResultImage", () => {
     it("应该返回试衣结果图片", async () => {
-      await controller.getTryOnResultImage(
-        "user-123",
-        "tryon-id",
-        mockResponse as never,
-      );
+      await controller.getTryOnResultImage("user-123", "tryon-id", mockResponse as never);
 
-      expect(mockTryOnService.getTryOnResultAsset).toHaveBeenCalledWith(
-        "tryon-id",
-        "user-123",
-      );
-      expect(mockResponse.setHeader).toHaveBeenCalledWith(
-        "Content-Type",
-        "image/png",
-      );
+      expect(mockTryOnService.getTryOnResultAsset).toHaveBeenCalledWith("tryon-id", "user-123");
+      expect(mockResponse.setHeader).toHaveBeenCalledWith("Content-Type", "image/png");
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         "Cache-Control",
-        "public, max-age=31536000",
+        "public, max-age=31536000"
       );
-      expect(mockResponse.send).toHaveBeenCalledWith(
-        expect.any(Buffer),
-      );
+      expect(mockResponse.send).toHaveBeenCalledWith(expect.any(Buffer));
     });
 
     it("应该处理试衣记录不存在的错误", async () => {
       mockTryOnService.getTryOnResultAsset.mockRejectedValueOnce(
-        new NotFoundException("试衣记录不存在"),
+        new NotFoundException("试衣记录不存在")
       );
 
       await expect(
-        controller.getTryOnResultImage(
-          "user-123",
-          "non-existent-id",
-          mockResponse as never,
-        ),
+        controller.getTryOnResultImage("user-123", "non-existent-id", mockResponse as never)
       ).rejects.toThrow(NotFoundException);
     });
 
     it("应该处理结果图片不存在的错误", async () => {
       mockTryOnService.getTryOnResultAsset.mockRejectedValueOnce(
-        new NotFoundException("试衣结果图不存在"),
+        new NotFoundException("试衣结果图不存在")
       );
 
       await expect(
-        controller.getTryOnResultImage(
-          "user-123",
-          "tryon-id",
-          mockResponse as never,
-        ),
+        controller.getTryOnResultImage("user-123", "tryon-id", mockResponse as never)
       ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe("getShareImage", () => {
     it("应该返回分享图", async () => {
-      await controller.getShareImage(
-        "user-123",
-        "tryon-id",
-        mockResponse as never,
-      );
+      await controller.getShareImage("user-123", "tryon-id", mockResponse as never);
 
-      expect(mockTryOnService.getShareImageAsset).toHaveBeenCalledWith(
-        "tryon-id",
-        "user-123",
-      );
-      expect(mockResponse.setHeader).toHaveBeenCalledWith(
-        "Content-Type",
-        "image/jpeg",
-      );
-      expect(mockResponse.send).toHaveBeenCalledWith(
-        expect.any(Buffer),
-      );
+      expect(mockTryOnService.getShareImageAsset).toHaveBeenCalledWith("tryon-id", "user-123");
+      expect(mockResponse.setHeader).toHaveBeenCalledWith("Content-Type", "image/jpeg");
+      expect(mockResponse.send).toHaveBeenCalledWith(expect.any(Buffer));
     });
 
     it("应该处理分享图不存在的错误", async () => {
       mockTryOnService.getShareImageAsset.mockRejectedValueOnce(
-        new NotFoundException("分享图不存在"),
+        new NotFoundException("分享图不存在")
       );
 
       await expect(
-        controller.getShareImage(
-          "user-123",
-          "tryon-id",
-          mockResponse as never,
-        ),
+        controller.getShareImage("user-123", "tryon-id", mockResponse as never)
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -372,30 +325,25 @@ describe("TryOnController", () => {
 
       expect(result.id).toBe("retry-tryon-id");
       expect(result.status).toBe(TryOnStatus.pending);
-      expect(mockTryOnService.retryTryOn).toHaveBeenCalledWith(
-        "tryon-id",
-        "user-123",
-      );
+      expect(mockTryOnService.retryTryOn).toHaveBeenCalledWith("tryon-id", "user-123");
     });
 
     it("应该处理试衣记录不存在的错误", async () => {
-      mockTryOnService.retryTryOn.mockRejectedValueOnce(
-        new NotFoundException("试衣记录不存在"),
-      );
+      mockTryOnService.retryTryOn.mockRejectedValueOnce(new NotFoundException("试衣记录不存在"));
 
-      await expect(
-        controller.retryTryOn("user-123", "non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.retryTryOn("user-123", "non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该处理每日重试限制的错误", async () => {
       mockTryOnService.retryTryOn.mockRejectedValueOnce(
-        new BadRequestException("今日免费试衣次数已用完，明天再来吧"),
+        new BadRequestException("今日免费试衣次数已用完，明天再来吧")
       );
 
-      await expect(
-        controller.retryTryOn("user-123", "tryon-id"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(controller.retryTryOn("user-123", "tryon-id")).rejects.toThrow(
+        BadRequestException
+      );
     });
   });
 
@@ -403,20 +351,15 @@ describe("TryOnController", () => {
     it("应该删除试衣记录", async () => {
       await controller.deleteTryOn("user-123", "tryon-id");
 
-      expect(mockTryOnService.deleteTryOn).toHaveBeenCalledWith(
-        "tryon-id",
-        "user-123",
-      );
+      expect(mockTryOnService.deleteTryOn).toHaveBeenCalledWith("tryon-id", "user-123");
     });
 
     it("应该处理试衣记录不存在的错误", async () => {
-      mockTryOnService.deleteTryOn.mockRejectedValueOnce(
-        new NotFoundException("试衣记录不存在"),
-      );
+      mockTryOnService.deleteTryOn.mockRejectedValueOnce(new NotFoundException("试衣记录不存在"));
 
-      await expect(
-        controller.deleteTryOn("user-123", "non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.deleteTryOn("user-123", "non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 });

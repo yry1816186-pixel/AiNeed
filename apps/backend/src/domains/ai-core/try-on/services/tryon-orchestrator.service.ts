@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
@@ -27,7 +26,7 @@ export class TryOnOrchestratorService {
     private doubaoSeedreamProvider: DoubaoSeedreamProvider,
     private glmTryOnProvider: GlmTryOnProvider,
     private localPreviewProvider: LocalPreviewTryOnProvider,
-    @Inject(REDIS_CLIENT) private redis: Redis,
+    @Inject(REDIS_CLIENT) private redis: Redis
   ) {
     this.providers = [
       this.doubaoSeedreamProvider,
@@ -35,17 +34,11 @@ export class TryOnOrchestratorService {
       this.localPreviewProvider,
     ].sort((a, b) => a.priority - b.priority);
 
-    this.cacheEnabled = this.configService.get<boolean>(
-      "TRYON_CACHE_ENABLED",
-      true,
-    );
+    this.cacheEnabled = this.configService.get<boolean>("TRYON_CACHE_ENABLED", true);
     this.cacheTTL = this.configService.get<number>("TRYON_CACHE_TTL", 86400);
   }
 
-  async executeTryOn(
-    request: TryOnRequest,
-    cacheKeyOverride?: string,
-  ): Promise<TryOnResponse> {
+  async executeTryOn(request: TryOnRequest, cacheKeyOverride?: string): Promise<TryOnResponse> {
     if (this.cacheEnabled && cacheKeyOverride) {
       const cached = await this.getFromCache(cacheKeyOverride);
       if (cached) {
@@ -60,9 +53,7 @@ export class TryOnOrchestratorService {
       try {
         const isAvailable = await provider.isAvailable();
         if (!isAvailable) {
-          this.logger.debug(
-            `Provider ${provider.name} not available, skipping`,
-          );
+          this.logger.debug(`Provider ${provider.name} not available, skipping`);
           continue;
         }
 
@@ -75,11 +66,8 @@ export class TryOnOrchestratorService {
 
         return result;
       } catch (error) {
-        const providerError =
-          error instanceof Error ? error : new Error("Unknown provider error");
-        this.logger.warn(
-          `Provider ${provider.name} failed: ${providerError.message}`,
-        );
+        const providerError = error instanceof Error ? error : new Error("Unknown provider error");
+        this.logger.warn(`Provider ${provider.name} failed: ${providerError.message}`);
         lastError = providerError;
       }
     }
@@ -100,10 +88,7 @@ export class TryOnOrchestratorService {
     return null;
   }
 
-  private async saveToCache(
-    cacheKey: string,
-    result: TryOnResponse,
-  ): Promise<void> {
+  private async saveToCache(cacheKey: string, result: TryOnResponse): Promise<void> {
     try {
       await this.redis.setex(cacheKey, this.cacheTTL, JSON.stringify(result));
       this.logger.debug(`Cached try-on result: ${cacheKey}`);
@@ -113,10 +98,7 @@ export class TryOnOrchestratorService {
     }
   }
 
-  async clearCache(
-    photoId?: string,
-    itemId?: string,
-  ): Promise<void> {
+  async clearCache(photoId?: string, itemId?: string): Promise<void> {
     try {
       if (photoId && itemId) {
         const cacheKey = generateStableCacheKey(photoId, itemId);
@@ -126,13 +108,7 @@ export class TryOnOrchestratorService {
         let deletedCount = 0;
 
         do {
-          const result = await this.redis.scan(
-            cursor,
-            "MATCH",
-            "tryon:stable:*",
-            "COUNT",
-            100,
-          );
+          const result = await this.redis.scan(cursor, "MATCH", "tryon:stable:*", "COUNT", 100);
           cursor = result[0];
           const keys = result[1];
 

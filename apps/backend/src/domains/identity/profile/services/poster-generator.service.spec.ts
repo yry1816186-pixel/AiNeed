@@ -74,11 +74,9 @@ describe("PosterGeneratorService", () => {
       bodyType: "hourglass",
       bodyTypeName: "X型（沙漏）体型",
       description: "您的肩部和臀部宽度相近",
-      recommendations: [
-        { category: "上衣", advice: "突出腰线的款式", examples: ["收腰衬衫"] },
-      ],
+      recommendations: [{ category: "上衣", advice: "突出腰线的款式", examples: ["收腰衬衫"] }],
       idealStyles: ["收腰设计", "高腰裤", "裹身裙"],
-      avoidStyles: ["过于宽松的款式"],
+      recommendStyles: ["收腰衬衫", "裹身裙", "高腰牛仔裤"],
     }),
     getColorAnalysis: jest.fn().mockResolvedValue({
       colorSeason: "spring_warm",
@@ -159,7 +157,7 @@ describe("PosterGeneratorService", () => {
       mockProfileService.getProfile.mockResolvedValueOnce(null);
 
       await expect(service.generateProfilePoster("non-existent-user")).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
   });
@@ -182,7 +180,9 @@ describe("PosterGeneratorService", () => {
     it("缓存未命中时应从 MinIO 获取海报", async () => {
       mockRedisService.get.mockResolvedValue(null);
       mockStorageService.fileExists.mockResolvedValue(true);
-      mockStorageService.getFileUrl.mockResolvedValue("https://storage.example.com/posters/test.png");
+      mockStorageService.getFileUrl.mockResolvedValue(
+        "https://storage.example.com/posters/test.png"
+      );
 
       const result = await service.getPoster("user-id", "poster-id");
 
@@ -196,7 +196,7 @@ describe("PosterGeneratorService", () => {
       mockStorageService.fileExists.mockResolvedValue(false);
 
       await expect(service.getPoster("user-id", "non-existent-id")).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
   });

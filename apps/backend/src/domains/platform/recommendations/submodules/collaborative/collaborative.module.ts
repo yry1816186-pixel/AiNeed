@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Collaborative Filtering Submodule
  * Handles user behavior-based recommendations:
@@ -17,15 +16,7 @@ import { PreferenceLearningService } from "../../services/preference-learning.se
 
 @Module({
   imports: [ConfigModule, PrismaModule],
-  providers: [
-    CollaborativeFilteringService,
-    ColdStartService,
-    PreferenceLearningService,
-  ],
-  exports: [
-    CollaborativeFilteringService,
-    ColdStartService,
-    PreferenceLearningService,
-  ],
+  providers: [CollaborativeFilteringService, ColdStartService, PreferenceLearningService],
+  exports: [CollaborativeFilteringService, ColdStartService, PreferenceLearningService],
 })
 export class CollaborativeSubmodule {}

@@ -23,14 +23,11 @@ import {
 } from "@nestjs/swagger";
 import type { Response } from "express";
 
+import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
-import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 
-import {
-  CreateTryOnDto,
-  GetTryOnHistoryQueryDto,
-} from "./dto/try-on.dto";
+import { CreateTryOnDto, GetTryOnHistoryQueryDto } from "./dto/try-on.dto";
 import { TryOnService } from "./try-on.service";
 
 @ApiTags("try-on")
@@ -44,11 +41,10 @@ export class TryOnController {
 
   @Post()
   @UseGuards(AiQuotaGuard)
-  @SetQuotaType('try-on')
+  @SetQuotaType("try-on")
   @ApiOperation({
     summary: "创建虚拟试衣请求",
-    description:
-      "提交虚拟试衣任务，将指定服装合成到用户照片上。任务异步处理，需要轮询查询状态。",
+    description: "提交虚拟试衣任务，将指定服装合成到用户照片上。任务异步处理，需要轮询查询状态。",
   })
   @ApiBody({ type: CreateTryOnDto })
   @ApiResponse({
@@ -67,15 +63,8 @@ export class TryOnController {
     status: 404,
     description: "照片或服装项不存在",
   })
-  async createTryOn(
-    @CurrentUser("id") userId: string,
-    @Body() body: CreateTryOnDto,
-  ) {
-    return this.tryOnService.createTryOnRequest(
-      userId,
-      body.photoId,
-      body.itemId,
-    );
+  async createTryOn(@CurrentUser("id") userId: string, @Body() body: CreateTryOnDto) {
+    return this.tryOnService.createTryOnRequest(userId, body.photoId, body.itemId);
   }
 
   @Get("history")
@@ -110,10 +99,7 @@ export class TryOnController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async getHistory(
-    @CurrentUser("id") userId: string,
-    @Query() query: GetTryOnHistoryQueryDto,
-  ) {
+  async getHistory(@CurrentUser("id") userId: string, @Query() query: GetTryOnHistoryQueryDto) {
     return this.tryOnService.getUserTryOnHistory(
       userId,
       query.page ?? 1,
@@ -122,7 +108,7 @@ export class TryOnController {
       query.category,
       query.scene,
       query.dateFrom,
-      query.dateTo,
+      query.dateTo
     );
   }
 
@@ -162,10 +148,7 @@ export class TryOnController {
     status: 404,
     description: "试衣记录不存在",
   })
-  async getTryOnStatus(
-    @CurrentUser("id") userId: string,
-    @Param("id") tryOnId: string,
-  ) {
+  async getTryOnStatus(@CurrentUser("id") userId: string, @Param("id") tryOnId: string) {
     return this.tryOnService.getTryOnStatus(tryOnId, userId);
   }
 
@@ -209,7 +192,7 @@ export class TryOnController {
   async getTryOnResultImage(
     @CurrentUser("id") userId: string,
     @Param("id") tryOnId: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     this.logger.log(`Serving try-on result image for ${tryOnId}`);
     const asset = await this.tryOnService.getTryOnResultAsset(tryOnId, userId);
@@ -241,7 +224,7 @@ export class TryOnController {
   async getShareImage(
     @CurrentUser("id") userId: string,
     @Param("id") tryOnId: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     this.logger.log(`Serving share image for ${tryOnId}`);
     const asset = await this.tryOnService.getShareImageAsset(tryOnId, userId);
@@ -272,10 +255,7 @@ export class TryOnController {
     status: 400,
     description: "今日免费重试次数已用完",
   })
-  async retryTryOn(
-    @CurrentUser("id") userId: string,
-    @Param("id") tryOnId: string,
-  ) {
+  async retryTryOn(@CurrentUser("id") userId: string, @Param("id") tryOnId: string) {
     return this.tryOnService.retryTryOn(tryOnId, userId);
   }
 
@@ -303,10 +283,7 @@ export class TryOnController {
     status: 404,
     description: "试衣记录不存在",
   })
-  async deleteTryOn(
-    @CurrentUser("id") userId: string,
-    @Param("id") tryOnId: string,
-  ) {
+  async deleteTryOn(@CurrentUser("id") userId: string, @Param("id") tryOnId: string) {
     await this.tryOnService.deleteTryOn(tryOnId, userId);
   }
 }

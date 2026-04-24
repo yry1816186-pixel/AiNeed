@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
-import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheService } from "../../../modules/cache/cache.service";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 import { RecommendationsService } from "./recommendations.service";
 

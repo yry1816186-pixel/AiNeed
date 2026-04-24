@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, ForbiddenException, Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
-import { Prisma , BehaviorEventType } from "@prisma/client";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import { Prisma, BehaviorEventType } from "@prisma/client";
 type MembershipPlan = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UserSubscription = any;
 
 import { PrismaService } from "../../../common/prisma/prisma.service";

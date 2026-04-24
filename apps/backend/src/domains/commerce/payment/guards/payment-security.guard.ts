@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, BadRequestException } from "@nestjs/common";
 import { Request } from "express";
 
 import { PaymentRawCallbackData } from "../types/common.types";

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -6,11 +5,7 @@ import Opossum from "opossum";
 
 import { StorageService } from "../../../../common/storage/storage.service";
 
-import {
-  TryOnProvider,
-  TryOnRequest,
-  TryOnResponse,
-} from "./ai-tryon-provider.interface";
+import { TryOnProvider, TryOnRequest, TryOnResponse } from "./ai-tryon-provider.interface";
 
 @Injectable()
 export class DoubaoSeedreamProvider implements TryOnProvider {
@@ -27,26 +22,23 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
   private readonly resultClient: AxiosInstance;
   private readonly circuitBreaker: Opossum<[TryOnRequest], TryOnResponse>;
 
-  constructor(
-    private configService: ConfigService,
-    private storageService: StorageService,
-  ) {
+  constructor(private configService: ConfigService, private storageService: StorageService) {
     this.apiKey = this.configService.get<string>("DOUBAO_SEEDREAM_API_KEY", "");
     this.apiEndpoint = this.configService.get<string>(
       "DOUBAO_SEEDREAM_API_URL",
-      "https://visual.volcengineapi.com/v1/aigc/generate",
+      "https://visual.volcengineapi.com/v1/aigc/generate"
     );
     this.resultEndpoint = this.configService.get<string>(
       "DOUBAO_SEEDREAM_RESULT_URL",
-      "https://visual.volcengineapi.com/v1/aigc/result",
+      "https://visual.volcengineapi.com/v1/aigc/result"
     );
     this.model = this.configService.get<string>(
       "DOUBAO_SEEDREAM_MODEL",
-      "doubao-seedream-3-0-t2i-250415",
+      "doubao-seedream-3-0-t2i-250415"
     );
     this.enabled =
-      this.configService.get<string>("DOUBAO_SEEDREAM_ENABLED", "false") ===
-        "true" && !!this.apiKey;
+      this.configService.get<string>("DOUBAO_SEEDREAM_ENABLED", "false") === "true" &&
+      !!this.apiKey;
 
     this.client = axios.create({
       baseURL: this.apiEndpoint,
@@ -65,17 +57,14 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
       },
     });
 
-    this.circuitBreaker = new Opossum(
-      (req: TryOnRequest) => this.executeSeedreamInference(req),
-      {
-        timeout: 25000,
-        errorThresholdPercentage: 50,
-        resetTimeout: 60000,
-        rollingCountTimeout: 10000,
-        rollingCountBuckets: 10,
-        volumeThreshold: 3,
-      },
-    );
+    this.circuitBreaker = new Opossum((req: TryOnRequest) => this.executeSeedreamInference(req), {
+      timeout: 25000,
+      errorThresholdPercentage: 50,
+      resetTimeout: 60000,
+      rollingCountTimeout: 10000,
+      rollingCountBuckets: 10,
+      volumeThreshold: 3,
+    });
 
     this.circuitBreaker.on("open", () => {
       this.logger.warn("Doubao-Seedream circuit breaker OPENED");
@@ -88,7 +77,7 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
     });
 
     this.logger.log(
-      `DoubaoSeedream Provider initialized. Enabled: ${this.enabled}, Model: ${this.model}`,
+      `DoubaoSeedream Provider initialized. Enabled: ${this.enabled}, Model: ${this.model}`
     );
   }
 
@@ -106,17 +95,11 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
     return this.circuitBreaker.fire(request);
   }
 
-  private async executeSeedreamInference(
-    request: TryOnRequest,
-  ): Promise<TryOnResponse> {
+  private async executeSeedreamInference(request: TryOnRequest): Promise<TryOnResponse> {
     const startTime = Date.now();
 
-    const personImageBase64 = await this.fetchImageAsBase64(
-      request.personImageUrl,
-    );
-    const garmentImageBase64 = await this.fetchImageAsBase64(
-      request.garmentImageUrl,
-    );
+    const personImageBase64 = await this.fetchImageAsBase64(request.personImageUrl);
+    const garmentImageBase64 = await this.fetchImageAsBase64(request.garmentImageUrl);
 
     const prompt = this.buildPrompt(request.category);
 
@@ -134,12 +117,8 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
 
     const submitResponse = await this.client.post("", payload);
 
-    const taskId =
-      submitResponse.data?.data?.task_id ??
-      submitResponse.data?.task_id;
-    const status =
-      submitResponse.data?.data?.status ??
-      submitResponse.data?.status;
+    const taskId = submitResponse.data?.data?.task_id ?? submitResponse.data?.task_id;
+    const status = submitResponse.data?.data?.status ?? submitResponse.data?.status;
 
     let resultImageUrl: string | undefined;
 
@@ -150,17 +129,13 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
     }
 
     if (!resultImageUrl) {
-      throw new Error(
-        "Doubao-Seedream API returned no result image",
-      );
+      throw new Error("Doubao-Seedream API returned no result image");
     }
 
     const finalUrl = await this.uploadResultToStorage(resultImageUrl);
 
     const processingTime = Date.now() - startTime;
-    this.logger.log(
-      `Doubao-Seedream try-on completed in ${processingTime}ms`,
-    );
+    this.logger.log(`Doubao-Seedream try-on completed in ${processingTime}ms`);
 
     return {
       resultImageUrl: finalUrl,
@@ -175,9 +150,7 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
     };
   }
 
-  private buildPrompt(
-    category?: TryOnRequest["category"],
-  ): string {
+  private buildPrompt(category?: TryOnRequest["category"]): string {
     const categoryDesc: Record<string, string> = {
       upper_body: "上装",
       lower_body: "下装",
@@ -196,14 +169,10 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
       await this.sleep(intervalMs);
 
       try {
-        const response = await this.resultClient.get(
-          `${this.resultEndpoint}/${taskId}`,
-        );
+        const response = await this.resultClient.get(`${this.resultEndpoint}/${taskId}`);
 
-        const status =
-          response.data?.data?.status ?? response.data?.status;
-        const results =
-          response.data?.data?.results ?? response.data?.results;
+        const status = response.data?.data?.status ?? response.data?.status;
+        const results = response.data?.data?.results ?? response.data?.results;
 
         if (status === "succeeded" && results?.length > 0) {
           return results[0].url;
@@ -211,29 +180,26 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
 
         if (status === "failed") {
           throw new Error(
-            `Doubao-Seedream task ${taskId} failed: ${JSON.stringify(response.data)}`,
+            `Doubao-Seedream task ${taskId} failed: ${JSON.stringify(response.data)}`
           );
         }
 
         this.logger.debug(
-          `Polling Seedream task ${taskId}, attempt ${attempt + 1}, status: ${status}`,
+          `Polling Seedream task ${taskId}, attempt ${attempt + 1}, status: ${status}`
         );
       } catch (error) {
-        if (
-          error instanceof Error &&
-          error.message.includes("failed")
-        ) {
+        if (error instanceof Error && error.message.includes("failed")) {
           throw error;
         }
         this.logger.warn(
-          `Poll attempt ${attempt + 1} failed: ${error instanceof Error ? error.message : String(error)}`,
+          `Poll attempt ${attempt + 1} failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`
         );
       }
     }
 
-    throw new Error(
-      `Doubao-Seedream task ${taskId} timed out after ${maxAttempts} poll attempts`,
-    );
+    throw new Error(`Doubao-Seedream task ${taskId} timed out after ${maxAttempts} poll attempts`);
   }
 
   private async uploadResultToStorage(imageUrl: string): Promise<string> {
@@ -249,7 +215,7 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
           buffer: imageBuffer,
           size: imageBuffer.length,
         },
-        "tryon-results",
+        "tryon-results"
       );
       return upload.url;
     }
@@ -264,7 +230,7 @@ export class DoubaoSeedreamProvider implements TryOnProvider {
         buffer: imageBuffer,
         size: imageBuffer.length,
       },
-      "tryon-results",
+      "tryon-results"
     );
     return upload.url;
   }

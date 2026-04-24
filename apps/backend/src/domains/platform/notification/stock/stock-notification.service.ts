@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { StockNotificationStatus } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { StockNotificationStatus } from "../../../../types/prisma-enums";
 
 @Injectable()
 export class StockNotificationService {
@@ -16,7 +10,7 @@ export class StockNotificationService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   /**
@@ -24,12 +18,7 @@ export class StockNotificationService {
    * Enforces unique constraint (userId+itemId+color+size).
    * If already exists and CANCELLED, reactivate to PENDING.
    */
-  async subscribe(
-    userId: string,
-    itemId: string,
-    color?: string,
-    size?: string,
-  ) {
+  async subscribe(userId: string, itemId: string, color?: string, size?: string) {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
     });
@@ -131,7 +120,9 @@ export class StockNotificationService {
       },
     });
 
-    if (subscriptions.length === 0) {return;}
+    if (subscriptions.length === 0) {
+      return;
+    }
 
     const now = new Date();
     await this.prisma.stockNotification.updateMany({
@@ -164,7 +155,9 @@ export class StockNotificationService {
       select: { id: true, name: true, stock: true, lowStockThreshold: true },
     });
 
-    if (!item) {return;}
+    if (!item) {
+      return;
+    }
 
     if (item.stock <= item.lowStockThreshold) {
       this.eventEmitter.emit("LOW_STOCK", {
@@ -175,7 +168,7 @@ export class StockNotificationService {
       });
 
       this.logger.warn(
-        `Low stock alert: ${item.name} (stock: ${item.stock}, threshold: ${item.lowStockThreshold})`,
+        `Low stock alert: ${item.name} (stock: ${item.stock}, threshold: ${item.lowStockThreshold})`
       );
     }
   }

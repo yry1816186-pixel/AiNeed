@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Prisma, type ClothingItem } from "@prisma/client";
+
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
   BodyType,
   SkinTone,
@@ -8,8 +9,6 @@ import {
   ClothingCategory,
   type PrismaUserProfile,
 } from "../../../../types/prisma-enums";
-
-import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { KnowledgeGraphService } from "./knowledge-graph.service";
 import { MatchingTheoryService } from "./matching-theory.service";

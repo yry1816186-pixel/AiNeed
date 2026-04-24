@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -88,15 +87,14 @@ class FcmPushProvider implements PushProvider {
         credential = admin.credential.cert(serviceAccountPath);
       }
 
-      this.firebaseApp = admin.initializeApp(
-        { credential },
-        "xuno-push-fcm",
-      );
+      this.firebaseApp = admin.initializeApp({ credential }, "xuno-push-fcm");
       this.messaging = admin.messaging(this.firebaseApp);
       this.logger.log("FCM push provider initialized successfully");
     } catch (error) {
       this.logger.warn(
-        `FCM initialization failed: ${error instanceof Error ? error.message : "Unknown error"}. FCM push disabled.`,
+        `FCM initialization failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }. FCM push disabled.`
       );
     }
   }
@@ -192,10 +190,10 @@ class FcmPushProvider implements PushProvider {
     }
   }
 
-  private stringifyData(
-    data?: Record<string, unknown>,
-  ): Record<string, string> | undefined {
-    if (!data) {return undefined;}
+  private stringifyData(data?: Record<string, unknown>): Record<string, string> | undefined {
+    if (!data) {
+      return undefined;
+    }
     const result: Record<string, string> = {};
     for (const [key, value] of Object.entries(data)) {
       result[key] = typeof value === "string" ? value : JSON.stringify(value);
@@ -246,7 +244,9 @@ class ApnsPushProvider implements PushProvider {
       this.logger.log("APNs push provider initialized successfully");
     } catch (error) {
       this.logger.warn(
-        `APNs initialization failed: ${error instanceof Error ? error.message : "Unknown error"}. APNs push disabled.`,
+        `APNs initialization failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }. APNs push disabled.`
       );
     }
   }
@@ -274,7 +274,11 @@ class ApnsPushProvider implements PushProvider {
         topic: process.env.APNS_BUNDLE_ID || "com.xuno.app",
       });
 
-      const result = await (this.apnProvider as { send: (n: unknown, t: string) => Promise<{ sent: unknown[]; failed: unknown[] }> }).send(notification, token);
+      const result = await (
+        this.apnProvider as {
+          send: (n: unknown, t: string) => Promise<{ sent: unknown[]; failed: unknown[] }>;
+        }
+      ).send(notification, token);
 
       if (result.failed && result.failed.length > 0) {
         return { token, success: false, error: "APNs delivery failed" };
@@ -294,9 +298,7 @@ class ApnsPushProvider implements PushProvider {
     const concurrency = 5;
     for (let i = 0; i < tokens.length; i += concurrency) {
       const batch = tokens.slice(i, i + concurrency);
-      const batchResults = await Promise.all(
-        batch.map((token) => this.send(token, payload)),
-      );
+      const batchResults = await Promise.all(batch.map((token) => this.send(token, payload)));
       results.push(...batchResults);
     }
     return results;
@@ -321,24 +323,17 @@ export class PushNotificationService {
     const available = this.providers.filter((p) => p.isAvailable());
     if (available.length === 0) {
       this.logger.warn(
-        "No push notification providers available. Push notifications disabled. Configure FIREBASE_SERVICE_ACCOUNT_JSON or APNS credentials to enable.",
+        "No push notification providers available. Push notifications disabled. Configure FIREBASE_SERVICE_ACCOUNT_JSON or APNS credentials to enable."
       );
     } else {
-      this.logger.log(
-        `Push providers available: ${available.map((p) => p.name).join(", ")}`,
-      );
+      this.logger.log(`Push providers available: ${available.map((p) => p.name).join(", ")}`);
     }
   }
 
   /**
    * Register a device token for a user
    */
-  async registerDeviceToken(
-    userId: string,
-    token: string,
-    platform: string,
-    appId?: string,
-  ) {
+  async registerDeviceToken(userId: string, token: string, platform: string, appId?: string) {
     return this.prisma.pushDeviceToken.upsert({
       where: {
         userId_token: { userId, token },
@@ -391,10 +386,7 @@ export class PushNotificationService {
   /**
    * Send push notification to a specific user
    */
-  async sendToUser(
-    userId: string,
-    payload: PushPayload,
-  ): Promise<PushSendResult[]> {
+  async sendToUser(userId: string, payload: PushPayload): Promise<PushSendResult[]> {
     const tokens = await this.getUserDeviceTokens(userId);
     if (tokens.length === 0) {
       this.logger.debug(`No device tokens for user ${userId}, skipping push`);
@@ -409,7 +401,7 @@ export class PushNotificationService {
    */
   async sendToUsers(
     userIds: string[],
-    payload: PushPayload,
+    payload: PushPayload
   ): Promise<Map<string, PushSendResult[]>> {
     const results = new Map<string, PushSendResult[]>();
 
@@ -447,10 +439,7 @@ export class PushNotificationService {
   /**
    * Send with retry logic (exponential backoff)
    */
-  private async sendWithRetry(
-    tokens: string[],
-    payload: PushPayload,
-  ): Promise<PushSendResult[]> {
+  private async sendWithRetry(tokens: string[], payload: PushPayload): Promise<PushSendResult[]> {
     const availableProviders = this.providers.filter((p) => p.isAvailable());
     if (availableProviders.length === 0) {
       return tokens.map((token) => ({
@@ -465,9 +454,10 @@ export class PushNotificationService {
 
     let lastResults: PushSendResult[] = [];
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
-      const results = tokens.length > 1
-        ? await provider.sendBatch(tokens, payload)
-        : [await provider.send(tokens[0]!, payload)];
+      const results =
+        tokens.length > 1
+          ? await provider.sendBatch(tokens, payload)
+          : [await provider.send(tokens[0]!, payload)];
 
       const failed = results.filter((r) => !r.success);
       if (failed.length === 0) {
@@ -484,7 +474,9 @@ export class PushNotificationService {
 
     // Deactivate invalid tokens
     const permanentlyFailed = lastResults.filter(
-      (r) => !r.success && (r.error?.includes("NotRegistered") || r.error?.includes("InvalidRegistration")),
+      (r) =>
+        !r.success &&
+        (r.error?.includes("NotRegistered") || r.error?.includes("InvalidRegistration"))
     );
     if (permanentlyFailed.length > 0) {
       await this.deactivateTokens(permanentlyFailed.map((r) => r.token));
@@ -505,7 +497,7 @@ export class PushNotificationService {
       this.logger.log(`Deactivated ${tokens.length} invalid device tokens`);
     } catch (error) {
       this.logger.error(
-        `Failed to deactivate tokens: ${error instanceof Error ? error.message : "Unknown"}`,
+        `Failed to deactivate tokens: ${error instanceof Error ? error.message : "Unknown"}`
       );
     }
   }

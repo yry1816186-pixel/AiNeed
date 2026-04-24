@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -61,10 +60,7 @@ export class StyleUnderstandingService {
   private readonly mlServiceUrl: string;
 
   constructor(private configService: ConfigService) {
-    this.mlServiceUrl = this.configService.get<string>(
-      "ML_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
   }
 
   async onModuleInit() {
@@ -84,7 +80,7 @@ export class StyleUnderstandingService {
       age?: number;
       bodyType?: string;
       stylePreferences?: string[];
-    },
+    }
   ): Promise<StyleAnalysisResult> {
     try {
       const response = await this.mlClient.post("/api/style/analyze", {
@@ -102,7 +98,7 @@ export class StyleUnderstandingService {
   async getStyleSuggestions(
     userInput: string,
     bodyType?: string,
-    occasion?: string,
+    occasion?: string
   ): Promise<StyleRecommendationResult> {
     try {
       const response = await this.mlClient.post("/api/style/suggestions", {
@@ -125,7 +121,7 @@ export class StyleUnderstandingService {
       occasion?: string;
       category?: string;
       topK?: number;
-    },
+    }
   ): Promise<FullRecommendationResult> {
     try {
       const response = await this.mlClient.post("/api/recommendations", {
@@ -148,7 +144,7 @@ export class StyleUnderstandingService {
     options?: {
       userProfile?: Record<string, any>;
       occasion?: string;
-    },
+    }
   ): Promise<{
     outfit_id: string;
     style_analysis: StyleAnalysisResult;
@@ -270,9 +266,7 @@ export class StyleUnderstandingService {
     };
   }
 
-  private getFallbackRecommendations(
-    userInput: string,
-  ): FullRecommendationResult {
+  private getFallbackRecommendations(userInput: string): FullRecommendationResult {
     return {
       style_analysis: this.getFallbackStyleAnalysis(userInput),
       recommendations: [],

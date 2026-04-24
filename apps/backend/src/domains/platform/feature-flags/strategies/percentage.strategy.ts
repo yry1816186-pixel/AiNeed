@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 interface FeatureFlag {
   id: string;
   key: string;
@@ -11,8 +9,7 @@ interface FeatureFlag {
 
 export class PercentageStrategy {
   evaluate(flag: FeatureFlag, userId: string): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const percentage = (flag.value as Record<string, any>).percentage ?? 0;
+    const percentage = flag.value.percentage ?? 0;
     if (percentage <= 0) {
       return false;
     }

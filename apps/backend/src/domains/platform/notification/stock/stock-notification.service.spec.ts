@@ -1,9 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { StockNotificationStatus } from "../../../../types/prisma-enums";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { StockNotificationStatus } from "../../../../types/prisma-enums";
+
 import { StockNotificationService } from "./stock-notification.service";
 
 const mockPrismaService = {
@@ -86,12 +87,8 @@ describe("StockNotificationService", () => {
     it("should throw NotFoundException when item does not exist", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        "商品不存在",
-      );
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow(NotFoundException);
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow("商品不存在");
     });
 
     it("should throw BadRequestException when already subscribed with PENDING status", async () => {
@@ -106,12 +103,8 @@ describe("StockNotificationService", () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockItem);
       mockPrismaService.stockNotification.findFirst.mockResolvedValue(existingNotification);
 
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        "您已订阅该商品的到货通知",
-      );
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow(BadRequestException);
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow("您已订阅该商品的到货通知");
     });
 
     it("should reactivate a CANCELLED subscription to PENDING", async () => {
@@ -154,12 +147,8 @@ describe("StockNotificationService", () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockItem);
       mockPrismaService.stockNotification.findFirst.mockResolvedValue(existingNotification);
 
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.subscribe(userId, itemId)).rejects.toThrow(
-        "该商品已到货，无需重复订阅",
-      );
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow(BadRequestException);
+      await expect(service.subscribe(userId, itemId)).rejects.toThrow("该商品已到货，无需重复订阅");
     });
   });
 
@@ -194,12 +183,8 @@ describe("StockNotificationService", () => {
     it("should throw NotFoundException when notification does not exist", async () => {
       mockPrismaService.stockNotification.findUnique.mockResolvedValue(null);
 
-      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow(
-        "通知记录不存在",
-      );
+      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow(NotFoundException);
+      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow("通知记录不存在");
     });
 
     it("should throw BadRequestException when user does not own the notification", async () => {
@@ -213,11 +198,9 @@ describe("StockNotificationService", () => {
       mockPrismaService.stockNotification.findUnique.mockResolvedValue(mockNotification);
 
       await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow(
-        BadRequestException,
+        BadRequestException
       );
-      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow(
-        "无权操作此通知",
-      );
+      await expect(service.unsubscribe(userId, notificationId)).rejects.toThrow("无权操作此通知");
     });
   });
 

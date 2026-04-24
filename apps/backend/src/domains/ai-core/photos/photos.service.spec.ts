@@ -2,11 +2,11 @@
 import { BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType, AnalysisStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
 import { StorageService } from "../../../common/storage/storage.service";
+import { PhotoType, AnalysisStatus } from "../../../types/prisma-enums";
 import { OnboardingService } from "../../identity/onboarding/onboarding.service";
 import { QueueService } from "../../platform/queue/queue.service";
 

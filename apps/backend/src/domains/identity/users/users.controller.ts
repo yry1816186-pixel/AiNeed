@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -53,10 +52,7 @@ class SuccessResponseDto {
 @UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UsersController {
-  constructor(
-    private usersService: UsersService,
-    private storageService: StorageService,
-  ) {}
+  constructor(private usersService: UsersService, private storageService: StorageService) {}
 
   @Get("me")
   @ApiOperation({
@@ -101,7 +97,7 @@ export class UsersController {
   })
   async updateCurrentUser(
     @Request() req: { user: { id: string } },
-    @Body() dto: ServiceUpdateUserDto,
+    @Body() dto: ServiceUpdateUserDto
   ) {
     return this.usersService.update(req.user.id, dto);
   }
@@ -128,7 +124,7 @@ export class UsersController {
   })
   async changePassword(
     @Request() req: { user: { id: string } },
-    @Body() dto: ServiceChangePasswordDto,
+    @Body() dto: ServiceChangePasswordDto
   ) {
     return this.usersService.changePassword(req.user.id, dto);
   }
@@ -154,7 +150,7 @@ export class UsersController {
   })
   async updateAvatar(
     @Request() req: { user: { id: string } },
-    @Body() body: { avatarUrl: string },
+    @Body() body: { avatarUrl: string }
   ) {
     return this.usersService.updateAvatar(req.user.id, body.avatarUrl);
   }
@@ -165,8 +161,7 @@ export class UsersController {
   @ApiConsumes("multipart/form-data")
   @ApiOperation({
     summary: "上传头像",
-    description:
-      "通过 multipart/form-data 上传头像文件。支持 JPEG、PNG、WebP 格式，最大 5MB。",
+    description: "通过 multipart/form-data 上传头像文件。支持 JPEG、PNG、WebP 格式，最大 5MB。",
   })
   @ApiBody({
     schema: {
@@ -196,7 +191,7 @@ export class UsersController {
   })
   async uploadAvatar(
     @Request() req: { user: { id: string } },
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File
   ) {
     if (!file) {
       throw new BadRequestException("请选择要上传的头像文件");
@@ -204,9 +199,7 @@ export class UsersController {
 
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException(
-        "不支持的文件格式，仅支持 JPEG、PNG、WebP 格式",
-      );
+      throw new BadRequestException("不支持的文件格式，仅支持 JPEG、PNG、WebP 格式");
     }
 
     const maxSize = 5 * 1024 * 1024; // 5MB

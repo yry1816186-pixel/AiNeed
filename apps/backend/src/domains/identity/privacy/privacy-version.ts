@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Current policy versions.
  * Update these when privacy policy or terms of service are modified.

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -9,7 +8,7 @@ export interface BodyVisionResult {
   description: string;
   recommendations: { category: string; advice: string; examples: string[] }[];
   idealStyles: string[];
-  avoidStyles: string[];
+  recommendStyles: string[];
 }
 
 export interface ColorVisionResult {
@@ -63,7 +62,7 @@ export class GlmVisionAnalysisService {
     {"category": "外套", "advice": "穿搭建议", "examples": ["具体单品1", "具体单品2"]}
   ],
   "idealStyles": ["适合的风格1", "适合的风格2", "适合的风格3"],
-  "avoidStyles": ["应避免的风格1", "应避免的风格2"]
+  "recommendStyles": ["推荐的单品风格1", "推荐的单品风格2"]
 }
 
 体型判定标准：
@@ -160,7 +159,7 @@ export class GlmVisionAnalysisService {
         { category: "整体", advice: "建议选择有层次感的搭配", examples: ["V领衬衫", "修身外套"] },
       ],
       idealStyles: parsed.idealStyles || ["casual", "business"],
-      avoidStyles: parsed.avoidStyles || ["oversized"],
+      recommendStyles: parsed.recommendStyles || ["structured_blazer", "v_neck_tops"],
     };
   }
 

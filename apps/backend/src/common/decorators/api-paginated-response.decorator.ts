@@ -13,7 +13,6 @@ export class PaginatedDto<T> {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
     ApiExtraModels(PaginatedDto, model),
@@ -32,6 +31,6 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
           },
         ],
       },
-    }),
+    })
   );
 };

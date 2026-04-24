@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { RecommendationCacheService } from "./recommendation-cache.service";
 
@@ -50,18 +49,6 @@ export class BehaviorTrackingService {
 
   async track(input: TrackBehaviorInput): Promise<void> {
     const { userId, action, clothingId, context } = input;
-
-    try {
-      await this.prisma.userBehavior.create({
-        data: {
-          userId,
-          itemId: clothingId,
-          type: action,
-        },
-      });
-    } catch (error) {
-      this.logger.warn(`Failed to track behavior: ${error}`);
-    }
 
     try {
       const weightMap: Record<string, number> = {
@@ -113,7 +100,7 @@ export class BehaviorTrackingService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const behaviors = await this.prisma.userBehavior.findMany({
+    const behaviors = await this.prisma.userBehaviorEvent.findMany({
       where: {
         userId,
         createdAt: { gte: since },
@@ -122,7 +109,7 @@ export class BehaviorTrackingService {
       take: 200,
     });
 
-    const itemIds = [...new Set(behaviors.map((b) => b.itemId).filter(Boolean) as string[])];
+    const itemIds = [...new Set(behaviors.map((b) => b.targetId).filter(Boolean) as string[])];
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds } },
@@ -142,8 +129,8 @@ export class BehaviorTrackingService {
     const recentItems: string[] = [];
 
     for (const b of behaviors) {
-      const weight = ACTION_WEIGHTS[b.type as BehaviorAction] || 0.1;
-      const itemId = b.itemId;
+      const weight = ACTION_WEIGHTS[b.action as BehaviorAction] || 0.1;
+      const itemId = b.targetId;
       if (!itemId) {
         continue;
       }
@@ -203,20 +190,20 @@ export class BehaviorTrackingService {
       }
     }
 
-    const recentViews = await this.prisma.userBehavior.findMany({
+    const recentViews = await this.prisma.userBehaviorEvent.findMany({
       where: {
         userId,
-        type: "page_view",
+        action: "page_view",
         createdAt: {
           gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         },
       },
-      select: { itemId: true },
+      select: { targetId: true },
       take: 50,
     });
     for (const item of recentViews) {
-      if (item.itemId) {
-        excluded.add(item.itemId);
+      if (item.targetId) {
+        excluded.add(item.targetId);
       }
     }
 

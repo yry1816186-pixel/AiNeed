@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, ExecutionContext, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request } from "express";
@@ -32,7 +31,12 @@ export class OptionalAuthGuard extends AuthGuard("jwt") {
     }
   }
 
-  handleRequest<TUser = JwtUserPayload>(err: Error | null, user: TUser | false, _info: unknown, _context: ExecutionContext): TUser | null {
+  handleRequest<TUser = JwtUserPayload>(
+    err: Error | null,
+    user: TUser | false,
+    _info: unknown,
+    _context: ExecutionContext
+  ): TUser | null {
     // 不抛出错误，允许无用户访问
     return user || null;
   }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
+import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
@@ -25,8 +25,12 @@ describe("AddressService", () => {
 
   const mockEncryptionService = {
     encrypt: jest.fn((val: string | null | undefined) => (val ? `encrypted:${val}` : val)),
-    decrypt: jest.fn((val: string | null | undefined) => (val ? val.replace("encrypted:", "") : val)),
-    isEncrypted: jest.fn((val: string | null | undefined) => (val ? val.startsWith("encrypted:") : false)),
+    decrypt: jest.fn((val: string | null | undefined) =>
+      val ? val.replace("encrypted:", "") : val
+    ),
+    isEncrypted: jest.fn((val: string | null | undefined) =>
+      val ? val.startsWith("encrypted:") : false
+    ),
   };
 
   beforeEach(async () => {
@@ -75,9 +79,7 @@ describe("AddressService", () => {
     it("should throw error when address not found", async () => {
       mockPrismaService.userAddress.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne("user-1", "addr-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne("user-1", "addr-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should return address when found", async () => {
@@ -114,17 +116,15 @@ describe("AddressService", () => {
     it("should throw error when phone format is invalid", async () => {
       mockPrismaService.userAddress.count.mockResolvedValue(0);
 
-      await expect(
-        service.create("user-1", { ...createDto, phone: "12345" }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.create("user-1", { ...createDto, phone: "12345" })).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw error when address limit reached", async () => {
       mockPrismaService.userAddress.count.mockResolvedValue(10);
 
-      await expect(service.create("user-1", createDto)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.create("user-1", createDto)).rejects.toThrow(BadRequestException);
     });
 
     it("should set as default when it is first address", async () => {
@@ -167,9 +167,9 @@ describe("AddressService", () => {
     it("should throw error when address not found", async () => {
       mockPrismaService.userAddress.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.update("user-1", "addr-1", { name: "New Name" }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update("user-1", "addr-1", { name: "New Name" })).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should update address successfully", async () => {
@@ -195,9 +195,7 @@ describe("AddressService", () => {
     it("should throw error when address not found", async () => {
       mockPrismaService.userAddress.findFirst.mockResolvedValue(null);
 
-      await expect(service.remove("user-1", "addr-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.remove("user-1", "addr-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should set next address as default when removing default", async () => {
@@ -221,9 +219,7 @@ describe("AddressService", () => {
     it("should throw error when address not found", async () => {
       mockPrismaService.userAddress.findFirst.mockResolvedValue(null);
 
-      await expect(service.setDefault("user-1", "addr-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.setDefault("user-1", "addr-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should set address as default", async () => {

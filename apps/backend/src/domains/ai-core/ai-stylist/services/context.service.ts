@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { PhotoType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PhotoType } from "../../../../types/prisma-enums";
 import type { StylistContext, StylistSlots, StylistBodyProfile } from "../types";
 
 import type { StylistSession, StylistContextInternal } from "./session.service";
@@ -100,25 +99,22 @@ export class AiStylistContextService {
           key: string | null;
           weight: number;
         }>
-      ).reduce(
-        (acc: Record<string, Record<string, number>>, preference) => {
-          const category = preference.category;
-          const key = preference.key;
-          if (!category || !key) {
-            return acc;
-          }
-          if (!acc[category]) {
-            acc[category] = {};
-          }
-          const bucket = acc[category];
-          if (!bucket) {
-            return acc;
-          }
-          bucket[key] = preference.weight;
+      ).reduce((acc: Record<string, Record<string, number>>, preference) => {
+        const category = preference.category;
+        const key = preference.key;
+        if (!category || !key) {
           return acc;
-        },
-        {} as Record<string, Record<string, number>>
-      ),
+        }
+        if (!acc[category]) {
+          acc[category] = {};
+        }
+        const bucket = acc[category];
+        if (!bucket) {
+          return acc;
+        }
+        bucket[key] = preference.weight;
+        return acc;
+      }, {} as Record<string, Record<string, number>>),
       recentBehaviors: recentBehaviors.map(
         (behavior: { eventType: string; metadata: unknown }) => ({
           type: behavior.eventType,

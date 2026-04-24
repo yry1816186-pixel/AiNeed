@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+
 import { AnalysisStatus, PhotoType } from "../../../../types/prisma-enums";
 
 export class PhotoUploadResultDto {

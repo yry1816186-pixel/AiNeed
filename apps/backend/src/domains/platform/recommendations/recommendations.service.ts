@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 interface UserProfile {
   bodyType?: BodyType | null;
@@ -422,10 +421,10 @@ export class RecommendationsService {
           select: { itemId: true },
           take: 100,
         }),
-        this.prisma.userBehavior.findMany({
+        this.prisma.userBehaviorEvent.findMany({
           where: { userId },
           orderBy: { createdAt: "desc" },
-          select: { itemId: true, type: true },
+          select: { targetId: true, action: true },
           take: 200,
         }),
         this.prisma.cartItem.findMany({
@@ -442,8 +441,8 @@ export class RecommendationsService {
 
       // 浏览过的商品ID -> 用于协同过滤
       const viewedItemIds = behaviors
-        .filter((b) => b.itemId && b.type === "page_view")
-        .map((b) => b.itemId!);
+        .filter((b) => b.targetId && b.action === "page_view")
+        .map((b) => b.targetId!);
 
       // 购物车中的商品ID
       const cartItemIds = cartItems
@@ -469,7 +468,7 @@ export class RecommendationsService {
       }
 
       // 最近的行为类型（用于判断用户活跃度）
-      const recentBehaviorTypes = behaviors.slice(0, 20).map((b) => b.type);
+      const recentBehaviorTypes = behaviors.slice(0, 20).map((b) => b.action);
 
       return {
         favoriteItemIds,
@@ -665,7 +664,7 @@ export class RecommendationsService {
     const itemPrice = Number(item.price);
     // eslint-disable-next-line eqeqeq
     if (profile.priceRangeMin != null && profile.priceRangeMax != null) {
-      if (itemPrice >= profile.priceRangeMin! && itemPrice <= profile.priceRangeMax!) {
+      if (itemPrice >= profile.priceRangeMin && itemPrice <= profile.priceRangeMax) {
         score += WEIGHTS.priceRangeMatch;
         reasons.push("价格在你的预算范围内");
       } else if (profile.stylePreferences?.includes("budget-friendly") && itemPrice < 500) {

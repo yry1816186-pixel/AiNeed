@@ -127,7 +127,7 @@ export class WardrobeService {
       where: { id },
     });
 
-    if (!item || item.userId !== userId) {
+    if (item?.userId !== userId) {
       throw new NotFoundException("衣橱单品不存在");
     }
 
@@ -158,7 +158,7 @@ export class WardrobeService {
       select: { id: true, userId: true },
     });
 
-    if (!item || item.userId !== userId) {
+    if (item?.userId !== userId) {
       throw new NotFoundException("衣橱单品不存在");
     }
 
@@ -197,7 +197,7 @@ export class WardrobeService {
       select: { id: true, userId: true },
     });
 
-    if (!item || item.userId !== userId) {
+    if (item?.userId !== userId) {
       throw new NotFoundException("衣橱单品不存在");
     }
 

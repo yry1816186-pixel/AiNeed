@@ -18,7 +18,6 @@ export class DatabaseService implements OnModuleDestroy {
   /**
    * Execute a parameterized query
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async query<T = any>(options: QueryOptions): Promise<QueryResult<T>> {
     const start = Date.now();
     try {
@@ -28,15 +27,13 @@ export class DatabaseService implements OnModuleDestroy {
       const slowQueryThreshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS) || 500;
       if (duration > slowQueryThreshold) {
         this.logger.warn(
-          `Slow query detected (${duration}ms): ${options.name || options.text.substring(0, 100)}`,
+          `Slow query detected (${duration}ms): ${options.name || options.text.substring(0, 100)}`
         );
       }
 
       return result;
     } catch (error) {
-      this.logger.error(
-        `Query error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      this.logger.error(`Query error: ${error instanceof Error ? error.message : "Unknown error"}`);
       throw error;
     }
   }
@@ -51,9 +48,7 @@ export class DatabaseService implements OnModuleDestroy {
   /**
    * Execute a transaction with automatic commit/rollback
    */
-  async transaction<T>(
-    callback: (client: PoolClient) => Promise<T>,
-  ): Promise<T> {
+  async transaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
     const client = await this.getClient();
     try {
       await client.query("BEGIN");
@@ -71,7 +66,6 @@ export class DatabaseService implements OnModuleDestroy {
   /**
    * Run EXPLAIN ANALYZE on a query for debugging
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async explainQuery(options: QueryOptions): Promise<any[]> {
     const explainQuery = `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${options.text}`;
     const result = await this.pool.query(explainQuery, options.values);

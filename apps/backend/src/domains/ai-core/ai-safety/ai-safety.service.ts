@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * AI Safety Service
  *
@@ -8,13 +7,13 @@
  * 2026 AI Safety Best Practices Implementation
  */
 
-import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { AxiosResponse } from 'axios';
-import { Counter, Histogram, Gauge } from 'prom-client';
-import { firstValueFrom } from 'rxjs';
+import { HttpService } from "@nestjs/axios";
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectMetric } from "@willsoto/nestjs-prometheus";
+import { AxiosResponse } from "axios";
+import { Counter, Histogram, Gauge } from "prom-client";
+import { firstValueFrom } from "rxjs";
 
 // Types
 export interface ValidationResult {
@@ -27,7 +26,7 @@ export interface ValidationResult {
 
 export interface DetectedIssue {
   type: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   description: string;
   confidence: number;
   location?: string;
@@ -65,17 +64,14 @@ export class AISafetyService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
-    @InjectMetric('hallucination_detection_total')
+    @InjectMetric("hallucination_detection_total")
     private readonly detectionCounter: Counter<string>,
-    @InjectMetric('hallucination_rate')
+    @InjectMetric("hallucination_rate")
     private readonly hallucinationRate: Gauge<string>,
-    @InjectMetric('validation_latency_seconds')
-    private readonly validationLatency: Histogram<string>,
+    @InjectMetric("validation_latency_seconds")
+    private readonly validationLatency: Histogram<string>
   ) {
-    this.mlServiceUrl = this.configService.get<string>(
-      'ML_SERVICE_URL',
-      'http://localhost:8001'
-    );
+    this.mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
   }
 
   /**
@@ -87,7 +83,7 @@ export class AISafetyService {
    */
   async validateResponse(
     response: string,
-    context: ValidationContext = {},
+    context: ValidationContext = {}
   ): Promise<ValidationResult> {
     const startTime = Date.now();
 
@@ -118,7 +114,7 @@ export class AISafetyService {
     } catch (error) {
       this.logger.error(
         `Validation failed: ${this.getErrorMessage(error)}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
 
       // Return a conservative result on error
@@ -127,9 +123,9 @@ export class AISafetyService {
         confidenceScore: 0,
         issues: [
           {
-            type: 'validation_error',
-            severity: 'error',
-            description: 'Failed to validate response',
+            type: "validation_error",
+            severity: "error",
+            description: "Failed to validate response",
             confidence: 1.0,
             details: { error: this.getErrorMessage(error) },
           },
@@ -149,7 +145,7 @@ export class AISafetyService {
    */
   async validateAndCorrect(
     response: string,
-    context: ValidationContext = {},
+    context: ValidationContext = {}
   ): Promise<{ correctedResponse: string; validation: ValidationResult }> {
     const validation = await this.validateResponse(response, context);
 
@@ -157,9 +153,7 @@ export class AISafetyService {
 
     // If hallucination detected, add disclaimer
     if (!validation.isValid) {
-      const criticalIssues = validation.issues.filter(
-        (i) => i.severity === 'error'
-      );
+      const criticalIssues = validation.issues.filter((i) => i.severity === "error");
 
       if (criticalIssues.length > 0) {
         // Add warning prefix for critical issues
@@ -182,7 +176,7 @@ export class AISafetyService {
   async logHallucination(
     response: string,
     detection: { isHallucination?: boolean; confidenceScore: number; issues: DetectedIssue[] },
-    context: ValidationContext = {},
+    context: ValidationContext = {}
   ): Promise<void> {
     const logEntry: HallucinationLog = {
       id: this.generateLogId(),
@@ -195,11 +189,11 @@ export class AISafetyService {
 
     // Log to console for now (could be extended to database)
     this.logger.warn({
-      message: 'Hallucination detected',
+      message: "Hallucination detected",
       logId: logEntry.id,
       confidenceScore: detection.confidenceScore,
       issueCount: detection.issues.length,
-      criticalIssues: detection.issues.filter((i) => i.severity === 'error').length,
+      criticalIssues: detection.issues.filter((i) => i.severity === "error").length,
       context: {
         occasion: context.occasion,
         season: context.season,
@@ -216,7 +210,7 @@ export class AISafetyService {
    */
   async getStatistics(
     startDate?: Date,
-    endDate?: Date,
+    endDate?: Date
   ): Promise<{
     totalDetections: number;
     hallucinationRate: number;
@@ -257,7 +251,9 @@ export class AISafetyService {
     } catch (error) {
       // Log unexpected error but default to true to avoid blocking responses
       this.logger.warn(
-        `quickCheck encountered unexpected error: ${this.getErrorMessage(error)}. Defaulting to true.`,
+        `quickCheck encountered unexpected error: ${this.getErrorMessage(
+          error
+        )}. Defaulting to true.`
       );
       return true;
     }
@@ -268,7 +264,7 @@ export class AISafetyService {
    */
   private async callMLService(
     textToValidate: string,
-    context: ValidationContext,
+    context: ValidationContext
   ): Promise<{
     isHallucination: boolean;
     confidenceScore: number;
@@ -294,11 +290,11 @@ export class AISafetyService {
           },
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             timeout: 5000,
-          },
-        ),
+          }
+        )
       );
 
       const data = response.data;
@@ -306,21 +302,29 @@ export class AISafetyService {
       return {
         isHallucination: data.is_hallucination ?? false,
         confidenceScore: data.confidence_score ?? 1.0,
-        issues: (data.issues ?? []).map((issue: { type: string; severity: string; description: string; confidence?: number; location?: string; suggestion?: string; details?: Record<string, unknown> }) => ({
-          type: issue.type,
-          severity: issue.severity as 'error' | 'warning' | 'info',
-          description: issue.description,
-          confidence: issue.confidence ?? 0.5,
-          location: issue.location,
-          suggestion: issue.suggestion,
-          details: issue.details,
-        })),
+        issues: (data.issues ?? []).map(
+          (issue: {
+            type: string;
+            severity: string;
+            description: string;
+            confidence?: number;
+            location?: string;
+            suggestion?: string;
+            details?: Record<string, unknown>;
+          }) => ({
+            type: issue.type,
+            severity: issue.severity as "error" | "warning" | "info",
+            description: issue.description,
+            confidence: issue.confidence ?? 0.5,
+            location: issue.location,
+            suggestion: issue.suggestion,
+            details: issue.details,
+          })
+        ),
       };
     } catch (error) {
       // If ML service is unavailable, use fallback validation
-      this.logger.warn(
-        `ML service unavailable, using fallback: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.warn(`ML service unavailable, using fallback: ${this.getErrorMessage(error)}`);
       return this.fallbackValidation(textToValidate, context);
     }
   }
@@ -330,7 +334,7 @@ export class AISafetyService {
    */
   private fallbackValidation(
     response: string,
-    context: ValidationContext,
+    context: ValidationContext
   ): {
     isHallucination: boolean;
     confidenceScore: number;
@@ -346,8 +350,8 @@ export class AISafetyService {
         const mentionedTemp = parseInt(mentionedTempText, 10);
         if (Math.abs(mentionedTemp - context.temperature) > 15) {
           issues.push({
-            type: 'numerical_error',
-            severity: 'warning',
+            type: "numerical_error",
+            severity: "warning",
             description: `Temperature ${mentionedTemp}C differs significantly from actual ${context.temperature}C`,
             confidence: 0.8,
           });
@@ -368,8 +372,8 @@ export class AISafetyService {
         for (const pattern of patterns) {
           if (pattern.test(response)) {
             issues.push({
-              type: 'fashion_rule',
-              severity: 'warning',
+              type: "fashion_rule",
+              severity: "warning",
               description: `Item may not be appropriate for ${context.occasion} occasion`,
               confidence: 0.7,
             });
@@ -378,9 +382,7 @@ export class AISafetyService {
       }
     }
 
-    const confidenceScore = issues.length > 0
-      ? Math.max(0.3, 1 - issues.length * 0.2)
-      : 0.8; // Lower confidence for fallback
+    const confidenceScore = issues.length > 0 ? Math.max(0.3, 1 - issues.length * 0.2) : 0.8; // Lower confidence for fallback
 
     return {
       isHallucination: confidenceScore < 0.5,
@@ -394,29 +396,26 @@ export class AISafetyService {
    */
   private recordMetrics(
     result: { isHallucination: boolean; confidenceScore: number; issues: DetectedIssue[] },
-    context: ValidationContext,
+    context: ValidationContext
   ): void {
     // Increment detection counter
     this.detectionCounter.inc({
-      status: result.isHallucination ? 'hallucination' : 'valid',
-      occasion: context.occasion || 'unknown',
+      status: result.isHallucination ? "hallucination" : "valid",
+      occasion: context.occasion || "unknown",
     });
 
     // Update hallucination rate gauge
     this.hallucinationRate.set(
-      { occasion: context.occasion || 'all' },
-      result.isHallucination ? 1 : 0,
+      { occasion: context.occasion || "all" },
+      result.isHallucination ? 1 : 0
     );
   }
 
   /**
    * Add warning prefix to response with critical issues
    */
-  private addWarningPrefix(
-    response: string,
-    issues: DetectedIssue[],
-  ): string {
-    const warningPrefix = '[提示：该建议可能包含不准确信息，请谨慎参考]\n\n';
+  private addWarningPrefix(response: string, issues: DetectedIssue[]): string {
+    const warningPrefix = "[提示：该建议可能包含不准确信息，请谨慎参考]\n\n";
     return warningPrefix + response;
   }
 
@@ -428,6 +427,6 @@ export class AISafetyService {
   }
 
   private getErrorMessage(error: unknown): string {
-    return error instanceof Error ? error.message : 'Unknown error';
+    return error instanceof Error ? error.message : "Unknown error";
   }
 }

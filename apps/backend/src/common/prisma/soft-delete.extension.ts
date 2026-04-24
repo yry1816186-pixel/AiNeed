@@ -129,7 +129,6 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
  * 注意: $extends 的参数类型在 @prisma/client 中未完整导出，
  * 使用 any 是当前唯一可行的方案（已知的 Prisma 类型系统限制）
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma $extends type constraint requires any
 export function createSoftDeletePrismaClient<T extends { $extends: (extension: any) => any }>(
   prisma: T
 ): ReturnType<T["$extends"]> {

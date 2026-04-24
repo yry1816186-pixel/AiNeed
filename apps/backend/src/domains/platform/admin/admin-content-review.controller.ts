@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -17,11 +16,7 @@ import { AdminGuard } from "../../../common/guards/admin.guard";
 import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
-import {
-  ReviewQueueQueryDto,
-  ReviewActionDto,
-  BatchReviewDto,
-} from "./dto/content-review.dto";
+import { ReviewQueueQueryDto, ReviewActionDto, BatchReviewDto } from "./dto/content-review.dto";
 import { ContentReviewService } from "./services/content-review.service";
 
 @ApiTags("admin/content-review")
@@ -62,14 +57,9 @@ export class AdminContentReviewController {
   async reviewContent(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: ReviewActionDto,
+    @Body() dto: ReviewActionDto
   ) {
-    const result = await this.reviewService.reviewContent(
-      id,
-      req.user.id,
-      dto.action,
-      dto.note,
-    );
+    const result = await this.reviewService.reviewContent(id, req.user.id, dto.action, dto.note);
 
     if (!result) {
       throw new NotFoundException("Content not found");
@@ -82,15 +72,7 @@ export class AdminContentReviewController {
   @ApiOperation({ summary: "Batch review multiple content items" })
   @ApiResponse({ status: 200, description: "成功" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async batchReview(
-    @Request() req: RequestWithUser,
-    @Body() dto: BatchReviewDto,
-  ) {
-    return this.reviewService.batchReview(
-      dto.ids,
-      req.user.id,
-      dto.action,
-      dto.note,
-    );
+  async batchReview(@Request() req: RequestWithUser, @Body() dto: BatchReviewDto) {
+    return this.reviewService.batchReview(dto.ids, req.user.id, dto.action, dto.note);
   }
 }

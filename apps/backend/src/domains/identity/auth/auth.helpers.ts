@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createHash } from "crypto";
 
 import { Injectable, UnauthorizedException } from "@nestjs/common";
@@ -21,15 +20,9 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 
 @Injectable()
 export class AuthHelpersService {
-  constructor(
-    private prisma: PrismaService,
-    private redisService: RedisService,
-  ) {}
+  constructor(private prisma: PrismaService, private redisService: RedisService) {}
 
-  async validateCredentials(
-    email: string,
-    password: string,
-  ): Promise<ValidatedUserForAuth> {
+  async validateCredentials(email: string, password: string): Promise<ValidatedUserForAuth> {
     const lockoutKey = `auth:lockout:${email.toLowerCase()}`;
     const isLocked = await this.redisService.exists(lockoutKey);
     if (isLocked) {

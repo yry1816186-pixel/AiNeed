@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 type BrandWhereInput = Prisma.BrandWhereInput;
 type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;

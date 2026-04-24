@@ -20,12 +20,11 @@ import {
   ApiQuery,
 } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 import { CurrentUser } from "../../../domains/identity/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import { CreateWardrobeItemDto } from "./dto/create-wardrobe-item.dto";
 import { UpdateWardrobeItemDto } from "./dto/update-wardrobe-item.dto";
-
 import { WardrobeService } from "./wardrobe.service";
 
 @ApiTags("Wardrobe")

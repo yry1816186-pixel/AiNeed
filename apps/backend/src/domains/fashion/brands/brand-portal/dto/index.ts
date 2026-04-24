@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { IsString, IsOptional, IsDateString, IsObject } from "class-validator";
 

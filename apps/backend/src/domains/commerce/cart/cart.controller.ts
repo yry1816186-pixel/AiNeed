@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -12,12 +11,27 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+} from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import { CartService } from "./cart.service";
-import { AddToCartDto, UpdateCartItemDto, SelectAllCartDto, BatchDeleteCartDto, MoveToFavoritesDto, UpdateCartSkuDto } from "./dto/cart.dto";
+import {
+  AddToCartDto,
+  UpdateCartItemDto,
+  SelectAllCartDto,
+  BatchDeleteCartDto,
+  MoveToFavoritesDto,
+  UpdateCartSkuDto,
+} from "./dto/cart.dto";
 
 @ApiTags("cart")
 @ApiBearerAuth()
@@ -41,7 +55,7 @@ export class CartController {
   @ApiQuery({ name: "couponCode", required: false, description: "优惠券代码", type: String })
   async getCartSummary(
     @Request() req: { user: { id: string } },
-    @Query("couponCode") couponCode?: string,
+    @Query("couponCode") couponCode?: string
   ) {
     return this.cartService.getCartSummaryWithCoupon(req.user.id, couponCode);
   }
@@ -51,16 +65,13 @@ export class CartController {
   @ApiResponse({ status: 201, description: "添加成功" })
   @ApiResponse({ status: 400, description: "商品不存在或已下架" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async addItem(
-    @Request() req: { user: { id: string } },
-    @Body() body: AddToCartDto,
-  ) {
+  async addItem(@Request() req: { user: { id: string } }, @Body() body: AddToCartDto) {
     return this.cartService.addItem(
       req.user.id,
       body.itemId,
-      body.color!,
-      body.size!,
-      body.quantity || 1,
+      body.color,
+      body.size,
+      body.quantity || 1
     );
   }
 
@@ -74,7 +85,7 @@ export class CartController {
   async updateItem(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() body: UpdateCartItemDto,
+    @Body() body: UpdateCartItemDto
   ) {
     return this.cartService.updateItem(req.user.id, id, body);
   }
@@ -85,10 +96,7 @@ export class CartController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "购物车商品不存在" })
   @ApiParam({ name: "id", description: "购物车项 ID" })
-  async removeItem(
-    @Request() req: { user: { id: string } },
-    @Param("id") id: string,
-  ) {
+  async removeItem(@Request() req: { user: { id: string } }, @Param("id") id: string) {
     await this.cartService.removeItem(req.user.id, id);
     return { success: true };
   }
@@ -106,10 +114,7 @@ export class CartController {
   @ApiOperation({ summary: "全选/取消全选" })
   @ApiResponse({ status: 200, description: "操作成功" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async selectAll(
-    @Request() req: { user: { id: string } },
-    @Body() body: SelectAllCartDto,
-  ) {
+  async selectAll(@Request() req: { user: { id: string } }, @Body() body: SelectAllCartDto) {
     await this.cartService.selectAll(req.user.id, body.selected);
     return { success: true };
   }
@@ -124,10 +129,7 @@ export class CartController {
 
   @Delete("batch")
   @ApiOperation({ summary: "批量删除购物车商品" })
-  async batchDelete(
-    @Request() req: { user: { id: string } },
-    @Body() body: BatchDeleteCartDto,
-  ) {
+  async batchDelete(@Request() req: { user: { id: string } }, @Body() body: BatchDeleteCartDto) {
     return this.cartService.batchDelete(req.user.id, body.cartItemIds);
   }
 
@@ -135,7 +137,7 @@ export class CartController {
   @ApiOperation({ summary: "移入收藏" })
   async moveToFavorites(
     @Request() req: { user: { id: string } },
-    @Body() body: MoveToFavoritesDto,
+    @Body() body: MoveToFavoritesDto
   ) {
     return this.cartService.moveToFavorites(req.user.id, body.cartItemIds);
   }
@@ -145,7 +147,7 @@ export class CartController {
   async updateItemSku(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() body: UpdateCartSkuDto,
+    @Body() body: UpdateCartSkuDto
   ) {
     return this.cartService.updateItemSku(req.user.id, id, body.color, body.size);
   }

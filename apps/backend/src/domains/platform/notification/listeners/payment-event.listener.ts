@@ -1,14 +1,13 @@
-import { NotificationType } from "../../../../types/prisma-enums";
-
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-
 import {
   PAYMENT_EVENTS,
   PaymentSucceededPayload,
   PaymentFailedPayload,
   PaymentRefundedPayload,
-} from '@xuno/types';
+} from "@xuno/types";
+
+import { NotificationType } from "../../../../types/prisma-enums";
 import { NotificationService } from "../services/notification.service";
 
 /**
@@ -27,9 +26,7 @@ export class PaymentNotificationListener {
    */
   @OnEvent(PAYMENT_EVENTS.PAYMENT_SUCCEEDED)
   async handlePaymentSucceeded(payload: PaymentSucceededPayload): Promise<void> {
-    this.logger.log(
-      `Sending payment success notification to user ${payload.userId}`,
-    );
+    this.logger.log(`Sending payment success notification to user ${payload.userId}`);
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
@@ -41,7 +38,7 @@ export class PaymentNotificationListener {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to send payment success notification: ${this.getErrorMessage(error)}`,
+        `Failed to send payment success notification: ${this.getErrorMessage(error)}`
       );
     }
   }
@@ -51,21 +48,21 @@ export class PaymentNotificationListener {
    */
   @OnEvent(PAYMENT_EVENTS.PAYMENT_FAILED)
   async handlePaymentFailed(payload: PaymentFailedPayload): Promise<void> {
-    this.logger.log(
-      `Sending payment failure notification to user ${payload.userId}`,
-    );
+    this.logger.log(`Sending payment failure notification to user ${payload.userId}`);
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
         type: "system_update" as NotificationType,
         title: "支付失败",
-        content: `您的订单 ${payload.orderId} 支付失败${payload.reason ? `: ${payload.reason}` : ""}，请重试或联系客服。`,
+        content: `您的订单 ${payload.orderId} 支付失败${
+          payload.reason ? `: ${payload.reason}` : ""
+        }，请重试或联系客服。`,
         targetType: "payment",
         targetId: payload.paymentRecordId,
       });
     } catch (error) {
       this.logger.error(
-        `Failed to send payment failure notification: ${this.getErrorMessage(error)}`,
+        `Failed to send payment failure notification: ${this.getErrorMessage(error)}`
       );
     }
   }
@@ -75,22 +72,20 @@ export class PaymentNotificationListener {
    */
   @OnEvent(PAYMENT_EVENTS.PAYMENT_REFUNDED)
   async handlePaymentRefunded(payload: PaymentRefundedPayload): Promise<void> {
-    this.logger.log(
-      `Sending refund notification to user ${payload.userId}`,
-    );
+    this.logger.log(`Sending refund notification to user ${payload.userId}`);
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
         type: "system_update" as NotificationType,
         title: "退款通知",
-        content: `您的订单 ${payload.orderId} 已退款 ¥${payload.amount.toFixed(2)}${payload.reason ? `，原因: ${payload.reason}` : ""}。`,
+        content: `您的订单 ${payload.orderId} 已退款 ¥${payload.amount.toFixed(2)}${
+          payload.reason ? `，原因: ${payload.reason}` : ""
+        }。`,
         targetType: "payment",
         targetId: payload.paymentRecordId,
       });
     } catch (error) {
-      this.logger.error(
-        `Failed to send refund notification: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to send refund notification: ${this.getErrorMessage(error)}`);
     }
   }
 

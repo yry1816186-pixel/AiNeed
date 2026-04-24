@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-
 import {
   PAYMENT_EVENTS,
   SubscriptionActivationPayload,
   PaymentSucceededPayload,
   PaymentRefundedPayload,
-} from '@xuno/types';
+} from "@xuno/types";
+
 import { SubscriptionService } from "../subscription.service";
 
 /**
@@ -25,27 +24,25 @@ export class PaymentEventListener {
    * Handle subscription activation when payment succeeds
    */
   @OnEvent(PAYMENT_EVENTS.SUBSCRIPTION_ACTIVATION_REQUIRED)
-  async handleSubscriptionActivation(
-    payload: SubscriptionActivationPayload,
-  ): Promise<void> {
+  async handleSubscriptionActivation(payload: SubscriptionActivationPayload): Promise<void> {
     this.logger.log(
-      `Processing subscription activation for user ${payload.userId}, order ${payload.orderId}`,
+      `Processing subscription activation for user ${payload.userId}, order ${payload.orderId}`
     );
 
     try {
       await this.subscriptionService.activateSubscription(
         payload.userId,
         payload.planId,
-        payload.orderId,
+        payload.orderId
       );
 
-      this.logger.log(
-        `Subscription activated successfully for user ${payload.userId}`,
-      );
+      this.logger.log(`Subscription activated successfully for user ${payload.userId}`);
     } catch (error) {
       this.logger.error(
-        `Failed to activate subscription for user ${payload.userId}: ${this.getErrorMessage(error)}`,
-        error instanceof Error ? error.stack : undefined,
+        `Failed to activate subscription for user ${payload.userId}: ${this.getErrorMessage(
+          error
+        )}`,
+        error instanceof Error ? error.stack : undefined
       );
       // Consider emitting a failure event for retry logic or alerting
     }
@@ -57,7 +54,7 @@ export class PaymentEventListener {
   @OnEvent(PAYMENT_EVENTS.PAYMENT_SUCCEEDED)
   async handlePaymentSucceeded(payload: PaymentSucceededPayload): Promise<void> {
     this.logger.log(
-      `Payment succeeded for user ${payload.userId}, order ${payload.orderId}, amount ${payload.amount} ${payload.currency}`,
+      `Payment succeeded for user ${payload.userId}, order ${payload.orderId}, amount ${payload.amount} ${payload.currency}`
     );
     // Additional logic can be added here (e.g., analytics, notifications)
   }
@@ -68,7 +65,7 @@ export class PaymentEventListener {
   @OnEvent(PAYMENT_EVENTS.PAYMENT_REFUNDED)
   async handlePaymentRefunded(payload: PaymentRefundedPayload): Promise<void> {
     this.logger.log(
-      `Payment refunded for user ${payload.userId}, order ${payload.orderId}, amount ${payload.amount}`,
+      `Payment refunded for user ${payload.userId}, order ${payload.orderId}, amount ${payload.amount}`
     );
 
     // If full refund, we might need to cancel/downgrade the subscription

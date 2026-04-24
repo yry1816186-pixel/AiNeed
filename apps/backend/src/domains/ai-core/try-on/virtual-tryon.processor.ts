@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Processor, WorkerHost, OnWorkerEvent } from "@nestjs/bullmq";
 import { Logger } from "@nestjs/common";
 import { Job } from "bullmq";
@@ -6,9 +5,10 @@ import { Job } from "bullmq";
 import { NotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { StorageService } from "../../../common/storage/storage.service";
+import { QUEUE_NAMES, JOB_STATUS } from "../../platform/queue/queue.constants";
+
 import { generateStableCacheKey } from "./services/ai-tryon-provider.interface";
 import { TryOnOrchestratorService } from "./services/tryon-orchestrator.service";
-import { QUEUE_NAMES, JOB_STATUS } from "../../platform/queue/queue.constants";
 
 interface VirtualTryOnJobData {
   jobId: string;
@@ -23,7 +23,7 @@ interface VirtualTryOnJobData {
 }
 
 function mapTryOnCategory(
-  category?: string,
+  category?: string
 ): "upper_body" | "lower_body" | "full_body" | "dress" | undefined {
   const normalized = (category ?? "").trim().toLowerCase();
 
@@ -59,7 +59,7 @@ export class VirtualTryOnProcessor extends WorkerHost {
     private notificationService: NotificationService,
     private tryOnOrchestratorService: TryOnOrchestratorService,
     private prisma: PrismaService,
-    private storageService: StorageService,
+    private storageService: StorageService
   ) {
     super();
   }
@@ -68,18 +68,15 @@ export class VirtualTryOnProcessor extends WorkerHost {
     const timeoutPromise = new Promise<never>((_, reject) =>
       setTimeout(
         () => reject(new Error("Virtual try-on timed out after 30s")),
-        VIRTUAL_TRYON_TIMEOUT,
-      ),
+        VIRTUAL_TRYON_TIMEOUT
+      )
     );
 
     return Promise.race([this.executeTryOnFlow(job), timeoutPromise]);
   }
 
-  private async executeTryOnFlow(
-    job: Job<VirtualTryOnJobData>,
-  ): Promise<unknown> {
-    const { jobId, userId, photoId, userPhotoUrl, clothingImageUrl, itemId } =
-      job.data;
+  private async executeTryOnFlow(job: Job<VirtualTryOnJobData>): Promise<unknown> {
+    const { jobId, userId, photoId, userPhotoUrl, clothingImageUrl, itemId } = job.data;
 
     this.logger.log(`Processing virtual try-on job ${jobId}`);
 
@@ -94,11 +91,9 @@ export class VirtualTryOnProcessor extends WorkerHost {
     });
 
     if (!tryOnRecord) {
-      this.logger.warn(
-        `No pending VirtualTryOn record found for job ${jobId}`,
-      );
+      this.logger.warn(`No pending VirtualTryOn record found for job ${jobId}`);
       throw new Error(
-        `No pending VirtualTryOn record for userId=${userId}, photoId=${photoId}, itemId=${itemId}`,
+        `No pending VirtualTryOn record for userId=${userId}, photoId=${photoId}, itemId=${itemId}`
       );
     }
 
@@ -107,30 +102,18 @@ export class VirtualTryOnProcessor extends WorkerHost {
       data: { status: "processing" },
     });
 
-    await this.notificationService.notifyTryOnProgress(
-      userId,
-      tryOnRecord.id,
-      10,
-      "processing",
-    );
+    await this.notificationService.notifyTryOnProgress(userId, tryOnRecord.id, 10, "processing");
 
     await job.updateProgress(10);
 
     if (!userPhotoUrl || !clothingImageUrl) {
-      throw new Error(
-        "userPhotoUrl and clothingImageUrl are required for virtual try-on",
-      );
+      throw new Error("userPhotoUrl and clothingImageUrl are required for virtual try-on");
     }
 
     const category = mapTryOnCategory(job.data.category);
     const cacheKey = generateStableCacheKey(photoId, itemId, category);
 
-    await this.notificationService.notifyTryOnProgress(
-      userId,
-      tryOnRecord.id,
-      30,
-      "generating",
-    );
+    await this.notificationService.notifyTryOnProgress(userId, tryOnRecord.id, 30, "generating");
     await job.updateProgress(30);
 
     const result = await this.tryOnOrchestratorService.executeTryOn(
@@ -139,15 +122,10 @@ export class VirtualTryOnProcessor extends WorkerHost {
         garmentImageUrl: clothingImageUrl,
         category,
       },
-      cacheKey,
+      cacheKey
     );
 
-    await this.notificationService.notifyTryOnProgress(
-      userId,
-      tryOnRecord.id,
-      70,
-      "generating",
-    );
+    await this.notificationService.notifyTryOnProgress(userId, tryOnRecord.id, 70, "generating");
     await job.updateProgress(70);
 
     await this.prisma.virtualTryOn.update({
@@ -163,26 +141,21 @@ export class VirtualTryOnProcessor extends WorkerHost {
     });
 
     // Generate watermarked version asynchronously (non-blocking)
-    this.storageService.generateWatermarkedImage(
-      result.resultImageUrl,
-      "寻裳 AI 试衣",
-    ).then(async (watermarkedUrl) => {
-      await this.prisma.virtualTryOn.update({
-        where: { id: tryOnRecord.id },
-        data: { watermarkedImageUrl: watermarkedUrl },
+    this.storageService
+      .generateWatermarkedImage(result.resultImageUrl, "寻裳 AI 试衣")
+      .then(async (watermarkedUrl) => {
+        await this.prisma.virtualTryOn.update({
+          where: { id: tryOnRecord.id },
+          data: { watermarkedImageUrl: watermarkedUrl },
+        });
+        this.logger.debug(`Watermarked image saved for try-on ${tryOnRecord.id}`);
+      })
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`Failed to generate watermark for ${tryOnRecord.id}: ${msg}`);
       });
-      this.logger.debug(`Watermarked image saved for try-on ${tryOnRecord.id}`);
-    }).catch((err: unknown) => {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`Failed to generate watermark for ${tryOnRecord.id}: ${msg}`);
-    });
 
-    await this.notificationService.notifyTryOnProgress(
-      userId,
-      tryOnRecord.id,
-      90,
-      "processing",
-    );
+    await this.notificationService.notifyTryOnProgress(userId, tryOnRecord.id, 90, "processing");
     await job.updateProgress(90);
 
     return {
@@ -205,7 +178,7 @@ export class VirtualTryOnProcessor extends WorkerHost {
     await this.notificationService.notifyTryOnComplete(
       userId,
       result.tryOnId,
-      result.resultImageUrl,
+      result.resultImageUrl
     );
 
     // Auto-archive completed try-on to inspiration wardrobe
@@ -232,7 +205,12 @@ export class VirtualTryOnProcessor extends WorkerHost {
 
         if (!alreadyArchived) {
           await this.prisma.wardrobeCollectionItem.create({
-            data: { userId, collectionId: collection.id, itemType: "try_on", itemId: result.tryOnId },
+            data: {
+              userId,
+              collectionId: collection.id,
+              itemType: "try_on",
+              itemId: result.tryOnId,
+            },
           });
           this.logger.log(`Auto-archived try-on ${result.tryOnId} to wardrobe for user ${userId}`);
         }

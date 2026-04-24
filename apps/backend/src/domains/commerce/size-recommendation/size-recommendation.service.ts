@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -449,7 +448,6 @@ export class SizeRecommendationService {
       return { size: null };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sizes = refundRequests.flatMap((r: any) => r.order.items.map((i: any) => i.size));
     if (sizes.length === 0) {
       return { size: null };
