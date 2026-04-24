@@ -13,7 +13,7 @@ import Animated, {
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const BASE_COLOR = DesignTokens.colors.semantic.skeletonBase;
-const SHIMMER_COLOR = DesignTokens.colors.borders.light;
+const SHIMMER_COLOR = DesignTokens.colors.semantic.skeletonShimmer;
 
 export interface ShimmerSkeletonProps {
   /** Width of the skeleton rectangle */

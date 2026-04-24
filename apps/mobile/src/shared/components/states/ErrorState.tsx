@@ -31,6 +31,7 @@ export interface ErrorStateProps {
   errorCode?: string;
   onRetry?: () => void;
   onReport?: () => void;
+  actionLabel?: string;
   showIllustration?: boolean;
   style?: ViewStyle;
 }
@@ -41,6 +42,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   errorCode,
   onRetry,
   onReport,
+  actionLabel = "重试",
   showIllustration = true,
   style,
 }) => {
@@ -100,7 +102,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         {onRetry && (
           <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
             <Ionicons name="refresh" size={18} color={colors.textInverse} />
-            <Text style={styles.retryText}>重试</Text>
+            <Text style={styles.retryText}>{actionLabel}</Text>
           </TouchableOpacity>
         )}
         {onReport && (

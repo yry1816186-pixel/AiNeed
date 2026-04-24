@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
   type TextStyle,
   type ViewStyle,
   type ImageStyle,
@@ -14,6 +15,9 @@ import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
+import { EmptyState } from "../../../shared/components/states";
+import { ErrorState } from "../../../shared/components/states";
 
 interface OutfitItem {
   name: string;
@@ -31,8 +35,11 @@ export interface OutfitData {
 
 export interface TryOnBottomSheetProps {
   outfit: OutfitData | null;
+  isLoading?: boolean;
+  error?: string | null;
   onSave: () => void;
   onTryAnother: () => void;
+  onRetry?: () => void;
 }
 
 /**
@@ -44,7 +51,7 @@ export interface TryOnBottomSheetProps {
  * - Uses terracotta accent for save button, neutral for try-another
  */
 export const TryOnBottomSheet = React.forwardRef<BottomSheetModal, TryOnBottomSheetProps>(
-  ({ outfit, onSave, onTryAnother }, ref) => {
+  ({ outfit, isLoading, error, onSave, onTryAnother, onRetry }, ref) => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const snapPoints = useMemo(() => ["70%"], []);
@@ -91,67 +98,114 @@ export const TryOnBottomSheet = React.forwardRef<BottomSheetModal, TryOnBottomSh
             <Text style={styles.headerTitle}>试穿效果图</Text>
           </View>
 
-          {/* Try-on image area */}
-          <View style={styles.imageContainer}>
-            {outfit?.imageUrl ? (
-              <Image source={{ uri: outfit.imageUrl }} style={styles.image} resizeMode="cover" />
-            ) : (
-              <View style={styles.imagePlaceholder}>
-                <Ionicons name="image-outline" size={48} color={DesignTokens.colors.neutral[300]} />
-                <Text style={styles.placeholderText}>试穿效果图</Text>
+          {/* Loading state */}
+          {isLoading && (
+            <View style={styles.imageContainer}>
+              <ShimmerSkeleton width="100%" height={240} />
+              <View style={{ marginTop: 16, gap: 8 }}>
+                <ShimmerSkeleton width="60%" height={16} />
+                <ShimmerSkeleton width="80%" height={16} />
+                <ShimmerSkeleton width="40%" height={16} />
               </View>
-            )}
-            {outfit?.overall_score != null && (
-              <View style={styles.scoreBadge}>
-                <Text style={styles.scoreText}>{Math.round(outfit.overall_score)}%</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Outfit items */}
-          {outfit?.items && outfit.items.length > 0 && (
-            <View style={styles.itemsSection}>
-              <Text style={styles.sectionTitle}>搭配单品</Text>
-              {outfit.items.map((item, i) => (
-                <View key={`${item.category}-${i}`} style={styles.itemRow}>
-                  <View style={styles.itemIcon}>
-                    <Ionicons
-                      name={getCategoryIcon(item.category)}
-                      size={16}
-                      color={DesignTokens.colors.brand.terracotta}
-                    />
-                  </View>
-                  <View style={styles.itemContent}>
-                    <Text style={styles.itemCategory}>{item.category}</Text>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                  </View>
-                  {item.price != null && (
-                    <Text style={styles.itemPrice}>¥{item.price.toFixed(0)}</Text>
-                  )}
-                </View>
-              ))}
             </View>
           )}
 
-          {/* Action buttons */}
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.saveButton} onPress={onSave} activeOpacity={0.8}>
-              <Ionicons name="heart-outline" size={18} color={DesignTokens.colors.neutral.white} />
-              <Text style={styles.saveButtonText}>保存到衣橱</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.tryAnotherButton}
-              onPress={onTryAnother}
-              activeOpacity={0.8}
-            >
-              <Ionicons
-                name="refresh-outline"
-                size={18}
-                color={DesignTokens.colors.brand.terracotta}
+          {/* Error state */}
+          {!isLoading && error && (
+            <View style={styles.imageContainer}>
+              <ErrorState title="试穿失败" message={error} onRetry={onRetry} actionLabel="重试" />
+            </View>
+          )}
+
+          {/* Empty state */}
+          {!isLoading && !error && !outfit && (
+            <View style={styles.imageContainer}>
+              <EmptyState
+                illustration="empty-box"
+                title="试穿结果生成中"
+                message="伊伊正在为你搭配，请稍候"
               />
-              <Text style={styles.tryAnotherButtonText}>换一套试试</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          )}
+
+          {/* Success state */}
+          {!isLoading && !error && outfit && (
+            <>
+              {/* Try-on image area */}
+              <View style={styles.imageContainer}>
+                {outfit?.imageUrl ? (
+                  <Image
+                    source={{ uri: outfit.imageUrl }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Ionicons
+                      name="image-outline"
+                      size={48}
+                      color={DesignTokens.colors.neutral[300]}
+                    />
+                    <Text style={styles.placeholderText}>试穿效果图</Text>
+                  </View>
+                )}
+                {outfit?.overall_score != null && (
+                  <View style={styles.scoreBadge}>
+                    <Text style={styles.scoreText}>{Math.round(outfit.overall_score)}%</Text>
+                  </View>
+                )}
+              </View>
+
+              {/* Outfit items */}
+              {outfit?.items && outfit.items.length > 0 && (
+                <View style={styles.itemsSection}>
+                  <Text style={styles.sectionTitle}>搭配单品</Text>
+                  {outfit.items.map((item, i) => (
+                    <View key={`${item.category}-${i}`} style={styles.itemRow}>
+                      <View style={styles.itemIcon}>
+                        <Ionicons
+                          name={getCategoryIcon(item.category)}
+                          size={16}
+                          color={DesignTokens.colors.brand.terracotta}
+                        />
+                      </View>
+                      <View style={styles.itemContent}>
+                        <Text style={styles.itemCategory}>{item.category}</Text>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                      </View>
+                      {item.price != null && (
+                        <Text style={styles.itemPrice}>¥{item.price.toFixed(0)}</Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Action buttons */}
+              <View style={styles.actions}>
+                <TouchableOpacity style={styles.saveButton} onPress={onSave} activeOpacity={0.8}>
+                  <Ionicons
+                    name="heart-outline"
+                    size={18}
+                    color={DesignTokens.colors.neutral.white}
+                  />
+                  <Text style={styles.saveButtonText}>保存到衣橱</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.tryAnotherButton}
+                  onPress={onTryAnother}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons
+                    name="refresh-outline"
+                    size={18}
+                    color={DesignTokens.colors.brand.terracotta}
+                  />
+                  <Text style={styles.tryAnotherButtonText}>换一套试试</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </BottomSheetView>
       </BottomSheetModal>
     );

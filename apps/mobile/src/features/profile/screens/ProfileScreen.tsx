@@ -39,6 +39,8 @@ import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation, useI18n } from "../../../i18n";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { BrandPattern, BrandDivider } from "../../../components/brand/BrandMotif";
+import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
+import { ErrorState } from "../../../shared/components/states";
 
 type ProfileNavigationProp = CompositeScreenProps<
   NativeStackNavigationProp<ProfileStackParamList>,
@@ -57,19 +59,21 @@ export const ProfileScreenComponent: React.FC = () => {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // 季节强调色，回退到品牌色
   const accentColor = seasonAccent?.accent ?? colors.primary;
 
   const fetchStats = useCallback(async () => {
     try {
+      setError(null);
       const response = await userApi.getStats();
       if (response.success && response.data) {
         setStats(response.data);
       }
-    } catch (error) {
-      // Stats fetch failed
-      logger.error("Failed to load profile stats:", error);
+    } catch (err) {
+      setError("加载失败，请稍后重试");
+      logger.error("Failed to load profile stats:", err);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -225,6 +229,41 @@ export const ProfileScreenComponent: React.FC = () => {
       },
     },
   ];
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{t.profile.title}</Text>
+        </View>
+        <View style={{ padding: 16, gap: 12 }}>
+          <ShimmerSkeleton width="100%" height={120} />
+          <ShimmerSkeleton width="100%" height={20} />
+          <ShimmerSkeleton width="100%" height={20} />
+          <ShimmerSkeleton width="100%" height={20} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error && !user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{t.profile.title}</Text>
+        </View>
+        <ErrorState
+          title="加载失败"
+          message={error}
+          onRetry={() => {
+            setLoading(true);
+            void fetchStats();
+          }}
+          actionLabel="重新加载"
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
