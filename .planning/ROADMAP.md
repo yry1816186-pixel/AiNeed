@@ -71,7 +71,13 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 4. Old users do not crash on update (NAV_VERSION migration)
 5. 7-day calendar view renders with weather + scene tags + outfit thumbnails
    **UI hint**: yes
-   **Plans**: TBD
+   **Plans**: 3 plans
+
+Plans:
+
+- [ ] 03-01-PLAN.md — Zustand store 去重: 删除 src/stores/ + clearAllStores 迁移 + 全部导入更新 (NAV-04)
+- [ ] 03-02-PLAN.md — 4-Tab 导航完善: Wardrobe/Favorites 从 Profile 迁移到 Discover + 导航类型更新 + Deep link 更新 (NAV-01, NAV-04, NAV-05)
+- [ ] 03-03-PLAN.md — 设计 Token 统一: borderRadius 调整 + 硬编码颜色替换 + WarmPrimaryColors 清理 + YiyiAvatar 一致性审计 (VIS-01, VIS-02, VIS-03, VIS-04)
 
 ### Phase 4: Yiyi Agent + Voice + Onboarding + Studio
 
@@ -191,7 +197,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | ----------------------------------------------- | -------------- | ----------- | --------- |
 | 1. Foundation + TS Cleanup + Visual Base        | 0/?            | Not started | -         |
 | 2. Pipeline + Cold Start + Curated Wardrobe     | 0/?            | Not started | -         |
-| 3. Navigation + Core Screens + Calendar         | 0/?            | Not started | -         |
+| 3. Navigation + Core Screens + Calendar         | 0/3            | Planned     | -         |
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 0/?            | Not started | -         |
 | 5. E2E Integration + Competition Demo           | 0/?            | Not started | -         |
 | 6. Model Upgrade + Compliance + Security        | 0/?            | Not started | -         |
