@@ -33,6 +33,17 @@ export interface UserProfile {
   primaryScenarios?: string[];
 }
 
+interface OnboardingProfile {
+  primaryScenarios?: string[];
+  styleExpression?: string[];
+  garmentPreference?: {
+    lowerBody: "pants" | "skirts" | "both";
+    upperFit: "fitted" | "regular" | "loose";
+  };
+  budgetRange?: { min: number; max: number };
+  bodyType?: string;
+}
+
 @Injectable()
 export class ColdStartService {
   private readonly logger = new Logger(ColdStartService.name);
@@ -211,15 +222,130 @@ export class ColdStartService {
       return this.getHybridStrategy(userId, profile);
     }
 
-    if (profile?.stylePreferences && profile.stylePreferences.length > 0) {
-      return this.getSurveyBasedStrategy(userId, profile);
+    // Merge onboarding data into the profile for richer cold-start signals
+    const onboarding = await this.getOnboardingProfile(userId);
+    const mergedProfile = this.mergeOnboardingIntoProfile(profile, onboarding);
+
+    if (mergedProfile.stylePreferences && mergedProfile.stylePreferences.length > 0) {
+      return this.getSurveyBasedStrategy(userId, mergedProfile);
     }
 
-    if (profile?.bodyType || (profile?.styleExpression && profile.styleExpression.length > 0)) {
-      return this.getProfileBasedStrategy(userId, profile);
+    if (
+      mergedProfile.bodyType ||
+      (mergedProfile.styleExpression && mergedProfile.styleExpression.length > 0)
+    ) {
+      return this.getProfileBasedStrategy(userId, mergedProfile);
     }
 
     return this.getPopularityStrategy(userId);
+  }
+
+  /**
+   * Query UserProfile for onboarding data, falling back to StyleQuizResult.
+   * Returns null when no onboarding data exists (graceful fallback).
+   */
+  private async getOnboardingProfile(userId: string): Promise<OnboardingProfile | null> {
+    const profile = await this.prisma.userProfile.findUnique({
+      where: { userId },
+    });
+
+    if (profile) {
+      // Extract onboarding fields from the preferences JSON and typed columns
+      const prefs = profile.preferences as Record<string, unknown> | null;
+      const stylePrefs = profile.stylePreferences as Record<string, unknown> | null;
+
+      const primaryScenarios =
+        (prefs?.primaryScenarios as string[]) ||
+        (stylePrefs?.primaryScenarios as string[]) ||
+        undefined;
+      const styleExpression =
+        (prefs?.styleExpression as string[]) ||
+        (stylePrefs?.styleExpression as string[]) ||
+        undefined;
+      const garmentPreference =
+        (prefs?.garmentPreference as {
+          lowerBody: "pants" | "skirts" | "both";
+          upperFit: "fitted" | "regular" | "loose";
+        }) || undefined;
+
+      const hasOnboardingData =
+        (primaryScenarios && primaryScenarios.length > 0) ||
+        (styleExpression && styleExpression.length > 0) ||
+        garmentPreference !== undefined;
+
+      if (hasOnboardingData) {
+        return {
+          primaryScenarios,
+          styleExpression,
+          garmentPreference,
+          bodyType: profile.bodyType || undefined,
+          budgetRange:
+            profile.priceRangeMin || profile.priceRangeMax
+              ? { min: profile.priceRangeMin ?? 0, max: profile.priceRangeMax ?? 100000 }
+              : undefined,
+        };
+      }
+    }
+
+    // Fallback: query latest StyleQuizResult
+    const quizResult = await this.prisma.styleQuizResult.findFirst({
+      where: { userId, isLatest: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!quizResult) {
+      return null;
+    }
+
+    // Derive budget range from quiz priceRange string
+    const budgetMap: Record<string, { min: number; max: number }> = {
+      budget: { min: 100, max: 300 },
+      mid_range: { min: 300, max: 800 },
+      premium: { min: 800, max: 2000 },
+      luxury: { min: 2000, max: 10000 },
+    };
+
+    return {
+      primaryScenarios: Object.keys(
+        (quizResult.occasionPreferences as Record<string, number>) || {}
+      ),
+      styleExpression: quizResult.styleKeywords || undefined,
+      budgetRange: budgetMap[quizResult.priceRange] || undefined,
+    };
+  }
+
+  /**
+   * Merge onboarding data into an existing UserProfile.
+   * Onboarding data takes precedence when available.
+   */
+  private mergeOnboardingIntoProfile(
+    profile: UserProfile | undefined,
+    onboarding: OnboardingProfile | null
+  ): UserProfile {
+    const merged: UserProfile = { ...profile };
+
+    if (!onboarding) {
+      return merged;
+    }
+
+    // Onboarding data takes precedence
+    if (onboarding.primaryScenarios && onboarding.primaryScenarios.length > 0) {
+      merged.primaryScenarios = onboarding.primaryScenarios;
+    }
+    if (onboarding.styleExpression && onboarding.styleExpression.length > 0) {
+      merged.styleExpression = onboarding.styleExpression;
+    }
+    if (onboarding.garmentPreference) {
+      merged.garmentPreference = onboarding.garmentPreference;
+    }
+    if (onboarding.bodyType) {
+      merged.bodyType = onboarding.bodyType;
+    }
+    if (onboarding.budgetRange) {
+      merged.priceRange = onboarding.budgetRange;
+    }
+
+    return merged;
   }
 
   private async getProfileBasedStrategy(
@@ -294,6 +420,42 @@ export class ColdStartService {
               reason: `符合${expr}风格表达`,
               strategy: "profile-based",
             });
+          }
+        }
+      }
+    }
+
+    // Apply garmentPreference category filter
+    const categoriesToExclude = this.getExcludedCategories(profile.garmentPreference);
+    if (categoriesToExclude.length > 0) {
+      for (const rec of recommendations) {
+        const item = await this.prisma.clothingItem.findUnique({
+          where: { id: rec.itemId },
+          select: { category: true },
+        });
+        if (item && categoriesToExclude.some((cat) => item.category.toLowerCase().includes(cat))) {
+          rec.score *= 0.3; // Heavily deprioritize rather than remove
+          rec.reason += "（非首选类别）";
+        }
+      }
+    }
+
+    // Apply budgetRange as price bounds
+    if (profile.priceRange) {
+      for (const rec of recommendations) {
+        const item = await this.prisma.clothingItem.findUnique({
+          where: { id: rec.itemId },
+          select: { price: true },
+        });
+        if (item) {
+          const price = Number(item.price);
+          if (price > profile.priceRange.max) {
+            rec.score *= 0.5;
+            rec.reason += "（超出预算）";
+          } else if (price < profile.priceRange.min) {
+            rec.score *= 0.8;
+          } else {
+            rec.score *= 1.1; // Bonus for within budget
           }
         }
       }
@@ -499,6 +661,24 @@ export class ColdStartService {
       orderBy: { likeCount: "desc" },
       take: limit,
     });
+  }
+
+  /**
+   * Map garmentPreference.lowerBody to categories that should be excluded/de-prioritized.
+   */
+  private getExcludedCategories(garmentPreference?: UserProfile["garmentPreference"]): string[] {
+    if (!garmentPreference) {
+      return [];
+    }
+    switch (garmentPreference.lowerBody) {
+      case "pants":
+        return ["skirt", "dress"];
+      case "skirts":
+        return ["pants", "trousers", "jeans"];
+      case "both":
+      default:
+        return [];
+    }
   }
 
   private getAgeGroup(age: number): string {
