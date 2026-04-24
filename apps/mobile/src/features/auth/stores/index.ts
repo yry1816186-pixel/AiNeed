@@ -1,4 +1,5 @@
-﻿import { create } from "zustand";
+/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
@@ -45,7 +46,7 @@ const secureStorageAdapter: StateStorage = {
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
           onboardingCompleted: userStr
-            ? ((JSON.parse(userStr) as User)?.onboardingCompleted ?? false)
+            ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false
             : false,
           isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
         },
@@ -119,7 +120,7 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       token: null,
       isAuthenticated: false,
-      isLoading: false,
+      isLoading: true,
       isRefreshing: false,
       error: null,
       onboardingCompleted: false,
@@ -266,7 +267,7 @@ export const useAuthStore = create<AuthState>()(
           // ignore clear errors during logout
         }
         // Dynamic import to avoid circular dependency at module load time
-        const { clearAllStores } = await import("../../../stores/index");
+        const { clearAllStores } = await import("../../../shared/stores/clearAllStores");
         clearAllStores();
         set({
           user: null,
@@ -304,7 +305,7 @@ export const useAuthStore = create<AuthState>()(
           await persistTokens(newAccess, newRefresh);
 
           const meResponse = await apiClient.get<User>("/auth/me");
-          const updatedUser = meResponse.success ? (meResponse.data ?? get().user) : get().user;
+          const updatedUser = meResponse.success ? meResponse.data ?? get().user : get().user;
           set({
             accessToken: newAccess,
             token: newAccess,

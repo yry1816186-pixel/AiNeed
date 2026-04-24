@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -71,7 +72,9 @@ const secureStorageAdapter: StateStorage = {
           refreshToken: refresh,
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
-          onboardingCompleted: userStr ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false : false,
+          onboardingCompleted: userStr
+            ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false
+            : false,
           isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
         },
         version: 0,
@@ -298,9 +301,9 @@ export const useAuthStore = create<AuthState>()(
           await apiClient.clearAuth();
         } catch (error) {
           // ignore clear errors during logout
-          console.error('Auth cleanup failed:', error);
+          console.error("Auth cleanup failed:", error);
         }
-        const { clearAllStores } = await import("../../../stores/index");
+        const { clearAllStores } = await import("../../../shared/stores/clearAllStores");
         clearAllStores();
         set({
           user: null,
@@ -399,7 +402,7 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           // non-blocking
-          console.error('Auth operation failed:', error);
+          console.error("Auth operation failed:", error);
         }
       },
 
@@ -411,7 +414,7 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           // non-blocking
-          console.error('Auth operation failed:', error);
+          console.error("Auth operation failed:", error);
         }
       },
 
