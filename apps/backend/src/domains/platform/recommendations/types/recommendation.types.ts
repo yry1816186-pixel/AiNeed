@@ -508,3 +508,64 @@ export interface FeedbackPayload {
   action: "like" | "dislike" | "skip";
   context?: RecommendationRequestContext;
 }
+
+// ============================================================================
+// Recommendation Output Types (REC-04, REC-06)
+// ============================================================================
+
+/**
+ * 推荐解释接口（结构化解释）
+ * @description 单个推荐的解释结构，包含推荐理由、替代方案、下一步操作
+ */
+export interface RecommendationExplanationDetail {
+  /** 推荐理由 */
+  why: string;
+  /** 替代方案建议 */
+  alternative: string;
+  /** 下一步操作提示 */
+  nextAction: string;
+  /** 置信度 0.0-1.0 */
+  confidence: number;
+}
+
+/**
+ * 推荐商品项接口（带解释）
+ * @description 单个推荐商品的完整输出结构
+ */
+export interface RecommendationOutputItem {
+  /** 商品ID */
+  id: string;
+  /** 商品名称 */
+  name: string;
+  /** 商品主图URL */
+  imageUrl: string;
+  /** 商品分类 */
+  category: string;
+  /** 商品价格（可选） */
+  price?: number;
+  /** 推荐得分 */
+  score: number;
+  /** 推荐解释 */
+  explanation: RecommendationExplanationDetail;
+}
+
+/**
+ * 推荐输出接口（REC-04, REC-06）
+ * @description 推荐系统的标准化输出结构
+ */
+export interface RecommendationOutput {
+  /** 推荐商品列表 */
+  items: RecommendationOutputItem[];
+  /** 搭配建议（可选） */
+  outfit?: {
+    name: string;
+    description: string;
+    items: RecommendationOutputItem[];
+  };
+  /** 推荐解释 */
+  explanation: RecommendationExplanationDetail;
+  /** A/B实验ID（REC-06） */
+  experimentId?: string;
+  /** 降级标记 */
+  degraded?: boolean;
+}

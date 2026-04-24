@@ -63,6 +63,13 @@ export interface RecommendationResult {
   score: number;
   sources: string[];
   reasons: string[];
+  experimentId?: string;
+  explanation?: {
+    why: string;
+    alternative: string;
+    nextAction: string;
+    confidence: number;
+  };
   breakdown?: {
     totalCandidates: number;
     afterSceneFilter: number;
@@ -217,12 +224,15 @@ export class RecommendationOrchestrator {
 
     const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
 
+    const experimentId = this.generateExperimentId();
+
     return fused.map((sc) =>
       this.toRecommendationResult(sc, {
         totalCandidates,
         afterSceneFilter,
         afterSizeFilter,
         afterBudgetFilter,
+        experimentId,
       })
     );
   }
@@ -985,8 +995,12 @@ export class RecommendationOrchestrator {
       afterSceneFilter: number;
       afterSizeFilter: number;
       afterBudgetFilter: number;
+      experimentId?: string;
     }
   ): RecommendationResult {
+    const confidence = Math.min(1, scored.finalScore / 100);
+    const primaryReason = scored.reasons[0] || "为你推荐";
+
     return {
       item: {
         id: scored.candidate.id,
@@ -999,6 +1013,16 @@ export class RecommendationOrchestrator {
       score: scored.finalScore,
       sources: scored.sources,
       reasons: scored.reasons,
+      experimentId: funnelStats.experimentId,
+      explanation: {
+        why: primaryReason,
+        alternative:
+          scored.reasons.length > 1
+            ? scored.reasons[1] ?? "也可以浏览更多相似推荐"
+            : "也可以浏览更多相似推荐",
+        nextAction: scored.finalScore >= 70 ? "试穿看看效果" : "查看相似款",
+        confidence,
+      },
       breakdown: {
         totalCandidates: funnelStats.totalCandidates,
         afterSceneFilter: funnelStats.afterSceneFilter,
@@ -1010,6 +1034,10 @@ export class RecommendationOrchestrator {
         finalScore: scored.finalScore,
       },
     };
+  }
+
+  private generateExperimentId(): string {
+    return `exp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
   private async isColdStartUser(userId: string): Promise<boolean> {
