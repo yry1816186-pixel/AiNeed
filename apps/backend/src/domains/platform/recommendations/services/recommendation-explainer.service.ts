@@ -105,20 +105,12 @@ const EXPLANATION_TEMPLATES = {
 };
 
 const STYLE_TIPS: Record<string, string[]> = {
-  tops: [
-    "可以搭配高腰裤拉长腿部线条",
-    "选择合身版型更显精神",
-    "深色上衣显瘦效果更好",
-  ],
+  tops: ["可以搭配高腰裤拉长腿部线条", "选择合身版型更显精神", "深色上衣显瘦效果更好"],
   bottoms: ["高腰设计可以优化身材比例", "直筒版型百搭不挑人", "深色裤装更显瘦"],
   dresses: ["系带设计可以突出腰线", "A字裙摆遮肉显瘦", "V领设计拉长颈部线条"],
   outerwear: ["短款外套显高显腿长", "敞开穿更有层次感", "选择肩线合身的版型"],
   footwear: ["尖头鞋更显腿长", "裸色鞋款延伸腿部线条", "粗跟设计舒适又时尚"],
-  accessories: [
-    "简约配饰更显高级感",
-    "金属色配饰提升整体质感",
-    "选择与服装呼应的色系",
-  ],
+  accessories: ["简约配饰更显高级感", "金属色配饰提升整体质感", "选择与服装呼应的色系"],
 };
 
 const BODY_TYPE_TIPS: Record<string, Record<string, string[]>> = {
@@ -154,18 +146,11 @@ export class RecommendationExplainerService {
   private readonly logger = new Logger(RecommendationExplainerService.name);
   private readonly useLLM: boolean;
 
-  constructor(
-    private configService: ConfigService,
-    private prisma: PrismaService,
-  ) {
-    this.useLLM =
-      this.configService.get<string>("ENABLE_LLM_EXPLANATIONS", "true") ===
-      "true";
+  constructor(private configService: ConfigService, private prisma: PrismaService) {
+    this.useLLM = this.configService.get<string>("ENABLE_LLM_EXPLANATIONS", "true") === "true";
   }
 
-  async generateExplanation(
-    context: RecommendationContext,
-  ): Promise<GeneratedExplanation> {
+  async generateExplanation(context: RecommendationContext): Promise<GeneratedExplanation> {
     if (this.useLLM && context.score > 0.5) {
       try {
         return await this.generateLLMExplanation(context);
@@ -177,18 +162,18 @@ export class RecommendationExplainerService {
   }
 
   private async generateLLMExplanation(
-    context: RecommendationContext,
+    context: RecommendationContext
   ): Promise<GeneratedExplanation> {
     const prompt = this.buildExplanationPrompt(context);
 
     const response = await this.callGLM(prompt);
 
-    return this.parseLLMResponse(response || '', context);
+    return this.parseLLMResponse(response || "", context);
   }
 
   async explain(
     userId: string,
-    itemId: string,
+    itemId: string
   ): Promise<{
     reasons: string[];
     factors: Array<{ name: string; contribution: number }>;
@@ -205,7 +190,13 @@ export class RecommendationExplainerService {
         { type: "color_match", weight: 0.6, description: "Color suits your profile" },
       ],
       matchingFactors: [
-        { factor: "style", userValue: "casual", itemValue: "casual", matchScore: 0.85, explanation: "Style match" },
+        {
+          factor: "style",
+          userValue: "casual",
+          itemValue: "casual",
+          matchScore: 0.85,
+          explanation: "Style match",
+        },
       ],
     };
 
@@ -241,7 +232,14 @@ export class RecommendationExplainerService {
 - 价格：¥${itemAttributes?.price || "未知"}
 
 匹配因素：
-${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.itemValue} (匹配度${Math.round(f.matchScore * 100)}%)`).join("\n")}
+${matchingFactors
+  .map(
+    (f) =>
+      `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.itemValue} (匹配度${Math.round(
+        f.matchScore * 100
+      )}%)`
+  )
+  .join("\n")}
 
 推荐评分：${Math.round(score * 100)}%
 
@@ -258,10 +256,7 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 }`;
   }
 
-  private parseLLMResponse(
-    response: string,
-    context: RecommendationContext,
-  ): GeneratedExplanation {
+  private parseLLMResponse(response: string, context: RecommendationContext): GeneratedExplanation {
     try {
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -280,19 +275,12 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
     return this.generateTemplateExplanation(context);
   }
 
-  private generateTemplateExplanation(
-    context: RecommendationContext,
-  ): GeneratedExplanation {
-    const { reasons, itemAttributes, userPreferences, matchingFactors } =
-      context;
+  private generateTemplateExplanation(context: RecommendationContext): GeneratedExplanation {
+    const { reasons, itemAttributes, userPreferences, matchingFactors } = context;
 
     const summary = this.generateSummary(context);
 
-    const detailedReasons = this.generateDetailedReasons(
-      reasons,
-      itemAttributes,
-      userPreferences,
-    );
+    const detailedReasons = this.generateDetailedReasons(reasons, itemAttributes, userPreferences);
 
     const styleTips = this.generateStyleTips(itemAttributes, userPreferences);
 
@@ -330,13 +318,11 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
   private generateDetailedReasons(
     reasons: RecommendationReason[],
     itemAttributes?: ItemAttributeSummary,
-    userPreferences?: UserPreferenceSummary,
+    userPreferences?: UserPreferenceSummary
   ): string[] {
     const detailedReasons: string[] = [];
 
-    const sortedReasons = [...reasons]
-      .sort((a, b) => b.weight - a.weight)
-      .slice(0, 3);
+    const sortedReasons = [...reasons].sort((a, b) => b.weight - a.weight).slice(0, 3);
 
     for (const reason of sortedReasons) {
       const template = this.getTemplate(reason.type, reason.weight);
@@ -355,18 +341,19 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   private generateStyleTips(
     itemAttributes?: ItemAttributeSummary,
-    userPreferences?: UserPreferenceSummary,
+    userPreferences?: UserPreferenceSummary
   ): string[] {
     const tips: string[] = [];
 
-    if (!itemAttributes?.category) {return tips;}
+    if (!itemAttributes?.category) {
+      return tips;
+    }
 
     const category = this.normalizeCategory(itemAttributes.category);
 
     const generalTips = STYLE_TIPS[category];
     if (generalTips && generalTips.length > 0) {
-      const generalTip =
-        generalTips[Math.floor(Math.random() * generalTips.length)];
+      const generalTip = generalTips[Math.floor(Math.random() * generalTips.length)];
       if (generalTip) {
         tips.push(generalTip);
       }
@@ -387,34 +374,33 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   private calculateConfidence(
     reasons: RecommendationReason[],
-    matchingFactors: MatchingFactor[],
+    matchingFactors: MatchingFactor[]
   ): number {
-    if (reasons.length === 0) {return 0.5;}
+    if (reasons.length === 0) {
+      return 0.5;
+    }
 
     const totalWeight = reasons.reduce((sum, r) => sum + r.weight, 0);
     const avgMatchScore =
       matchingFactors.length > 0
-        ? matchingFactors.reduce((sum, f) => sum + f.matchScore, 0) /
-          matchingFactors.length
+        ? matchingFactors.reduce((sum, f) => sum + f.matchScore, 0) / matchingFactors.length
         : 0.5;
 
     return Math.min(1, (totalWeight / reasons.length + avgMatchScore) / 2);
   }
 
-  private getTemplate(
-    type: RecommendationReason["type"],
-    weight: number,
-  ): string {
+  private getTemplate(type: RecommendationReason["type"], weight: number): string {
     const templates = EXPLANATION_TEMPLATES[type];
-    if (weight > 0.7) {return templates.high;}
-    if (weight > 0.4) {return templates.medium;}
+    if (weight > 0.7) {
+      return templates.high;
+    }
+    if (weight > 0.4) {
+      return templates.medium;
+    }
     return templates.low;
   }
 
-  private fillTemplate(
-    template: string,
-    values: Record<string, string>,
-  ): string {
+  private fillTemplate(template: string, values: Record<string, string>): string {
     let result = template;
     for (const [key, value] of Object.entries(values)) {
       result = result.replace(new RegExp(`\\{${key}\\}`, "g"), value);
@@ -452,9 +438,7 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
     return categoryMap[normalized] || normalized;
   }
 
-  generateBatchExplanations(
-    contexts: RecommendationContext[],
-  ): Promise<GeneratedExplanation>[] {
+  generateBatchExplanations(contexts: RecommendationContext[]): Promise<GeneratedExplanation>[] {
     return contexts.map((ctx) => this.generateExplanation(ctx));
   }
 
@@ -472,7 +456,9 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
     if ((scores.ruleScore || 0) > 70) {
       const bodyType = userProfile?.bodyType as string | undefined;
-      const bodyTypeFit = (itemDetails?.attributes as Record<string, unknown>)?.bodyTypeFit as string[] | undefined;
+      const bodyTypeFit = (itemDetails?.attributes as Record<string, unknown>)?.bodyTypeFit as
+        | string[]
+        | undefined;
       if (bodyType && bodyTypeFit?.includes(bodyType)) {
         reasons.push(`适合你的${bodyType}体型`);
       }
@@ -500,8 +486,15 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
     try {
       const prompt = `为以下穿搭推荐生成1句话的推荐理由（15字以内）：
-用户画像：${JSON.stringify({ gender: userProfile?.gender, colorSeason: userProfile?.colorSeason, bodyType: userProfile?.bodyType })}
-商品：${JSON.stringify({ name: itemDetails?.name, category: itemDetails?.category, style: (itemDetails?.attributes as Record<string, unknown>)?.style })}
+用户画像：${JSON.stringify({
+        colorSeason: userProfile?.colorSeason,
+        bodyType: userProfile?.bodyType,
+      })}
+商品：${JSON.stringify({
+        name: itemDetails?.name,
+        category: itemDetails?.category,
+        style: (itemDetails?.attributes as Record<string, unknown>)?.style,
+      })}
 评分：${JSON.stringify(scores)}
 色彩和谐度：${colorHarmony?.score || "N/A"}%
 
@@ -516,25 +509,24 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   private async callGLM(prompt: string): Promise<string | null> {
     const apiKey = this.configService.get("GLM_API_KEY");
-    if (!apiKey) {return null;}
+    if (!apiKey) {
+      return null;
+    }
 
     try {
-      const response = await fetch(
-        "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "glm-4-flash",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 50,
-            temperature: 0.7,
-          }),
+      const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          model: "glm-4-flash",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 50,
+          temperature: 0.7,
+        }),
+      });
 
       const data = (await response.json()) as {
         choices?: Array<{ message?: { content?: string } }>;
@@ -547,7 +539,7 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   async batchGenerateReasons(
     items: Array<{ itemId: string; scores: Record<string, number> }>,
-    userId: string,
+    userId: string
   ): Promise<Map<string, string>> {
     const userProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
@@ -569,10 +561,14 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   private translateColorSeason(season: string): string {
     const map: Record<string, string> = {
-      spring_warm: "暖春", spring_light: "浅春",
-      summer_cool: "凉夏", summer_light: "浅夏",
-      autumn_warm: "暖秋", autumn_deep: "深秋",
-      winter_cool: "冷冬", winter_deep: "深冬",
+      spring_warm: "暖春",
+      spring_light: "浅春",
+      summer_cool: "凉夏",
+      summer_light: "浅夏",
+      autumn_warm: "暖秋",
+      autumn_deep: "深秋",
+      winter_cool: "冷冬",
+      winter_deep: "深冬",
     };
     return map[season] || season;
   }

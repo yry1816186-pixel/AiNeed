@@ -19,7 +19,6 @@ export interface ColdStartRecommendation {
 
 export interface UserProfile {
   age?: number;
-  gender?: string;
   location?: string;
   occupation?: string;
   stylePreferences?: string[];
@@ -52,7 +51,7 @@ export class ColdStartService {
       categories: ["bottoms", "tops"],
     },
     hourglass: {
-      styles: ["elegant", "classic", "feminine"],
+      styles: ["elegant", "classic", "tailored"],
       categories: ["dresses", "tops", "bottoms"],
     },
     oval: {
@@ -79,6 +78,19 @@ export class ColdStartService {
     classic: ["white-shirt", "trousers", "blazer", "loafers"],
     sporty: ["activewear", "running-shoes", "sports-jacket", "shorts"],
     bohemian: ["maxi-dress", "floral-top", "sandals", "accessories"],
+  };
+
+  private readonly scenarioMapping: Record<string, { categories: string[]; styles: string[] }> = {
+    commute: {
+      categories: ["tops", "bottoms", "outerwear"],
+      styles: ["smart-casual", "minimalist"],
+    },
+    interview: { categories: ["suits", "tops", "bottoms"], styles: ["formal", "classic"] },
+    date: { categories: ["dresses", "tops", "bottoms"], styles: ["elegant", "romantic"] },
+    casual: { categories: ["tops", "bottoms", "sneakers"], styles: ["casual", "streetwear"] },
+    workout: { categories: ["activewear", "shorts"], styles: ["sporty"] },
+    party: { categories: ["dresses", "tops", "accessories"], styles: ["trendy", "elegant"] },
+    travel: { categories: ["tops", "bottoms", "outerwear"], styles: ["casual", "comfortable"] },
   };
 
   constructor(private prisma: PrismaService) {}
@@ -216,6 +228,35 @@ export class ColdStartService {
   ): Promise<ColdStartStrategy> {
     const recommendations: ColdStartRecommendation[] = [];
 
+    // Primary sort: primaryScenarios -> maps to category/occasion filters
+    if (profile.primaryScenarios && profile.primaryScenarios.length > 0) {
+      for (const scenario of profile.primaryScenarios) {
+        const scenarioConfig = this.scenarioMapping[scenario];
+        if (scenarioConfig) {
+          const items = await this.prisma.clothingItem.findMany({
+            where: {
+              isActive: true,
+              OR: [
+                { tags: { hasSome: scenarioConfig.styles } },
+                { tags: { hasSome: scenarioConfig.categories } },
+              ],
+            },
+            orderBy: { likeCount: "desc" },
+            take: 4,
+          });
+          for (const item of items) {
+            recommendations.push({
+              itemId: item.id,
+              score: this.deterministicScore(userId, item.id, 75, 15, scenario),
+              reason: `适合${scenario}场景的穿搭`,
+              strategy: "profile-based",
+            });
+          }
+        }
+      }
+    }
+
+    // Secondary sort: bodyType -> maps to flattering categories
     if (profile.bodyType) {
       const bodyRules = this.bodyTypeRules[profile.bodyType];
       if (bodyRules) {
@@ -233,6 +274,7 @@ export class ColdStartService {
       }
     }
 
+    // Tertiary sort: styleExpression -> maps to style-item associations
     if (profile.styleExpression && profile.styleExpression.length > 0) {
       for (const expr of profile.styleExpression) {
         const itemKeywords = this.styleExpressionMapping[expr];
@@ -676,7 +718,7 @@ export class ColdStartService {
         avoid: ["form-fitting"],
       },
       hourglass: {
-        styles: ["elegant", "classic", "feminine"],
+        styles: ["elegant", "classic", "tailored"],
         categories: ["dresses", "tops", "bottoms"],
         avoid: ["oversized"],
       },
