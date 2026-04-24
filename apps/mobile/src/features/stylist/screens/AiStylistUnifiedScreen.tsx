@@ -49,12 +49,15 @@ import {
   TryOnBottomSheet,
   StudioRecommendCard,
   QuickReplyBar,
+  VoiceButton,
 } from "../components";
 import type { OutfitData, StudioData } from "../components";
 import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
 import type { RootStackParamList } from "../../../types/navigation";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { useVoiceRecognition } from "../../../services/speech/voiceRecognitionHook";
+import { speakFromUrl } from "../../../services/speech/ttsService";
 
 // ============ Scene Chips Config ============
 
@@ -691,6 +694,15 @@ export const AiStylistUnifiedScreen: React.FC = () => {
 
   const scrollViewRef = useRef<ScrollView>(null);
 
+  // Voice recognition hook (STT via @react-native-voice/voice)
+  const {
+    isListening: isVoiceListening,
+    recognizedText: voiceText,
+    startListening: startVoiceListening,
+    stopListening: stopVoiceListening,
+    isAvailable: voiceAvailable,
+  } = useVoiceRecognition();
+
   // Studio lookup from local directory for sprint (production would query backend)
   const getStudioForSignal = useCallback((signal: string): StudioData | null => {
     // Sprint: static studio data. In production, backend provides this.
@@ -734,6 +746,42 @@ export const AiStylistUnifiedScreen: React.FC = () => {
   }, []);
 
   const orderedScenes = useMemo(() => getOrderedScenes(), []);
+
+  // Auto-send recognized voice text through chat pipeline
+  useEffect(() => {
+    if (voiceText && voiceText.trim().length > 0) {
+      const text = voiceText.trim();
+      // Send through the same pipeline as text input
+      if (!isGenerating) {
+        const userMsg: ChatMessage = {
+          id: `user_${Date.now()}`,
+          role: "user",
+          content: text,
+          timestamp: new Date().toISOString(),
+        };
+        addMessage(userMsg);
+
+        void (async () => {
+          let sid = currentSessionId;
+          if (!sid) {
+            sid = await createSession(text);
+          }
+          if (sid) {
+            const result = await sendMessage(text);
+            if (result) {
+              processDialogResponse(result);
+              if (result.audioUrl) {
+                void speakFromUrl(result.audioUrl);
+              }
+            }
+            if (result?.result) {
+              await fetchOutfitPlan(sid);
+            }
+          }
+        })();
+      }
+    }
+  }, [voiceText]);
 
   useEffect(() => {
     if (authLoading || !isAuthenticated || hasInitialized) {
@@ -813,6 +861,9 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       const result = await sendMessage(text);
       if (result) {
         processDialogResponse(result);
+        if (result.audioUrl) {
+          void speakFromUrl(result.audioUrl);
+        }
       }
       if (result?.result) {
         await fetchOutfitPlan(sid);
@@ -1168,6 +1219,12 @@ export const AiStylistUnifiedScreen: React.FC = () => {
               accessibilityLabel="输入穿搭需求"
             />
           </View>
+          {voiceAvailable && (
+            <VoiceButton
+              isListening={isVoiceListening}
+              onPress={isVoiceListening ? stopVoiceListening : startVoiceListening}
+            />
+          )}
           <SendButton
             onPress={handleSend}
             disabled={!inputText.trim() || isGenerating}

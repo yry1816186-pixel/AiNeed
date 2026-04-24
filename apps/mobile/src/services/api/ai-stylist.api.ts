@@ -113,6 +113,7 @@ export interface AiStylistSessionResponse {
   action?: "try_on" | "detail";
   studioSignal?: string;
   outfits?: unknown[];
+  audioUrl?: string;
 }
 
 export interface AiStylistSuggestionResponse {

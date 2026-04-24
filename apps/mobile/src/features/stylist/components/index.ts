@@ -21,3 +21,5 @@ export type { TryOnBottomSheetProps, OutfitData } from "./TryOnBottomSheet";
 export { StudioRecommendCard } from "./StudioRecommendCard";
 export type { StudioRecommendCardProps, StudioData } from "./StudioRecommendCard";
 export { QuickReplyBar } from "./QuickReplyBar";
+export { VoiceButton } from "./VoiceButton";
+export type { VoiceButtonProps } from "./VoiceButton";
