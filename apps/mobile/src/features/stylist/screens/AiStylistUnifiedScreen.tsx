@@ -15,7 +15,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, {
   useSharedValue,
@@ -54,7 +54,7 @@ import {
 import type { OutfitData, StudioData } from "../components";
 import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
-import type { RootStackParamList } from "../../../types/navigation";
+import type { RootStackParamList, StylistStackParamList } from "../../../types/navigation";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { useVoiceRecognition } from "../../../services/speech/voiceRecognitionHook";
 import { speakFromUrl } from "../../../services/speech/ttsService";
@@ -648,6 +648,7 @@ const AnimatedMessageBubble: React.FC<{
 
 export const AiStylistUnifiedScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<StylistStackParamList, "AIStylist">>();
   const { colors, seasonAccent } = useTheme();
   const styles = useStyles(colors);
   const t = useTranslation();
@@ -782,6 +783,58 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       }
     }
   }, [voiceText]);
+
+  // Handle navigation params: startVoice and initialMessage from QuickChatBar
+  useEffect(() => {
+    const params = route.params as { startVoice?: boolean; initialMessage?: string } | undefined;
+    if (!params) return;
+
+    if (params.startVoice) {
+      // Auto-start voice recognition after a brief delay for screen to mount
+      const timer = setTimeout(() => {
+        if (voiceAvailable) {
+          startVoiceListening();
+        }
+        // Clear param to prevent re-triggering on re-renders
+        navigation.setParams({ startVoice: undefined } as never);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+
+    if (params.initialMessage) {
+      const msg = params.initialMessage;
+      // Clear param first to prevent re-triggering
+      navigation.setParams({ initialMessage: undefined } as never);
+
+      // Send the message through the chat pipeline
+      const userMsg: ChatMessage = {
+        id: `user_${Date.now()}`,
+        role: "user",
+        content: msg,
+        timestamp: new Date().toISOString(),
+      };
+      addMessage(userMsg);
+
+      void (async () => {
+        let sid = currentSessionId;
+        if (!sid) {
+          sid = await createSession(msg);
+        }
+        if (sid) {
+          const result = await sendMessage(msg);
+          if (result) {
+            processDialogResponse(result);
+            if (result.audioUrl) {
+              void speakFromUrl(result.audioUrl);
+            }
+          }
+          if (result?.result) {
+            await fetchOutfitPlan(sid);
+          }
+        }
+      })();
+    }
+  }, [route.params]);
 
   useEffect(() => {
     if (authLoading || !isAuthenticated || hasInitialized) {

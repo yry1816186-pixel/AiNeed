@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PhotoType } from "../../../types/prisma-enums";
 
 import { BodyPositiveFilter } from "./body-positive.filter";
@@ -59,6 +60,7 @@ export class AiStylistService {
 
   constructor(
     private configService: ConfigService,
+    private prisma: PrismaService,
     private sessionService: AiStylistSessionService,
     private chatService: AiStylistChatService,
     private contextService: AiStylistContextService,
@@ -303,12 +305,54 @@ export class AiStylistService {
   async dialogChat(request: DialogChatRequestDto, userId: string): Promise<DialogChatResponseDto> {
     const context = await this.dialogStateService.getContext(request.sessionId);
 
+    // Load user profile for preference memory on first turn (GREET state)
+    if (context.turnCount === 0 && !context.preferenceMemory) {
+      try {
+        const profile = await this.prisma.userProfile.findUnique({
+          where: { userId },
+          select: {
+            bodyType: true,
+            stylePreferences: true,
+            colorPreferences: true,
+            priceRangeMin: true,
+            priceRangeMax: true,
+          },
+        });
+        if (profile) {
+          const memory: Record<string, string> = {};
+          if (profile.bodyType) {memory.bodyType = profile.bodyType;}
+          if (profile.stylePreferences) {
+            const styles = Array.isArray(profile.stylePreferences)
+              ? (profile.stylePreferences as string[]).join(", ")
+              : String(profile.stylePreferences);
+            if (styles) {memory.stylePreferences = styles;}
+          }
+          if (profile.colorPreferences) {
+            const colors = Array.isArray(profile.colorPreferences)
+              ? (profile.colorPreferences as string[]).join(", ")
+              : String(profile.colorPreferences);
+            if (colors) {memory.colorPreferences = colors;}
+          }
+          if (profile.priceRangeMin !== null && profile.priceRangeMin !== undefined)
+            {memory.budgetMin = String(profile.priceRangeMin);}
+          if (profile.priceRangeMax !== null && profile.priceRangeMax !== undefined)
+            {memory.budgetMax = String(profile.priceRangeMax);}
+          context.preferenceMemory = memory;
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to load user profile for preference memory: ${err}`);
+      }
+    }
+
     try {
       const mlResponse = await axios.post(
         `${this.mlServiceUrl}/dialog/process`,
         {
           message: request.message,
-          context,
+          context: {
+            ...context,
+            preference_memory: context.preferenceMemory,
+          },
           user_id: userId,
         },
         {
@@ -321,7 +365,14 @@ export class AiStylistService {
       // Python DialogEngine owns all state transition decisions.
       const pythonContext: DialogContextDto = mlResponse.data.context;
       if (pythonContext) {
+        // Preserve preference_memory from Python response
+        if (mlResponse.data.context?.preference_memory) {
+          pythonContext.preferenceMemory = mlResponse.data.context.preference_memory;
+        }
         await this.dialogStateService.saveContext(request.sessionId, pythonContext);
+
+        // Save updated preferences back to user profile
+        await this.savePreferenceMemoryToProfile(userId, pythonContext);
       }
 
       const filteredReply = this.bodyPositiveFilter.filter(mlResponse.data.reply || "");
@@ -358,6 +409,47 @@ export class AiStylistService {
 
   async endDialogSession(sessionId: string): Promise<void> {
     await this.dialogStateService.clearContext(sessionId);
+  }
+
+  private async savePreferenceMemoryToProfile(
+    userId: string,
+    context: DialogContextDto
+  ): Promise<void> {
+    if (!context.preferenceMemory || Object.keys(context.preferenceMemory).length === 0) {
+      return;
+    }
+    try {
+      const data: Record<string, unknown> = {};
+      if (context.preferenceMemory.bodyType) {
+        data.bodyType = context.preferenceMemory.bodyType;
+      }
+      if (context.preferenceMemory.stylePreferences) {
+        data.stylePreferences = context.preferenceMemory.stylePreferences
+          .split(", ")
+          .filter(Boolean);
+      }
+      if (context.preferenceMemory.colorPreferences) {
+        data.colorPreferences = context.preferenceMemory.colorPreferences
+          .split(", ")
+          .filter(Boolean);
+      }
+      if (context.preferenceMemory.budgetMin) {
+        data.priceRangeMin = parseFloat(context.preferenceMemory.budgetMin);
+      }
+      if (context.preferenceMemory.budgetMax) {
+        data.priceRangeMax = parseFloat(context.preferenceMemory.budgetMax);
+      }
+
+      if (Object.keys(data).length > 0) {
+        await this.prisma.userProfile.upsert({
+          where: { userId },
+          update: data,
+          create: { userId, ...data },
+        });
+      }
+    } catch (err) {
+      this.logger.warn(`Failed to save preference memory to profile: ${err}`);
+    }
   }
 
   private generateQuickReplies(context: DialogContextDto): string[] {

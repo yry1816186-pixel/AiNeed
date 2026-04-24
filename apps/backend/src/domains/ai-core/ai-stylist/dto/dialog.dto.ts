@@ -87,6 +87,9 @@ export class DialogContextDto {
 
   @ApiPropertyOptional({ description: "生成的穿搭方案" })
   generatedOutfits?: any[];
+
+  @ApiPropertyOptional({ description: "跨session偏好记忆" })
+  preferenceMemory?: Record<string, string>;
 }
 
 export class DialogChatRequestDto {

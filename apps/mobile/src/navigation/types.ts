@@ -54,7 +54,7 @@ export type DiscoverStackParamList = {
 // Stylist Tab Stack (Phase 2 - AI 造型师)
 // ============================================================
 export type StylistStackParamList = {
-  AIStylist: undefined;
+  AIStylist: { startVoice?: boolean; initialMessage?: string } | undefined;
   OutfitPlan: { planId?: string };
   ChatHistory: undefined;
   AiStylistChat: { sessionId?: string };

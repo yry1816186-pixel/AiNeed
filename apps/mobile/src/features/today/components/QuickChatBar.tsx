@@ -1,12 +1,39 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import type { RootStackParamList } from "../../../types/navigation";
 
 export function QuickChatBar() {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [text, setText] = useState("");
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const handleVoicePress = () => {
+    navigation.navigate("MainTabs", {
+      screen: "Stylist",
+      params: {
+        screen: "AIStylist",
+        params: { startVoice: true },
+      },
+    } as never);
+  };
+
+  const handleSend = () => {
+    const message = text.trim();
+    if (!message) return;
+
+    setText("");
+    navigation.navigate("MainTabs", {
+      screen: "Stylist",
+      params: {
+        screen: "AIStylist",
+        params: { initialMessage: message },
+      },
+    } as never);
+  };
 
   return (
     <View style={styles.container}>
@@ -17,8 +44,12 @@ export function QuickChatBar() {
           placeholderTextColor={colors.textTertiary}
           value={text}
           onChangeText={setText}
+          onSubmitEditing={handleSend}
         />
-        <TouchableOpacity style={styles.sendButton}>
+        <TouchableOpacity style={styles.voiceButton} onPress={handleVoicePress} activeOpacity={0.7}>
+          <Ionicons name="mic-outline" size={22} color={colors.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
           <Ionicons name="send" size={20} color={colors.textInverse} />
         </TouchableOpacity>
       </View>
@@ -62,6 +93,17 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: 16,
     fontSize: 14,
     color: colors.textPrimary,
+  },
+  voiceButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
   sendButton: {
     width: 40,

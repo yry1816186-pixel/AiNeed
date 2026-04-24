@@ -188,6 +188,13 @@ class DialogEngine:
         return DialogState.CONTEXT
 
     async def _handle_greet(self, message: str, context: DialogContext) -> Dict:
+        # Apply preference memory to personalize the interaction
+        memory_context = ""
+        if context.preference_memory:
+            memory_parts = [f"{k}: {v}" for k, v in context.preference_memory.items() if v]
+            if memory_parts:
+                memory_context = f"\n\n用户偏好记忆: {', '.join(memory_parts)}"
+
         context.slots = await self.slot_extractor.extract(message, context.slots)
 
         # Route to appropriate state based on intent
@@ -203,12 +210,37 @@ class DialogEngine:
 
         if next_state == DialogState.CHAT:
             context.state = DialogState.CHAT
+            # Include preference memory in the chat prompt
+            if memory_context:
+                personalized_prompt = CHAT_REPLY_PROMPT.format(
+                    message=message,
+                    personality=YIYI_PERSONALITY_PROMPT + "\n" + memory_context,
+                )
+                try:
+                    reply = await self._call_llm(
+                        messages=[
+                            {"role": "system", "content": YIYI_PERSONALITY_PROMPT},
+                            {"role": "user", "content": personalized_prompt},
+                        ],
+                        max_tokens=200,
+                    )
+                    reply = reply.strip()
+                except Exception as e:
+                    logger.warning(f"Greet chat LLM failed: {e}")
+                    reply = "嗯，有什么穿搭问题都可以问我哦"
+
+                return {
+                    "reply": reply,
+                    "quick_replies": ["面试穿搭", "约会穿搭", "日常穿搭", "帮我搭配"],
+                    "state": DialogState.CHAT.value,
+                    "slots": context.slots.model_dump(),
+                }
             return await self._handle_chat(message, context)
 
         # Default: CONTEXT
         context.state = DialogState.CONTEXT
         missing = context.missing_required_slots()
-        reply = await self._ask_for_slots(missing, context)
+        reply = await self._ask_for_slots(missing, context, memory_context)
         return {
             "reply": reply,
             "quick_replies": self._get_context_quick_replies(context),
@@ -547,7 +579,7 @@ class DialogEngine:
             replies.extend(["简约利落", "温柔优雅", "专业正式"])
         return replies[:6]
 
-    async def _ask_for_slots(self, missing: List[str], context: DialogContext) -> str:
+    async def _ask_for_slots(self, missing: List[str], context: DialogContext, memory_context: str = "") -> str:
         slots_summary = context.slots.model_dump_json(exclude_none=True, exclude_defaults=True)
         missing_names = {
             "occasion": "穿搭场合",
@@ -563,7 +595,7 @@ class DialogEngine:
             slots_summary=slots_summary,
             missing_summary=missing_summary,
             body_positive_rule=BODY_POSITIVE_PROMPT,
-        )
+        ) + memory_context
 
         try:
             reply = await self._call_llm(
