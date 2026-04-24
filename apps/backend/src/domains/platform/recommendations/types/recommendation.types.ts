@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview 统一推荐引擎类型定义
  * @description 定义推荐系统中使用的所有类型接口，替代 any 类型以提高类型安全性
  * @module recommendations/types
  */
 
-import {
-  BodyType,
-  SkinTone,
-  ColorSeason,
-  ClothingCategory,
-} from "../../../../types/prisma-enums";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 
 /**
  * 服装商品属性接口
@@ -432,4 +426,85 @@ export interface RecommendationExplanationContext {
   userPreferences?: UserPreferenceSummary;
   itemAttributes?: ItemAttributeSummary;
   matchingFactors: MatchingFactor[];
+}
+
+// ============================================================================
+// Pipeline-specific types for orchestrator and service layers
+// ============================================================================
+
+/**
+ * 推荐候选项接口
+ * @description 候选商品在推荐漏斗中的数据结构
+ */
+export interface RecommendationCandidate {
+  id: string;
+  score: number;
+  metadata: Record<string, unknown>;
+  source: string;
+  category: string;
+  price: number;
+  tags: string[];
+  imageUrl?: string;
+  vector?: number[];
+}
+
+/**
+ * 推荐上下文接口（扩展版）
+ * @description 推荐请求的结构化上下文信息，用于 orchestrator 和 service 层
+ */
+export interface RecommendationRequestContext {
+  userId: string;
+  occasion?: string;
+  season?: string;
+  weather?: string;
+  budget?: number;
+  bodyType?: string;
+  styleExpression?: string[];
+  category?: ClothingCategory;
+}
+
+/**
+ * 推荐选项接口
+ * @description 推荐请求的选项配置
+ */
+export interface RecommendationOptions {
+  limit: number;
+  offset?: number;
+  strategy?: string;
+  experimentId?: string;
+}
+
+/**
+ * 评分结果接口
+ * @description 推荐评分管道的输出结果
+ */
+export interface ScoringResult {
+  candidate: RecommendationCandidate;
+  ruleScore: number;
+  vectorScore: number;
+  preferenceScore: number;
+  finalScore: number;
+  explanation: string;
+}
+
+/**
+ * 策略输出接口
+ * @description 推荐策略服务的返回类型
+ */
+export interface StrategyOutput {
+  candidates: RecommendationCandidate[];
+  strategyName: string;
+  confidence: number;
+  metadata: Record<string, unknown>;
+}
+
+/**
+ * 反馈载荷接口
+ * @description 用户对推荐结果的反馈结构
+ */
+export interface FeedbackPayload {
+  userId: string;
+  clothingId: string;
+  action: "like" | "dislike" | "skip";
+  context?: RecommendationRequestContext;
 }
