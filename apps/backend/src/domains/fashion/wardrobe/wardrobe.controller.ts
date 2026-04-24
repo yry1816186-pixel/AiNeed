@@ -24,7 +24,9 @@ import { CurrentUser } from "../../../domains/identity/auth/decorators/current-u
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import { CreateWardrobeItemDto } from "./dto/create-wardrobe-item.dto";
+import { CuratedWardrobeQueryDto } from "./dto/curated-wardrobe-query.dto";
 import { UpdateWardrobeItemDto } from "./dto/update-wardrobe-item.dto";
+import { CuratedWardrobeService } from "./curated-wardrobe.service";
 import { WardrobeService } from "./wardrobe.service";
 
 @ApiTags("Wardrobe")
@@ -40,7 +42,108 @@ import { WardrobeService } from "./wardrobe.service";
   })
 )
 export class WardrobeController {
-  constructor(private readonly wardrobeService: WardrobeService) {}
+  constructor(
+    private readonly wardrobeService: WardrobeService,
+    private readonly curatedWardrobeService: CuratedWardrobeService
+  ) {}
+
+  // ==================== Curated Wardrobe Endpoints ====================
+
+  @Get("curated")
+  @ApiOperation({
+    summary: "获取策展衣橱",
+    description: "获取用户策展衣橱的三个分区：保存的搭配、心愿单、已购商品",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getCuratedWardrobe(@CurrentUser("id") userId: string) {
+    return this.curatedWardrobeService.getCuratedWardrobe(userId);
+  }
+
+  @Get("curated/wishlist")
+  @ApiOperation({
+    summary: "获取心愿单列表",
+    description: "分页获取心愿单中的商品，支持按分类、季节筛选",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiQuery({ name: "page", required: false, type: Number, description: "页码，默认 1" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "每页数量，默认 20" })
+  @ApiQuery({ name: "category", required: false, type: String, description: "分类筛选" })
+  @ApiQuery({ name: "season", required: false, type: String, description: "季节筛选" })
+  async getWishlist(
+    @CurrentUser("id") userId: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("category") category?: string,
+    @Query("season") season?: string
+  ) {
+    return this.curatedWardrobeService.getWishlistedItems(userId, {
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+      category,
+      season,
+    });
+  }
+
+  @Post("curated/wishlist/:itemId")
+  @ApiOperation({
+    summary: "添加到心愿单",
+    description: "将商品添加到策展衣橱心愿单",
+  })
+  @ApiResponse({ status: 201, description: "添加成功" })
+  @ApiResponse({ status: 400, description: "商品不存在或已下架" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "itemId", description: "商品 ID", type: String, format: "uuid" })
+  async addToWishlist(@CurrentUser("id") userId: string, @Param("itemId") itemId: string) {
+    return this.curatedWardrobeService.moveToWishlist(userId, itemId);
+  }
+
+  @Delete("curated/wishlist/:itemId")
+  @ApiOperation({
+    summary: "从心愿单移除",
+    description: "从策展衣橱心愿单中移除商品",
+  })
+  @ApiResponse({ status: 200, description: "移除成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "itemId", description: "商品 ID", type: String, format: "uuid" })
+  async removeFromWishlist(@CurrentUser("id") userId: string, @Param("itemId") itemId: string) {
+    await this.curatedWardrobeService.removeFromWishlist(userId, itemId);
+    return { success: true };
+  }
+
+  @Get("curated/purchased")
+  @ApiOperation({
+    summary: "获取已购商品列表",
+    description: "分页获取通过订单购买的商品，支持按分类、季节筛选",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiQuery({ name: "page", required: false, type: Number, description: "页码，默认 1" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "每页数量，默认 20" })
+  async getPurchased(
+    @CurrentUser("id") userId: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
+    return this.curatedWardrobeService.getPurchasedItems(userId, {
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+    });
+  }
+
+  @Get("curated/stats")
+  @ApiOperation({
+    summary: "获取策展衣橱统计",
+    description: "获取各分区数量统计及风格分布",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getCuratedStats(@CurrentUser("id") userId: string) {
+    return this.curatedWardrobeService.getSectionStats(userId);
+  }
+
+  // ==================== Original Wardrobe Endpoints ====================
 
   @Get()
   @ApiOperation({

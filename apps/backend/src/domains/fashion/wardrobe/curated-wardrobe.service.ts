@@ -2,6 +2,11 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { OrderStatus } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import {
+  PaginatedResponse,
+  createPaginatedResponse,
+  normalizePaginationParams,
+} from "../../../common/types/api-response.types";
 import { WardrobeSection } from "../../../types/prisma-enums";
 
 export interface CuratedWardrobe {
@@ -116,6 +121,107 @@ export class CuratedWardrobeService {
       purchasedItems: purchasedCount,
       styleDistribution,
     };
+  }
+
+  async getWishlistedItems(
+    userId: string,
+    params: {
+      page?: number;
+      limit?: number;
+      category?: string;
+      season?: string;
+    } = {}
+  ): Promise<PaginatedResponse<unknown>> {
+    const { page = 1, pageSize = 20 } = normalizePaginationParams({
+      page: params.page,
+      limit: params.limit,
+    });
+
+    const itemWhere: Record<string, unknown> = {};
+    if (params.category) {
+      itemWhere.category = params.category;
+    }
+    if (params.season) {
+      itemWhere.seasons = { has: params.season };
+    }
+
+    const skip = (page - 1) * pageSize;
+
+    const [favorites, total] = await Promise.all([
+      this.prisma.favorite.findMany({
+        where: {
+          userId,
+          section: WardrobeSection.wishlisted,
+          item: itemWhere,
+        },
+        include: {
+          item: {
+            include: { brand: { select: { id: true, name: true, logo: true } } },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      this.prisma.favorite.count({
+        where: {
+          userId,
+          section: WardrobeSection.wishlisted,
+          item: itemWhere,
+        },
+      }),
+    ]);
+
+    const items = favorites
+      .map((f) => f.item)
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    return createPaginatedResponse(items, total, page, pageSize);
+  }
+
+  async getPurchasedItems(
+    userId: string,
+    params: { page?: number; limit?: number } = {}
+  ): Promise<PaginatedResponse<unknown>> {
+    const { page = 1, pageSize = 20 } = normalizePaginationParams({
+      page: params.page,
+      limit: params.limit,
+    });
+
+    const purchasedItemIds = await this.prisma.orderItem.findMany({
+      where: {
+        order: {
+          userId,
+          status: { in: PURCHASED_ORDER_STATUSES },
+          isDeleted: false,
+        },
+        itemId: { not: null },
+      },
+      select: { itemId: true },
+      distinct: ["itemId"],
+    });
+
+    const itemIds = purchasedItemIds
+      .map((oi) => oi.itemId)
+      .filter((id): id is string => id !== null);
+
+    const total = itemIds.length;
+    const skip = (page - 1) * pageSize;
+    const pagedIds = itemIds.slice(skip, skip + pageSize);
+
+    if (pagedIds.length === 0) {
+      return createPaginatedResponse([], total, page, pageSize);
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: { id: { in: pagedIds } },
+      include: { brand: { select: { id: true, name: true, logo: true } } },
+    });
+
+    const itemOrderMap = new Map(pagedIds.map((id, idx) => [id, idx]));
+    items.sort((a, b) => (itemOrderMap.get(a.id) ?? 0) - (itemOrderMap.get(b.id) ?? 0));
+
+    return createPaginatedResponse(items, total, page, pageSize);
   }
 
   private async getWishlistedClothingItems(
