@@ -5,36 +5,37 @@
 See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 
 **Core value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
-**Current focus:** Phase 3 — Navigation + Core Screens + Calendar
+**Current focus:** Phase 2 complete (Pipeline + Cold Start + Curated Wardrobe). Phase 3 complete. Ready for Phase 4.
 **Authoritative source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md (42 frozen decisions, 10 dimensions)
 
 ## Current Position
 
-Phase: 3 of 10 (Navigation + Core Screens + Calendar)
+Phase: 2 of 10 (Pipeline + Cold Start + Curated Wardrobe)
 Plan: 3 of 3 executed in current phase
 Status: Phase Complete
-Last activity: 2026-04-24 -- Plan 03-03 completed: Design token unification (borderRadius, hex colors, WarmPrimaryColors, YiyiAvatar)
+Last activity: 2026-04-24 -- Plan 02-03 completed: Pipeline verification + output standardization + seed matrix
 
-Progress: [####......] 33%
+Progress: [####......] 40%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6 (Phase 1: 3, Phase 3: 3)
-- Average duration: ~28min
-- Total execution time: ~2h 55min
+- Total plans completed: 9 (Phase 1: 3, Phase 2: 3, Phase 3: 3)
+- Average duration: ~22min
+- Total execution time: ~3h 36min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 | ----- | ----- | ----- | -------- |
 | 1     | 3     | ~110m | ~37min   |
+| 2     | 3     | ~51m  | ~17min   |
 | 3     | 3     | 55m   | 18m      |
 
 **Recent Trend:**
 
-- Phase 1 completed in 3 plans across 2 waves. Plan 01 (any elimination) took 52m, Plan 02 (pipeline) took 23m.
+- Phase 2 completed in 3 plans across 2 waves. Plan 01 (orchestrator+cold-start+quiz+AB) took 14min, Plan 02 (curated wardrobe+complementary) took 18min, Plan 03 (output std+degraded+seed) took 17min.
 
 ## Accumulated Context
 
@@ -45,6 +46,10 @@ Source: XUNO_FINAL_PLAN.md §20.2 + §20.3
 
 Critical decisions affecting current work:
 
+- RecommendationOutput standardized on all 7 public methods (REC-04)
+- Degraded pipeline uses 4x3 season-occasion outfit templates (REC-05)
+- Cold-start reads UserProfile.preferences JSON + StyleQuizResult
+- FeatureFlagService optional injection for A/B experiment variants
 - FashionCLIP → Marqo-FashionSigLIP (decision #7)
 - Visual system: warm camel #C4956A palette (decision #35)
 - Curated wardrobe replaces inventory model (decision #4)
@@ -59,6 +64,12 @@ Critical decisions affecting current work:
 - **Plan 01**: Core domain any elimination (28 files, ~200 any removed, 7 commits)
 - **Plan 02**: Orchestrator as sole entry point + ColdStartService refactoring (7 files, 551 lines added, 5 commits)
 - **Plan 03**: Remaining any + Gender Demotion + Quality Gate (execution status: partially completed in prior session)
+
+### Phase 2 Completed Work
+
+- **Plan 01**: Orchestrator sole entry point verified + ColdStartService reads onboarding + StyleQuiz sync to scoring weights + A/B experiment integration (6 files, 14min)
+- **Plan 02**: CuratedWardrobe three-section model (WardrobeSection enum) + 5 REST endpoints + preference-complementary bridge recommendations (8 files, 18min)
+- **Plan 03**: RecommendationOutput standardization across 7 public methods + degraded pipeline with 12 outfit templates + seed data occasion/season coverage (5 files, 17min)
 
 ### Phase 3 Completed Work
 
@@ -97,5 +108,5 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-04-24
-Stopped at: Completed 03-03-PLAN.md (Design Token Unification), Phase 3 complete
-Resume file: .planning/phases/03-navigation-core-screens-calendar/03-03-SUMMARY.md
+Stopped at: Completed 02-03-PLAN.md (Pipeline Verification + Output Standardization), Phase 2 complete
+Resume file: .planning/phases/02-pipeline-cold-start-curated-wardrobe/03-SUMMARY.md

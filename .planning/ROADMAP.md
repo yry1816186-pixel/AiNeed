@@ -56,7 +56,13 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 5. When AI pipeline is unavailable, a weather+season+scene template still produces a visible outfit plan
 6. Every recommendation carries an A/B experiment_id
 7. Wardrobe model stores savedOutfits + wishlistedItems + purchasedItems (not ownedItems)
-   **Plans**: TBD
+   **Plans**: 3 plans
+
+Plans:
+
+- [x] 02-01-PLAN.md -- Orchestrator sole entry point + cold start reads onboarding + quiz sync + A/B experiment (REC-01, REC-02, REC-03, REC-06)
+- [x] 02-02-PLAN.md -- Curated wardrobe three-section model + preference-complementary bridge recommendations (CUR-01, CUR-02)
+- [x] 02-03-PLAN.md -- Pipeline verification + output standardization + degraded templates + seed matrix (REC-04, REC-05)
 
 ### Phase 3: Navigation + Core Screens + Calendar
 
@@ -206,7 +212,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | Phase                                           | Plans Complete | Status      | Completed  |
 | ----------------------------------------------- | -------------- | ----------- | ---------- |
 | 1. Foundation + TS Cleanup + Visual Base        | 0/?            | Not started | -          |
-| 2. Pipeline + Cold Start + Curated Wardrobe     | 0/?            | Not started | -          |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
 | 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 0/7            | Planned     | -          |
 | 5. E2E Integration + Competition Demo           | 0/?            | Not started | -          |
