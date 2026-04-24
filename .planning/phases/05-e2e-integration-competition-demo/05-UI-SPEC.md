@@ -48,15 +48,11 @@ Exceptions: none
 | Role    | Size | Weight         | Line Height |
 | ------- | ---- | -------------- | ----------- |
 | Body    | 16px | regular (400)  | 1.5         |
-| Label   | 14px | medium (500)   | 1.4         |
+| Label   | 14px | regular (400)  | 1.4         |
 | Heading | 20px | semibold (600) | 1.2         |
-| Display | 28px | bold (700)     | 1.2         |
+| Display | 28px | semibold (600) | 1.2         |
 
-Additional sizes available in tokens but restricted to these 4 for this phase:
-
-- caption (12px) — only for timestamps and metadata
-- bodySmall (14px) — only for secondary body text within cards
-- hero (48px) — only for onboarding splash screens
+Only these 4 sizes and 2 weights are used in this phase. All other token sizes (caption 12px, bodySmall 14px, hero 48px) are deprecated for Phase 5 — do not introduce new size/weight variants.
 
 ---
 
@@ -99,7 +95,7 @@ Semantic colors (pre-existing, no change):
 | Empty state body         | 伊伊正在为你准备专属推荐，稍等片刻             |
 | Empty state action       | 刷新试试                                       |
 | Error state              | 出错了 — 抱歉，发生了一些错误，请稍后重试      |
-| Error state action       | 重试                                           |
+| Error state action       | 重新加载推荐                                   |
 | Network error            | 网络不给力 — 请检查网络连接后重试              |
 | Network error action     | 重新连接                                       |
 | Destructive confirmation | 删除搭配：确定要删除这套搭配吗？此操作不可撤销 |
@@ -117,6 +113,17 @@ Screen-specific empty states:
 ---
 
 ## Phase 5 — New Components
+
+### Visual Focal Points by Screen
+
+| Screen     | Primary Focal Point                                     | Secondary Anchor                              |
+| ---------- | ------------------------------------------------------- | --------------------------------------------- |
+| Today      | WeatherSceneCard temperature (Display 28px, terracotta) | AiInsightBubble (typewriter animation)        |
+| Discover   | ProductFeedCard hero image (top of feed)                | SearchBar (spring focus animation)            |
+| Stylist    | TypewriterMessage (AI response, typewriter animation)   | VoiceButton (terracotta gradient, pulse ring) |
+| Me         | Profile avatar + name (top of screen)                   | Menu items list                               |
+| Wardrobe   | OutfitCard grid (visual grid of saved outfits)          | Add clothing FAB                              |
+| Onboarding | Step progress bar (top)                                 | YiyiAvatar + outfit cards (step 4)            |
 
 ### RecommendationFunnel
 
@@ -137,8 +144,8 @@ Visual spec:
 - Each bar: full-width with rounded corners (borderRadius: 8px)
 - Bar height: 36px
 - Gap between bars: 4px (xs)
-- Labels: Label typography (14px/medium), left-aligned inside bar
-- Count badge: right-aligned, caption (12px/medium), terracotta for L6
+- Labels: Label typography (14px/regular), left-aligned inside bar
+- Count badge: right-aligned, Label (14px/regular), terracotta for L6
 - Animation: bars animate width from 0% to target% with spring(0.7, 18)
 - L6 bar has terracotta background with white text
 - Container padding: md (16px) all sides
@@ -158,7 +165,7 @@ Visual spec:
 - Position: bottom sheet, snapPoints: ["60%"]
 - Header: "演示配置" in Heading (20px/semibold), with close button
 - Body: scrollable form with sections
-- Each field: Label (14px/medium) + value display + edit button
+- Each field: Label (14px/regular) + value display + edit button
 - Fields: bodyType, styleExpression, primaryScenarios (multi-select)
 - Save button: terracotta gradient, full-width, "应用配置" CTA
 - Danger zone: "重置为默认" with destructive color, confirmation required
@@ -217,9 +224,9 @@ Demo flow visual contract:
 
 1. **Today Tab**: WeatherSceneCard shows "明天 12°C 面试推荐 3 套"
 
-   - Temperature: Display (28px/bold), terracotta
+   - Temperature: Display (28px/semibold), terracotta
    - Scene label: Heading (20px/semibold), charcoal
-   - Count badge: Label (14px/medium), terracotta background, white text
+   - Count badge: Label (14px/regular), terracotta background, white text
 
 2. **User taps → Stylist**: AiStylistUnifiedScreen opens with pre-filled context
 
