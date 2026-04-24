@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomUUID, createHash, timingSafeEqual } from "crypto";
 
 import {
@@ -11,9 +10,10 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma , Gender } from "@prisma/client";
+import { Prisma, Gender } from "@prisma/client";
 import type { StringValue } from "ms";
 
+import { EmailService } from "../../../common/email/email.service";
 import {
   StructuredLoggerService,
   ContextualLogger,
@@ -21,7 +21,6 @@ import {
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
 import * as bcrypt from "../../../common/security/bcrypt";
-import { EmailService } from "../../../common/email/email.service";
 import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/privacy-version";
 
 import { AuthHelpersService } from "./auth.helpers";
@@ -535,7 +534,7 @@ export class AuthService {
 
     let user = await this.prisma.user.findFirst({
       where: {
-        OR: [{ wechatOpenId: openid }, ...(unionid ? [{ wechatUnionId: unionid }] : [])] as any[],
+        OR: [{ wechatOpenId: openid }, ...(unionid ? [{ wechatUnionId: unionid }] : [])],
       },
     });
 
@@ -612,7 +611,7 @@ export class AuthService {
           password: await bcrypt.hash(randomUUID()),
           phone: dto.phone,
           nickname: dto.nickname ?? `用户${dto.phone.slice(-4)}`,
-          gender: dto.gender as Gender,
+          ...(dto.gender ? { gender: dto.gender as Gender } : {}),
           ...(dto.birthDate ? { birthDate: new Date(dto.birthDate) } : {}),
         },
       });
@@ -620,7 +619,6 @@ export class AuthService {
       await tx.userProfile.create({
         data: {
           userId: createdUser.id,
-          ...(dto.gender ? { gender: dto.gender as Gender } : {}),
         },
       });
 

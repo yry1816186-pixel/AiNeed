@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsEmail,
@@ -21,7 +20,8 @@ import {
 const GenderValues = ["male", "female", "other"] as const;
 type Gender = (typeof GenderValues)[number];
 
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
 const PASSWORD_ERROR_MSG = "密码必须为8-32位，包含大小写字母和数字";
 
 /**
@@ -46,7 +46,9 @@ class IsPasswordMatchConstraint implements ValidatorConstraintInterface {
 @ValidatorConstraint({ name: "isValidBirthDate", async: false })
 class IsValidBirthDateConstraint implements ValidatorConstraintInterface {
   validate(value: string) {
-    if (!value) {return true;} // 可选字段
+    if (!value) {
+      return true;
+    } // 可选字段
     const date = new Date(value);
     const now = new Date();
     const minAge = new Date(now.getFullYear() - 120, now.getMonth(), now.getDate());
@@ -60,20 +62,21 @@ class IsValidBirthDateConstraint implements ValidatorConstraintInterface {
 }
 
 export class RegisterDto {
-  @ApiProperty({ 
+  @ApiProperty({
     example: "user@example.com",
     description: "用户邮箱地址",
-    format: "email"
+    format: "email",
   })
   @IsEmail({}, { message: "请输入有效的邮箱地址" })
   email!: string;
 
-  @ApiProperty({ 
-    example: "Password123", 
-    minLength: 8, 
+  @ApiProperty({
+    example: "Password123",
+    minLength: 8,
     maxLength: 32,
     description: "密码必须为8-32位，包含大小写字母和数字",
-    pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,32}$"
+    pattern:
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,32}$",
   })
   @IsString({ message: "密码必须是字符串" })
   @MinLength(8, { message: "密码长度不能少于8位" })
@@ -81,29 +84,29 @@ export class RegisterDto {
   @Matches(PASSWORD_REGEX, { message: PASSWORD_ERROR_MSG })
   password!: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "Password123",
-    description: "确认密码，必须与密码一致"
+    description: "确认密码，必须与密码一致",
   })
   @IsOptional()
   @IsString({ message: "确认密码必须是字符串" })
   @Validate(IsPasswordMatchConstraint)
   confirmPassword?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "张三",
     description: "用户昵称，最长50个字符",
-    maxLength: 50
+    maxLength: 50,
   })
   @IsOptional()
   @IsString({ message: "昵称必须是字符串" })
   @MaxLength(50, { message: "昵称长度不能超过50位" })
   nickname?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "13800138000",
     description: "中国大陆手机号码",
-    pattern: "^1[3-9]\\d{9}$"
+    pattern: "^1[3-9]\\d{9}$",
   })
   @IsOptional()
   @IsString({ message: "手机号码必须是字符串" })
@@ -112,17 +115,17 @@ export class RegisterDto {
 }
 
 export class LoginDto {
-  @ApiProperty({ 
+  @ApiProperty({
     example: "user@example.com",
     description: "用户邮箱地址",
-    format: "email"
+    format: "email",
   })
   @IsEmail({}, { message: "请输入有效的邮箱地址" })
   email!: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     example: "Password123",
-    description: "用户密码"
+    description: "用户密码",
   })
   @IsString({ message: "密码必须是字符串" })
   @MinLength(1, { message: "密码不能为空" })
@@ -153,9 +156,9 @@ export class AuthResponseDto {
 }
 
 export class RefreshTokenDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: "Refresh Token，用于刷新访问令牌",
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   })
   @IsString({ message: "Refresh Token 必须是字符串" })
   @MinLength(1, { message: "Refresh Token 不能为空" })
@@ -163,29 +166,29 @@ export class RefreshTokenDto {
 }
 
 export class UpdateProfileDto {
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "张三",
     description: "用户昵称",
-    maxLength: 50
+    maxLength: 50,
   })
   @IsOptional()
   @IsString({ message: "昵称必须是字符串" })
   @MaxLength(50, { message: "昵称长度不能超过50位" })
   nickname?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     enum: GenderValues,
     description: "性别：male-男性，female-女性，other-其他",
-    example: "male"
+    example: "male",
   })
   @IsOptional()
   @IsIn(GenderValues, { message: "性别必须是 male、female 或 other" })
   gender?: Gender;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "1990-01-01",
     description: "出生日期，ISO 8601 格式",
-    format: "date"
+    format: "date",
   })
   @IsOptional()
   @IsDateString({}, { message: "出生日期必须是有效的 ISO 8601 日期格式" })
@@ -195,10 +198,10 @@ export class UpdateProfileDto {
 
 // FIX-BL-003: 密码找回DTO (修复时间: 2026-03-19)
 export class ForgotPasswordDto {
-  @ApiProperty({ 
+  @ApiProperty({
     example: "user@example.com",
     description: "注册时使用的邮箱地址",
-    format: "email"
+    format: "email",
   })
   @IsEmail({}, { message: "请输入有效的邮箱地址" })
   email!: string;
@@ -207,7 +210,7 @@ export class ForgotPasswordDto {
 export class ResetPasswordDto {
   @ApiProperty({
     description: "密码重置令牌，通过邮件发送",
-    example: "a1b2c3d4e5f6g7h8i9j0"
+    example: "a1b2c3d4e5f6g7h8i9j0",
   })
   @IsString({ message: "令牌必须是字符串" })
   @MinLength(1, { message: "令牌不能为空" })
@@ -218,7 +221,8 @@ export class ResetPasswordDto {
     description: "新密码，必须为8-32位，包含大小写字母和数字",
     minLength: 8,
     maxLength: 32,
-    pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,32}$"
+    pattern:
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,32}$",
   })
   @IsString({ message: "密码必须是字符串" })
   @MinLength(8, { message: "密码长度不能少于8位" })
@@ -228,7 +232,7 @@ export class ResetPasswordDto {
 
   @ApiPropertyOptional({
     example: "NewPassword123",
-    description: "确认新密码，必须与新密码一致"
+    description: "确认新密码，必须与新密码一致",
   })
   @IsOptional()
   @IsString({ message: "确认密码必须是字符串" })
@@ -240,7 +244,7 @@ export class PhoneLoginDto {
   @ApiProperty({
     example: "13800138000",
     description: "中国大陆手机号码",
-    pattern: "^1[3-9]\\d{9}$"
+    pattern: "^1[3-9]\\d{9}$",
   })
   @IsString()
   @IsNotEmpty()
@@ -251,7 +255,7 @@ export class PhoneLoginDto {
     example: "123456",
     description: "短信验证码，6位数字",
     minLength: 6,
-    maxLength: 6
+    maxLength: 6,
   })
   @IsString()
   @IsNotEmpty()
@@ -263,7 +267,7 @@ export class PhoneRegisterDto {
   @ApiProperty({
     example: "13800138000",
     description: "中国大陆手机号码",
-    pattern: "^1[3-9]\\d{9}$"
+    pattern: "^1[3-9]\\d{9}$",
   })
   @IsString()
   @IsNotEmpty()
@@ -274,25 +278,25 @@ export class PhoneRegisterDto {
     example: "123456",
     description: "短信验证码，6位数字",
     minLength: 6,
-    maxLength: 6
+    maxLength: 6,
   })
   @IsString()
   @IsNotEmpty()
   @Length(6, 6)
   code!: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: GenderValues,
-    description: "性别，用于个性化推荐",
-    example: "male"
+    description: "性别，用于个性化推荐（可选）",
+    example: "male",
   })
-  @IsEnum(GenderValues, { message: "Gender is required for personalized recommendations" })
-  @IsNotEmpty({ message: "Gender is required for personalized recommendations" })
-  gender!: Gender;
+  @IsOptional()
+  @IsEnum(GenderValues, { message: "Gender must be male, female, or other" })
+  gender?: Gender;
 
   @ApiPropertyOptional({
     example: "1990-01-01",
-    description: "出生日期，用于推导年龄段"
+    description: "出生日期，用于推导年龄段",
   })
   @IsOptional()
   @IsString()
@@ -302,7 +306,7 @@ export class PhoneRegisterDto {
     example: "张三",
     description: "用户昵称",
     minLength: 2,
-    maxLength: 20
+    maxLength: 20,
   })
   @IsString()
   @IsOptional()
