@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export type OnboardingStep = "basicInfo" | "photo" | "styleTest" | "complete";
+export type OnboardingStep = "scene" | "preference" | "style" | "result";
 
 export interface OnboardingFormData {
   gender?: "male" | "female" | "other" | null;
@@ -79,7 +79,7 @@ interface OnboardingState {
   resetNewOnboarding: () => void;
 }
 
-const STEP_ORDER: OnboardingStep[] = ["basicInfo", "styleTest", "photo", "complete"];
+const STEP_ORDER: OnboardingStep[] = ["scene", "preference", "style", "result"];
 
 const NEW_STEP_ORDER: NewOnboardingStep[] = ["scene", "style", "preference", "result"];
 
@@ -90,6 +90,13 @@ const DEFAULT_FORM_DATA: OnboardingFormData = {
   weight: "",
   photoUri: null,
   styleAnswers: [],
+  bodyType: null,
+  primaryScenarios: [],
+  styleExpression: [],
+  garmentPreference: {
+    lowerBody: "both",
+    upperFit: "regular",
+  },
 };
 
 const DEFAULT_NEW_ONBOARDING: NewOnboardingState = {
@@ -115,7 +122,7 @@ interface PersistedOnboardingState {
 export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set, get) => ({
-      currentStep: "basicInfo",
+      currentStep: "scene",
       completedSteps: [],
       formData: { ...DEFAULT_FORM_DATA },
       isLoading: false,
@@ -134,7 +141,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       setLoading: (loading) => set({ isLoading: loading }),
       resetOnboarding: () =>
         set({
-          currentStep: "basicInfo",
+          currentStep: "scene",
           completedSteps: [],
           formData: { ...DEFAULT_FORM_DATA },
           isLoading: false,

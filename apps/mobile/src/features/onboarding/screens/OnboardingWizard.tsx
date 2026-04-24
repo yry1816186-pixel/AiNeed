@@ -24,26 +24,23 @@ import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { useOnboardingStore } from "../stores/onboardingStore";
 import type { OnboardingStep } from "../stores/onboardingStore";
 import { onboardingService } from "../services/onboardingService";
-import { BasicInfoStep } from "./steps/BasicInfoStep";
-import { PhotoStep } from "./steps/PhotoStep";
-import { StyleTestStep } from "./steps/StyleTestStep";
-import { CompleteStep } from "./steps/CompleteStep";
+import { SceneSelectionStep } from "./steps/SceneSelectionStep";
+import { QuickProfileStep } from "./steps/QuickProfileStep";
+import { StyleExpressionStep } from "./steps/StyleExpressionStep";
 import type { RootStackParamList } from "../../../types/navigation";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
 
-const STEP_ORDER: OnboardingStep[] = ["basicInfo", "styleTest", "photo", "complete"];
+const STEP_ORDER: OnboardingStep[] = ["scene", "preference", "style", "result"];
 
 const STEP_TITLES: Record<OnboardingStep, string> = {
-  basicInfo: "认识你",
-  styleTest: "你的风格",
-  photo: "上传照片",
-  complete: "完成设置",
+  scene: "你的场景",
+  preference: "快速画像",
+  style: "你的风格",
+  result: "让伊伊搭第一套",
 };
 
-const SKIPPABLE_STEPS: OnboardingStep[] = ["photo"];
-
-const TOTAL_STEPS = STEP_ORDER.length - 1; // 3 steps, excluding complete
+const TOTAL_STEPS = 4;
 
 export const OnboardingWizard: React.FC = () => {
   const { colors } = useTheme();
@@ -52,6 +49,7 @@ export const OnboardingWizard: React.FC = () => {
     currentStep,
     formData,
     isLoading,
+    newOnboarding,
     completeStep,
     updateFormData,
     goToNextStep,
@@ -78,14 +76,20 @@ export const OnboardingWizard: React.FC = () => {
   }));
 
   const canProceed = useCallback((): boolean => {
-    if (currentStep === "basicInfo") {
-      return formData.ageRange !== null;
+    if (currentStep === "scene") {
+      return newOnboarding.selectedScenes.length >= 1;
     }
-    if (currentStep === "styleTest") {
-      return formData.styleAnswers.length === 3 && formData.styleAnswers.every(Boolean);
+    if (currentStep === "preference") {
+      return (
+        newOnboarding.garmentPreference.lowerBody !== undefined &&
+        newOnboarding.garmentPreference.upperFit !== undefined
+      );
     }
-    return true;
-  }, [currentStep, formData.ageRange, formData.styleAnswers]);
+    if (currentStep === "style") {
+      return newOnboarding.selectedStyles.length >= 1;
+    }
+    return true; // result step
+  }, [currentStep, newOnboarding]);
 
   const handleNext = useCallback(() => {
     if (!canProceed()) {
@@ -94,7 +98,7 @@ export const OnboardingWizard: React.FC = () => {
 
     completeStep(currentStep);
 
-    if (currentStep === "complete") {
+    if (currentStep === "result") {
       void handleComplete();
       return;
     }
@@ -110,16 +114,10 @@ export const OnboardingWizard: React.FC = () => {
     }
   }, [stepIndex, goToPrevStep, updateProgress]);
 
-  const handleSkip = useCallback(() => {
-    completeStep(currentStep);
-    goToNextStep();
-    updateProgress(stepIndex + 1);
-  }, [currentStep, completeStep, goToNextStep, stepIndex, updateProgress]);
-
   const handleComplete = useCallback(async () => {
     setLoading(true);
     try {
-      await onboardingService.saveOnboardingData(formData);
+      await onboardingService.completeOnboarding(formData, newOnboarding);
       await onboardingService.markOnboardingComplete();
       navigation.reset({
         index: 0,
@@ -134,15 +132,14 @@ export const OnboardingWizard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [formData, navigation, setLoading]);
+  }, [formData, newOnboarding, navigation, setLoading]);
 
-  const isLastStep = currentStep === "complete";
-  const isFirstStep = currentStep === "basicInfo";
-  const isSkippable = SKIPPABLE_STEPS.includes(currentStep);
+  const isFirstStep = currentStep === "scene";
+  const isLastStep = currentStep === "result";
 
   const renderStep = useMemo(() => {
     switch (currentStep) {
-      case "basicInfo":
+      case "scene":
         return (
           <Animated.View
             key={currentStep}
@@ -150,14 +147,25 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <BasicInfoStep
+            <SceneSelectionStep onNext={handleNext} />
+          </Animated.View>
+        );
+      case "preference":
+        return (
+          <Animated.View
+            key={currentStep}
+            entering={SlideInRight}
+            exiting={SlideOutLeft}
+            style={styles.stepContainer}
+          >
+            <QuickProfileStep
               formData={formData}
               updateFormData={updateFormData}
               onNext={handleNext}
             />
           </Animated.View>
         );
-      case "photo":
+      case "style":
         return (
           <Animated.View
             key={currentStep}
@@ -165,10 +173,10 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <PhotoStep onNext={handleNext} onSkip={handleSkip} />
+            <StyleExpressionStep onNext={handleNext} />
           </Animated.View>
         );
-      case "styleTest":
+      case "result":
         return (
           <Animated.View
             key={currentStep}
@@ -176,28 +184,16 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <StyleTestStep
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={handleNext}
-            />
-          </Animated.View>
-        );
-      case "complete":
-        return (
-          <Animated.View
-            key={currentStep}
-            entering={SlideInRight}
-            exiting={SlideOutLeft}
-            style={styles.stepContainer}
-          >
-            <CompleteStep onComplete={handleComplete} />
+            <View style={styles.placeholderContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={styles.placeholderText}>正在为你搭配...</Text>
+            </View>
           </Animated.View>
         );
       default:
         return null;
     }
-  }, [currentStep, formData, handleNext, handleSkip, handleComplete, updateFormData]);
+  }, [currentStep, formData, handleNext, updateFormData, colors.primary]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -218,7 +214,15 @@ export const OnboardingWizard: React.FC = () => {
 
       <View style={styles.footer}>
         {isFirstStep ? (
-          <TouchableOpacity style={styles.skipButton} onPress={handleSkip} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.skipButton}
+            onPress={() => {
+              onboardingService.markOnboardingComplete().then(() => {
+                navigation.reset({ index: 0, routes: [{ name: "MainTabs" }] });
+              });
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.skipButtonText}>稍后设置</Text>
           </TouchableOpacity>
         ) : (
@@ -229,12 +233,6 @@ export const OnboardingWizard: React.FC = () => {
         )}
 
         <View style={styles.footerSpacer} />
-
-        {isSkippable && (
-          <TouchableOpacity style={styles.skipButton} onPress={handleSkip} activeOpacity={0.7}>
-            <Text style={styles.skipButtonText}>跳过</Text>
-          </TouchableOpacity>
-        )}
 
         {!isLastStep && (
           <TouchableOpacity
@@ -305,6 +303,16 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     flex: 1,
+  },
+  placeholderContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing[4],
+  },
+  placeholderText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.textSecondary,
   },
   footer: {
     flexDirection: "row",
