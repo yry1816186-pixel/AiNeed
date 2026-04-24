@@ -5,25 +5,25 @@
 See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 
 **Core value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
-**Current focus:** Phase 2 complete (Pipeline + Cold Start + Curated Wardrobe). Phase 3 complete. Ready for Phase 4.
+**Current focus:** Phase 4 complete (Yiyi Agent + Voice + Onboarding + Studio). Ready for Phase 5 (E2E Integration + Competition Demo).
 **Authoritative source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md (42 frozen decisions, 10 dimensions)
 
 ## Current Position
 
-Phase: 4 of 10 (Yiyi Agent + Voice + Onboarding + Studio)
-Plan: 4 of 7 executed in current phase
-Status: In Progress
-Last activity: 2026-04-24 -- Plan 04-04 completed: TryOnBottomSheet + StudioRecommendCard + QuickReplyBar wired into chat screen
+Phase: 5 of 10 (E2E Integration + Competition Demo)
+Plan: 0 of ? planned
+Status: Phase 4 complete, ready for Phase 5 planning
+Last activity: 2026-04-25 -- Phase 4 complete: 7/7 plans executed, 9/9 must-haves verified, 5 human tests pending
 
-Progress: [########..] 62%
+Progress: [#########.] 80%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 4)
-- Average duration: ~22min
-- Total execution time: ~4h 18min
+- Total plans completed: 17 (Phase 1: 3, Phase 2: 3, Phase 3: 3, Phase 4: 7)
+- Average duration: ~18min
+- Total execution time: ~5h 9min
 
 **By Phase:**
 
@@ -32,7 +32,7 @@ Progress: [########..] 62%
 | 1     | 3     | ~110m | ~37min   |
 | 2     | 3     | ~51m  | ~17min   |
 | 3     | 3     | 55m   | 18m      |
-| 4     | 4     | 55m   | 14m      |
+| 4     | 7     | 93m   | 13m      |
 
 **Recent Trend:**
 
@@ -78,12 +78,15 @@ Critical decisions affecting current work:
 - **Plan 02**: Wardrobe + Favorites moved from ProfileStack to DiscoverStack -- updated types, deep links, MainStackNavigator, fixed 3 cross-reference files (6min, 1 commit)
 - **Plan 03**: Design token unification -- borderRadius.lg 10->12, replaced 55 hardcoded hex colors with DesignTokens references across 26 files, removed WarmPrimaryColors re-export, verified YiyiAvatar consistency (25min, 3 commits)
 
-### Phase 4 In Progress
+### Phase 4 Complete
 
 - **Plan 01**: DialogEngine core extension -- SCENE/DIRECT/CHAT states, interview flow (company/position/budget), YIYI_PERSONALITY_PROMPT, FashionRuleLoader (7 JSON files), StudioSignalDetector (5 signals), 50 pytest tests (17min, 4 commits)
 - **Plan 02**: NestJS dialog forwarding + TTS + Yiyi prompt -- DialogState enum parity (SCENE/DIRECT/CHAT), EdgeTTSService gateway, POST /tts endpoint, Yiyi personality system prompt, deprecated advanceState/updateSlots, Python /dialog/process forwarding (9min, 2 commits)
 - **Plan 03**: New onboarding step components -- SceneSelectionStep (8 cards, phosphor icons, multi-select 1-3), QuickProfileStep (age/height/weight/garmentPreference), StyleExpressionStep (5 styles + 6 outfit placeholders), OnboardingWizard rewritten with 4-step flow, store updated (13min, 2 commits)
 - **Plan 04**: TryOnBottomSheet + StudioRecommendCard + QuickReplyBar -- TryOnBottomSheet wraps BottomSheetModal with snapPoints=["70%"], StudioRecommendCard renders studio info in chat, QuickReplyBar wired with backend-provided options, processDialogResponse handles try_on action and studio signal, ChatMessage type extended (16min, 2 commits)
+- **Plan 05**: Voice STT/TTS integration -- replaced placeholder speechRecognition.ts with @react-native-voice/voice, useVoiceRecognition hook (zh-CN locale), ttsService.speakFromUrl for Edge-TTS audio, VoiceButton wired into chat input bar with auto-send + TTS auto-play (9min, 2 commits)
+- **Plan 06**: YiyiFirstOutfitStep onboarding step 4 -- backend POST /onboarding/first-outfits endpoint, YiyiFirstOutfitStep with 3 outfit cards + terracotta selected border + save to wardrobe with retry, OnboardingWizard result case renders YiyiFirstOutfitStep (9min, 1 commit)
+- **Plan 07**: E2E wiring + preference memory -- QuickChatBar voice button navigates to Stylist with auto-voice-start, preference memory Prisma→NestJS→Python roundtrip, interview flow verified end-to-end, no forbidden phrases, 25 Python tests pass (8min, 1 commit)
 
 ### Pending Todos
 
@@ -115,6 +118,6 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-24
-Stopped at: Completed 04-04-PLAN.md (TryOnBottomSheet + StudioRecommendCard + QuickReplyBar)
-Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-04-SUMMARY.md
+Last session: 2026-04-25
+Stopped at: Phase 4 complete (7/7 plans), ready for Phase 5 planning
+Resume file: .planning/phases/04-yiyi-agent-voice-onboarding-studio/04-VERIFICATION.md
