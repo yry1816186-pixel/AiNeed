@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -94,7 +93,9 @@ export class VectorSimilarityService {
     const intersection = new Set([...set1].filter((x) => set2.has(x)));
     const union = new Set([...set1, ...set2]);
 
-    if (union.size === 0) {return 0;}
+    if (union.size === 0) {
+      return 0;
+    }
 
     return intersection.size / union.size;
   }
@@ -105,7 +106,9 @@ export class VectorSimilarityService {
     }
 
     const n = vec1.length;
-    if (n === 0) {return 0;}
+    if (n === 0) {
+      return 0;
+    }
 
     const sum1 = vec1.reduce((a, b) => a + b, 0);
     const sum2 = vec2.reduce((a, b) => a + b, 0);
@@ -128,7 +131,9 @@ export class VectorSimilarityService {
 
     const denominator = Math.sqrt(denom1 * denom2);
 
-    if (denominator === 0) {return 0;}
+    if (denominator === 0) {
+      return 0;
+    }
 
     return numerator / denominator;
   }
@@ -137,7 +142,7 @@ export class VectorSimilarityService {
     queryVector: number[],
     vectors: Vector[],
     k: number = 10,
-    method: "cosine" | "euclidean" | "dot" = "cosine",
+    method: "cosine" | "euclidean" | "dot" = "cosine"
   ): SimilarityResult[] {
     const similarities: SimilarityResult[] = vectors.map((v) => {
       let score: number;
@@ -169,7 +174,9 @@ export class VectorSimilarityService {
   normalizeVector(vec: number[]): number[] {
     const norm = Math.sqrt(vec.reduce((sum, val) => sum + val * val, 0));
 
-    if (norm === 0) {return vec.map(() => 0);}
+    if (norm === 0) {
+      return vec.map(() => 0);
+    }
 
     return vec.map((val) => val / norm);
   }
@@ -213,7 +220,9 @@ export class VectorSimilarityService {
       }
     }
 
-    if (totalWeight === 0) {return result;}
+    if (totalWeight === 0) {
+      return result;
+    }
 
     return result.map((val) => val / totalWeight);
   }
@@ -234,10 +243,7 @@ export class VectorSimilarityService {
     return this.generateDeterministicVector(`default:${dimension}`, dimension);
   }
 
-  generateDeterministicVector(
-    seed: string,
-    dimension: number = this.vectorDimension,
-  ): number[] {
+  generateDeterministicVector(seed: string, dimension: number = this.vectorDimension): number[] {
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
       const char = seed.charCodeAt(i);
@@ -258,7 +264,7 @@ export class VectorSimilarityService {
 
   combineMultipleSimilarities(
     scores: Map<string, Map<string, number>>,
-    weights: Map<string, number>,
+    weights: Map<string, number>
   ): Map<string, number> {
     const combined = new Map<string, number>();
     const itemIds = new Set<string>();
@@ -307,8 +313,7 @@ export class VectorSimilarityService {
 
   zScoreNormalize(scores: number[]): number[] {
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const variance =
-      scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
+    const variance = scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
     const std = Math.sqrt(variance);
 
     if (std === 0) {

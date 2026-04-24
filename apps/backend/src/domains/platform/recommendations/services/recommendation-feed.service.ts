@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -37,7 +36,7 @@ export class RecommendationFeedService {
     private explainer: RecommendationExplainerService,
     private coldStart: ColdStartService,
     private cacheService: RecommendationCacheService,
-    private colorMatching: ColorMatchingService,
+    private colorMatching: ColorMatchingService
   ) {}
 
   async getFeed(
@@ -45,14 +44,11 @@ export class RecommendationFeedService {
     category: "daily" | "occasion" | "trending" | "explore",
     subCategory?: string,
     page: number = 1,
-    pageSize: number = 10,
+    pageSize: number = 10
   ): Promise<FeedResult> {
     const cached = await this.cacheService.get(userId, category, subCategory);
     if (cached) {
-      const items = (cached.results as FeedItem[]).slice(
-        (page - 1) * pageSize,
-        page * pageSize,
-      );
+      const items = (cached.results as FeedItem[]).slice((page - 1) * pageSize, page * pageSize);
       return {
         items,
         total: (cached.results as FeedItem[]).length,
@@ -71,10 +67,7 @@ export class RecommendationFeedService {
     }>;
 
     if (userBehaviorCount < 5) {
-      const coldStartRecs = await this.coldStart.getHybridRecommendations(
-        userId,
-        pageSize * 2,
-      );
+      const coldStartRecs = await this.coldStart.getHybridRecommendations(userId, pageSize * 2);
       recommendations = coldStartRecs.map((r) => ({
         itemId: r.itemId,
         score: r.score,
@@ -99,10 +92,7 @@ export class RecommendationFeedService {
       ttlMs: 30 * 60 * 1000,
     });
 
-    const pagedItems = allItems.slice(
-      (page - 1) * pageSize,
-      page * pageSize,
-    );
+    const pagedItems = allItems.slice((page - 1) * pageSize, page * pageSize);
 
     return {
       items: pagedItems,
@@ -117,9 +107,11 @@ export class RecommendationFeedService {
       itemId: string;
       score: number;
       reasons?: string[];
-    }>,
+    }>
   ): Promise<FeedItem[]> {
-    if (recommendations.length === 0) {return [];}
+    if (recommendations.length === 0) {
+      return [];
+    }
 
     const itemIds = recommendations.map((r) => r.itemId);
     const clothingItems = await this.prisma.clothingItem.findMany({
@@ -127,20 +119,21 @@ export class RecommendationFeedService {
       include: { brand: true },
     });
 
-    const itemMap = new Map(clothingItems.map((i: any) => [i.id, i]));
+    const itemMap = new Map(clothingItems.map((i) => [i.id, i]));
     const userProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
     });
 
     const feedItems: FeedItem[] = [];
     for (const rec of recommendations) {
-      const item = itemMap.get(rec.itemId) as any;
-      if (!item) {continue;}
+      const item = itemMap.get(rec.itemId);
+      if (!item) {
+        continue;
+      }
 
       const attrs = item.attributes as Record<string, unknown> | null;
-      const itemColors = (
-        (attrs?.colors as string[]) || [attrs?.primaryColor as string].filter(Boolean)
-      );
+      const itemColors =
+        (attrs?.colors as string[]) || [attrs?.primaryColor as string].filter(Boolean);
 
       const colorHarmonyScore = this.calculateColorHarmony(itemColors, userProfile);
 
@@ -177,15 +170,13 @@ export class RecommendationFeedService {
    */
   private calculateColorHarmony(
     itemColors: string[],
-    userProfile: Record<string, unknown> | null,
+    userProfile: Record<string, unknown> | null
   ): number {
     if (!itemColors || itemColors.length === 0) {
       return 65;
     }
 
-    const userColors = (
-      (userProfile?.colorPreferences as string[]) || []
-    ).filter(Boolean);
+    const userColors = ((userProfile?.colorPreferences as string[]) || []).filter(Boolean);
     const colorSeason = userProfile?.colorSeason as string | undefined;
 
     if (userColors.length === 0 && !colorSeason) {

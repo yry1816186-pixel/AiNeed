@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -116,26 +115,19 @@ export class SASRecService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-    private transformerEncoder: TransformerEncoderService,
+    private transformerEncoder: TransformerEncoderService
   ) {
-    this.modelEndpoint = this.configService.get<string>(
-      "SASREC_ENDPOINT",
-      "http://localhost:8002",
-    );
-    this.useLocalModel =
-      this.configService.get<string>("USE_LOCAL_SASREC", "false") === "true";
+    this.modelEndpoint = this.configService.get<string>("SASREC_ENDPOINT", "http://localhost:8002");
+    this.useLocalModel = this.configService.get<string>("USE_LOCAL_SASREC", "false") === "true";
 
     this.initializeModel();
     this.startCacheCleanup();
   }
 
   private startCacheCleanup(): void {
-    this.cleanupInterval = setInterval(
-      () => {
-        this.cleanupExpiredCache();
-      },
-      this.config.cacheTTLMinutes * 60 * 1000,
-    );
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupExpiredCache();
+    }, this.config.cacheTTLMinutes * 60 * 1000);
   }
 
   private cleanupExpiredCache(): void {
@@ -161,17 +153,14 @@ export class SASRecService {
 
     if (cleanedItems > 0 || cleanedSequences > 0) {
       this.logger.debug(
-        `Cache cleanup: removed ${cleanedItems} items, ${cleanedSequences} sequences`,
+        `Cache cleanup: removed ${cleanedItems} items, ${cleanedSequences} sequences`
       );
     }
 
     if (this.itemEmbeddings.size > this.config.maxCacheSize) {
       const entries = Array.from(this.itemEmbeddings.entries());
       entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
-      const toRemove = entries.slice(
-        0,
-        entries.length - this.config.maxCacheSize,
-      );
+      const toRemove = entries.slice(0, entries.length - this.config.maxCacheSize);
       for (const [key] of toRemove) {
         this.itemEmbeddings.delete(key);
       }
@@ -180,10 +169,7 @@ export class SASRecService {
     if (this.userSequences.size > this.config.maxCacheSize) {
       const entries = Array.from(this.userSequences.entries());
       entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
-      const toRemove = entries.slice(
-        0,
-        entries.length - this.config.maxCacheSize,
-      );
+      const toRemove = entries.slice(0, entries.length - this.config.maxCacheSize);
       for (const [key] of toRemove) {
         this.userSequences.delete(key);
       }
@@ -208,7 +194,7 @@ export class SASRecService {
 
     this.isModelLoaded = true;
     this.logger.log(
-      `SASRec initialized. Items: ${this.itemEmbeddings.size}, Users: ${this.userSequences.size}`,
+      `SASRec initialized. Items: ${this.itemEmbeddings.size}, Users: ${this.userSequences.size}`
     );
   }
 
@@ -241,9 +227,7 @@ export class SASRecService {
 
       this.logger.log(`Loaded ${items.length} item embeddings`);
     } catch (error) {
-      this.logger.error(
-        `Failed to load item embeddings: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to load item embeddings: ${this.getErrorMessage(error)}`);
     }
   }
 
@@ -282,11 +266,7 @@ export class SASRecService {
 
     if (item.colors && item.colors.length > 0) {
       const colorEmbed = this.generateColorEmbedding(item.colors);
-      for (
-        let i = baseSize;
-        i < Math.min(baseSize + 8, this.config.hiddenSize);
-        i++
-      ) {
+      for (let i = baseSize; i < Math.min(baseSize + 8, this.config.hiddenSize); i++) {
         embedding[i] = colorEmbed[i - baseSize] || 0;
       }
     }
@@ -301,15 +281,16 @@ export class SASRecService {
 
     const idHash = this.hashString(item.id);
     for (let i = this.config.hiddenSize - 4; i < this.config.hiddenSize; i++) {
-      embedding[i] =
-        ((idHash >> ((i - this.config.hiddenSize + 4) * 8)) & 0xff) / 255;
+      embedding[i] = ((idHash >> ((i - this.config.hiddenSize + 4) * 8)) & 0xff) / 255;
     }
 
     return this.normalizeEmbedding(embedding);
   }
 
   private normalizeCategory(category?: string): string {
-    if (!category) {return "default";}
+    if (!category) {
+      return "default";
+    }
     const normalized = category.toLowerCase();
 
     const categoryMap: Record<string, string> = {
@@ -345,7 +326,9 @@ export class SASRecService {
     };
 
     for (const [key, value] of Object.entries(categoryMap)) {
-      if (normalized.includes(key)) {return value;}
+      if (normalized.includes(key)) {
+        return value;
+      }
     }
     return "default";
   }
@@ -414,7 +397,9 @@ export class SASRecService {
 
   private normalizeEmbedding(embedding: number[]): number[] {
     const norm = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-    if (norm === 0) {return embedding;}
+    if (norm === 0) {
+      return embedding;
+    }
     return embedding.map((val) => val / norm);
   }
 
@@ -462,15 +447,13 @@ export class SASRecService {
       this.userSequences = sequenceMap;
       this.logger.log(`Loaded sequences for ${sequenceMap.size} users`);
     } catch (error) {
-      this.logger.error(
-        `Failed to load user sequences: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to load user sequences: ${this.getErrorMessage(error)}`);
     }
   }
 
   async getSequenceRecommendations(
     userId: string,
-    topK: number = 10,
+    topK: number = 10
   ): Promise<SequenceRecommendationResult> {
     const startTime = Date.now();
 
@@ -510,7 +493,7 @@ export class SASRecService {
    */
   private async getRemoteRecommendations(
     userId: string,
-    topK: number,
+    topK: number
   ): Promise<SequenceRecommendationResult | null> {
     const sequenceEntry = this.userSequences.get(userId);
     const sequence = sequenceEntry?.data || [];
@@ -521,7 +504,7 @@ export class SASRecService {
 
     const itemSequence = sequence.slice(-this.config.maxSequenceLength).map((s) => {
       // Convert itemId to numeric ID for SASRec
-      return this.hashString(s.itemId) % 50000 + 1;
+      return (this.hashString(s.itemId) % 50000) + 1;
     });
 
     try {
@@ -554,7 +537,7 @@ export class SASRecService {
           score: data.scores?.[index] || 1 - index * 0.05,
           rank: index + 1,
           reason: this.generateReason(sequence, data.scores?.[index] || 0.5),
-        }),
+        })
       );
 
       return {
@@ -575,7 +558,7 @@ export class SASRecService {
   private getItemIdFromNumeric(numericId: number): string {
     // This is a simplified mapping - in production, maintain a bidirectional mapping
     for (const [itemId, entry] of this.itemEmbeddings) {
-      const hash = this.hashString(itemId) % 50000 + 1;
+      const hash = (this.hashString(itemId) % 50000) + 1;
       if (hash === numericId) {
         return itemId;
       }
@@ -585,7 +568,7 @@ export class SASRecService {
 
   private async predictNextItems(
     sequence: SequenceItem[],
-    topK: number,
+    topK: number
   ): Promise<SASRecPrediction[]> {
     const sequenceEmbedding = this.encodeSequence(sequence);
     const scores: { itemId: string; score: number }[] = [];
@@ -627,8 +610,7 @@ export class SASRecService {
         const totalWeight = positionWeight * actionWeight;
 
         for (let j = 0; j < embedding.length; j++) {
-          embedding[j] =
-            (embedding[j] ?? 0) + (itemEntry.data[j] ?? 0) * totalWeight;
+          embedding[j] = (embedding[j] ?? 0) + (itemEntry.data[j] ?? 0) * totalWeight;
         }
       }
     });
@@ -644,7 +626,9 @@ export class SASRecService {
   }
 
   private cosineSimilarity(a: number[], b: number[]): number {
-    if (a.length !== b.length) {return 0;}
+    if (a.length !== b.length) {
+      return 0;
+    }
 
     let dotProduct = 0;
     let normA = 0;
@@ -658,7 +642,9 @@ export class SASRecService {
       normB += bValue * bValue;
     }
 
-    if (normA === 0 || normB === 0) {return 0;}
+    if (normA === 0 || normB === 0) {
+      return 0;
+    }
 
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
@@ -680,7 +666,7 @@ export class SASRecService {
   private async getColdStartRecommendations(
     userId: string,
     topK: number,
-    startTime: number,
+    startTime: number
   ): Promise<SequenceRecommendationResult> {
     const popularItems = await this.prisma.clothingItem.findMany({
       where: { isActive: true },
@@ -690,7 +676,7 @@ export class SASRecService {
     });
 
     return {
-      recommendations: popularItems.map((item: any, index: number) => ({
+      recommendations: popularItems.map((item, index: number) => ({
         itemId: item.id,
         score: 1 - index * 0.05,
         rank: index + 1,

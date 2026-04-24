@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Optional } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -35,10 +34,7 @@ export class KnowledgeGraphService {
     edges: [],
   };
 
-  constructor(
-    private prisma: PrismaService,
-    @Optional() private neo4jService?: Neo4jService,
-  ) {}
+  constructor(private prisma: PrismaService, @Optional() private neo4jService?: Neo4jService) {}
 
   private get useNeo4j(): boolean {
     return !!this.neo4jService?.isReady();
@@ -54,7 +50,9 @@ export class KnowledgeGraphService {
     }
 
     this.logger.log(
-      `Graph built: ${this.graph.nodes.size} nodes, ${this.graph.edges.length} edges (mode: ${this.useNeo4j ? "Neo4j" : "in-memory"})`,
+      `Graph built: ${this.graph.nodes.size} nodes, ${this.graph.edges.length} edges (mode: ${
+        this.useNeo4j ? "Neo4j" : "in-memory"
+      })`
     );
   }
 
@@ -64,9 +62,7 @@ export class KnowledgeGraphService {
         id: string;
         name: string;
         category: string;
-      }>(
-        `MATCH (i:Item) RETURN i.id AS id, i.name AS name, i.category AS category LIMIT 2000`,
-      );
+      }>(`MATCH (i:Item) RETURN i.id AS id, i.name AS name, i.category AS category LIMIT 2000`);
 
       itemResults.forEach((item) => {
         const nodeId = `item_${item.id}`;
@@ -83,7 +79,7 @@ export class KnowledgeGraphService {
         relation: string;
         weight: number;
       }>(
-        `MATCH (a)-[r]->(b) RETURN a.id AS sourceId, b.id AS targetId, type(r) AS relation, r.weight AS weight LIMIT 5000`,
+        `MATCH (a)-[r]->(b) RETURN a.id AS sourceId, b.id AS targetId, type(r) AS relation, r.weight AS weight LIMIT 5000`
       );
 
       relationResults.forEach((rel) => {
@@ -110,8 +106,16 @@ export class KnowledgeGraphService {
 
   private async buildCategoryNodes(): Promise<void> {
     const categories = [
-      "tops", "bottoms", "dresses", "outerwear", "footwear",
-      "accessories", "activewear", "swimwear", "intimates", "suits",
+      "tops",
+      "bottoms",
+      "dresses",
+      "outerwear",
+      "footwear",
+      "accessories",
+      "activewear",
+      "swimwear",
+      "intimates",
+      "suits",
     ];
     categories.forEach((cat) => {
       const nodeId = `category_${cat}`;
@@ -125,9 +129,18 @@ export class KnowledgeGraphService {
 
   private async buildStyleNodes(): Promise<void> {
     const styles = [
-      "casual", "formal", "business", "sporty", "bohemian",
-      "minimalist", "streetwear", "vintage", "romantic", "edgy",
-      "classic", "trendy",
+      "casual",
+      "formal",
+      "business",
+      "sporty",
+      "bohemian",
+      "minimalist",
+      "streetwear",
+      "vintage",
+      "romantic",
+      "edgy",
+      "classic",
+      "trendy",
     ];
     styles.forEach((style) => {
       const nodeId = `style_${style}`;
@@ -142,10 +155,14 @@ export class KnowledgeGraphService {
 
   private addStyleCompatibilityRules(): void {
     const compatiblePairs = [
-      ["casual", "sporty"], ["casual", "streetwear"],
-      ["formal", "business"], ["formal", "classic"],
-      ["bohemian", "vintage"], ["minimalist", "classic"],
-      ["romantic", "vintage"], ["edgy", "streetwear"],
+      ["casual", "sporty"],
+      ["casual", "streetwear"],
+      ["formal", "business"],
+      ["formal", "classic"],
+      ["bohemian", "vintage"],
+      ["minimalist", "classic"],
+      ["romantic", "vintage"],
+      ["edgy", "streetwear"],
     ];
     compatiblePairs.forEach(([style1, style2]) => {
       this.graph.edges.push({
@@ -159,8 +176,18 @@ export class KnowledgeGraphService {
 
   private async buildOccasionNodes(): Promise<void> {
     const occasions = [
-      "daily", "work", "date", "party", "sport", "travel",
-      "wedding", "interview", "beach", "gym", "dinner", "meeting",
+      "daily",
+      "work",
+      "date",
+      "party",
+      "sport",
+      "travel",
+      "wedding",
+      "interview",
+      "beach",
+      "gym",
+      "dinner",
+      "meeting",
     ];
     occasions.forEach((occasion) => {
       const nodeId = `occasion_${occasion}`;
@@ -200,7 +227,7 @@ export class KnowledgeGraphService {
       take: 1000,
     });
 
-    items.forEach((item: any) => {
+    items.forEach((item) => {
       const nodeId = `item_${item.id}`;
       this.graph.nodes.set(nodeId, {
         id: nodeId,
@@ -267,7 +294,10 @@ export class KnowledgeGraphService {
 
     const cooccurrence: Map<string, Map<string, number>> = new Map();
     const ordersMap = new Map<string, string[]>();
-    orderItems.forEach((oi: any) => {
+    orderItems.forEach((oi) => {
+      if (!oi.itemId) {
+        return;
+      }
       if (!ordersMap.has(oi.orderId)) {
         ordersMap.set(oi.orderId, []);
       }
@@ -279,12 +309,18 @@ export class KnowledgeGraphService {
         for (let j = i + 1; j < items.length; j++) {
           const firstItem = items[i];
           const secondItem = items[j];
-          if (!firstItem || !secondItem) {continue;}
+          if (!firstItem || !secondItem) {
+            continue;
+          }
           const key1 = firstItem < secondItem ? firstItem : secondItem;
           const key2 = firstItem < secondItem ? secondItem : firstItem;
-          if (!cooccurrence.has(key1)) {cooccurrence.set(key1, new Map());}
+          if (!cooccurrence.has(key1)) {
+            cooccurrence.set(key1, new Map());
+          }
           const currentRow = cooccurrence.get(key1);
-          if (!currentRow) {continue;}
+          if (!currentRow) {
+            continue;
+          }
           currentRow.set(key2, (currentRow.get(key2) ?? 0) + 1);
         }
       }
@@ -293,12 +329,14 @@ export class KnowledgeGraphService {
     const results: Array<{ item1: string; item2: string; score: number }> = [];
     const maxCooccur = Math.max(
       ...Array.from(cooccurrence.values()).flatMap((m) => Array.from(m.values())),
-      1,
+      1
     );
 
     cooccurrence.forEach((innerMap, item1) => {
       innerMap.forEach((count, item2) => {
-        if (count >= 2) {results.push({ item1, item2, score: count / maxCooccur });}
+        if (count >= 2) {
+          results.push({ item1, item2, score: count / maxCooccur });
+        }
       });
     });
     return results.slice(0, 500);
@@ -327,7 +365,7 @@ export class KnowledgeGraphService {
           category: item.category,
           price: item.price,
           brandId: item.brandId,
-        },
+        }
       );
 
       if (attrs?.style) {
@@ -336,7 +374,7 @@ export class KnowledgeGraphService {
             `MERGE (s:Style {name: $style})
              MERGE (i:Item {id: $itemId})
              MERGE (i)-[:HAS_STYLE {weight: 0.8}]->(s)`,
-            { style, itemId: item.id },
+            { style, itemId: item.id }
           );
         }
       }
@@ -347,7 +385,7 @@ export class KnowledgeGraphService {
             `MERGE (o:Occasion {name: $occasion})
              MERGE (i:Item {id: $itemId})
              MERGE (i)-[:SUITABLE_FOR {weight: 0.7}]->(o)`,
-            { occasion, itemId: item.id },
+            { occasion, itemId: item.id }
           );
         }
       }
@@ -356,7 +394,7 @@ export class KnowledgeGraphService {
         `MERGE (c:Category {name: $category})
          MERGE (i:Item {id: $itemId})
          MERGE (i)-[:BELONGS_TO {weight: 1.0}]->(c)`,
-        { category: item.category, itemId: item.id },
+        { category: item.category, itemId: item.id }
       );
     }
 
@@ -365,7 +403,7 @@ export class KnowledgeGraphService {
 
   async getRecommendationsByStylePath(
     itemId: string,
-    maxDepth: number = 3,
+    maxDepth: number = 3
   ): Promise<Array<{ itemId: string; score: number; path: string[] }>> {
     if (this.useNeo4j) {
       try {
@@ -381,7 +419,7 @@ export class KnowledgeGraphService {
                 [n IN nodes(path) | labels(n)[0]] AS pathLabels
            RETURN target.id AS targetId, avgWeight * pow(0.9, length(path) - 1) AS score, pathLabels
            ORDER BY score DESC LIMIT 20`,
-          { itemId },
+          { itemId }
         );
         return results.map((r) => ({
           itemId: r.targetId,
@@ -398,7 +436,7 @@ export class KnowledgeGraphService {
 
   private getInMemoryStylePathRecommendations(
     itemId: string,
-    maxDepth: number,
+    maxDepth: number
   ): Array<{ itemId: string; score: number; path: string[] }> {
     const compatibleItems = this.findCompatibleItemsByStyle(itemId);
     return compatibleItems
@@ -410,11 +448,7 @@ export class KnowledgeGraphService {
       }));
   }
 
-  findPaths(
-    startId: string,
-    endId: string,
-    maxDepth: number = 3,
-  ): RecommendationPath[] {
+  findPaths(startId: string, endId: string, maxDepth: number = 3): RecommendationPath[] {
     const paths: RecommendationPath[] = [];
     const visited = new Set<string>();
     this.dfs(startId, endId, [], [], visited, paths, maxDepth);
@@ -428,11 +462,15 @@ export class KnowledgeGraphService {
     edgePath: KnowledgeEdge[],
     visited: Set<string>,
     results: RecommendationPath[],
-    maxDepth: number,
+    maxDepth: number
   ): void {
-    if (nodePath.length > maxDepth) {return;}
+    if (nodePath.length > maxDepth) {
+      return;
+    }
     const currentNode = this.graph.nodes.get(current);
-    if (!currentNode) {return;}
+    if (!currentNode) {
+      return;
+    }
     visited.add(current);
     nodePath.push(currentNode);
 
@@ -460,7 +498,9 @@ export class KnowledgeGraphService {
   }
 
   private calculatePathScore(edges: KnowledgeEdge[]): number {
-    if (edges.length === 0) {return 0;}
+    if (edges.length === 0) {
+      return 0;
+    }
     const avgWeight = edges.reduce((sum, e) => sum + e.weight, 0) / edges.length;
     return avgWeight * Math.pow(0.9, edges.length - 1);
   }
@@ -472,22 +512,24 @@ export class KnowledgeGraphService {
       .filter(
         (e) =>
           (e.source === nodePrefix || e.target === nodePrefix) &&
-          (!relationTypes || relationTypes.includes(e.relation)),
+          (!relationTypes || relationTypes.includes(e.relation))
       )
       .forEach((edge) => {
         const relatedId = edge.source === nodePrefix ? edge.target : edge.source;
         const node = this.graph.nodes.get(relatedId);
-        if (node?.type === "item") {related.push(node);}
+        if (node?.type === "item") {
+          related.push(node);
+        }
       });
     return related;
   }
 
-  findCompatibleItemsByStyle(
-    itemId: string,
-  ): Array<{ item: KnowledgeNode; score: number }> {
+  findCompatibleItemsByStyle(itemId: string): Array<{ item: KnowledgeNode; score: number }> {
     const nodePrefix = `item_${itemId}`;
     const itemNode = this.graph.nodes.get(nodePrefix);
-    if (!itemNode) {return [];}
+    if (!itemNode) {
+      return [];
+    }
 
     const itemStyles = this.graph.edges
       .filter((e) => e.source === nodePrefix && e.relation === "has_style")
@@ -497,9 +539,7 @@ export class KnowledgeGraphService {
     itemStyles.forEach((styleId) => {
       const compatibleStyles = this.graph.edges
         .filter(
-          (e) =>
-            (e.source === styleId || e.target === styleId) &&
-            e.relation === "compatible_with",
+          (e) => (e.source === styleId || e.target === styleId) && e.relation === "compatible_with"
         )
         .map((e) => (e.source === styleId ? e.target : e.source));
 
@@ -515,7 +555,9 @@ export class KnowledgeGraphService {
     const results: Array<{ item: KnowledgeNode; score: number }> = [];
     compatibleItems.forEach((score, id) => {
       const node = this.graph.nodes.get(id);
-      if (node && id !== nodePrefix) {results.push({ item: node, score: Math.min(score, 1) });}
+      if (node && id !== nodePrefix) {
+        results.push({ item: node, score: Math.min(score, 1) });
+      }
     });
     return results.sort((a, b) => b.score - a.score).slice(0, 20);
   }
@@ -527,7 +569,9 @@ export class KnowledgeGraphService {
       .filter((e) => e.target === occasionNode && e.relation === "suitable_for")
       .forEach((e) => {
         const node = this.graph.nodes.get(e.source);
-        if (node?.type === "item") {items.push(node);}
+        if (node?.type === "item") {
+          items.push(node);
+        }
       });
     return items;
   }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 import { AIIntegrationService } from "../../../ai-core/ai/services/ai-integration.service";
 import {
   ClothingItemWithBrand,
@@ -474,7 +474,7 @@ export class UnifiedRecommendationEngine {
       take: 200,
     });
 
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       ...item,
       price: Number(item.price),
       originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
@@ -1226,7 +1226,7 @@ export class UnifiedRecommendationEngine {
       });
 
       const scored: RecommendationResult[] = await Promise.all(
-        candidates.map(async (item: any) => {
+        candidates.map(async (item) => {
           const features = await this.multimodalFusion.extractItemFeatures(item.id);
           const compatibility = await this.multimodalFusion.calculateCompatibility(
             baseFeatures,

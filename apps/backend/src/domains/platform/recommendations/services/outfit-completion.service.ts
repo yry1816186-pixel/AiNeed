@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { QdrantService } from "./qdrant.service";
 
@@ -88,13 +84,10 @@ export class OutfitCompletionService {
   constructor(
     private prisma: PrismaService,
     private qdrantService: QdrantService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
-  async getCompleteTheLook(
-    clothingId: string,
-    userId?: string,
-  ): Promise<OutfitCompletionResult> {
+  async getCompleteTheLook(clothingId: string, userId?: string): Promise<OutfitCompletionResult> {
     const anchor = await this.prisma.clothingItem.findUnique({
       where: { id: clothingId },
       include: { brand: true },
@@ -114,9 +107,21 @@ export class OutfitCompletionService {
 
     const anchorColors = anchor.colors || [];
     const anchorStyles = anchor.tags || [];
-    const anchorOccasions = anchor.tags?.filter((t: any) =>
-      ["daily", "work", "date", "party", "sport", "travel", "interview", "dinner", "formal", "casual"].includes(t.toLowerCase()),
-    ) || [];
+    const anchorOccasions =
+      anchor.tags?.filter((t: string) =>
+        [
+          "daily",
+          "work",
+          "date",
+          "party",
+          "sport",
+          "travel",
+          "interview",
+          "dinner",
+          "formal",
+          "casual",
+        ].includes(t.toLowerCase())
+      ) || [];
 
     const suggestions: Record<string, OutfitSuggestionItem[]> = {};
 
@@ -127,7 +132,7 @@ export class OutfitCompletionService {
         anchorColors,
         anchorStyles,
         anchorOccasions,
-        userId,
+        userId
       );
       const key = this.categoryKeyMap[targetCat] || targetCat;
       suggestions[key] = candidates.slice(0, 3);
@@ -162,7 +167,7 @@ export class OutfitCompletionService {
     anchorColors: string[],
     anchorStyles: string[],
     anchorOccasions: string[],
-    userId?: string,
+    userId?: string
   ): Promise<OutfitSuggestionItem[]> {
     const vectorResults = await this.searchByVector(anchor.id, targetCategory);
 
@@ -181,7 +186,7 @@ export class OutfitCompletionService {
       orderBy: { createdAt: "desc" },
     });
 
-    const scored = dbItems.map((item: any) => {
+    const scored = dbItems.map((item) => {
       let score = 0;
       const itemColors = item.colors || [];
       const itemStyles = item.tags || [];
@@ -201,21 +206,29 @@ export class OutfitCompletionService {
       }
 
       const priceDiff = Math.abs(
-        (anchor.price?.toNumber() || 100) - (item.price?.toNumber() || 100),
+        (anchor.price?.toNumber() || 100) - (item.price?.toNumber() || 100)
       );
-      if (priceDiff < 50) {score += 5;}
-      else if (priceDiff < 150) {score += 2;}
+      if (priceDiff < 50) {
+        score += 5;
+      } else if (priceDiff < 150) {
+        score += 2;
+      }
 
       let reason = "";
-      if (colorMatch > 0.5) {reason = "色彩搭配和谐";}
-      else if (styleOverlap > 0.5) {reason = "风格一致";}
-      else if (occasionOverlap > 0.5) {reason = "场合适配";}
-      else {reason = "推荐搭配";}
+      if (colorMatch > 0.5) {
+        reason = "色彩搭配和谐";
+      } else if (styleOverlap > 0.5) {
+        reason = "风格一致";
+      } else if (occasionOverlap > 0.5) {
+        reason = "场合适配";
+      } else {
+        reason = "推荐搭配";
+      }
 
       return {
         id: item.id,
         name: item.name,
-        imageUrl: (item.images)?.[0] || "",
+        imageUrl: item.images?.[0] || "",
         price: item.price?.toNumber(),
         brand: item.brand?.name,
         matchScore: Math.round(score),
@@ -223,23 +236,25 @@ export class OutfitCompletionService {
       };
     });
 
-    return scored.sort((a: OutfitSuggestionItem, b: OutfitSuggestionItem) => b.matchScore - a.matchScore);
+    return scored.sort(
+      (a: OutfitSuggestionItem, b: OutfitSuggestionItem) => b.matchScore - a.matchScore
+    );
   }
 
   private async searchByVector(
     anchorId: string,
-    targetCategory: string,
+    targetCategory: string
   ): Promise<{ id: string; score: number }[]> {
     try {
       const anchorVector = await this.qdrantService.getVector(anchorId);
-      if (!anchorVector) {return [];}
+      if (!anchorVector) {
+        return [];
+      }
 
       const results = await this.qdrantService.searchSimilar(anchorVector.vector, {
         topK: 10,
         filter: {
-          must: [
-            { key: "category", match: { value: targetCategory } },
-          ],
+          must: [{ key: "category", match: { value: targetCategory } }],
         },
         minScore: 0.5,
       });
@@ -252,7 +267,7 @@ export class OutfitCompletionService {
 
   calculateOutfitHarmony(
     anchorColors: string[],
-    items: OutfitSuggestionItem[],
+    items: OutfitSuggestionItem[]
   ): { score: number; rule: string; description: string } {
     if (items.length === 0) {
       return {
@@ -327,7 +342,9 @@ export class OutfitCompletionService {
   }
 
   private calculateColorMatch(colors1: string[], colors2: string[]): number {
-    if (colors1.length === 0 || colors2.length === 0) {return 0.3;}
+    if (colors1.length === 0 || colors2.length === 0) {
+      return 0.3;
+    }
 
     let matchCount = 0;
     for (const c1 of colors1) {
@@ -343,7 +360,9 @@ export class OutfitCompletionService {
   }
 
   private calculateSetOverlap(set1: string[], set2: string[]): number {
-    if (set1.length === 0 || set2.length === 0) {return 0;}
+    if (set1.length === 0 || set2.length === 0) {
+      return 0;
+    }
     const s2Lower = set2.map((s) => s.toLowerCase());
     const overlap = set1.filter((s) => s2Lower.includes(s.toLowerCase())).length;
     return overlap / Math.max(set1.length, set2.length);
