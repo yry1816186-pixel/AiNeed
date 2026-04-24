@@ -16,3 +16,7 @@ export { PresetQuestionsModal } from "./PresetQuestionsModal";
 export { FeedbackModal } from "./FeedbackModal";
 export { AISizeBadge } from "./AISizeBadge";
 export { OutfitCard } from "./OutfitCard";
+export { TryOnBottomSheet } from "./TryOnBottomSheet";
+export type { TryOnBottomSheetProps, OutfitData } from "./TryOnBottomSheet";
+export { StudioRecommendCard } from "./StudioRecommendCard";
+export type { StudioRecommendCardProps, StudioData } from "./StudioRecommendCard";
