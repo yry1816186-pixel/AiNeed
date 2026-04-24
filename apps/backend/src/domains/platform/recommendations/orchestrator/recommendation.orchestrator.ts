@@ -21,6 +21,12 @@ import { RecommendationFeedService } from "../services/recommendation-feed.servi
 import { RuleEngineService } from "../services/rule-engine.service";
 import { SASRecService } from "../services/sasrec.service";
 
+export interface ScoreWeights {
+  rule: number;
+  vector: number;
+  preference: number;
+}
+
 export interface RecommendationRequest {
   userId: string;
   context?: {
@@ -35,6 +41,7 @@ export interface RecommendationRequest {
     minPrice?: number;
     maxPrice?: number;
     includeReasons?: boolean;
+    scoreWeights?: ScoreWeights;
   };
 }
 
@@ -208,7 +215,7 @@ export class RecommendationOrchestrator {
     const vectorScored = await this.scoreByVector(ruleScored, profile, context);
     const finalScored = await this.applyPreferenceLearning(vectorScored, userId);
 
-    const fused = this.fuseAndExplain(finalScored, limit);
+    const fused = this.fuseAndExplain(finalScored, limit, options?.scoreWeights);
 
     return fused.map((sc) =>
       this.toRecommendationResult(sc, {
@@ -907,11 +914,16 @@ export class RecommendationOrchestrator {
     }
   }
 
-  private fuseAndExplain(candidates: ScoredCandidate[], limit: number): ScoredCandidate[] {
+  private fuseAndExplain(
+    candidates: ScoredCandidate[],
+    limit: number,
+    customWeights?: ScoreWeights
+  ): ScoredCandidate[] {
+    const weights = customWeights || this.SCORE_WEIGHTS;
     const fused = candidates.map((c) => {
-      const ruleWeight = c.ruleScore > 0 ? this.SCORE_WEIGHTS.rule : 0;
-      const vectorWeight = c.vectorScore > 0 ? this.SCORE_WEIGHTS.vector : 0;
-      const prefWeight = c.preferenceScore > 0 ? this.SCORE_WEIGHTS.preference : 0;
+      const ruleWeight = c.ruleScore > 0 ? weights.rule : 0;
+      const vectorWeight = c.vectorScore > 0 ? weights.vector : 0;
+      const prefWeight = c.preferenceScore > 0 ? weights.preference : 0;
 
       const totalWeight = ruleWeight + vectorWeight + prefWeight || 1;
 
