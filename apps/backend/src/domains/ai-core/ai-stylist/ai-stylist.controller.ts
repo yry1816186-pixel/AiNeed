@@ -48,6 +48,7 @@ import { PresetQuestionsService } from "./services/preset-questions.service";
 import { SessionArchiveService } from "./services/session-archive.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { SystemContextService } from "./system-context.service";
+import { EdgeTTSService } from "./tts.service";
 
 /**
  * 会话列表响应
@@ -167,7 +168,8 @@ export class AiStylistController {
     private readonly sessionArchiveService: SessionArchiveService,
     private readonly presetQuestionsService: PresetQuestionsService,
     private readonly weatherIntegrationService: WeatherIntegrationService,
-    private readonly dialogStateService: DialogStateService
+    private readonly dialogStateService: DialogStateService,
+    private readonly ttsService: EdgeTTSService
   ) {}
 
   @Post("dialog/session")
@@ -221,6 +223,37 @@ export class AiStylistController {
   async endDialogSession(@Param("id") sessionId: string) {
     await this.stylistService.endDialogSession(sessionId);
     return { success: true };
+  }
+
+  @Post("tts")
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  @ApiOperation({
+    summary: "文字转语音",
+    description: "将文字转换为语音，返回音频 URL。调用 Python Edge-TTS 服务生成音频。",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "要转换的文字（最大500字符）", maxLength: 500 },
+      },
+      required: ["text"],
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: "TTS 合成成功",
+    schema: {
+      type: "object",
+      properties: {
+        audioUrl: { type: "string", description: "音频文件 URL", nullable: true },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async synthesizeSpeech(@Body() body: { text: string }) {
+    const audioUrl = await this.ttsService.synthesizeAndUpload(body.text);
+    return { audioUrl };
   }
 
   @Post("sessions")

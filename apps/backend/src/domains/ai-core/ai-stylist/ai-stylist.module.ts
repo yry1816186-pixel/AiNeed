@@ -27,6 +27,7 @@ import { SessionArchiveService } from "./services/session-archive.service";
 import { AiStylistSessionService } from "./services/session.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { SystemContextService } from "./system-context.service";
+import { EdgeTTSService } from "./tts.service";
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { SystemContextService } from "./system-context.service";
     SessionArchiveService,
     PresetQuestionsService,
     WeatherIntegrationService,
+    EdgeTTSService,
   ],
   exports: [
     AiStylistService,
