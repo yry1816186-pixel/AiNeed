@@ -73,9 +73,7 @@ export class ConsultantService {
 
   async getProfiles(query: ConsultantQueryDto) {
     const { page = 1, pageSize = 20, status, specialty, sortBy = "rating" } = query;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (status) {
       where.status = status;
@@ -87,11 +85,9 @@ export class ConsultantService {
     if (specialty) {
       // specialties 是 Json 类型存储的数组，使用 string_contains 过滤
       // 由于 Prisma Json 过滤限制，使用 string_contains 匹配 JSON 字符串中的值
-      where.specialties = { string_contains: specialty } as any;
+      where.specialties = { string_contains: specialty } as Record<string, unknown>;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let orderBy: any;
+    let orderBy: Record<string, unknown>;
     switch (sortBy) {
       case "rating":
         orderBy = { rating: "desc" };
@@ -208,9 +204,7 @@ export class ConsultantService {
     if (profile.userId !== userId) {
       throw new ForbiddenException("无权修改此顾问档案");
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {};
+    const data: Record<string, unknown> = {};
 
     if (dto.studioName !== undefined) {
       data.studioName = dto.studioName;
@@ -323,9 +317,7 @@ export class ConsultantService {
 
   async getBookingsByUser(userId: string, query: BookingQueryDto) {
     const { page = 1, pageSize = 20, status, serviceType, consultantId } = query;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (status) {
       where.status = status;
@@ -416,9 +408,7 @@ export class ConsultantService {
     if (!booking) {
       throw new NotFoundException("预约不存在");
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {};
+    const data: Record<string, unknown> = {};
 
     if (dto.scheduledAt !== undefined) {
       data.scheduledAt = new Date(dto.scheduledAt);
@@ -529,9 +519,7 @@ export class ConsultantService {
     }
 
     const { page = 1, pageSize = 20, status, serviceType } = query;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { consultantId };
+    const where: Record<string, unknown> = { consultantId };
 
     if (status) {
       where.status = status;
@@ -868,8 +856,8 @@ export class ConsultantService {
     });
 
     return completedBookings
-      .filter((booking: any) => booking.review)
-      .map((booking: any) => ({
+      .filter((booking) => booking.review)
+      .map((booking) => ({
         bookingId: booking.id,
         serviceType: booking.serviceType,
         beforeImages: booking.review!.beforeImages,

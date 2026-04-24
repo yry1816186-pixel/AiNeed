@@ -1,4 +1,12 @@
-import { Injectable, Logger, NotFoundException, ConflictException, ForbiddenException, Inject, Optional } from "@nestjs/common";
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Optional,
+} from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import Redis from "ioredis";
 
@@ -27,7 +35,7 @@ export class CommunityService {
     private readonly prisma: PrismaService,
     private readonly storage: StorageService,
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
-    @Optional() private readonly contentModerationService: ContentModerationService,
+    @Optional() private readonly contentModerationService: ContentModerationService
   ) {}
 
   async createPost(userId: string, dto: CreatePostDto) {
@@ -81,31 +89,19 @@ export class CommunityService {
     });
 
     if (this.contentModerationService) {
-      await this.contentModerationService.moderateContent(
-        'post',
-        post.id,
-        post.content,
-        post.images as string[] | undefined,
-      ).catch((err) => {
-        this.logger.warn(`Content moderation failed for post ${post.id}: ${err.message}`);
-      });
+      await this.contentModerationService
+        .moderateContent("post", post.id, post.content, post.images as string[] | undefined)
+        .catch((err) => {
+          this.logger.warn(`Content moderation failed for post ${post.id}: ${err.message}`);
+        });
     }
 
     return post;
   }
 
   async getPosts(query: PostQueryDto, userId?: string, adminMode = false) {
-    const {
-      page = 1,
-      pageSize = 20,
-      category,
-      tags,
-      authorId,
-      sortBy = "latest",
-    } = query;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { isDeleted: false };
+    const { page = 1, pageSize = 20, category, tags, authorId, sortBy = "latest" } = query;
+    const where: Record<string, unknown> = { isDeleted: false };
 
     if (!adminMode) {
       where.moderationStatus = "approved";
@@ -122,20 +118,14 @@ export class CommunityService {
     if (authorId) {
       where.authorId = authorId;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let orderBy: any = { createdAt: "desc" };
+    let orderBy: Record<string, unknown> | Record<string, unknown>[] = { createdAt: "desc" };
 
     switch (sortBy) {
       case "popular":
         orderBy = [{ likeCount: "desc" }, { viewCount: "desc" }];
         break;
       case "trending":
-        orderBy = [
-          { commentCount: "desc" },
-          { likeCount: "desc" },
-          { createdAt: "desc" },
-        ];
+        orderBy = [{ commentCount: "desc" }, { likeCount: "desc" }, { createdAt: "desc" }];
         break;
       case "latest":
       default:
@@ -145,7 +135,7 @@ export class CommunityService {
     if (sortBy === "trending") {
       const cached = await this.redis.get("community:trending");
       if (cached) {
-        const trendingIds = (JSON.parse(cached) as Array<{ id: string }>).map((p: any) => p.id);
+        const trendingIds = (JSON.parse(cached) as Array<{ id: string }>).map((p) => p.id);
         if (trendingIds.length > 0) {
           const skip = (page - 1) * pageSize;
           const pagedIds = trendingIds.slice(skip, skip + pageSize);
@@ -171,7 +161,7 @@ export class CommunityService {
             });
 
             const sortedPosts = pagedIds
-              .map((id: string) => posts.find((p: any) => p.id === id))
+              .map((id: string) => posts.find((p) => p.id === id))
               .filter(Boolean);
 
             const bookmarkedIds = userId
@@ -180,13 +170,13 @@ export class CommunityService {
                     where: { userId, postId: { in: pagedIds } },
                     select: { postId: true },
                   })
-                ).map((b: any) => b.postId)
+                ).map((b) => b.postId)
               : [];
 
             return {
-              data: sortedPosts.map((post: any) => ({
+              data: sortedPosts.map((post) => ({
                 ...post!,
-                relatedItems: post!.relatedItems.map((ri: any) => ri.item),
+                relatedItems: post!.relatedItems.map((ri) => ri.item),
                 isBookmarked: bookmarkedIds.includes(post!.id),
               })),
               meta: {
@@ -239,20 +229,20 @@ export class CommunityService {
       this.prisma.communityPost.count({ where }),
     ]);
 
-    const postIds = posts.map((p: any) => p.id);
+    const postIds = posts.map((p) => p.id);
     const bookmarkedIds = userId
       ? (
           await this.prisma.postBookmark.findMany({
             where: { userId, postId: { in: postIds } },
             select: { postId: true },
           })
-        ).map((b: any) => b.postId)
+        ).map((b) => b.postId)
       : [];
 
     return {
-      data: posts.map((post: any) => ({
+      data: posts.map((post) => ({
         ...post,
-        relatedItems: post.relatedItems.map((ri: any) => ri.item),
+        relatedItems: post.relatedItems.map((ri) => ri.item),
         isBookmarked: bookmarkedIds.includes(post.id),
       })),
       meta: {
@@ -347,7 +337,9 @@ export class CommunityService {
       isBookmarked = !!bookmarkRecord;
     }
 
-    const relatedItems = (post as { relatedItems?: Array<{ item: unknown }> }).relatedItems?.map((ri) => ri.item) ?? [];
+    const relatedItems =
+      (post as { relatedItems?: Array<{ item: unknown }> }).relatedItems?.map((ri) => ri.item) ??
+      [];
 
     return {
       ...post,
@@ -406,7 +398,7 @@ export class CommunityService {
   }
 
   async likePost(userId: string, postId: string) {
-    return this.prisma.$transaction(async (tx: any) => {
+    return this.prisma.$transaction(async (tx) => {
       const existingLike = await tx.postLike.findUnique({
         where: {
           userId_postId: { userId, postId },
@@ -525,13 +517,11 @@ export class CommunityService {
     }
 
     if (this.contentModerationService) {
-      await this.contentModerationService.moderateContent(
-        'comment',
-        comment.id,
-        dto.content,
-      ).catch((err) => {
-        this.logger.warn(`Content moderation failed for comment ${comment.id}: ${err.message}`);
-      });
+      await this.contentModerationService
+        .moderateContent("comment", comment.id, dto.content)
+        .catch((err) => {
+          this.logger.warn(`Content moderation failed for comment ${comment.id}: ${err.message}`);
+        });
     }
 
     return comment;
@@ -650,8 +640,9 @@ export class CommunityService {
             data: { followerId: userId },
           },
         })
-        .catch((err: any) => {
-          this.logger.warn(`Failed to create follow notification: ${err.message}`);
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : String(err);
+          this.logger.warn(`Failed to create follow notification: ${msg}`);
         });
 
       return { following: true };
@@ -705,8 +696,8 @@ export class CommunityService {
         where: {
           author: {
             followers: {
-              some: { followerId: userId }
-            }
+              some: { followerId: userId },
+            },
           },
           isDeleted: false,
         },
@@ -733,8 +724,8 @@ export class CommunityService {
         where: {
           author: {
             followers: {
-              some: { followerId: userId }
-            }
+              some: { followerId: userId },
+            },
           },
           isDeleted: false,
         },
@@ -757,7 +748,7 @@ export class CommunityService {
       where: { followerId: userId },
       select: { followingId: true },
     });
-    const followingIds = followingUsers.map((f: any) => f.followingId);
+    const followingIds = followingUsers.map((f) => f.followingId);
 
     if (followingIds.length === 0) {
       return {
@@ -801,11 +792,22 @@ export class CommunityService {
       }),
     ]);
 
-    const tryOns: { id: string; createdAt: Date; userId: string; user: unknown; tryOnResult?: unknown; resultImageUrl?: string }[] = [];
+    const tryOns: {
+      id: string;
+      createdAt: Date;
+      userId: string;
+      user: unknown;
+      tryOnResult?: unknown;
+      resultImageUrl?: string;
+    }[] = [];
 
     const feedItems = [
-      ...posts.map((p: typeof posts[number]) => ({ ...p, feedType: "post" as const, feedTime: p.createdAt.getTime() })),
-      ...likes.map((l: typeof likes[number]) => ({
+      ...posts.map((p: (typeof posts)[number]) => ({
+        ...p,
+        feedType: "post" as const,
+        feedTime: p.createdAt.getTime(),
+      })),
+      ...likes.map((l: (typeof likes)[number]) => ({
         feedType: "like" as const,
         feedTime: l.createdAt.getTime(),
         userId: l.userId,
@@ -813,7 +815,7 @@ export class CommunityService {
         postId: l.postId,
         post: l.post,
       })),
-      ...tryOns.map((t: typeof tryOns[number]) => ({
+      ...tryOns.map((t: (typeof tryOns)[number]) => ({
         feedType: "try_on" as const,
         feedTime: t.createdAt?.getTime() ?? 0,
         userId: t.userId,
@@ -846,11 +848,9 @@ export class CommunityService {
     });
 
     const preferredCategories = userPreferences
-      .filter((p: any) => Number(p.weight) > 0.3)
-      .map((p: any) => p.category);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { isDeleted: false };
+      .filter((p) => Number(p.weight) > 0.3)
+      .map((p) => p.category);
+    const where: Record<string, unknown> = { isDeleted: false };
 
     if (preferredCategories.length > 0) {
       where.OR = [
@@ -862,11 +862,7 @@ export class CommunityService {
     const [posts, total] = await Promise.all([
       this.prisma.communityPost.findMany({
         where,
-        orderBy: [
-          { likeCount: "desc" },
-          { viewCount: "desc" },
-          { createdAt: "desc" },
-        ],
+        orderBy: [{ likeCount: "desc" }, { viewCount: "desc" }, { createdAt: "desc" }],
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
@@ -915,7 +911,7 @@ export class CommunityService {
         return { bookmarked: true };
       }
 
-      await this.prisma.$transaction(async (tx: any) => {
+      await this.prisma.$transaction(async (tx) => {
         await tx.postBookmark.create({
           data: { userId, postId, collectionId: dto.collectionId },
         });
@@ -924,14 +920,16 @@ export class CommunityService {
           data: { bookmarkCount: { increment: 1 } },
         });
         if (dto.collectionId) {
-          await tx.wardrobeCollectionItem.create({
-            data: {
-              collectionId: dto.collectionId,
-              userId,
-              itemType: "post",
-              itemId: postId,
-            },
-          }).catch(() => {});
+          await tx.wardrobeCollectionItem
+            .create({
+              data: {
+                collectionId: dto.collectionId,
+                userId,
+                itemType: "post",
+                itemId: postId,
+              },
+            })
+            .catch(() => {});
         }
       });
       return { bookmarked: true };
@@ -943,7 +941,7 @@ export class CommunityService {
         return { bookmarked: false };
       }
 
-      await this.prisma.$transaction(async (tx: any) => {
+      await this.prisma.$transaction(async (tx) => {
         await tx.postBookmark.delete({
           where: { userId_postId: { userId, postId } },
         });
@@ -952,13 +950,15 @@ export class CommunityService {
           data: { bookmarkCount: { decrement: 1 } },
         });
         if (existing.collectionId) {
-          await tx.wardrobeCollectionItem.deleteMany({
-            where: {
-              collectionId: existing.collectionId,
-              itemType: "post",
-              itemId: postId,
-            },
-          }).catch(() => {});
+          await tx.wardrobeCollectionItem
+            .deleteMany({
+              where: {
+                collectionId: existing.collectionId,
+                itemType: "post",
+                itemId: postId,
+              },
+            })
+            .catch(() => {});
         }
       });
       return { bookmarked: false };
@@ -1037,12 +1037,13 @@ export class CommunityService {
     }
 
     if (this.contentModerationService) {
-      await this.contentModerationService.handleReportThreshold(
-        dto.contentType,
-        dto.contentId,
-      ).catch((err) => {
-        this.logger.warn(`Handle report threshold failed for ${dto.contentType}/${dto.contentId}: ${err.message}`);
-      });
+      await this.contentModerationService
+        .handleReportThreshold(dto.contentType, dto.contentId)
+        .catch((err) => {
+          this.logger.warn(
+            `Handle report threshold failed for ${dto.contentType}/${dto.contentId}: ${err.message}`
+          );
+        });
     }
 
     return report;
@@ -1096,9 +1097,7 @@ export class CommunityService {
         },
       };
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
+    const where: Record<string, unknown> = {
       isDeleted: false,
       hotScore: { gt: 0 },
     };
@@ -1152,9 +1151,8 @@ export class CommunityService {
       },
     });
 
-    const updates = posts.map((post: any) => {
-      const hoursSinceCreation =
-        (Date.now() - post.createdAt.getTime()) / (1000 * 60 * 60);
+    const updates = posts.map((post) => {
+      const hoursSinceCreation = (Date.now() - post.createdAt.getTime()) / (1000 * 60 * 60);
       const timeDecay = 1 / (1 + hoursSinceCreation / 168);
       const hotScore =
         (post.likeCount * 3 +
@@ -1172,15 +1170,9 @@ export class CommunityService {
 
     const results = await Promise.all(updates);
 
-    const topPosts = results
-      .sort((a, b) => b.hotScore - a.hotScore)
-      .slice(0, 50);
+    const topPosts = results.sort((a, b) => b.hotScore - a.hotScore).slice(0, 50);
 
-    await this.redis.setex(
-      "community:trending",
-      300,
-      JSON.stringify(topPosts),
-    );
+    await this.redis.setex("community:trending", 300, JSON.stringify(topPosts));
 
     this.logger.log(`Recalculated hot scores for ${posts.length} posts`);
     return { updated: posts.length };
