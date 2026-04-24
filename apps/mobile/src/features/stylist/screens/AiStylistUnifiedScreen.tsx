@@ -58,6 +58,8 @@ import type { RootStackParamList, StylistStackParamList } from "../../../types/n
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { useVoiceRecognition } from "../../../services/speech/voiceRecognitionHook";
 import { speakFromUrl } from "../../../services/speech/ttsService";
+import { ProfileDebugPanel } from "../components/ProfileDebugPanel";
+import { useDemoStore } from "../../../shared/stores/demoStore";
 
 // ============ Scene Chips Config ============
 
@@ -689,6 +691,8 @@ export const AiStylistUnifiedScreen: React.FC = () => {
 
   // Try-on + Studio + Quick Reply state
   const tryOnRef = useRef<BottomSheetModal>(null);
+  const debugPanelRef = useRef<BottomSheetModal>(null);
+  const demoMode = useDemoStore((s) => s.demoMode);
   const [selectedOutfit, setSelectedOutfit] = useState<OutfitData | null>(null);
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [studioData, setStudioData] = useState<StudioData | null>(null);
@@ -1320,7 +1324,6 @@ export const AiStylistUnifiedScreen: React.FC = () => {
         ref={tryOnRef}
         outfit={selectedOutfit}
         onSave={() => {
-          // Sprint: save outfit to wardrobe (would call API in production)
           tryOnRef.current?.dismiss();
         }}
         onTryAnother={() => {
@@ -1328,6 +1331,21 @@ export const AiStylistUnifiedScreen: React.FC = () => {
           setInputText("再来一套");
         }}
       />
+
+      {(__DEV__ || demoMode) && (
+        <>
+          <TouchableOpacity
+            style={styles.debugFab}
+            onPress={() => debugPanelRef.current?.present()}
+            activeOpacity={0.7}
+            accessibilityLabel="演示配置"
+            accessibilityRole="button"
+          >
+            <Ionicons name="settings" size={22} color={DesignTokens.colors.neutral.white} />
+          </TouchableOpacity>
+          <ProfileDebugPanel ref={debugPanelRef} />
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -1338,6 +1356,22 @@ const useStyles = createStyles((c) => ({
   container: { flex: 1, backgroundColor: c.background },
   flex: { flex: 1 },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
+  debugFab: {
+    position: "absolute",
+    bottom: 100,
+    left: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
 
   header: {
     flexDirection: "row",

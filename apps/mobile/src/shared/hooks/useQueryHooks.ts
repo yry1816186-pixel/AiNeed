@@ -18,6 +18,8 @@ import { tryOnApi, recommendationsApi } from "../../services/api/tryon.api";
 import { aiStylistApi } from "../../services/api/ai-stylist.api";
 import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
 import { weatherApi } from "../../services/api/weather.api";
+import { useDemoStore } from "../stores/demoStore";
+import { preCacheDemoRecommendations, getPreCachedRecommendation } from "../utils/demoPreCache";
 
 import type { ApiResponse, PaginatedResponse, SearchFilters } from "../types";
 import type { ClothingItem, ClothingFilter, ClothingSortOptions } from "../../types/clothing";
@@ -453,4 +455,20 @@ export function useDiscoverFeed(options?: Partial<UseQueryOptions<FeedResult>>) 
     gcTime: 15 * 60 * 1000,
     ...options,
   });
+}
+
+export function useDemoPreCache() {
+  const demoMode = useDemoStore((s) => s.demoMode);
+
+  useEffect(() => {
+    if (!demoMode) return;
+
+    void preCacheDemoRecommendations();
+
+    const interval = setInterval(() => {
+      void preCacheDemoRecommendations();
+    }, 20 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [demoMode]);
 }

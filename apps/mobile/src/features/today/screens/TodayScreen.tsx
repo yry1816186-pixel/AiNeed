@@ -1,6 +1,7 @@
 ﻿import { View, ScrollView } from "react-native";
 import { WeatherSceneCard } from "../components/WeatherSceneCard";
 import { RecommendationCarousel } from "../components/RecommendationCarousel";
+import { RecommendationFunnel } from "../components/RecommendationFunnel";
 import { QuickChatBar } from "../components/QuickChatBar";
 import { GlassHeader } from "../components/GlassHeader";
 import { AiInsightBubble } from "../components/AiInsightBubble";
@@ -10,10 +11,12 @@ import { EmptyState, ErrorState } from "../../../shared/components/states";
 import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
 import { navigateStylist } from "../../../navigation/navigationService";
 import { useTodayRecommendations, useWeather } from "../../../shared/hooks/useQueryHooks";
+import { useDemoStore } from "../../../shared/stores/demoStore";
 
 export function TodayScreen() {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const demoMode = useDemoStore((s) => s.demoMode);
 
   const {
     data: recommendations,
@@ -103,6 +106,9 @@ export function TodayScreen() {
           }}
         />
         <RecommendationCarousel items={recommendations.items} />
+        {recommendations?.breakdown && (__DEV__ || demoMode) && (
+          <RecommendationFunnel breakdown={recommendations.breakdown} />
+        )}
         <AiInsightBubble message={recommendations.explanation?.why || ""} />
         <QuickReplyButtons
           options={[

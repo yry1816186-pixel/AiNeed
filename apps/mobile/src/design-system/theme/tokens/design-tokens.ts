@@ -146,6 +146,14 @@ export const DesignTokens = {
       charcoal: "#2D3436",
       warmOrange: "#E17055",
     },
+    funnel: {
+      l1: "#E8DDD5",
+      l2: "#D4C4B5",
+      l3: "#C0AA95",
+      l4: "#AB9075",
+      l5: "#977655",
+      l6: "#C67B5C",
+    },
   },
 
   gradients: {
