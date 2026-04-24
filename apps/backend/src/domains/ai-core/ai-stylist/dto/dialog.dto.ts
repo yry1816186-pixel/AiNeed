@@ -12,6 +12,9 @@ import {
 export enum DialogState {
   GREET = "GREET",
   CONTEXT = "CONTEXT",
+  SCENE = "SCENE",
+  DIRECT = "DIRECT",
+  CHAT = "CHAT",
   GENERATE = "GENERATE",
   REFINE = "REFINE",
   ACTION = "ACTION",
@@ -55,6 +58,21 @@ export class DialogSlotDto {
   @IsOptional()
   @IsNumber()
   temperature?: number;
+
+  @ApiPropertyOptional({ description: "公司" })
+  @IsOptional()
+  @IsString()
+  company?: string;
+
+  @ApiPropertyOptional({ description: "岗位" })
+  @IsOptional()
+  @IsString()
+  position?: string;
+
+  @ApiPropertyOptional({ description: "色彩季节" })
+  @IsOptional()
+  @IsString()
+  colorSeason?: string;
 }
 
 export class DialogContextDto {
@@ -97,4 +115,13 @@ export class DialogChatResponseDto {
   state!: DialogState;
 
   slots!: DialogSlotDto;
+
+  @ApiPropertyOptional({ description: "试穿触发" })
+  action?: "try_on" | "detail";
+
+  @ApiPropertyOptional({ description: "工作室推荐信号" })
+  studioSignal?: string;
+
+  @ApiPropertyOptional({ description: "TTS 音频 URL" })
+  audioUrl?: string;
 }

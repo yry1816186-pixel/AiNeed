@@ -305,7 +305,7 @@ export class AiStylistService {
 
     try {
       const mlResponse = await axios.post(
-        `${this.mlServiceUrl}/stylist/chat`,
+        `${this.mlServiceUrl}/dialog/process`,
         {
           message: request.message,
           context,
@@ -317,19 +317,35 @@ export class AiStylistService {
         }
       );
 
-      const updatedContext: DialogContextDto = mlResponse.data.context || context;
-      updatedContext.turnCount = (updatedContext.turnCount || 0) + 1;
-      await this.dialogStateService.saveContext(request.sessionId, updatedContext);
+      // Save Python's returned context directly -- no merge logic.
+      // Python DialogEngine owns all state transition decisions.
+      const pythonContext: DialogContextDto = mlResponse.data.context;
+      if (pythonContext) {
+        await this.dialogStateService.saveContext(request.sessionId, pythonContext);
+      }
 
       const filteredReply = this.bodyPositiveFilter.filter(mlResponse.data.reply || "");
 
-      return {
+      const response: DialogChatResponseDto = {
         reply: filteredReply,
         outfits: mlResponse.data.outfits,
-        quickReplies: mlResponse.data.quick_replies || this.generateQuickReplies(updatedContext),
-        state: mlResponse.data.state || updatedContext.state,
-        slots: mlResponse.data.slots || updatedContext.slots,
+        quickReplies:
+          mlResponse.data.quick_replies || this.generateQuickReplies(pythonContext || context),
+        state: mlResponse.data.state || pythonContext?.state || context.state,
+        slots: mlResponse.data.slots || pythonContext?.slots || context.slots,
       };
+
+      if (mlResponse.data.action) {
+        response.action = mlResponse.data.action;
+      }
+      if (mlResponse.data.studio_signal) {
+        response.studioSignal = mlResponse.data.studio_signal;
+      }
+      if (mlResponse.data.audio_url) {
+        response.audioUrl = mlResponse.data.audio_url;
+      }
+
+      return response;
     } catch (error) {
       this.logger.warn(
         `ML service unavailable, falling back to local dialog: ${
@@ -350,6 +366,12 @@ export class AiStylistService {
         return ["面试穿搭", "约会穿搭", "通勤穿搭", "出游穿搭"];
       case DialogState.CONTEXT:
         return ["极简风", "韩系风", "法式风", "轻正式"];
+      case DialogState.SCENE:
+        return ["面试", "约会", "通勤", "聚会"];
+      case DialogState.DIRECT:
+        return ["显高", "显瘦", "提气色", "减龄"];
+      case DialogState.CHAT:
+        return ["换一套", "换个颜色", "调整预算", "就这样"];
       case DialogState.GENERATE:
         return ["换一套", "调整预算", "换个风格", "确认这套"];
       case DialogState.REFINE:

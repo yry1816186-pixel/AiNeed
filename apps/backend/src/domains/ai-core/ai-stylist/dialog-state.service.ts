@@ -57,6 +57,10 @@ export class DialogStateService {
     }
   }
 
+  /**
+   * @deprecated State transitions decided by Python DialogEngine only.
+   * NestJS should not make independent state transition decisions.
+   */
   async advanceState(sessionId: string, newState: DialogState): Promise<DialogContextDto> {
     const context = await this.getContext(sessionId);
     context.state = newState;
@@ -65,6 +69,10 @@ export class DialogStateService {
     return context;
   }
 
+  /**
+   * @deprecated State transitions decided by Python DialogEngine only.
+   * NestJS should not make independent slot update decisions.
+   */
   async updateSlots(
     sessionId: string,
     slotUpdates: Partial<import("./dto/dialog.dto").DialogSlotDto>
