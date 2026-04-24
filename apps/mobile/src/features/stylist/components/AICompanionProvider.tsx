@@ -18,10 +18,7 @@ import {
   AiStylistProgress,
   AiStylistOutfitPlan,
 } from "../../../services/api/ai-stylist.api";
-import {
-  useSpeechRecognition,
-  SpeechRecognitionResult,
-} from "../../../services/speech/speechRecognition";
+import { useSpeechRecognition } from "../../../services/speech/speechRecognition";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 
 const POSITION_STORAGE_KEY = "@xuno_companion_position";
@@ -113,41 +110,32 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
   const {
     status: voiceStatus,
-    result: voiceResult,
+    recognizedText: voiceText,
     isAvailable: isVoiceAvailable,
     startListening,
     stopListening,
     cancel: cancelVoice,
-    requestPermissions: requestVoicePermissions,
-  } = useSpeechRecognition({
-    language: "zh-CN",
-    timeout: 30000,
-    onResult: (result: SpeechRecognitionResult) => {
-      setIsVoiceMode(false);
+    error: voiceError,
+  } = useSpeechRecognition();
+
+  // React to voice recognition status changes (replaces callback-based API)
+  useEffect(() => {
+    if (voiceStatus === "listening") {
+      setState("listening");
+      setIsVoiceMode(true);
+    } else if (voiceStatus === "processing") {
       setState("thinking");
+    }
+  }, [voiceStatus]);
 
-      if (onVoiceResult) {
-        onVoiceResult(result.text);
-      }
-
-      if (enableChat && result.text) {
-        void sendMessage(result.text);
-      }
-    },
-    onError: (error: unknown) => {
-      console.error("Voice recognition error:", error);
+  // React to voice recognition errors
+  useEffect(() => {
+    if (voiceError) {
+      console.error("Voice recognition error:", voiceError);
       setIsVoiceMode(false);
       setState("idle");
-    },
-    onStatusChange: (status: string) => {
-      if (status === "listening") {
-        setState("listening");
-        setIsVoiceMode(true);
-      } else if (status === "processing") {
-        setState("thinking");
-      }
-    },
-  });
+    }
+  }, [voiceError]);
 
   useEffect(() => {
     void loadPosition();
@@ -485,6 +473,22 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     [sessionId, processResponse]
   );
 
+  // React to voice recognition results -- auto-send recognized text
+  useEffect(() => {
+    if (voiceStatus === "success" && voiceText && voiceText.trim().length > 0) {
+      setIsVoiceMode(false);
+      setState("thinking");
+
+      if (onVoiceResult) {
+        onVoiceResult(voiceText);
+      }
+
+      if (enableChat) {
+        void sendMessage(voiceText);
+      }
+    }
+  }, [voiceStatus, voiceText, onVoiceResult, enableChat, sendMessage]);
+
   const uploadPhoto = useCallback(
     async (source: "camera" | "library" = "library") => {
       if (!sessionId) {
@@ -754,19 +758,13 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     }
 
     try {
-      const hasPermission = await requestVoicePermissions();
-      if (!hasPermission) {
-        console.warn("Voice permission denied");
-        return;
-      }
-
       setShowHint(false);
       await startListening();
     } catch (error) {
       console.error("Failed to start voice input:", error);
       useAiStylistStore.getState().setError("语音输入启动失败");
     }
-  }, [enableVoiceInput, isVoiceAvailable, requestVoicePermissions, startListening]);
+  }, [enableVoiceInput, isVoiceAvailable, startListening]);
 
   const stopVoiceInput = useCallback(() => {
     void stopListening();
