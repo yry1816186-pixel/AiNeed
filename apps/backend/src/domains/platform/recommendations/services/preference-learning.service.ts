@@ -195,7 +195,8 @@ export class PreferenceLearningService {
     userId: string,
     category: string,
     key: string,
-    delta: number
+    delta: number,
+    source: string = "behavior_learning"
   ): Promise<void> {
     const existing = await this.prisma.userPreferenceWeight.findUnique({
       where: {
@@ -223,17 +224,81 @@ export class PreferenceLearningService {
           category,
           key,
           weight: Math.max(this.MIN_WEIGHT, Math.min(this.MAX_WEIGHT, 1.0 + delta)),
-          source: "behavior_learning",
+          source,
         },
       });
     }
+  }
+
+  /**
+   * Sync StyleQuiz results into UserPreferenceWeight entries.
+   * Called on quiz completion and during cold-start scoring.
+   * Quiz-sourced preferences use confidence score to set weight values.
+   */
+  async syncQuizResults(userId: string): Promise<void> {
+    const quizResult = await this.prisma.styleQuizResult.findFirst({
+      where: { userId, isLatest: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!quizResult) {
+      return;
+    }
+
+    const confidenceMultiplier = Math.max(0.5, Number(quizResult.confidenceScore));
+
+    // Sync style keywords as style_keyword preferences
+    if (quizResult.styleKeywords && quizResult.styleKeywords.length > 0) {
+      for (const keyword of quizResult.styleKeywords) {
+        await this.upsertPreferenceWeight(
+          userId,
+          "style_keyword",
+          keyword.toLowerCase(),
+          2.0 * confidenceMultiplier,
+          "quiz"
+        );
+      }
+    }
+
+    // Sync color preferences
+    const colorPrefs = quizResult.colorPreferences as Record<string, number> | null;
+    if (colorPrefs) {
+      for (const [color, weight] of Object.entries(colorPrefs)) {
+        await this.upsertPreferenceWeight(
+          userId,
+          "color_preference",
+          color.toLowerCase(),
+          (weight ?? 0.5) * 3.0 * confidenceMultiplier,
+          "quiz"
+        );
+      }
+    }
+
+    // Sync occasion preferences
+    const occasionPrefs = quizResult.occasionPreferences as Record<string, number> | null;
+    if (occasionPrefs) {
+      for (const [occasion, weight] of Object.entries(occasionPrefs)) {
+        await this.upsertPreferenceWeight(
+          userId,
+          "occasion_preference",
+          occasion.toLowerCase(),
+          (weight ?? 0.5) * 2.0 * confidenceMultiplier,
+          "quiz"
+        );
+      }
+    }
+
+    await this.invalidateUserPreferenceCache(userId);
+    this.logger.debug(
+      `Synced quiz results for user ${userId}, confidence: ${quizResult.confidenceScore}`
+    );
   }
 
   async getUserPreferences(
     userId: string,
     category?: string,
     limit: number = 20
-  ): Promise<UserPreference[]> {
+  ): Promise<Array<UserPreference & { source?: string }>> {
     const where = category ? { userId, category } : { userId };
 
     const weights = await this.prisma.userPreferenceWeight.findMany({
@@ -247,6 +312,7 @@ export class PreferenceLearningService {
       key: w.key,
       value: Number(w.weight),
       trend: "stable" as const,
+      source: w.source || undefined,
     }));
   }
 

@@ -875,6 +875,12 @@ export class RecommendationOrchestrator {
     userId: string
   ): Promise<ScoredCandidate[]> {
     try {
+      // Sync quiz results into preferences for cold-start users
+      const isColdStart = await this.isColdStartUser(userId);
+      if (isColdStart) {
+        await this.preferenceLearning.syncQuizResults(userId);
+      }
+
       const [preferences, sasrecResult] = await Promise.allSettled([
         this.preferenceLearning.getUserPreferences(userId),
         this.sasrec.getSequenceRecommendations(userId, 50),

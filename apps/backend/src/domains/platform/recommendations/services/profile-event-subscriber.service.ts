@@ -2,6 +2,8 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
 
+import { PreferenceLearningService } from "./preference-learning.service";
+
 /**
  * ProfileEventSubscriberService subscribes to Redis Pub/Sub channels
  * for profile and quiz events, triggering recommendation recalculation.
@@ -11,7 +13,10 @@ import { RedisService } from "../../../../common/redis/redis.service";
 export class ProfileEventSubscriberService implements OnModuleInit {
   private readonly logger = new Logger(ProfileEventSubscriberService.name);
 
-  constructor(private readonly redisService: RedisService) {}
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly preferenceLearning: PreferenceLearningService
+  ) {}
 
   onModuleInit(): void {
     this.subscribeToProfileUpdates();
@@ -72,11 +77,11 @@ export class ProfileEventSubscriberService implements OnModuleInit {
     try {
       const data = JSON.parse(message) as { userId: string; quizId: string };
       this.logger.debug(
-        `Recommendations: received quiz:completed for user ${data.userId}, triggering recommendation recalculation`
+        `Recommendations: received quiz:completed for user ${data.userId}, syncing quiz results to preferences`
       );
 
-      // Trigger recommendation recalculation for this user
-      // The actual recalculation uses existing recommendation engine
+      // Sync quiz results into preference weights for immediate scoring impact
+      await this.preferenceLearning.syncQuizResults(data.userId);
     } catch {
       // Malformed message, ignore
     }
