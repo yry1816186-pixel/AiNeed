@@ -1495,6 +1495,10 @@ const tagSets = {
     ["高领", "保暖", "秋冬", "质感"],
     ["印花", "潮流", "街头", "青春"],
     ["羊绒", "奢华", "经典", "高级"],
+    ["面试", "商务", "正装", "衬衫"],
+    ["旅行", "轻便", "速干", "户外"],
+    ["运动", "速干", "透气", "健身"],
+    ["派对", "亮片", "性感", "夜店"],
   ],
   bottoms: [
     ["修身", "百搭", "经典", "直筒"],
@@ -1503,6 +1507,10 @@ const tagSets = {
     ["复古", "宽松", "街头", "潮流"],
     ["职场", "通勤", "西装裤", "知性"],
     ["牛仔", "百搭", "耐穿", "日常"],
+    ["面试", "商务", "西裤", "正装"],
+    ["旅行", "弹力", "舒适", "轻便"],
+    ["运动", "速干", "透气", "跑步"],
+    ["派对", "皮裤", "酷感", "个性"],
   ],
   dresses: [
     ["优雅", "约会", "气质", "显瘦"],
@@ -1511,6 +1519,9 @@ const tagSets = {
     ["职场", "知性", "通勤", "大方"],
     ["派对", "性感", "亮片", "夜店"],
     ["清新", "少女", "甜美", "减龄"],
+    ["面试", "端庄", "简约", "商务"],
+    ["旅行", "轻便", "度假", "飘逸"],
+    ["运动", "舒适", "休闲", "日常"],
   ],
   outerwear: [
     ["保暖", "厚实", "秋冬", "防风"],
@@ -1519,6 +1530,9 @@ const tagSets = {
     ["经典", "百搭", "职场", "简约"],
     ["运动", "户外", "防水", "透气"],
     ["奢华", "质感", "羊绒", "高级"],
+    ["面试", "西装", "正装", "商务"],
+    ["旅行", "轻便", "防风", "便携"],
+    ["派对", "皮衣", "酷感", "个性"],
   ],
   footwear: [
     ["百搭", "舒适", "经典", "日常"],
@@ -1527,6 +1541,10 @@ const tagSets = {
     ["休闲", "平底", "舒适", "行走"],
     ["潮流", "街头", "个性", "设计感"],
     ["保暖", "秋冬", "加绒", "厚底"],
+    ["面试", "乐福鞋", "正装", "商务"],
+    ["旅行", "轻便", "舒适", "行走"],
+    ["派对", "高跟", "性感", "优雅"],
+    ["运动", "健身", "透气", "跑步"],
   ],
   accessories: [
     ["百搭", "经典", "日常", "简约"],
@@ -1534,6 +1552,9 @@ const tagSets = {
     ["优雅", "气质", "职场", "知性"],
     ["运动", "功能", "实用", "户外"],
     ["奢华", "质感", "高级", "品牌"],
+    ["面试", "精致", "手表", "简约"],
+    ["旅行", "实用", "大容量", "托特"],
+    ["派对", "闪亮", "耳环", "手链"],
   ],
   activewear: [
     ["运动", "透气", "弹力", "速干"],
@@ -1541,6 +1562,8 @@ const tagSets = {
     ["跑步", "轻便", "反光", "功能"],
     ["健身", "支撑", "透气", "速干"],
     ["休闲", "运动", "百搭", "日常"],
+    ["旅行", "轻便", "舒适", "户外"],
+    ["运动", "健身", "支撑", "透气"],
   ],
   swimwear: [
     ["性感", "比基尼", "度假", "海滩"],
@@ -1548,6 +1571,7 @@ const tagSets = {
     ["运动", "功能", "竞速", "专业"],
     ["可爱", "少女", "甜美", "清新"],
     ["潮流", "设计感", "个性", "时尚"],
+    ["旅行", "度假", "海滩", "防晒"],
   ],
 };
 
@@ -2178,10 +2202,13 @@ for (const [cat, target] of Object.entries(categoryCounts)) {
     const careInstr = carePool[i % carePool.length];
     const sizeChart = sizeChartGen(size);
 
+    const catSeasons = categorySeasonMap[cat] || ["all_season"];
     const attributes: any = {
       material,
       pairingSuggestions: pairings,
       careInstructions: careInstr,
+      seasons: [catSeasons[i % catSeasons.length]],
+      occasions: tag.slice(0, 2),
     };
     if (sizeChart.length > 0) {
       attributes.sizeChart = sizeChart;
@@ -2214,14 +2241,14 @@ for (const [cat, target] of Object.entries(categoryCounts)) {
 // ============================================================================
 
 const categorySeasonMap: Record<string, string[]> = {
-  tops: ["all_season"],
-  bottoms: ["all_season"],
-  dresses: ["spring", "summer"],
-  outerwear: ["autumn", "winter"],
-  footwear: ["all_season"],
+  tops: ["spring", "summer", "autumn", "winter", "all_season"],
+  bottoms: ["spring", "summer", "autumn", "winter", "all_season"],
+  dresses: ["spring", "summer", "autumn"],
+  outerwear: ["autumn", "winter", "spring"],
+  footwear: ["spring", "summer", "autumn", "winter", "all_season"],
   accessories: ["all_season"],
-  activewear: ["spring", "summer"],
-  swimwear: ["summer"],
+  activewear: ["spring", "summer", "autumn"],
+  swimwear: ["summer", "spring"],
 };
 
 const subcategoryGenderMap: Record<string, Gender> = {
