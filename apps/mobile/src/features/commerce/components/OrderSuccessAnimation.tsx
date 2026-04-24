@@ -142,7 +142,7 @@ export const OrderSuccessAnimation: React.FC = () => {
           </View>
           <Animated.View style={[styles.checkmark, checkAnimatedStyle]}>
             <View style={styles.checkmarkCircle}>
-              <Ionicons name="checkmark" size={18} color="#FFFFFF" />
+              <Ionicons name="checkmark" size={18} color={DesignTokens.colors.neutral.white} />
             </View>
           </Animated.View>
         </Animated.View>

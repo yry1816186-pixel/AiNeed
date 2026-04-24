@@ -208,20 +208,20 @@ export const FavoritesScreen: React.FC = () => {
 
 const useStyles = createStyles((colors) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#FFFFFF" },
+    container: { flex: 1, backgroundColor: colors.background },
     header: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       padding: Spacing.md,
-      backgroundColor: "#FFFFFF",
+      backgroundColor: colors.surface,
       borderBottomWidth: 1,
-      borderBottomColor: "#E5E5E5",
+      borderBottomColor: colors.borderLight,
     },
     headerTitle: {
       fontSize: DesignTokens.typography.sizes.lg,
       fontWeight: "700",
-      color: "#1A1A1A",
+      color: colors.textPrimary,
     },
     backBtn: {
       width: Spacing.xl,
@@ -232,7 +232,7 @@ const useStyles = createStyles((colors) =>
     list: { padding: Spacing.md },
     emptyList: { flex: 1 },
     card: {
-      backgroundColor: "#FFFFFF",
+      backgroundColor: colors.surface,
       borderRadius: 12,
       marginBottom: DesignTokens.spacing[3],
       overflow: "hidden",
@@ -248,16 +248,20 @@ const useStyles = createStyles((colors) =>
       justifyContent: "center",
     },
     info: { flex: 1, padding: DesignTokens.spacing[3], justifyContent: "center" },
-    name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: "#1A1A1A" },
+    name: {
+      fontSize: DesignTokens.typography.sizes.base,
+      fontWeight: "600",
+      color: colors.textPrimary,
+    },
     brand: {
       fontSize: DesignTokens.typography.sizes.sm,
-      color: "#C67B5C",
+      color: colors.primary,
       marginTop: DesignTokens.spacing["0.5"],
     },
     price: {
       fontSize: DesignTokens.typography.sizes.base,
       fontWeight: "700",
-      color: "#C67B5C",
+      color: colors.primary,
       marginTop: Spacing.xs,
     },
     actions: { justifyContent: "center", paddingRight: DesignTokens.spacing[3] },
@@ -265,7 +269,7 @@ const useStyles = createStyles((colors) =>
     centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
     loadingText: {
       fontSize: DesignTokens.typography.sizes.base,
-      color: "#888888",
+      color: colors.textTertiary,
       marginTop: Spacing.sm,
     },
     emptyContainer: {
@@ -276,12 +280,12 @@ const useStyles = createStyles((colors) =>
     },
     emptyText: {
       fontSize: DesignTokens.typography.sizes.base,
-      color: "#888888",
+      color: colors.textTertiary,
       marginTop: Spacing.sm,
     },
     emptyAction: {
       fontSize: DesignTokens.typography.sizes.base,
-      color: "#C67B5C",
+      color: colors.primary,
       marginTop: DesignTokens.spacing[3],
     },
   })

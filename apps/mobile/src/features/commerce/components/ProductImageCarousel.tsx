@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: DesignTokens.colors.semantic.error,
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   zoomCloseText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontSize: 16,
     fontWeight: "600",
   },

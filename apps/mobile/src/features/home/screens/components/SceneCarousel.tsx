@@ -78,13 +78,13 @@ const cardStyles = StyleSheet.create({
   sceneText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     letterSpacing: DesignTokens.typography.letterSpacing.wide,
   },
   cardDescription: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     marginBottom: DesignTokens.spacing["1.5"],
     lineHeight: DesignTokens.typography.sizes.base * DesignTokens.typography.lineHeights.snug,
   },
@@ -101,7 +101,7 @@ const cardStyles = StyleSheet.create({
   matchText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
 });
 
@@ -153,7 +153,7 @@ const SceneCardItem = memo(({ card, colorPair, onPress }: SceneCardItemProps) =>
             {card.description}
           </Text>
           <View style={cardStyles.matchBadge}>
-            <Ionicons name="sparkles" size={10} color="#FFFFFF" />
+            <Ionicons name="sparkles" size={10} color={DesignTokens.colors.neutral.white} />
             <Text style={cardStyles.matchText}>{card.matchScore}% 匹配</Text>
           </View>
         </LinearGradient>

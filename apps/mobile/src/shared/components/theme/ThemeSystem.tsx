@@ -524,7 +524,7 @@ const useStyles = createStyles((colors) => ({
   sheetHandle: {
     width: 36,
     height: 5,
-    backgroundColor: "#E4E4E7",
+    backgroundColor: DesignTokens.colors.neutral[300],
     borderRadius: 2.5,
     alignSelf: "center",
     marginBottom: 20,

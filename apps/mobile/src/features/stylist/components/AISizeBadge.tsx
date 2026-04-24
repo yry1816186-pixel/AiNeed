@@ -28,7 +28,7 @@ const useStyles = createStyles((colors) => ({
   badgeSize: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
-    color: "#3D5E4D",
+    color: DesignTokens.colors.brand.sageDark,
   },
   detail: {
     marginTop: 4,

@@ -216,7 +216,10 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: colors.error, backgroundColor: "#FFF5F5" },
+  sizeButtonSelected: {
+    borderColor: colors.error,
+    backgroundColor: DesignTokens.colors.semantic.errorLight,
+  },
   sizeButtonDisabled: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderColor: DesignTokens.colors.neutral[100],

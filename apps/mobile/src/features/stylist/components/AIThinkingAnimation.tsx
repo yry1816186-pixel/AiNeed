@@ -100,7 +100,7 @@ const r = StyleSheet.create({
     flex: 1,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(198, 123, 92, 0.15)",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     overflow: "hidden",
   },
   gradientFill: {
@@ -307,7 +307,7 @@ const s = StyleSheet.create({
   lineTrack: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     overflow: "hidden",
   },
   gradientLine: {

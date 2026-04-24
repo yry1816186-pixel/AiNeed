@@ -14,6 +14,7 @@ import {
   StructuredError,
 } from "../../utils/errorHandling";
 import { ErrorFallback, ErrorFallbackProps } from "./ErrorFallback";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 // ============================================================================
 // 类型定义
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
   loadingError: {
     marginTop: 12,
     fontSize: 12,
-    color: "#e53935",
+    color: DesignTokens.colors.semantic.error,
     fontFamily: "monospace",
     textAlign: "center",
   },

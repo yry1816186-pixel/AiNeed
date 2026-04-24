@@ -24,7 +24,7 @@ export function EmptyState({
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Feather name={icon} size={64} color="#a1a1aa" />
+        <Feather name={icon} size={64} color={DesignTokens.colors.neutral[400]} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
@@ -118,13 +118,13 @@ const useStyles = createStyles((colors) => ({
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "#18181b",
+    color: DesignTokens.colors.neutral[900],
     marginBottom: 8,
     textAlign: "center",
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#71717a",
+    color: DesignTokens.colors.neutral[500],
     textAlign: "center",
     marginBottom: 20,
   },

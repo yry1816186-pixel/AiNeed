@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { useTheme } from "../../shared/contexts/ThemeContext";
 
 interface AreaValue {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f5f5f5",
+    borderBottomColor: DesignTokens.colors.neutral[100],
   },
   itemText: {
     fontSize: 15,

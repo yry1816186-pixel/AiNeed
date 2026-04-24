@@ -170,7 +170,7 @@ const metricStyles = StyleSheet.create({
   },
   track: {
     height: 6,
-    backgroundColor: "#E5E5E0",
+    backgroundColor: DesignTokens.colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
   },

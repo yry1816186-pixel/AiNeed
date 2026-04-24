@@ -315,8 +315,19 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
       </Animated.View>
 
       {isUsingMockData && (
-        <View style={{ backgroundColor: "#FFF3E0", padding: 8, paddingHorizontal: 16 }}>
-          <Text style={{ color: "#E65100", fontSize: DesignTokens.typography.sizes.sm }}>
+        <View
+          style={{
+            backgroundColor: DesignTokens.colors.semantic.warningLight,
+            padding: 8,
+            paddingHorizontal: 16,
+          }}
+        >
+          <Text
+            style={{
+              color: DesignTokens.colors.semantic.warning,
+              fontSize: DesignTokens.typography.sizes.sm,
+            }}
+          >
             当前为示例数据，推荐服务暂不可用
           </Text>
         </View>

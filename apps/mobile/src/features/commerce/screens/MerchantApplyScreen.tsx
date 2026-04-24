@@ -291,7 +291,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     marginTop: 24,
   },
-  submitButtonDisabled: { backgroundColor: "#FFB0B0" },
+  submitButtonDisabled: { backgroundColor: DesignTokens.colors.semantic.errorLight },
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",

@@ -73,7 +73,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" />
+        <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
       ) : (
         <Text style={[styles.followText, isSmall && styles.followTextSmall]}>关注</Text>
       )}
@@ -96,7 +96,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 14,
   },
   followText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

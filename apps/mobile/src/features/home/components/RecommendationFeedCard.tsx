@@ -146,7 +146,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 4,
   },
   harmonyText: {
-    color: "#4ADE80", // custom color
+    color: DesignTokens.colors.semantic.success,
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
   },

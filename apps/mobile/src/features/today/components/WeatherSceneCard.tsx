@@ -31,7 +31,10 @@ interface WeatherSceneCardProps {
   onPress?: () => void;
 }
 
-const GRADIENT_COLORS = ["#C67B5C", "#D9A441"];
+const GRADIENT_COLORS = [
+  DesignTokens.colors.brand.terracotta,
+  DesignTokens.colors.semantic.warning,
+];
 const BREATHING_DURATION = 2500;
 const BREATHING_SCALE_MAX = 1.02;
 const SHADOW_OPACITY_MIN = 0.1;
@@ -83,7 +86,7 @@ export function WeatherSceneCard({ weather, scene, onPress }: WeatherSceneCardPr
         />
         <View style={styles.content}>
           <View style={styles.weatherRow}>
-            <Sun size={24} color="#FFFFFF" weight="fill" />
+            <Sun size={24} color={DesignTokens.colors.neutral.white} weight="fill" />
             <Text style={styles.weatherText}>
               {weather.temp}°C {weather.condition}
             </Text>
@@ -117,19 +120,19 @@ const useStyles = createStyles(() => ({
   weatherText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: DesignTokens.typography.fontWeights.semibold,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     marginLeft: DesignTokens.spacing[2],
   },
   sceneTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: DesignTokens.typography.fontWeights.bold,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     marginBottom: DesignTokens.spacing[1],
     lineHeight: DesignTokens.typography.sizes.lg * DesignTokens.typography.lineHeights.snug,
   },
   sceneDescription: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     opacity: 0.85,
     lineHeight: DesignTokens.typography.sizes.base * DesignTokens.typography.lineHeights.normal,
   },

@@ -93,7 +93,7 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({ isListening, onPress }
             buttonAnimStyle,
           ]}
         >
-          <Microphone size={24} color="#FFFFFF" weight="fill" />
+          <Microphone size={24} color={DesignTokens.colors.neutral.white} weight="fill" />
         </Animated.View>
       </Pressable>
     </View>

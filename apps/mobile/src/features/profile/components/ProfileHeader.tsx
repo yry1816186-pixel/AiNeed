@@ -166,7 +166,7 @@ const useStyles = createStyles((colors) => ({
   avatarPlaceholderText: {
     fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   onlineDot: {
     position: "absolute",
@@ -186,7 +186,7 @@ const useStyles = createStyles((colors) => ({
   nameText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     lineHeight: DesignTokens.typography.sizes.xl * DesignTokens.typography.lineHeights.tight,
     letterSpacing: DesignTokens.typography.letterSpacing.wide,
   },
@@ -200,7 +200,7 @@ const useStyles = createStyles((colors) => ({
   styleTagText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     letterSpacing: DesignTokens.typography.letterSpacing.wide,
   },
   statsRow: {
