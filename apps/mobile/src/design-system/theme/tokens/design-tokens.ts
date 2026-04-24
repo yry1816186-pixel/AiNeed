@@ -196,7 +196,7 @@ export const DesignTokens = {
     xs: 2,
     sm: 4,
     md: 6,
-    lg: 10,
+    lg: 12,
     xl: 16,
     "2xl": 24,
     "3xl": 32,

@@ -1,7 +1,6 @@
 export {
   DesignTokens,
   darkTokens,
-  WarmPrimaryColors,
   BrandColors,
   NeutralColors,
   PrimaryColors,
