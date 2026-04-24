@@ -22,7 +22,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 - [ ] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization
 - [ ] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching
 - [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission
-- [ ] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials
+- [ ] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials submitted
 
 ## Phase Details
 
@@ -96,7 +96,17 @@ Plans:
 8. Fashion rules filtered by bodyType+occasion+colorSeason
 9. Body-positive language enforced: describe clothes not body, try-on failure blames garment
    **UI hint**: yes
-   **Plans**: TBD
+   **Plans**: 7 plans
+
+Plans:
+
+- [ ] 04-01-PLAN.md — Python DialogEngine: 新状态(SCENE/DIRECT/CHAT) + 面试流程 + 伊伊人格 + FashionRuleLoader + StudioSignalDetector (YIYI-01~03, YIYI-05~07, RUL-01~03, WKS-01, WKS-03, ETH-01~02)
+- [ ] 04-02-PLAN.md — NestJS Backend: DialogState DTO 同步 + Yiyi 系统提示词 + Python 转发 + Edge-TTS 端点 (YIYI-03, YIYI-05, VOI-03, WKS-04)
+- [ ] 04-03-PLAN.md — Onboarding Steps 1-3: 场景选择 + 快速画像 + 风格表达 (ONB-01~03, ONB-05)
+- [ ] 04-04-PLAN.md — Chat UI: TryOnBottomSheet + StudioRecommendCard + QuickReply 接入 (YIYI-04, YIYI-06, WKS-02, WKS-04)
+- [ ] 04-05-PLAN.md — Voice: @react-native-voice/voice STT + Edge-TTS TTS + VoiceButton 接入 (VOI-01~03)
+- [ ] 04-06-PLAN.md — Onboarding Step 4: "让伊伊搭第一套" 3 方案选择+保存衣橱 (ONB-04)
+- [ ] 04-07-PLAN.md — E2E Wiring: 首页语音按钮接入 + 偏好记忆 + 面试流程验证 (YIYI-04, YIYI-05)
 
 ### Phase 5: E2E Integration + Competition Demo
 
@@ -120,7 +130,7 @@ Plans:
 **Requirements**: MOD-01, MOD-02, MOD-03, RAD-01, RAD-02, RAD-03, RAD-04, DAT-01, DAT-02, DAT-03, DAT-04, DAT-05, CMP-01, CMP-02, CMP-03, CMP-04, CMP-05, SEC-01, SEC-02, SEC-03, SEC-04
 **Success Criteria** (what must be TRUE):
 
-1. Marqo-FashionSigLIP replaces FashionCLIP in all vector operations, Recall@10 improves ≥15% vs old model
+1. Marqo-FashionSigLIP replaces FashionCLIP in all vector operations, Recall@10 improves >=15% vs old model
 2. Chinese fine-tune on 5000 Taobao items + DeepFashion Chinese subset completes successfully on AutoDL
 3. SASRec trained on user behavior sequences, scoring weight increases with interaction count
 4. 6-layer funnel pipeline executes L1-L4 hard filters then L5-L6 soft scoring
@@ -198,7 +208,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 1. Foundation + TS Cleanup + Visual Base        | 0/?            | Not started | -         |
 | 2. Pipeline + Cold Start + Curated Wardrobe     | 0/?            | Not started | -         |
 | 3. Navigation + Core Screens + Calendar         | 0/3            | Planned     | -         |
-| 4. Yiyi Agent + Voice + Onboarding + Studio     | 0/?            | Not started | -         |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 0/7            | Planned     | -         |
 | 5. E2E Integration + Competition Demo           | 0/?            | Not started | -         |
 | 6. Model Upgrade + Compliance + Security        | 0/?            | Not started | -         |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 0/?            | Not started | -         |
