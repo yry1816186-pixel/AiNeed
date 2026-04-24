@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Screen Error Boundaries
  *
  * 这个文件展示了如何为各个 Screen 添加局部错误边界。
@@ -12,7 +12,6 @@
  *
  * export default withErrorBoundary(MyScreen, {
  *   screenName: 'MyScreen',
- *   onReset: () => console.log('[MyScreen] Reset'),
  * });
  * ```
  */
@@ -27,117 +26,91 @@ export const screenErrorBoundaryConfigs = {
   // 主要 Tab 页面
   HomeScreen: {
     screenName: "HomeScreen",
-    onReset: () => console.log("[HomeScreen] Error boundary reset"),
   },
   SearchScreen: {
     screenName: "SearchScreen",
-    onReset: () => console.log("[SearchScreen] Error boundary reset"),
   },
   HeartScreen: {
     screenName: "HeartScreen",
-    onReset: () => console.log("[HeartScreen] Error boundary reset"),
   },
   CartScreen: {
     screenName: "CartScreen",
-    onReset: () => console.log("[CartScreen] Error boundary reset"),
   },
   WardrobeScreen: {
     screenName: "WardrobeScreen",
-    onReset: () => console.log("[WardrobeScreen] Error boundary reset"),
   },
   ProfileScreen: {
     screenName: "ProfileScreen",
-    onReset: () => console.log("[ProfileScreen] Error boundary reset"),
   },
 
   // 认证相关页面
   LoginScreen: {
     screenName: "LoginScreen",
-    onReset: () => console.log("[LoginScreen] Error boundary reset"),
   },
   RegisterScreen: {
     screenName: "RegisterScreen",
-    onReset: () => console.log("[RegisterScreen] Error boundary reset"),
   },
 
   // AI 功能页面
   AiStylistScreen: {
     screenName: "AiStylistScreen",
-    onReset: () => console.log("[AiStylistScreen] Error boundary reset"),
   },
   VirtualTryOnScreen: {
     screenName: "VirtualTryOnScreen",
-    onReset: () => console.log("[VirtualTryOnScreen] Error boundary reset"),
   },
 
   // 订单相关页面
   OrdersScreen: {
     screenName: "OrdersScreen",
-    onReset: () => console.log("[OrdersScreen] Error boundary reset"),
   },
   OrderDetailScreen: {
     screenName: "OrderDetailScreen",
-    onReset: () => console.log("[OrderDetailScreen] Error boundary reset"),
   },
   CheckoutScreen: {
     screenName: "CheckoutScreen",
-    onReset: () => console.log("[CheckoutScreen] Error boundary reset"),
   },
 
   // 设置相关页面
   SettingsScreen: {
     screenName: "SettingsScreen",
-    onReset: () => console.log("[SettingsScreen] Error boundary reset"),
   },
   NotificationSettingsScreen: {
     screenName: "NotificationSettingsScreen",
-    onReset: () => console.log("[NotificationSettingsScreen] Error boundary reset"),
   },
 
   // 其他页面
   FavoritesScreen: {
     screenName: "FavoritesScreen",
-    onReset: () => console.log("[FavoritesScreen] Error boundary reset"),
   },
   CommunityScreen: {
     screenName: "CommunityScreen",
-    onReset: () => console.log("[CommunityScreen] Error boundary reset"),
   },
   OnboardingScreen: {
     screenName: "OnboardingScreen",
-    onReset: () => console.log("[OnboardingScreen] Error boundary reset"),
   },
   SubscriptionScreen: {
     screenName: "SubscriptionScreen",
-    onReset: () => console.log("[SubscriptionScreen] Error boundary reset"),
   },
   CustomizationScreen: {
     screenName: "CustomizationScreen",
-    onReset: () => console.log("[CustomizationScreen] Error boundary reset"),
   },
   AddClothingScreen: {
     screenName: "AddClothingScreen",
-    onReset: () => console.log("[AddClothingScreen] Error boundary reset"),
   },
   ClothingDetailScreen: {
     screenName: "ClothingDetailScreen",
-    onReset: () => console.log("[ClothingDetailScreen] Error boundary reset"),
   },
   OutfitDetailScreen: {
     screenName: "OutfitDetailScreen",
-    onReset: () => console.log("[OutfitDetailScreen] Error boundary reset"),
   },
   RecommendationDetailScreen: {
     screenName: "RecommendationDetailScreen",
-    onReset: () => console.log("[RecommendationDetailScreen] Error boundary reset"),
   },
   NotificationsScreen: {
     screenName: "NotificationsScreen",
-    onReset: () => console.log("[NotificationsScreen] Error boundary reset"),
   },
   LegalScreen: {
     screenName: "LegalScreen",
-    onReset: () => console.log("[LegalScreen] Error boundary reset"),
   },
 } as const;
 
@@ -177,7 +150,6 @@ export function wrapScreenWithErrorBoundary<P extends Record<string, unknown>>(
  *
  * export default withErrorBoundary(HomeScreen, {
  *   screenName: 'HomeScreen',
- *   onReset: () => console.log('[HomeScreen] Reset'),
  * });
  * ```
  *
