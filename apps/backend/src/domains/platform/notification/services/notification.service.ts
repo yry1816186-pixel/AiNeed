@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { NotificationType } from "../../../../types/prisma-enums";
+import { Prisma } from "@prisma/client";
 
 import { NotificationService as WebSocketNotificationService } from "../../../../common/gateway/notification.service";
 import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { NotificationType } from "../../../../types/prisma-enums";
 
 import { NotificationTemplateService } from "./notification-template.service";
 import type { PushPayload } from "./push-notification.service";
@@ -480,15 +480,18 @@ export class NotificationService {
     return this.prisma.userNotificationSetting.upsert({
       where: { userId },
       update: {
-        email: settings.email as any,
-        push: settings.push as any,
-        inApp: settings.inApp as any,
+        email: settings.email as unknown as Prisma.InputJsonValue,
+        push: settings.push as unknown as Prisma.InputJsonValue,
+        inApp: settings.inApp as unknown as Prisma.InputJsonValue,
       },
       create: {
         userId,
-        email: (settings.email || { marketing: true, transactional: true }) as any,
-        push: (settings.push || { ...DEFAULT_PUSH_SETTINGS }) as any,
-        inApp: (settings.inApp || { all: true }) as any,
+        email: (settings.email || {
+          marketing: true,
+          transactional: true,
+        }) as unknown as Prisma.InputJsonValue,
+        push: (settings.push || { ...DEFAULT_PUSH_SETTINGS }) as unknown as Prisma.InputJsonValue,
+        inApp: (settings.inApp || { all: true }) as unknown as Prisma.InputJsonValue,
       },
     });
   }

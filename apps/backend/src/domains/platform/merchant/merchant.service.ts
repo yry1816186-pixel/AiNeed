@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Injectable,
   NotFoundException,
@@ -6,6 +5,7 @@ import {
   Logger,
   BadRequestException,
 } from "@nestjs/common";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import * as bcrypt from "../../../common/security/bcrypt";
 
@@ -44,7 +44,7 @@ export class MerchantService {
 
     // 使用事务创建品牌和商家账户
     try {
-      const result = await this.prisma.$transaction(async (tx: any) => {
+      const result = await this.prisma.$transaction(async (tx) => {
         const brand = await tx.brand.create({
           data: {
             name: data.brandName,
@@ -325,14 +325,11 @@ export class MerchantService {
     });
 
     // 统计各类事件
-    const stats = behaviorEvents.reduce(
-      (acc: Record<string, number>, event: any) => {
-        const type = event.eventType;
-        acc[type] = (acc[type] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
+    const stats = behaviorEvents.reduce((acc: Record<string, number>, event: any) => {
+      const type = event.eventType;
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     const totalViews = stats["item_view"] ?? 0;
     const totalAddToCart = stats["add_to_cart"] ?? 0;
@@ -386,7 +383,7 @@ export class MerchantService {
     });
 
     // 批量获取所有产品的试衣次数，避免N+1查询
-    const productIds = products.map((p: any) => p.id);
+    const productIds = products.map((p) => p.id);
     const tryOnCounts = await this.prisma.virtualTryOn.groupBy({
       by: ["itemId"],
       where: { itemId: { in: productIds } },
@@ -394,9 +391,9 @@ export class MerchantService {
     });
 
     // 创建itemId到count的映射
-    const tryOnMap = new Map(tryOnCounts.map((t: any) => [t.itemId, t._count.id]));
+    const tryOnMap = new Map(tryOnCounts.map((t) => [t.itemId, t._count.id]));
 
-    return products.map((p: any) => ({
+    return products.map((p) => ({
       ...p,
       tryOnCount: tryOnMap.get(p.id) || 0,
     }));
@@ -410,7 +407,7 @@ export class MerchantService {
       where: { brandId },
       select: { id: true },
     });
-    const productIds = products.map((p: any) => p.id);
+    const productIds = products.map((p) => p.id);
 
     if (productIds.length === 0) {
       return {
@@ -447,12 +444,12 @@ export class MerchantService {
     `;
 
     return {
-      dailyStats: dailyStats.map((s: any) => ({
+      dailyStats: dailyStats.map((s) => ({
         date: s.date,
         eventType: s.event_type,
         count: Number(s.count),
       })),
-      dailyTryOns: dailyTryOns.map((t: any) => ({
+      dailyTryOns: dailyTryOns.map((t) => ({
         date: t.date,
         count: Number(t.count),
       })),
@@ -468,7 +465,7 @@ export class MerchantService {
         where: { brandId },
         select: { id: true },
       })
-    ).map((p: any) => p.id);
+    ).map((p) => p.id);
 
     // 获取与该品牌产品有交互的用户ID
     const interactions = await this.prisma.userBehaviorEvent.findMany({
@@ -480,7 +477,7 @@ export class MerchantService {
       distinct: ["userId"],
     });
 
-    const userIds = interactions.map((i: any) => i.userId).filter(Boolean) as string[];
+    const userIds = interactions.map((i) => i.userId).filter(Boolean) as string[];
 
     if (userIds.length === 0) {
       return {
@@ -502,7 +499,7 @@ export class MerchantService {
     const colorSeasonDistribution: Record<string, number> = {};
     const stylePreferences: Record<string, number> = {};
 
-    profiles.forEach((p: any) => {
+    profiles.forEach((p) => {
       if (p.bodyType) {
         bodyTypeDistribution[p.bodyType] = (bodyTypeDistribution[p.bodyType] || 0) + 1;
       }
@@ -675,7 +672,7 @@ export class MerchantService {
     }
 
     // Verify order contains this brand's items
-    const hasBrandItems = order.items.some((item: any) => item.item?.brandId === brandId);
+    const hasBrandItems = order.items.some((item) => item.item?.brandId === brandId);
     if (!hasBrandItems) {
       throw new ForbiddenException("该订单不包含您的商品");
     }

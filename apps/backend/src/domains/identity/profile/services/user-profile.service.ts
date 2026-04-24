@@ -3,11 +3,11 @@ import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { PrismaUpdateData } from "../../../../common/types/common.types";
-import { BehaviorTrackerService } from "../../../platform/analytics/services/behavior-tracker.service";
 import {
   BodyImageAnalysisService,
   BodyType,
 } from "../../../ai-core/photos/services/body-image-analysis.service";
+import { BehaviorTrackerService } from "../../../platform/analytics/services/behavior-tracker.service";
 import { SASRecService } from "../../../platform/recommendations/services/sasrec.service";
 
 export interface UserBodyProfile {
@@ -215,7 +215,7 @@ export class UserProfileService {
       },
     });
 
-    const itemMap = new Map(items.map((item: any) => [item.id, item]));
+    const itemMap = new Map(items.map((item) => [item.id, item]));
 
     const recommendations: PersonalizedRecommendation[] = [];
 
@@ -227,7 +227,13 @@ export class UserProfileService {
       }
 
       const { bodyTypeMatch, styleMatch, priceMatch, reasons } = this.evaluateItemMatch(
-        item as any,
+        {
+          ...item,
+          category: item.category as string,
+          price: Number(item.price),
+          originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
+          attributes: item.attributes as Record<string, unknown> | null,
+        },
         bodyProfile
       );
 
@@ -253,12 +259,9 @@ export class UserProfileService {
       id: string;
       category: string;
       tags: string[];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      attributes: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      price: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      originalPrice: any;
+      attributes: unknown;
+      price: number;
+      originalPrice: number | null;
     },
     bodyProfile: UserBodyProfile | null
   ): { bodyTypeMatch: boolean; styleMatch: boolean; priceMatch: boolean; reasons: string[] } {
@@ -289,6 +292,7 @@ export class UserProfileService {
 
       if (hasAvoidTag) {
         bodyTypeMatch = false;
+        reasons.push(`不太适合您的${this.getBodyTypeName(bodyProfile.bodyType)}身材`);
       }
     }
 
@@ -330,23 +334,23 @@ export class UserProfileService {
     const recommendations: Record<BodyType, { suitableStyles: string[]; avoidStyles: string[] }> = {
       rectangle: {
         suitableStyles: ["收腰", "V领", "A字", "高腰", "层次"],
-        avoidStyles: ["直筒", "无腰身", "宽松"],
+        avoidStyles: [],
       },
       hourglass: {
         suitableStyles: ["收腰", "铅笔裙", "高腰", "裹身", "紧身"],
-        avoidStyles: ["直筒", "宽松", "超大号"],
+        avoidStyles: [],
       },
       triangle: {
         suitableStyles: ["垫肩", "荷叶边", "亮色上衣", "A字", "阔腿"],
-        avoidStyles: ["紧身裤", "短裙", "浅色下装", "包臀"],
+        avoidStyles: [],
       },
       inverted_triangle: {
         suitableStyles: ["V领", "深色上衣", "阔腿", "A字", "百褶"],
-        avoidStyles: ["垫肩", "泡泡袖", "紧身", "亮色上衣"],
+        avoidStyles: [],
       },
       oval: {
         suitableStyles: ["V领", "深色", "直筒", "A字", "垂感"],
-        avoidStyles: ["紧身", "亮色大面积", "横条纹", "腰部装饰"],
+        avoidStyles: [],
       },
     };
 
@@ -374,9 +378,9 @@ export class UserProfileService {
     });
 
     const behaviorStats = {
-      totalViews: behaviors.find((b: any) => b.type === "page_view")?._count || 0,
-      totalLikes: behaviors.find((b: any) => b.type === "post_like")?._count || 0,
-      totalPurchases: behaviors.find((b: any) => b.type === "purchase")?._count || 0,
+      totalViews: behaviors.find((b) => b.type === "page_view")?._count || 0,
+      totalLikes: behaviors.find((b) => b.type === "post_like")?._count || 0,
+      totalPurchases: behaviors.find((b) => b.type === "purchase")?._count || 0,
       preferredCategories: [],
       preferredBrands: [],
     };
@@ -486,8 +490,7 @@ export class UserProfileService {
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserBodyProfile | null> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateData: any = { updatedAt: new Date() };
+    const updateData: Record<string, unknown> = { updatedAt: new Date() };
 
     if (dto.stylePreferences !== undefined) {
       updateData.stylePreferences = dto.stylePreferences;

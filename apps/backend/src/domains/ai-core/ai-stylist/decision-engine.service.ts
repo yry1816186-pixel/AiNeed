@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomUUID } from "crypto";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 // Import shared types
 import {
@@ -1246,11 +1245,9 @@ export class DecisionEngineService {
     }
 
     // Add from preference weights
-    const styleWeights = preferenceWeights.filter((w: any) => w.category === "decision_style");
+    const styleWeights = preferenceWeights.filter((w) => w.category === "decision_style");
     stylePreferences.push(
-      ...styleWeights
-        .sort((a: any, b: any) => Number(b.weight) - Number(a.weight))
-        .map((w: any) => w.key)
+      ...styleWeights.sort((a, b) => Number(b.weight) - Number(a.weight)).map((w) => w.key)
     );
 
     // Extract color preferences
@@ -1261,7 +1258,7 @@ export class DecisionEngineService {
     }
 
     // Build behavior history
-    const behaviorHistory: BehaviorRecord[] = behaviors.map((b: any) => ({
+    const behaviorHistory: BehaviorRecord[] = behaviors.map((b) => ({
       type: b.action,
       category: b.category,
       value: b.targetId || undefined,
@@ -1308,7 +1305,7 @@ export class DecisionEngineService {
       orderBy: { timestamp: "asc" },
     });
 
-    return decisions.map((d: any) => ({
+    return decisions.map((d) => ({
       id: d.id,
       sessionId: d.sessionId,
       nodeId: d.nodeId,

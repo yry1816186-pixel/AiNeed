@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -119,27 +118,25 @@ export class ItemReplacementService {
 
     // 基于用户画像计算匹配分并排序
     const scored: AlternativeItem[] = candidates
-      .filter((c: any) => !existingIds.has(c.id))
-      .map((candidate: any) => {
+      .filter((c) => !existingIds.has(c.id))
+      .map((candidate) => {
         let matchScore = 50; // 基础分
 
         // 画像偏好加分
         const profile = userContext.userProfile;
         if (profile?.stylePreferences) {
           const prefs = profile.stylePreferences.map((p) =>
-            typeof p === "string" ? p : (p.name ?? "")
+            typeof p === "string" ? p : p.name ?? ""
           );
           const tags = candidate.tags || [];
-          const overlap = tags.filter((t: any) =>
-            prefs.some((p) => t.includes(p) || p.includes(t))
-          );
+          const overlap = tags.filter((t) => prefs.some((p) => t.includes(p) || p.includes(t)));
           matchScore += overlap.length * 10;
         }
 
         // 色彩偏好加分
         if (colorPrefs.length > 0) {
           const tags = candidate.tags || [];
-          const colorMatch = tags.filter((t: any) =>
+          const colorMatch = tags.filter((t) =>
             colorPrefs.some((c) => t.includes(c) || c.includes(t))
           );
           matchScore += colorMatch.length * 8;
@@ -156,7 +153,7 @@ export class ItemReplacementService {
           matchScore: Math.min(matchScore, 100),
         };
       })
-      .sort((a: any, b: any) => b.matchScore - a.matchScore)
+      .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, limit);
 
     return scored;

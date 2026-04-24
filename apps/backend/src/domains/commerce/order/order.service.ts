@@ -1,20 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
-import { IsIn, IsString } from "class-validator";
 import { Cron } from "@nestjs/schedule";
-import { OrderStatus } from "../../../types/prisma-enums";
-import { Prisma } from "@prisma/client";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Order = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type OrderItem = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type OrderAddress = any;
+import { Prisma, Order, OrderItem, OrderAddress } from "@prisma/client";
+import { IsIn, IsString } from "class-validator";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { SoftDeleteService } from "../../../common/soft-delete";
 import { NotificationService } from "../../../domains/platform/notification/services/notification.service";
+import { OrderStatus } from "../../../types/prisma-enums";
 import {
   PaymentMethod as PaymentDtoMethod,
   PaymentProvider as PaymentDtoProvider,
@@ -135,10 +128,10 @@ export class OrderService {
     });
 
     // 创建商品 ID 到商品的映射
-    const itemMap = new Map(clothingItems.map((item: any) => [item.id, item]));
+    const itemMap = new Map(clothingItems.map((item) => [item.id, item]));
 
     // 验证所有商品并检查库存
-    const itemsWithDetails = dto.items.map((item: any) => {
+    const itemsWithDetails = dto.items.map((item) => {
       const clothingItem = itemMap.get(item.itemId);
 
       if (!clothingItem) {
@@ -163,7 +156,7 @@ export class OrderService {
     });
 
     let totalAmount = 0;
-    const orderItems = itemsWithDetails.map((item: any) => {
+    const orderItems = itemsWithDetails.map((item) => {
       totalAmount += Number(item.clothingItem.price) * item.quantity;
       return {
         itemId: item.itemId,
@@ -181,7 +174,7 @@ export class OrderService {
 
     const orderNo = this.generateOrderNo();
 
-    const order = await this.prisma.$transaction(async (tx: any) => {
+    const order = await this.prisma.$transaction(async (tx) => {
       // FIX-BL-010: 扣减库存 (修复时间: 2026-03-19)
       for (const item of itemsWithDetails) {
         const updated = await tx.clothingItem.updateMany({
@@ -255,7 +248,7 @@ export class OrderService {
   ): Promise<{ items: OrderResponse[]; total: number }> {
     const { status, page = 1, limit = 10 } = options;
 
-    const where: any = { userId, isDeleted: false };
+    const where: Record<string, unknown> = { userId, isDeleted: false };
     if (status) {
       where.status = status as OrderStatus;
     }
@@ -275,7 +268,7 @@ export class OrderService {
     ]);
 
     return {
-      items: orders.map((order: any) => this.mapToOrderResponse(order)),
+      items: orders.map((order) => this.mapToOrderResponse(order)),
       total,
     };
   }
@@ -461,7 +454,7 @@ export class OrderService {
     status: OrderStatus,
     extraData?: Record<string, unknown>
   ): Promise<void> {
-    const updateData: any = { status };
+    const updateData: Record<string, unknown> = { status };
 
     if (status === OrderStatus.paid) {
       updateData.paymentTime = new Date();
@@ -503,7 +496,7 @@ export class OrderService {
       status: order.status,
       items: (order.items || []).map((item) => ({
         id: item.id,
-        itemId: item.itemId,
+        itemId: item.itemId ?? "",
         itemName: item.itemName,
         itemImage: item.itemImage,
         color: item.color,
@@ -617,7 +610,7 @@ export class OrderService {
    * Tabs: all, pending, paid, shipped, completed, refund
    */
   async getOrdersByTab(userId: string, tab: string, page: number = 1, limit: number = 10) {
-    const where: any = { userId, isDeleted: false };
+    const where: Record<string, unknown> = { userId, isDeleted: false };
 
     switch (tab) {
       case "pending":
