@@ -546,20 +546,28 @@ enum ClothingCategory {
   swimwear
 }
 
+enum WardrobeSection {
+  saved_outfit
+  wishlisted
+  purchased
+}
+
 model Favorite {
-  id        String   @id @default(uuid())
+  id        String         @id @default(uuid())
   userId    String
   itemId    String
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item      ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  
-  createdAt DateTime @default(now())
+  section   WardrobeSection @default(wishlisted)
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      ClothingItem   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime       @default(now())
 
   @@unique([userId, itemId])
   @@index([userId])
   @@index([itemId])
   @@index([createdAt(sort: Desc)])
+  @@index([userId, section])
 }
 
 model VirtualTryOn {

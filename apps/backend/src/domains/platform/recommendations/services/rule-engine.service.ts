@@ -656,6 +656,7 @@ export class RuleEngineService implements OnModuleInit {
   /**
    * Produce degraded recommendations when the AI pipeline is unavailable.
    * Uses weather + season + scene templates to generate hardcoded outfit suggestions.
+   * Template system covers 4 seasons x 3 occasions = 12 minimum combinations.
    * Returns pre-built recommendations with explanations.
    */
   async getDegradedRecommendations(params: {
@@ -676,72 +677,178 @@ export class RuleEngineService implements OnModuleInit {
     const season = params.season || "spring";
     const occasion = params.occasion || "daily";
 
-    // Season -> hardcoded outfit template categories
-    const seasonTemplates: Record<string, string[]> = {
-      spring: ["tops", "bottoms", "outerwear"],
-      summer: ["tops", "bottoms"],
-      autumn: ["tops", "bottoms", "outerwear"],
-      winter: ["outerwear", "tops", "bottoms"],
-    };
-
-    // Occasion -> style filter
-    const occasionStyles: Record<string, string[]> = {
-      interview: ["formal", "classic", "business"],
-      date: ["elegant", "romantic"],
-      daily: ["casual", "smart-casual"],
-      work: ["business", "smart-casual"],
-      party: ["trendy", "elegant"],
-      workout: ["sporty", "athletic"],
-      travel: ["casual", "comfortable"],
-    };
-
-    const categories = seasonTemplates[season] || seasonTemplates["spring"];
-    const styles = occasionStyles[occasion] || occasionStyles["daily"];
-
-    // Fetch popular items matching categories and styles
-    const items = await this.prismaService.clothingItem.findMany({
-      where: {
-        isActive: true,
-        OR: [{ tags: { hasSome: styles } }, { tags: { hasSome: categories } }],
+    // Outfit templates: season x occasion -> named outfit pieces with category + tag hints
+    const outfitTemplates: Record<
+      string,
+      Record<string, Array<{ name: string; category: string; tags: string[] }>>
+    > = {
+      spring: {
+        daily: [
+          { name: "薄款针织衫", category: "tops", tags: ["针织", "休闲"] },
+          { name: "高腰直筒牛仔裤", category: "bottoms", tags: ["牛仔裤", "高腰"] },
+          { name: "乐福鞋", category: "footwear", tags: ["乐福鞋", "休闲"] },
+          { name: "链条包", category: "accessories", tags: ["链条包", "百搭"] },
+        ],
+        interview: [
+          { name: "白色衬衫", category: "tops", tags: ["衬衫", "通勤", "白色"] },
+          { name: "西装阔腿裤", category: "bottoms", tags: ["西装裤", "通勤", "高腰"] },
+          { name: "尖头高跟鞋", category: "footwear", tags: ["高跟鞋", "通勤"] },
+          { name: "极简手表", category: "accessories", tags: ["手表", "极简"] },
+        ],
+        date: [
+          { name: "法式方领衬衫", category: "tops", tags: ["法式", "方领", "泡泡袖"] },
+          { name: "百褶中长裙", category: "bottoms", tags: ["百褶裙", "优雅"] },
+          { name: "穆勒鞋", category: "footwear", tags: ["穆勒鞋", "春夏"] },
+          { name: "丝巾", category: "accessories", tags: ["丝巾", "优雅"] },
+        ],
       },
-      orderBy: { viewCount: "desc" },
-      take: limit,
-      select: { id: true, viewCount: true },
-    });
+      summer: {
+        daily: [
+          { name: "短袖T恤", category: "tops", tags: ["短袖", "休闲"] },
+          { name: "短裤", category: "bottoms", tags: ["短裤", "休闲", "夏日"] },
+          { name: "帆布鞋", category: "footwear", tags: ["运动鞋", "休闲"] },
+          { name: "墨镜", category: "accessories", tags: ["墨镜", "夏日"] },
+        ],
+        interview: [
+          { name: "真丝衬衫", category: "tops", tags: ["真丝", "通勤", "V领"] },
+          { name: "西装九分裤", category: "bottoms", tags: ["西装裤", "通勤"] },
+          { name: "尖头高跟鞋", category: "footwear", tags: ["高跟鞋", "通勤"] },
+          { name: "链条包", category: "accessories", tags: ["链条包", "通勤"] },
+        ],
+        date: [
+          { name: "碎花连衣裙", category: "dresses", tags: ["碎花", "雪纺", "约会"] },
+          { name: "穆勒鞋", category: "footwear", tags: ["穆勒鞋", "春夏"] },
+          { name: "珍珠耳环", category: "accessories", tags: ["耳环", "珍珠"] },
+        ],
+      },
+      autumn: {
+        daily: [
+          { name: "条纹长袖T恤", category: "tops", tags: ["条纹", "休闲", "长袖"] },
+          { name: "工装裤", category: "bottoms", tags: ["工装裤", "休闲"] },
+          { name: "运动鞋", category: "footwear", tags: ["运动鞋", "休闲"] },
+          { name: "针织开衫", category: "outerwear", tags: ["针织开衫", "春秋"] },
+        ],
+        interview: [
+          { name: "修身西装外套", category: "outerwear", tags: ["西装", "职场", "修身"] },
+          { name: "白色衬衫", category: "tops", tags: ["衬衫", "通勤", "白色"] },
+          { name: "羊毛西裤", category: "bottoms", tags: ["西裤", "商务"] },
+          { name: "乐福鞋", category: "footwear", tags: ["乐福鞋", "通勤"] },
+        ],
+        date: [
+          { name: "针织裙", category: "dresses", tags: ["针织裙", "极简", "约会"] },
+          { name: "风衣", category: "outerwear", tags: ["风衣", "英伦"] },
+          { name: "短靴", category: "footwear", tags: ["短靴", "秋冬"] },
+          { name: "丝巾", category: "accessories", tags: ["丝巾", "优雅"] },
+        ],
+      },
+      winter: {
+        daily: [
+          { name: "高领羊绒毛衣", category: "tops", tags: ["羊绒", "高领", "保暖"] },
+          { name: "弹力修身裤", category: "bottoms", tags: ["修身", "显瘦"] },
+          { name: "羽绒服", category: "outerwear", tags: ["羽绒服", "保暖"] },
+          { name: "短靴", category: "footwear", tags: ["短靴", "秋冬"] },
+        ],
+        interview: [
+          { name: "深色西装外套", category: "outerwear", tags: ["西装", "职场"] },
+          { name: "白色衬衫", category: "tops", tags: ["衬衫", "通勤", "白色"] },
+          { name: "黑色西裤", category: "bottoms", tags: ["西裤", "商务"] },
+          { name: "牛津鞋", category: "footwear", tags: ["乐福鞋", "通勤"] },
+        ],
+        date: [
+          { name: "小黑裙", category: "dresses", tags: ["小黑裙", "经典", "约会"] },
+          { name: "羊毛大衣", category: "outerwear", tags: ["羊毛大衣", "秋冬"] },
+          { name: "高跟鞋", category: "footwear", tags: ["高跟鞋", "优雅"] },
+          { name: "珍珠耳环", category: "accessories", tags: ["耳环", "珍珠"] },
+        ],
+      },
+    };
 
-    if (items.length === 0) {
-      // Fallback to all popular items if no category/style match
-      const fallbackItems = await this.prismaService.clothingItem.findMany({
-        where: { isActive: true },
-        orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
-        take: limit,
+    // Look up the template for this season x occasion
+    const seasonTemplates = outfitTemplates[season] ?? outfitTemplates["spring"] ?? {};
+    const template = seasonTemplates[occasion] ?? seasonTemplates["daily"] ?? [];
+
+    // Try to find real items matching each template slot
+    const results: Array<{
+      itemId: string;
+      score: number;
+      reason: string;
+      strategy: string;
+      explanation: { why: string; alternative: string; nextAction: string; confidence: number };
+    }> = [];
+
+    for (const slot of template) {
+      const item = await this.prismaService.clothingItem.findFirst({
+        where: {
+          isActive: true,
+          OR: [{ tags: { hasSome: slot.tags } }, { name: { contains: slot.name.slice(0, 3) } }],
+        },
+        orderBy: { viewCount: "desc" },
         select: { id: true },
       });
 
-      return fallbackItems.map((item, index) => ({
-        itemId: item.id,
-        score: 50 + (fallbackItems.length - index),
-        reason: `热门推荐（${season}/${occasion}）`,
-        strategy: "degraded",
-        explanation: {
-          why: "为你推荐的热门单品",
-          alternative: "可以浏览更多分类",
-          nextAction: "查看详情",
-          confidence: 0.4,
-        },
-      }));
+      if (item) {
+        results.push({
+          itemId: item.id,
+          score: 65,
+          reason: `经典${season}${occasion}搭配：${slot.name}`,
+          strategy: "degraded",
+          explanation: {
+            why: `基于${season}季节${occasion}场景的搭配建议（AI 暂时不可用，使用经典模板）`,
+            alternative: "可以浏览更多分类查看更多选择",
+            nextAction: "查看详情",
+            confidence: 0.5,
+          },
+        });
+      }
     }
 
-    return items.map((item, index) => ({
+    // If template matching found items, return them
+    if (results.length > 0) {
+      // Fill remaining slots with popular items if under limit
+      if (results.length < limit) {
+        const existingIds = new Set(results.map((r) => r.itemId));
+        const filler = await this.prismaService.clothingItem.findMany({
+          where: { isActive: true, id: { notIn: [...existingIds] } },
+          orderBy: { viewCount: "desc" },
+          take: limit - results.length,
+          select: { id: true },
+        });
+        for (const item of filler) {
+          results.push({
+            itemId: item.id,
+            score: 55,
+            reason: `热门推荐（${season}/${occasion}）`,
+            strategy: "degraded",
+            explanation: {
+              why: `基于${season}季节${occasion}场景的搭配建议（AI 暂时不可用，使用经典模板）`,
+              alternative: "可以浏览更多分类查看更多选择",
+              nextAction: "查看详情",
+              confidence: 0.45,
+            },
+          });
+        }
+      }
+      return results.slice(0, limit);
+    }
+
+    // Fallback to all popular items if no template match found
+    const fallbackItems = await this.prismaService.clothingItem.findMany({
+      where: { isActive: true },
+      orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
+      take: limit,
+      select: { id: true },
+    });
+
+    return fallbackItems.map((item, index) => ({
       itemId: item.id,
-      score: 60 + Math.min(items.length - index, 20),
-      reason: `适合${season}季节${occasion}场合`,
+      score: 50 + (fallbackItems.length - index),
+      reason: `热门推荐（${season}/${occasion}）`,
       strategy: "degraded",
       explanation: {
-        why: `基于${season}季节和${occasion}场景的推荐`,
-        alternative: "可以尝试更多风格",
+        why: `基于${season}季节${occasion}场景的搭配建议（AI 暂时不可用，使用经典模板）`,
+        alternative: "可以浏览更多分类查看更多选择",
         nextAction: "查看详情",
-        confidence: 0.5,
+        confidence: 0.4,
       },
     }));
   }

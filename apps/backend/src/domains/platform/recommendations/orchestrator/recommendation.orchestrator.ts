@@ -363,9 +363,69 @@ export class RecommendationOrchestrator {
 
   /**
    * Get complete-the-look outfit suggestions (delegates to OutfitCompletionService)
+   * Wrapped to return standardized RecommendationOutput.
    */
-  async getCompleteTheLook(clothingId: string, userId: string): Promise<unknown> {
-    return this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
+  async getCompleteTheLook(clothingId: string, userId: string): Promise<RecommendationOutput> {
+    const completion = await this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
+
+    // Convert anchor item to RecommendationOutputItem
+    const anchorItem: RecommendationOutputItem = {
+      id: completion.anchor.id,
+      name: completion.anchor.name,
+      imageUrl: completion.anchor.imageUrl,
+      category: completion.anchor.category,
+      price: completion.anchor.price,
+      score: 100,
+      explanation: {
+        why: "你选择的单品",
+        alternative: "也可以换一件基础款试试",
+        nextAction: "查看搭配建议",
+        confidence: 1.0,
+      },
+    };
+
+    // Flatten all suggestions into RecommendationOutputItem[]
+    const allSuggestions = [
+      ...completion.suggestions.top,
+      ...completion.suggestions.bottom,
+      ...completion.suggestions.shoes,
+      ...completion.suggestions.accessories,
+    ];
+
+    const suggestionItems: RecommendationOutputItem[] = allSuggestions.map((s) => ({
+      id: s.id,
+      name: s.name,
+      imageUrl: s.imageUrl,
+      category: "",
+      price: s.price,
+      score: s.matchScore,
+      explanation: {
+        why: s.reason,
+        alternative: "查看更多搭配选项",
+        nextAction: "试穿看看效果",
+        confidence: Math.min(1, s.matchScore / 100),
+      },
+    }));
+
+    const allItems = [anchorItem, ...suggestionItems];
+    const experimentId = this.generateExperimentId();
+
+    return {
+      items: allItems,
+      outfit: {
+        name: `${completion.anchor.name}的完整搭配`,
+        description: completion.harmonyDescription,
+        items: suggestionItems,
+      },
+      explanation: {
+        why: `基于你选择的${completion.anchor.category}，推荐${allSuggestions.length}件搭配单品`,
+        alternative: "可以浏览更多风格",
+        nextAction: "试穿看看整体效果",
+        confidence: Math.min(1, completion.harmonyScore / 100),
+      },
+      experimentId,
+      degraded: false,
+    };
   }
 
   /**
@@ -1190,31 +1250,45 @@ export class RecommendationOrchestrator {
 
     const experimentId = this.generateExperimentId();
 
-    return degradedRecs.map((rec) => ({
-      item: {
-        id: rec.itemId,
-        name: "",
-        price: 0,
-        category: "",
-        images: [],
-        brand: null,
-      },
-      score: rec.score,
-      sources: ["degraded-rule-engine"],
-      reasons: [rec.reason],
-      experimentId,
-      explanation: rec.explanation,
-      breakdown: {
-        totalCandidates: degradedRecs.length,
-        afterSceneFilter: degradedRecs.length,
-        afterSizeFilter: degradedRecs.length,
-        afterBudgetFilter: degradedRecs.length,
-        ruleScore: rec.score,
-        vectorScore: 0,
-        preferenceScore: 0,
-        finalScore: rec.score,
-      },
-    }));
+    // Fetch full ClothingItem records to populate name, price, category, images, brand
+    const itemIds = degradedRecs.map((rec) => rec.itemId);
+    const fullItems = await this.prisma.clothingItem.findMany({
+      where: { id: { in: itemIds } },
+      include: { brand: { select: { id: true, name: true, logo: true } } },
+    });
+    const itemMap = new Map(fullItems.map((i) => [i.id, i]));
+
+    return degradedRecs.map((rec) => {
+      const fullItem = itemMap.get(rec.itemId);
+
+      return {
+        item: {
+          id: rec.itemId,
+          name: fullItem?.name ?? "",
+          price: fullItem ? Number(fullItem.price) : 0,
+          category: fullItem ? String(fullItem.category) : "",
+          images: fullItem ? (fullItem.images as string[]) : [],
+          brand: fullItem?.brand
+            ? { id: fullItem.brand.id, name: fullItem.brand.name, logo: fullItem.brand.logo }
+            : null,
+        },
+        score: rec.score,
+        sources: ["degraded-rule-engine"],
+        reasons: [rec.reason],
+        experimentId,
+        explanation: rec.explanation,
+        breakdown: {
+          totalCandidates: degradedRecs.length,
+          afterSceneFilter: degradedRecs.length,
+          afterSizeFilter: degradedRecs.length,
+          afterBudgetFilter: degradedRecs.length,
+          ruleScore: rec.score,
+          vectorScore: 0,
+          preferenceScore: 0,
+          finalScore: rec.score,
+        },
+      };
+    });
   }
 
   private async isColdStartUser(userId: string): Promise<boolean> {
