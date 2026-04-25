@@ -10,7 +10,7 @@ class QdrantConfig:
     host: str = "localhost"
     port: int = 6333
     collection_name: str = "fashion_knowledge"
-    embedding_dim: int = 512
+    embedding_dim: int = 1152
     api_key: Optional[str] = None
 
 

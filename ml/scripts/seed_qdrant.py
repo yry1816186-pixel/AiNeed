@@ -1,7 +1,8 @@
 """
 将Mock商品数据灌入Qdrant
-使用FashionCLIP生成嵌入
+使用FashionSigLIP生成嵌入
 """
+import argparse
 import json
 import sys
 import os
@@ -21,12 +22,14 @@ def load_mock_products():
     raise FileNotFoundError(f"Mock products file not found: {products_path}")
 
 
-def seed():
-    print("Loading FashionCLIP model...")
-    embedding_service = EmbeddingService()
+def seed(batch_size: int = 100):
+    print("Loading FashionSigLIP model...")
+    embedding_config = EmbeddingConfig(dimension=1152)
+    embedding_service = EmbeddingService(config=embedding_config)
 
     print("Connecting to Qdrant...")
-    vector_store = QdrantVectorStore()
+    qdrant_config = QdrantConfig(embedding_dim=1152)
+    vector_store = QdrantVectorStore(config=qdrant_config)
 
     print("Loading mock products...")
     products = load_mock_products()
@@ -37,14 +40,15 @@ def seed():
         for p in products
     ]
 
-    print("Generating embeddings with FashionCLIP...")
-    batch_size = 32
+    total_batches = (len(texts) + batch_size - 1) // batch_size
+    print(f"Generating embeddings with FashionSigLIP ({total_batches} batches, batch_size={batch_size})...")
     all_embeddings = []
     for i in range(0, len(texts), batch_size):
         batch = texts[i:i + batch_size]
         embeddings = embedding_service.encode_text(batch)
         all_embeddings.extend(embeddings)
-        print(f"  Embedded {min(i + batch_size, len(texts))}/{len(texts)}")
+        batch_num = i // batch_size + 1
+        print(f"  Encoding batch {batch_num}/{total_batches}... ({min(i + batch_size, len(texts))}/{len(texts)})")
 
     print("Upserting to Qdrant...")
     docs = [
@@ -80,4 +84,7 @@ def seed():
 
 
 if __name__ == "__main__":
-    seed()
+    parser = argparse.ArgumentParser(description="Seed Qdrant with mock products using FashionSigLIP")
+    parser.add_argument("--batch-size", type=int, default=100, help="Batch size for embedding generation (default: 100)")
+    args = parser.parse_args()
+    seed(batch_size=args.batch_size)

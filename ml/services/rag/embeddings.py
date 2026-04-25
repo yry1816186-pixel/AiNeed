@@ -15,7 +15,7 @@ def _resolve_default_model() -> str:
     if _CHINESE_FASHION_CLIP_PATH.exists() and (_CHINESE_FASHION_CLIP_PATH / "config.json").exists():
         logger.info(f"Auto-detected ChineseFashionCLIP at {_CHINESE_FASHION_CLIP_PATH}")
         return str(_CHINESE_FASHION_CLIP_PATH)
-    return "patrickjohncyh/fashion-clip"
+    return "marqo/fashionSigLIP"
 
 
 _DEFAULT_MODEL = _resolve_default_model()
@@ -24,7 +24,7 @@ _DEFAULT_MODEL = _resolve_default_model()
 @dataclass
 class EmbeddingConfig:
     model_name: str = ""
-    dimension: int = 512
+    dimension: int = 1152
     batch_size: int = 32
     device: str = "auto"
     normalize: bool = True
@@ -35,7 +35,7 @@ class EmbeddingConfig:
 
 
 class EmbeddingService:
-    def __init__(self, model_name: str = "", config: Optional[EmbeddingConfig] = None, model_type: str = "fashion_clip"):
+    def __init__(self, model_name: str = "", config: Optional[EmbeddingConfig] = None, model_type: str = "fashion_siglip"):
         self.config = config or EmbeddingConfig(model_name=model_name)
         if not self.config.model_name:
             self.config.model_name = _DEFAULT_MODEL
@@ -50,26 +50,28 @@ class EmbeddingService:
         model_display = self.config.model_name
         if "chinese-fashion-clip" in model_display:
             model_display = f"ChineseFashionCLIP ({model_display})"
+        elif "fashionSigLIP" in model_display:
+            model_display = f"FashionSigLIP ({model_display})"
         logger.info(f"EmbeddingService initialized with model={model_display}, device={self.config.device}")
 
     def _load_model(self):
         if self._model is None:
             try:
-                from transformers import CLIPModel, CLIPProcessor
+                from transformers import SiglipModel, SiglipProcessor
                 import torch
-                self._model = CLIPModel.from_pretrained(self.config.model_name)
-                self._processor = CLIPProcessor.from_pretrained(self.config.model_name)
+                self._model = SiglipModel.from_pretrained(self.config.model_name)
+                self._processor = SiglipProcessor.from_pretrained(self.config.model_name)
                 self._model.to(self.config.device)
                 self._model.eval()
-                model_label = "ChineseFashionCLIP" if "chinese-fashion-clip" in self.config.model_name else "FashionCLIP"
+                model_label = "ChineseFashionCLIP" if "chinese-fashion-clip" in self.config.model_name else "FashionSigLIP"
                 logger.info(f"{model_label} loaded on {self.config.device}")
             except ImportError as e:
                 raise RuntimeError(
-                    f"FashionCLIP dependencies not available: {e}. "
-                    f"Install: pip install transformers torch"
+                    f"FashionSigLIP dependencies not available: {e}. "
+                    f"Install: pip install transformers torch peft"
                 )
             except Exception as e:
-                raise RuntimeError(f"Failed to load FashionCLIP model: {e}")
+                raise RuntimeError(f"Failed to load FashionSigLIP model: {e}")
 
     def encode_text(self, texts: List[str]) -> List[List[float]]:
         self._load_model()
@@ -77,9 +79,10 @@ class EmbeddingService:
         inputs = self._processor(text=texts, return_tensors="pt", padding=True, truncation=True)
         inputs = {k: v.to(self.config.device) for k, v in inputs.items()}
         with torch.no_grad():
-            features = self._model.get_text_features(**inputs)
-        features = features / features.norm(dim=-1, keepdim=True)
-        return features.cpu().tolist()
+            outputs = self._model.text_model(**inputs)
+            embedding = outputs.last_hidden_state[:, 0, :]
+        embedding = embedding / embedding.norm(dim=-1, keepdim=True)
+        return embedding.cpu().tolist()
 
     def encode_image(self, images: Union[List[str], List]) -> List[List[float]]:
         self._load_model()
@@ -90,9 +93,10 @@ class EmbeddingService:
         inputs = self._processor(images=images, return_tensors="pt", padding=True)
         inputs = {k: v.to(self.config.device) for k, v in inputs.items()}
         with torch.no_grad():
-            features = self._model.get_image_features(**inputs)
-        features = features / features.norm(dim=-1, keepdim=True)
-        return features.cpu().tolist()
+            outputs = self._model.vision_model(**inputs)
+            embedding = outputs.last_hidden_state[:, 0, :]
+        embedding = embedding / embedding.norm(dim=-1, keepdim=True)
+        return embedding.cpu().tolist()
 
     def encode(self, texts: List[str], batch_size: int = None) -> List[List[float]]:
         return self.encode_text(texts)

@@ -31,7 +31,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(QdrantService.name);
   private client: QdrantClient | null = null;
   private readonly collectionName: string;
-  private readonly vectorDimension = 512;
+  private readonly vectorDimension = 1152;
   private isConnected = false;
   private readonly mlServiceUrl: string;
 
@@ -305,7 +305,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
     return this.isConnected;
   }
 
-  async ensureCollection(name: string, vectorSize: number = 512): Promise<void> {
+  async ensureCollection(name: string, vectorSize: number = 1152): Promise<void> {
     if (!this.client) {
       return;
     }
@@ -335,5 +335,72 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
       vector,
       payload: metadata,
     });
+  }
+
+  /**
+   * Rebuild the Qdrant collection: drop existing and recreate with 1152-dim vectors.
+   * WARNING: All existing vectors in the collection will be lost.
+   */
+  async rebuildCollection(): Promise<void> {
+    if (!this.client) {
+      throw new Error("Qdrant is not connected. Cannot rebuild collection.");
+    }
+
+    try {
+      this.logger.warn(
+        `Rebuilding collection: ${this.collectionName} — all existing vectors will be lost.`
+      );
+
+      // Drop existing collection
+      await this.dropCollection(this.collectionName);
+
+      // Recreate with current vector dimension
+      await this.initializeCollection();
+
+      this.logger.log(
+        `Collection ${this.collectionName} rebuilt successfully with ${this.vectorDimension}-dim vectors.`
+      );
+    } catch (error) {
+      this.logger.error(`Failed to rebuild collection: ${error}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Drop a Qdrant collection by name.
+   */
+  async dropCollection(name: string): Promise<void> {
+    if (!this.client) {
+      throw new Error("Qdrant is not connected. Cannot drop collection.");
+    }
+
+    try {
+      await this.client.deleteCollection(name);
+      this.logger.log(`Dropped Qdrant collection: ${name}`);
+    } catch (error) {
+      this.logger.error(`Failed to drop collection ${name}: ${error}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get collection info: vector count, dimension, and status.
+   */
+  async getCollectionInfo(): Promise<{ vectorCount: number; dimension: number; status: string }> {
+    if (!this.client) {
+      return { vectorCount: 0, dimension: this.vectorDimension, status: "disconnected" };
+    }
+
+    try {
+      const info = await this.client.getCollection(this.collectionName);
+      return {
+        vectorCount: info.points_count || 0,
+        dimension: this.vectorDimension,
+        status: info.status || "unknown",
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get collection info: ${error}`);
+      return { vectorCount: 0, dimension: this.vectorDimension, status: "error" };
+    }
   }
 }

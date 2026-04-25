@@ -6,6 +6,7 @@ opencv-python>=4.8.0,<5.0.0
 
 # ML Models
 transformers>=4.30.0,<5.0.0
+peft>=0.10.0
 
 # Optional: only for local inference (SASRec training with backpropagation)
 # Uncomment if you need PyTorch-based training
