@@ -7,6 +7,7 @@ import { secureStorage, SECURE_STORAGE_KEYS } from "../../utils/secureStorage";
 import { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from "../../types";
 import { AuthTokens } from "../../types/user";
 import { AppError, AppErrorCode, classifyAxiosError } from "./error";
+import { usageEventEmitter } from "../../shared/utils/usageEventEmitter";
 
 const API_URL = requireMobileUrl(mobileRuntimeConfig.apiUrl, "API_URL");
 const USER_KEY = "user_data";
@@ -154,12 +155,44 @@ class ApiClient {
         if (__DEV__) {
           logger.debug(`[API] ${response.status} ${response.config.url}`);
         }
+
+        // D-05: Progressive usage hint -- read X-Usage-* headers
+        const usageRemaining = response.headers["x-usage-remaining"];
+        const usageLimit = response.headers["x-usage-limit"];
+        if (usageLimit && usageRemaining && parseInt(String(usageLimit), 10) > 0) {
+          const limit = parseInt(String(usageLimit), 10);
+          const remaining = parseInt(String(usageRemaining), 10);
+          const usagePercent = (limit - remaining) / limit;
+          if (usagePercent >= 0.8 && remaining > 0) {
+            // 80% progressive hint -- emit event for toast
+            usageEventEmitter.emit("usage:progressive", { limit, remaining });
+          } else if (remaining === 0) {
+            // 100% -- emit event for BottomSheet
+            usageEventEmitter.emit("usage:exceeded", { limit, remaining });
+          }
+        }
+
         return response;
       },
       async (error: AxiosError<ApiError>) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
           _retry?: boolean;
         };
+
+        // D-04: Handle 429 Usage Limit Exceeded
+        if (error.response?.status === 429) {
+          const data = error.response.data as Record<string, unknown> | undefined;
+          if (data) {
+            usageEventEmitter.emit("usage:exceeded", {
+              limit: (data.limit as number) ?? 0,
+              remaining: 0,
+              actionType: (data.actionType as string) ?? undefined,
+            });
+          } else {
+            usageEventEmitter.emit("usage:exceeded", { limit: 0, remaining: 0 });
+          }
+          return Promise.reject(error);
+        }
 
         if (error.response?.status !== 401) {
           return Promise.reject(error);
