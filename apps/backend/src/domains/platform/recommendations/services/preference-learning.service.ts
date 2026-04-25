@@ -5,6 +5,9 @@ import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
 import { BehaviorEventType } from "../../../../types/prisma-enums";
 
+/** Python preference model service base URL (configurable via env) */
+const PREFERENCE_MODEL_URL = process.env.PREFERENCE_MODEL_URL || "http://localhost:8100";
+
 export interface UserPreference {
   category: string;
   key: string;
@@ -398,5 +401,125 @@ export class PreferenceLearningService {
     }
 
     return scores;
+  }
+
+  /**
+   * Get preference score from the Python dual-tower preference model.
+   * Falls back to weight-based scoring if the Python service is unavailable.
+   *
+   * @param userId - User ID
+   * @param itemId - Item ID to score
+   * @returns Preference score between 0 and 1
+   */
+  async getPreferenceScore(userId: string, itemId: string): Promise<number> {
+    try {
+      // Fetch user profile for model input features
+      const profile = await this.prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      // Fetch item for model input features
+      const item = await this.prisma.clothingItem.findUnique({
+        where: { id: itemId },
+        include: { brand: true },
+      });
+
+      if (!profile || !item) {
+        return this.fallbackPreferenceScore(userId, itemId);
+      }
+
+      // Build request payload for Python preference model
+      const payload = {
+        userId,
+        itemId,
+        bodyType: (profile.bodyType as string) || "hourglass",
+        styleExpression:
+          Array.isArray(profile.stylePreferences) && profile.stylePreferences.length > 0
+            ? String(
+                (profile.stylePreferences as Array<Record<string, unknown>>)[0]?.name ||
+                  "minimalist"
+              )
+            : "minimalist",
+        budget: this.inferBudgetLevel(
+          typeof profile.priceRangeMin === "number" ? profile.priceRangeMin : undefined,
+          typeof profile.priceRangeMax === "number" ? profile.priceRangeMax : undefined
+        ),
+        scenario: "daily",
+        category: String(item.category || "tops").toLowerCase(),
+        price: Number(item.price) || 200,
+      };
+
+      // Call Python /preference/predict endpoint
+      const response = await fetch(`${PREFERENCE_MODEL_URL}/preference/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(3000), // 3s timeout
+      });
+
+      if (!response.ok) {
+        this.logger.debug(
+          `Preference model returned ${response.status}, falling back to weight-based scoring`
+        );
+        return this.fallbackPreferenceScore(userId, itemId);
+      }
+
+      const result = (await response.json()) as { score: number };
+      return Math.min(1, Math.max(0, result.score));
+    } catch (error) {
+      this.logger.debug(
+        `Python preference model unavailable, using fallback: ${
+          error instanceof Error ? error.message : "unknown"
+        }`
+      );
+      return this.fallbackPreferenceScore(userId, itemId);
+    }
+  }
+
+  /**
+   * Fallback preference score using existing weight-based scoring.
+   */
+  private async fallbackPreferenceScore(userId: string, itemId: string): Promise<number> {
+    const item = await this.prisma.clothingItem.findUnique({
+      where: { id: itemId },
+    });
+
+    if (!item) {
+      return 0.5;
+    }
+
+    const scores = await this.getPersonalizedScores(userId, [
+      {
+        id: item.id,
+        category: String(item.category),
+        colors: (item.colors as string[]) || [],
+        attributes: item.attributes as Record<string, unknown> | null,
+      },
+    ]);
+
+    const score = scores.get(itemId) ?? 50;
+    // Normalize from 0-100 range to 0-1
+    return score / 100;
+  }
+
+  /**
+   * Infer budget level from user price range preferences.
+   */
+  private inferBudgetLevel(min?: number, max?: number): string {
+    const avg = min !== undefined && max !== undefined ? (min + max) / 2 : max ?? min ?? 500;
+
+    if (avg < 100) {
+      return "budget";
+    }
+    if (avg < 300) {
+      return "affordable";
+    }
+    if (avg < 800) {
+      return "mid-range";
+    }
+    if (avg < 2000) {
+      return "premium";
+    }
+    return "luxury";
   }
 }
