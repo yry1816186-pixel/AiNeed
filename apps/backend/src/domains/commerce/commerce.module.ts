@@ -13,10 +13,11 @@ import { PaymentModule } from "./payment/payment.module";
 import { RefundRequestModule } from "./refund-request/refund-request.module";
 import { SizeRecommendationModule } from "./size-recommendation/size-recommendation.module";
 import { SubscriptionModule } from "./subscription/subscription.module";
+import { UsageLimitModule } from "./usage-limit/usage-limit.module";
 import { JDClientService } from "./services/jd-client.service";
 import { ProductSyncService } from "./services/product-sync.service";
 import { TaobaoClientService } from "./services/taobao-client.service";
-import { SYNC_QUEUE , SyncSchedulerService } from "./sync/sync-scheduler.service";
+import { SYNC_QUEUE, SyncSchedulerService } from "./sync/sync-scheduler.service";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SYNC_QUEUE , SyncSchedulerService } from "./sync/sync-scheduler.service
     PaymentModule,
     RefundRequestModule,
     SubscriptionModule,
+    UsageLimitModule,
     AddressModule,
     SizeRecommendationModule,
     // Dependencies for data pipeline
@@ -53,6 +55,7 @@ import { SYNC_QUEUE , SyncSchedulerService } from "./sync/sync-scheduler.service
     PaymentModule,
     RefundRequestModule,
     SubscriptionModule,
+    UsageLimitModule,
     AddressModule,
     SizeRecommendationModule,
     // Export data pipeline services for use in other domains
