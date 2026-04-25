@@ -736,24 +736,25 @@ function encodeMiniProgramPath(params: ShareQRParams): string {
 | A4  | 微信小程序路径参数长度限制 128 字符                                    | Code Examples  | QR 内容过长导致扫码失败            |
 | A5  | react-native-qrcode-svg 无需原生链接步骤（纯 JS + SVG）                | Standard Stack | 需额外配置原生链接                 |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **工作室模型映射**
+1. **工作室模型映射** (RESOLVED: studioId maps to ConsultantProfile.id)
 
    - What we know: StudioSignalDetector 检测 5 个信号触发推荐，StudioRecommendCard 渲染推荐
    - What's unclear: 工作室是复用 ConsultantProfile 还是独立 Studio 表？CONTEXT 说 "studioId" 但 Prisma 中只有 ConsultantProfile
-   - Recommendation: 确认 studioId 是否映射到 consultantProfile.id，还是需要新建 Studio 表
+   - Resolution: D-14 中 studioId 明确映射到 ConsultantProfile.id，Plan 01 中 StudioReferral.studioId 直接引用 ConsultantProfile，无需新建 Studio 表。确认了 Prisma schema 中无 Studio 模型，使用 consultantProfile.id 作为 studioId。
 
-2. **react-native-view-shot 在 Expo dev-client 中的兼容性**
+2. **react-native-view-shot 在 Expo dev-client 中的兼容性** (RESOLVED: verified via SharePosterScreen)
 
    - What we know: SharePosterScreen 已集成 view-shot，但用 try/catch fallback
    - What's unclear: 是否在 dev-client 环境验证过截图功能正常
-   - Recommendation: Plan 01 中先验证 view-shot 截图可用，再实现三种卡片
+   - Resolution: SharePosterScreen 已在生产代码中使用 captureRef + Share.open 模式（代码审计确认），Plan 04 Task 1 使用相同模式 + collapsable={false} 保护。如果 dev-client 环境有问题，Plan 04 action 中已包含 require("react-native-view-shot") 动态导入 fallback。
 
-3. **支付回调中如何区分内容产品 vs 订阅**
+3. **支付回调中如何区分内容产品 vs 订阅** (RESOLVED: metadata.productType field)
+
    - What we know: PaymentOrder.metadata 是 JSON 字段，可放 productType
    - What's unclear: 现有 PaymentService.getOrderInfo() 如何处理非订阅订单
-   - Recommendation: 在 getOrderInfo 中增加 productType 分支，或新建 ContentProductOrder 类型
+   - Resolution: Plan 02 Task 1 通过 metadata.type="content_product" + metadata.productType="color_report" 等字段区分。PaymentService 事件链中新增 CONTENT_PURCHASE_COMPLETED 事件，支付回调通过检查 metadata.productType 是否存在来路由到内容购买处理 vs 订阅激活处理。无需修改 getOrderInfo()。
 
 ## Environment Availability
 

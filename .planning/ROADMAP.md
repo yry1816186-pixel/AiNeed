@@ -12,7 +12,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 
 - [x] **Phase 1: Foundation + TS Cleanup + Visual Base** - Zero compile errors, data schema enriched, gender demoted, visual system initialized, FashionSigLIP visualization component ✓ 2026-04-24
 - [x] **Phase 2: Pipeline + Cold Start + Curated Wardrobe** - Recommendation pipeline single entry, cold start refactored, mock data seeded, curated wardrobe model, A/B experiment ID ✓ 2026-04-24
-- [x] **Phase 3: Navigation + Core Screens + Calendar** - 4-tab navigation, Today Screen with Yiyi proactive push, Discover Screen with curation space, simplified 7-day calendar ✓ 2026-04-24
+- [x] **Phase 3: Navigation + Core Screens + Calendar** - 4-tab navigation, Today Screen with Yiyi proactive push, Discover with curation space, simplified 7-day calendar ✓ 2026-04-24
 - [x] **Phase 4: Yiyi Agent + Voice + Onboarding + Studio** - Agent state machine, interview outfit dialog, voice button, Edge-TTS, new 4-step onboarding, studio smart recommendation ✓ 2026-04-25
 - [x] **Phase 5: E2E Integration + Competition Demo** - Full flow test, visual consistency, competition-specific demo path, tech depth showcase ✓ 2026-04-25
 
@@ -160,7 +160,16 @@ Plans:
 6. Users provide separate consent for each sensitive data category
 7. All API traffic TLS-terminated, no exposed ports, no plaintext API keys
 8. Software copyright filed, trademark applications for "寻裳" and "伊伊" submitted
-   **Plans**: TBD
+   **Plans**: 6 plans
+
+Plans:
+
+- [x] 06-01-PLAN.md — FashionSigLIP Hard Replace + Qdrant Rebuild (MOD-01, DAT-04) ✓ 2026-04-25
+- [x] 06-02-PLAN.md — SASRec Pipeline + 6-Layer Funnel + Mixed Explanation (RAD-01, RAD-02, RAD-04) ✓ 2026-04-25
+- [x] 06-03-PLAN.md — Chinese Fine-tune + Bias Audit + Preference Model (MOD-02, MOD-03, RAD-03, DAT-05) ✓ 2026-04-25
+- [x] 06-04-PLAN.md — Data Pipeline E-commerce APIs + Sync Schedule (DAT-01, DAT-02, DAT-03) ✓ 2026-04-25
+- [x] 06-05-PLAN.md — PIPL Compliance + Software Copyright + Algorithm Registration (CMP-01~05) ✓ 2026-04-25
+- [x] 06-06-PLAN.md — Security Hardening - Nginx+TLS+Port+API Keys+Proxy (SEC-01~04) ✓ 2026-04-25
 
 ### Phase 7: Data Flywheel + Calendar Full + Advanced Rec
 
@@ -207,7 +216,7 @@ Plans:
 
 ### Phase 9: Monetization + Community + Sharing
 
-**Goal**: Free tier limits enforced, content products purchasable, share seed features drive viral growth, studio commission operational
+**Goal**: Free tier limits enforced, content products purchasable, premium features gated by subscription, share seed features drive viral growth, studio commission operational
 **Depends on**: Phase 8
 **Requirements**: MON-01, MON-02, MON-03, MON-04, SOC-02
 **Success Criteria** (what must be TRUE):
@@ -218,7 +227,14 @@ Plans:
 4. Share images generated with QR codes for WeChat/Xiaohongshu
 5. Studio referral commission 15-20% operational
    **UI hint**: yes
-   **Plans**: TBD
+   **Plans**: 4 plans
+
+Plans:
+
+- [ ] 09-01-PLAN.md -- UsageLimitGuard + Redis INCR daily counters + ContentPurchase/StudioReferral Prisma models (MON-01)
+- [ ] 09-02-PLAN.md -- ContentProductModule + StudioCommissionModule + premium feature gating (MON-03) + capsule wardrobe AI generation (D-08) + payment event extension (MON-02, MON-03, SOC-02)
+- [ ] 09-03-PLAN.md -- Mobile UsageLimitBottomSheet + ContentProductScreen + API interceptor (MON-01, MON-02)
+- [ ] 09-04-PLAN.md -- Share cards (Outfit/TryOn/Report) + QR encoder + capture hook (MON-04, SOC-02)
 
 ### Phase 10: Production + Launch + Competition
 
@@ -232,25 +248,32 @@ Plans:
 3. Load test passes without degradation, security audit no CRITICAL findings
 4. App listed on 2+ Chinese Android stores (Huawei, Xiaomi, OPPO, or Vivo)
 5. Competition materials submitted: PPT + demo video + seed user data + advisor letter
-   **Plans**: TBD
+   **Plans**: 4 plans
+
+Plans:
+
+- [ ] 10-01-PLAN.md -- [To be planned]
+- [ ] 10-02-PLAN.md -- [To be planned]
+- [ ] 10-03-PLAN.md -- [To be planned]
+- [ ] 10-04-PLAN.md -- [To be planned]
 
 ## Progress
 
 **Execution Order:**
 Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 8 → 9 → 10 (long-term)
 
-| Phase                                           | Plans Complete | Status      | Completed  |
-| ----------------------------------------------- | -------------- | ----------- | ---------- |
-| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete    | 2026-04-24 |
-| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
-| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
-| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
-| 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
-| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
-| 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
-| 10. Production + Launch + Competition           | 0/?            | Not started | -          |
+| Phase                                           | Plans Complete | Status            | Completed  |
+| ----------------------------------------------- | -------------- | ----------------- | ---------- |
+| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete          | 2026-04-24 |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete          | 2026-04-24 |
+| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete          | 2026-04-24 |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete          | 2026-04-25 |
+| 5. E2E Integration + Competition Demo           | 4/4            | Complete          | 2026-04-25 |
+| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete          | 2026-04-25 |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete          | 2026-04-27 |
+| 8. Mini Program + Photo Search + Social         | 4/4            | Complete          | 2026-04-25 |
+| 9. Monetization + Community + Sharing           | 0/4            | Planning complete | -          |
+| 10. Production + Launch + Competition           | 0/?            | Not started       | -          |
 
 ---
 
