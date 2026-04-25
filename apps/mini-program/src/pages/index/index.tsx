@@ -39,6 +39,11 @@ export default function Index() {
     Taro.navigateTo({ url: "/pages/chat/index" });
   };
 
+  /** Navigate to Style DNA social page */
+  const handleStyleDNA = () => {
+    Taro.navigateTo({ url: "/pages/social/index" });
+  };
+
   const greeting = user?.nickname ? `Hi, ${user.nickname}` : "Hi, I'm Yiyi";
 
   return (
@@ -61,6 +66,15 @@ export default function Index() {
           <Text className="index__action-title">问问伊伊</Text>
           <Text className="index__action-desc">穿搭问题，随时问我</Text>
         </View>
+      </View>
+
+      <View className="index__style-dna-entry" onClick={handleStyleDNA}>
+        <Text className="index__style-dna-icon">{"🧬"}</Text>
+        <View className="index__style-dna-text">
+          <Text className="index__style-dna-title">风格 DNA</Text>
+          <Text className="index__style-dna-desc">找到和你品味最搭的人</Text>
+        </View>
+        <Text className="index__style-dna-arrow">{">"}</Text>
       </View>
     </View>
   );

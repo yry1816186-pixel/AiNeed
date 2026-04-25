@@ -1,6 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { ensureLogin } from "../../services/auth";
+import { wechatMiniLogin } from "../../services/auth";
 import { useUserStore } from "../../store/user";
 
 /**
@@ -17,28 +17,19 @@ export default function RegistrationCTA() {
 
   const handleLogin = async () => {
     try {
-      const result = await ensureLogin();
-      if (result) {
-        // Update user store with login result
-        const store = useUserStore.getState();
-        store.setAuth(result, {
-          id: result.user.id,
-          nickname: result.user.nickname,
-          avatar: result.user.avatar,
-        });
+      const result = await wechatMiniLogin();
+      const store = useUserStore.getState();
+      store.setAuth(result.accessToken, {
+        id: result.user.id,
+        nickname: result.user.nickname,
+        avatar: result.user.avatar,
+      });
 
-        Taro.showToast({
-          title: "解锁成功",
-          icon: "success",
-          duration: 1500,
-        });
-      } else {
-        Taro.showToast({
-          title: "登录失败，请重试",
-          icon: "none",
-          duration: 2000,
-        });
-      }
+      Taro.showToast({
+        title: "解锁成功",
+        icon: "success",
+        duration: 1500,
+      });
     } catch {
       Taro.showToast({
         title: "登录失败，请重试",

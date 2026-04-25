@@ -61,4 +61,45 @@ $warm-white: #fafaf8;
     font-size: 24px;
     color: #999;
   }
+
+  &__style-dna-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 40px;
+    padding: 28px 32px;
+    background-color: #fff;
+    border-radius: 20px;
+    border: 2px solid #f0ebe5;
+  }
+
+  &__style-dna-icon {
+    font-size: 44px;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+
+  &__style-dna-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__style-dna-title {
+    font-size: 30px;
+    font-weight: 600;
+    color: $charcoal;
+  }
+
+  &__style-dna-desc {
+    font-size: 22px;
+    color: #999;
+    margin-top: 4px;
+  }
+
+  &__style-dna-arrow {
+    font-size: 32px;
+    color: #ccc;
+    flex-shrink: 0;
+  }
 }
