@@ -3,6 +3,11 @@ import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
+import type {
+  RecommendationBreakdown,
+  RecommendationExplanationDetail,
+} from "../types/recommendation.types";
+
 export interface RecommendationContext {
   userId: string;
   itemId: string;
@@ -150,7 +155,38 @@ export class RecommendationExplainerService {
     this.useLLM = this.configService.get<string>("ENABLE_LLM_EXPLANATIONS", "true") === "true";
   }
 
-  async generateExplanation(context: RecommendationContext): Promise<GeneratedExplanation> {
+  async generateExplanation(
+    context: RecommendationContext,
+    breakdown?: RecommendationBreakdown,
+    profile?: Record<string, unknown> | null
+  ): Promise<GeneratedExplanation> {
+    // Use mixed explanation when breakdown is available
+    if (breakdown) {
+      try {
+        const items = context.itemAttributes
+          ? [
+              {
+                id: context.itemId,
+                name: "",
+                category: context.itemAttributes.category,
+                price: context.itemAttributes.price,
+              },
+            ]
+          : [];
+
+        const mixedResult = await this.generateMixedExplanation(items, breakdown, profile ?? null);
+
+        return {
+          summary: mixedResult.why,
+          detailedReasons: context.reasons.map((r) => r.description),
+          styleTips: [],
+          confidence: mixedResult.confidence,
+        };
+      } catch (error) {
+        this.logger.debug(`Mixed explanation failed, falling back: ${error}`);
+      }
+    }
+
     if (this.useLLM && context.score > 0.5) {
       try {
         return await this.generateLLMExplanation(context);
@@ -159,6 +195,148 @@ export class RecommendationExplainerService {
       }
     }
     return this.generateTemplateExplanation(context);
+  }
+
+  /**
+   * Generate mixed explanation: collect rule engine evidence from funnel breakdown,
+   * then call LLM to polish the explanation text.
+   * Falls back to template explanation if LLM fails.
+   *
+   * @param items - The recommended clothing items (basic info)
+   * @param breakdown - The funnel breakdown data with counts at each layer
+   * @param profile - The user profile for personalization
+   * @returns Structured explanation with LLM-polished text
+   */
+  async generateMixedExplanation(
+    items: Array<{ id: string; name: string; category: string; price?: number }>,
+    breakdown: RecommendationBreakdown,
+    profile: Record<string, unknown> | null
+  ): Promise<RecommendationExplanationDetail> {
+    // Step 1: Collect rule engine evidence from funnel breakdown
+    const evidenceParts: string[] = [];
+
+    evidenceParts.push(`从 ${breakdown.totalCandidates} 件候选单品中筛选`);
+
+    if (
+      breakdown.afterCompliance !== undefined &&
+      breakdown.afterCompliance < breakdown.totalCandidates
+    ) {
+      const removed = breakdown.totalCandidates - breakdown.afterCompliance;
+      evidenceParts.push(`合规过滤移除 ${removed} 件`);
+    }
+
+    if (breakdown.afterSceneFilter < (breakdown.afterCompliance ?? breakdown.totalCandidates)) {
+      const before = breakdown.afterCompliance ?? breakdown.totalCandidates;
+      const removed = before - breakdown.afterSceneFilter;
+      evidenceParts.push(
+        `场景匹配筛选出 ${breakdown.afterSceneFilter} 件，移除 ${removed} 件不匹配的单品`
+      );
+    }
+
+    if (breakdown.afterSizeFilter < breakdown.afterSceneFilter) {
+      const removed = breakdown.afterSceneFilter - breakdown.afterSizeFilter;
+      evidenceParts.push(
+        `尺码匹配后剩余 ${breakdown.afterSizeFilter} 件，移除 ${removed} 件无合适尺码的单品`
+      );
+    }
+
+    if (breakdown.afterBudgetFilter < breakdown.afterSizeFilter) {
+      const removed = breakdown.afterSizeFilter - breakdown.afterBudgetFilter;
+      evidenceParts.push(
+        `预算范围内剩余 ${breakdown.afterBudgetFilter} 件，移除 ${removed} 件超预算的单品`
+      );
+    }
+
+    if (breakdown.afterStyleFilter < breakdown.afterBudgetFilter) {
+      const removed = breakdown.afterBudgetFilter - breakdown.afterStyleFilter;
+      evidenceParts.push(
+        `风格匹配后剩余 ${breakdown.afterStyleFilter} 件，移除 ${removed} 件风格不符的单品`
+      );
+    }
+
+    if (breakdown.afterWardrobeFilter < breakdown.afterStyleFilter) {
+      const removed = breakdown.afterStyleFilter - breakdown.afterWardrobeFilter;
+      evidenceParts.push(
+        `衣橱互补筛选后剩余 ${breakdown.afterWardrobeFilter} 件，移除 ${removed} 件与已有单品过于相似的单品`
+      );
+    }
+
+    evidenceParts.push(`最终推荐 ${breakdown.finalCount} 件单品`);
+
+    // Add user profile context to evidence
+    if (profile) {
+      if (profile.bodyType) {
+        evidenceParts.push(`用户体型：${profile.bodyType}`);
+      }
+      if (profile.colorSeason) {
+        evidenceParts.push(`色彩季型：${profile.colorSeason}`);
+      }
+      const stylePrefs = Array.isArray(profile.stylePreferences)
+        ? (profile.stylePreferences as Array<Record<string, unknown> | string>)
+            .map((s) =>
+              typeof s === "string" ? s : String((s as Record<string, unknown>)?.name || "")
+            )
+            .filter((s: string) => s.length > 0)
+        : [];
+      if (stylePrefs.length > 0) {
+        evidenceParts.push(`偏好风格：${stylePrefs.join("、")}`);
+      }
+    }
+
+    // Add item summary
+    if (items.length > 0) {
+      const itemSummary = items
+        .slice(0, 3)
+        .map((item) => `${item.name}(${item.category})`)
+        .join("、");
+      evidenceParts.push(`推荐单品包括：${itemSummary}`);
+    }
+
+    const evidence = evidenceParts.join("；");
+
+    // Step 2: Call LLM to polish the explanation
+    try {
+      const llmResult = await this.callGLM(
+        `根据以下推荐证据，生成简洁的中文推荐解释：${evidence}\n\n请用1-2句话总结推荐理由，语气亲切自然，不超过50字。`
+      );
+
+      if (llmResult) {
+        return {
+          why: llmResult,
+          alternative: "可以浏览更多分类发现其他风格",
+          nextAction: "试穿看看效果",
+          confidence: Math.min(
+            1,
+            breakdown.finalCount / Math.max(breakdown.totalCandidates, 1) + 0.5
+          ),
+        };
+      }
+    } catch (error) {
+      this.logger.debug(
+        `LLM polish failed for mixed explanation, falling back to template: ${error}`
+      );
+    }
+
+    // Step 3: Template fallback
+    const stylePrefs = profile
+      ? Array.isArray(profile.stylePreferences)
+        ? (profile.stylePreferences as Array<Record<string, unknown> | string>)
+            .map((s) =>
+              typeof s === "string" ? s : String((s as Record<string, unknown>)?.name || "")
+            )
+            .filter((s: string) => s.length > 0)
+        : []
+      : [];
+
+    const styleText =
+      stylePrefs.length > 0 ? `，契合你的${stylePrefs.slice(0, 2).join("、")}风格` : "";
+
+    return {
+      why: `从 ${breakdown.totalCandidates} 件中精选 ${breakdown.finalCount} 件${styleText}`,
+      alternative: "可以浏览更多分类发现其他风格",
+      nextAction: "试穿看看效果",
+      confidence: Math.min(1, breakdown.finalCount / Math.max(breakdown.totalCandidates, 1) + 0.5),
+    };
   }
 
   private async generateLLMExplanation(

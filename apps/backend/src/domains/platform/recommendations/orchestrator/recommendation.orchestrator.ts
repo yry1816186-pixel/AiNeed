@@ -79,9 +79,12 @@ export interface RecommendationResult {
   };
   breakdown?: {
     totalCandidates: number;
+    afterCompliance: number;
     afterSceneFilter: number;
     afterSizeFilter: number;
     afterBudgetFilter: number;
+    afterStyleFilter: number;
+    afterWardrobeFilter: number;
     ruleScore: number;
     vectorScore: number;
     preferenceScore: number;
@@ -224,16 +227,31 @@ export class RecommendationOrchestrator {
       const allItems = await this.fetchAllCandidates(options?.category);
       const totalCandidates = allItems.length;
 
-      const sceneFiltered = this.filterByScene(allItems, scene);
+      // L1: Compliance filter
+      const complianceFiltered = await this.filterByCompliance(allItems, userId);
+      const afterCompliance = complianceFiltered.length;
+
+      // L2: Scene filter
+      const sceneFiltered = this.filterByScene(complianceFiltered, scene);
       const afterSceneFilter = sceneFiltered.length;
 
+      // L3: Size filter
       const sizeFiltered = this.filterBySize(sceneFiltered, profile);
       const afterSizeFilter = sizeFiltered.length;
 
+      // L4: Budget filter
       const budgetFiltered = this.filterByBudget(sizeFiltered, profile, options);
       const afterBudgetFilter = budgetFiltered.length;
 
-      const ruleScored = await this.scoreByRules(budgetFiltered, profile, context);
+      // L5: Style scoring filter
+      const styleFiltered = this.filterByStyle(budgetFiltered, profile);
+      const afterStyleFilter = styleFiltered.length;
+
+      // L6: Wardrobe complementary filter
+      const wardrobeFiltered = await this.filterByWardrobe(styleFiltered, userId);
+      const afterWardrobeFilter = wardrobeFiltered.length;
+
+      const ruleScored = await this.scoreByRules(wardrobeFiltered, profile, context);
       const vectorScored = await this.scoreByVector(ruleScored, profile, context);
       const finalScored = await this.applyPreferenceLearning(vectorScored, userId);
 
@@ -247,9 +265,12 @@ export class RecommendationOrchestrator {
       const mainResults = fused.map((sc) =>
         this.toRecommendationResult(sc, {
           totalCandidates,
+          afterCompliance,
           afterSceneFilter,
           afterSizeFilter,
           afterBudgetFilter,
+          afterStyleFilter,
+          afterWardrobeFilter,
           experimentId,
         })
       );
@@ -846,6 +867,201 @@ export class RecommendationOrchestrator {
     });
   }
 
+  /**
+   * L1 Compliance filter: remove items that require consents the user has not granted.
+   * - body_metrics consent: items with bodyTypeFit attributes require this consent
+   * - photos consent: items requiring photo analysis need this consent
+   */
+  async filterByCompliance(items: FunnelCandidate[], userId: string): Promise<FunnelCandidate[]> {
+    try {
+      const consents = await this.prisma.userConsent.findMany({
+        where: { userId, granted: true },
+        select: { consentType: true },
+      });
+
+      const grantedConsents = new Set(consents.map((c) => c.consentType));
+
+      const hasBodyMetricsConsent = grantedConsents.has("body_metrics");
+      const hasPhotosConsent = grantedConsents.has("photos");
+
+      return items.filter((item) => {
+        const attrs = item.attributes as Record<string, unknown> | null;
+
+        // Items with bodyTypeFit require body_metrics consent
+        if (!hasBodyMetricsConsent && attrs?.bodyTypeFit) {
+          const bodyTypeFit = attrs.bodyTypeFit;
+          if (Array.isArray(bodyTypeFit) && bodyTypeFit.length > 0) {
+            return false;
+          }
+        }
+
+        // Items requiring photo analysis need photos consent
+        if (!hasPhotosConsent && attrs?.requiresPhoto) {
+          return false;
+        }
+
+        return true;
+      });
+    } catch (error) {
+      this.logger.debug(
+        `Compliance filter failed, passing all items through: ${
+          error instanceof Error ? error.message : "unknown"
+        }`
+      );
+      return items;
+    }
+  }
+
+  /**
+   * L5 Style scoring filter: remove items whose style score is below threshold.
+   * Uses the user's styleExpression from profile to score each item.
+   */
+  filterByStyle(
+    items: FunnelCandidate[],
+    profile: Record<string, unknown> | null
+  ): FunnelCandidate[] {
+    if (!profile) {
+      return items;
+    }
+
+    const styleExpression = Array.isArray(profile.stylePreferences)
+      ? (profile.stylePreferences as Array<Record<string, unknown> | string>)
+          .map((s) =>
+            typeof s === "string" ? s : String((s as Record<string, unknown>)?.name || "")
+          )
+          .filter((s: string) => s.length > 0)
+      : [];
+
+    if (styleExpression.length === 0) {
+      return items;
+    }
+
+    const styleKeywords = styleExpression.map((s: string) => s.toLowerCase());
+
+    return items.filter((item) => {
+      let styleScore = 0;
+
+      const attrs = item.attributes as Record<string, unknown> | null;
+
+      // Check style tags in attributes
+      if (attrs?.style && Array.isArray(attrs.style)) {
+        const itemStyles = (attrs.style as string[]).map((s: string) => s.toLowerCase());
+        for (const keyword of styleKeywords) {
+          if (itemStyles.some((s) => s.includes(keyword) || keyword.includes(s))) {
+            styleScore += 0.3;
+          }
+        }
+      }
+
+      // Check tags
+      for (const tag of item.tags) {
+        const tagLower = tag.toLowerCase();
+        for (const keyword of styleKeywords) {
+          if (tagLower.includes(keyword) || keyword.includes(tagLower)) {
+            styleScore += 0.2;
+          }
+        }
+      }
+
+      // Check category match with style preferences
+      const categoryLower = item.category?.toLowerCase() || "";
+      for (const keyword of styleKeywords) {
+        if (categoryLower.includes(keyword)) {
+          styleScore += 0.1;
+        }
+      }
+
+      // Baseline score for all items (avoid filtering everything out)
+      styleScore += 0.1;
+
+      return styleScore >= 0.3;
+    });
+  }
+
+  /**
+   * L6 Wardrobe complementary filter: remove items too similar to existing wardrobe,
+   * prioritize complementary items from different categories.
+   */
+  async filterByWardrobe(items: FunnelCandidate[], userId: string): Promise<FunnelCandidate[]> {
+    try {
+      // Fetch user's wardrobe items (all types, as clothing items can be linked via any type)
+      const wardrobeItems = await this.prisma.wardrobeCollectionItem.findMany({
+        where: { userId },
+        select: { itemId: true },
+        take: 200,
+      });
+
+      if (wardrobeItems.length === 0) {
+        return items;
+      }
+
+      const wardrobeItemIds = new Set(wardrobeItems.map((w) => w.itemId));
+
+      // Fetch wardrobe item categories for complementary scoring
+      const wardrobeClothingItems = await this.prisma.clothingItem.findMany({
+        where: { id: { in: Array.from(wardrobeItemIds) } },
+        select: { id: true, category: true, tags: true, colors: true },
+      });
+
+      const wardrobeCategoryCount = new Map<string, number>();
+      const wardrobeTagSet = new Set<string>();
+
+      for (const wItem of wardrobeClothingItems) {
+        const cat = String(wItem.category);
+        wardrobeCategoryCount.set(cat, (wardrobeCategoryCount.get(cat) || 0) + 1);
+
+        const tags = (wItem.tags as string[]) || [];
+        for (const tag of tags) {
+          wardrobeTagSet.add(tag.toLowerCase());
+        }
+      }
+
+      // Find the most common category in wardrobe
+      let dominantCategory = "";
+      let maxCount = 0;
+      for (const [cat, count] of wardrobeCategoryCount) {
+        if (count > maxCount) {
+          maxCount = count;
+          dominantCategory = cat;
+        }
+      }
+
+      return items.filter((item) => {
+        // Remove items already in wardrobe
+        if (wardrobeItemIds.has(item.id)) {
+          return false;
+        }
+
+        // Check tag similarity (proxy for cosine similarity)
+        const itemTags = item.tags.map((t) => t.toLowerCase());
+        let matchingTags = 0;
+        for (const tag of itemTags) {
+          if (wardrobeTagSet.has(tag)) {
+            matchingTags++;
+          }
+        }
+
+        // If too many tags overlap (> 90% of item tags), item is too similar
+        if (itemTags.length > 0 && matchingTags / itemTags.length > 0.9) {
+          // But allow if it's a different category (complementary)
+          if (String(item.category) !== dominantCategory) {
+            return true;
+          }
+          return false;
+        }
+
+        return true;
+      });
+    } catch (error) {
+      this.logger.debug(
+        `Wardrobe filter failed, passing all items through: ${
+          error instanceof Error ? error.message : "unknown"
+        }`
+      );
+      return items;
+    }
+  }
+
   private async scoreByRules(
     items: FunnelCandidate[],
     profile: Record<string, unknown> | null,
@@ -1098,9 +1314,12 @@ export class RecommendationOrchestrator {
     scored: ScoredCandidate,
     funnelStats: {
       totalCandidates: number;
+      afterCompliance: number;
       afterSceneFilter: number;
       afterSizeFilter: number;
       afterBudgetFilter: number;
+      afterStyleFilter: number;
+      afterWardrobeFilter: number;
       experimentId?: string;
     }
   ): RecommendationResult {
@@ -1131,9 +1350,12 @@ export class RecommendationOrchestrator {
       },
       breakdown: {
         totalCandidates: funnelStats.totalCandidates,
+        afterCompliance: funnelStats.afterCompliance,
         afterSceneFilter: funnelStats.afterSceneFilter,
         afterSizeFilter: funnelStats.afterSizeFilter,
         afterBudgetFilter: funnelStats.afterBudgetFilter,
+        afterStyleFilter: funnelStats.afterStyleFilter,
+        afterWardrobeFilter: funnelStats.afterWardrobeFilter,
         ruleScore: scored.ruleScore,
         vectorScore: scored.vectorScore,
         preferenceScore: scored.preferenceScore,
@@ -1205,11 +1427,12 @@ export class RecommendationOrchestrator {
       breakdown: firstBreakdown
         ? {
             totalCandidates: firstBreakdown.totalCandidates,
+            afterCompliance: firstBreakdown.afterCompliance,
             afterSceneFilter: firstBreakdown.afterSceneFilter,
             afterSizeFilter: firstBreakdown.afterSizeFilter,
             afterBudgetFilter: firstBreakdown.afterBudgetFilter,
-            afterStyleFilter: 0,
-            afterWardrobeFilter: 0,
+            afterStyleFilter: firstBreakdown.afterStyleFilter,
+            afterWardrobeFilter: firstBreakdown.afterWardrobeFilter,
             finalCount: items.length,
           }
         : undefined,
@@ -1292,9 +1515,12 @@ export class RecommendationOrchestrator {
         explanation: rec.explanation,
         breakdown: {
           totalCandidates: degradedRecs.length,
+          afterCompliance: degradedRecs.length,
           afterSceneFilter: degradedRecs.length,
           afterSizeFilter: degradedRecs.length,
           afterBudgetFilter: degradedRecs.length,
+          afterStyleFilter: degradedRecs.length,
+          afterWardrobeFilter: degradedRecs.length,
           ruleScore: rec.score,
           vectorScore: 0,
           preferenceScore: 0,
@@ -1492,9 +1718,12 @@ export class RecommendationOrchestrator {
         reasons: [rec.reason],
         breakdown: {
           totalCandidates: itemIds.length,
+          afterCompliance: itemIds.length,
           afterSceneFilter: itemIds.length,
           afterSizeFilter: itemIds.length,
           afterBudgetFilter: itemIds.length,
+          afterStyleFilter: itemIds.length,
+          afterWardrobeFilter: itemIds.length,
           ruleScore: rec.score,
           vectorScore: 0,
           preferenceScore: 0,

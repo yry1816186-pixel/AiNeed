@@ -555,6 +555,7 @@ export interface RecommendationOutputItem {
  */
 export interface RecommendationBreakdown {
   totalCandidates: number;
+  afterCompliance: number;
   afterSceneFilter: number;
   afterSizeFilter: number;
   afterBudgetFilter: number;

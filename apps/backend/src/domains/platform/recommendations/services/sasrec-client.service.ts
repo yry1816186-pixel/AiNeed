@@ -16,14 +16,21 @@ export class SASRecClientService {
   private readonly logger = new Logger(SASRecClientService.name);
   private readonly baseUrl: string;
   private readonly enabled: boolean;
+  private readonly fallbackEnabled: boolean;
 
   constructor(private configService: ConfigService) {
     this.baseUrl = this.configService.get<string>("SASREC_SERVICE_URL", "http://localhost:8100");
-    this.enabled = this.configService.get<string>("SASREC_ENABLED", "false") === "true";
+    this.enabled = this.configService.get<string>("SASREC_ENABLED", "true") === "true";
+    this.fallbackEnabled =
+      this.configService.get<string>("SASREC_FALLBACK_ENABLED", "true") === "true";
   }
 
   isEnabled(): boolean {
     return this.enabled;
+  }
+
+  isFallbackEnabled(): boolean {
+    return this.fallbackEnabled;
   }
 
   async predict(
