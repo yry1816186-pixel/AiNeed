@@ -200,7 +200,7 @@ Plans:
 
 Plans:
 
-- [ ] 08-01-PLAN.md — Backend: mini-program login (jscode2session) + image embed/search endpoint (MINI-01, PHO-01)
+- [x] 08-01-PLAN.md — Backend: mini-program login (jscode2session) + image embed/search endpoint (MINI-01, PHO-01) ✓ 2026-04-25
 - [ ] 08-02-PLAN.md — Backend: style DNA service + social matching + Qdrant user_style_dna collection (SOC-01)
 - [ ] 08-03-PLAN.md — Taro mini-program: project init + auth + chat + profile pages + share hooks (MINI-01, MINI-02)
 - [ ] 08-04-PLAN.md — Taro mini-program: photo search page + social matching page + registration CTA (PHO-01, PHO-02, SOC-01, MINI-02)
@@ -248,7 +248,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
 | 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 0/4            | Not started | -          |
+| 8. Mini Program + Photo Search + Social         | 1/4            | In progress | -          |
 | 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
 | 10. Production + Launch + Competition           | 0/?            | Not started | -          |
 
