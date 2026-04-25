@@ -32,6 +32,7 @@ const mockSmsVerificationService = {
 const mockWechatService = {
   getAccessToken: jest.fn(),
   getUserInfo: jest.fn(),
+  jscode2session: jest.fn(),
 };
 
 const mockAuthHelpersService = {
@@ -946,6 +947,94 @@ describe("AuthService", () => {
         .mockRejectedValue(new UnauthorizedException("微信授权失败"));
 
       await expect(service.loginWithWechat("invalid-code")).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe("loginWithMiniProgram", () => {
+    it("新用户应该自动注册并登录 (authProvider=wechat_mini)", async () => {
+      const openid = "mini-openid-12345";
+      mockWechatService.jscode2session = jest.fn().mockResolvedValue({
+        openid,
+        session_key: "test-session-key",
+      });
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed-password");
+      mockPrismaService.user.create.mockResolvedValue({
+        ...mockUser,
+        wechatOpenId: openid,
+        authProvider: "wechat_mini",
+      });
+      mockPrismaService.userProfile.create.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithMiniProgram("test-js-code");
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(mockWechatService.jscode2session).toHaveBeenCalledWith("test-js-code");
+      expect(mockPrismaService.user.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            authProvider: "wechat_mini",
+            wechatOpenId: openid,
+            email: `wechat_mini_${openid}@internal.placeholder`,
+          }),
+        })
+      );
+    });
+
+    it("已存在的 openid 用户应该直接登录（不重复创建）", async () => {
+      const existingUser = { ...mockUser, wechatOpenId: "existing-openid" };
+      mockWechatService.jscode2session = jest.fn().mockResolvedValue({
+        openid: "existing-openid",
+        session_key: "test-session-key",
+      });
+      mockPrismaService.user.findFirst.mockResolvedValue(existingUser);
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithMiniProgram("test-js-code");
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(mockPrismaService.user.create).not.toHaveBeenCalled();
+    });
+
+    it("jscode2session 失败时应该拒绝登录", async () => {
+      mockWechatService.jscode2session = jest
+        .fn()
+        .mockRejectedValue(new UnauthorizedException("微信小程序授权失败"));
+
+      await expect(service.loginWithMiniProgram("invalid-code")).rejects.toThrow(
+        UnauthorizedException
+      );
+    });
+
+    it("新用户昵称应为 mini_ 加 openid 后四位", async () => {
+      const openid = "abcdefghijklmnopqrstuvwxyz";
+      mockWechatService.jscode2session = jest.fn().mockResolvedValue({
+        openid,
+        session_key: "test-session-key",
+      });
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed-password");
+      mockPrismaService.user.create.mockResolvedValue({
+        ...mockUser,
+        wechatOpenId: openid,
+        nickname: "mini_wxyz",
+      });
+      mockPrismaService.userProfile.create.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      await service.loginWithMiniProgram("test-js-code");
+
+      expect(mockPrismaService.user.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            nickname: "mini_wxyz",
+          }),
+        })
+      );
     });
   });
 });

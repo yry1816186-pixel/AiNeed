@@ -56,6 +56,7 @@ model User {
   recommendationCaches RecommendationCache[]
   userClothings UserClothing[]
   outfits    Outfit[]
+  outfitPlans OutfitPlan[]
   aiStylistSessions AiStylistSession[]
   userDecisions UserDecision[]
   styleProfiles     StyleProfile[]
@@ -111,6 +112,10 @@ model User {
   dataDeletionRequests DataDeletionRequest[]
   searchHistories      SearchHistory[]
   userSessions         UserSession[]
+
+  // Phase 7: Outfit Diary + Weekly Report
+  outfitDiaries        OutfitDiary[]
+  weeklyReports        WeeklyReport[]
 
   @@index([email])
   @@index([phone])
@@ -172,6 +177,7 @@ enum AuthProvider {
   email
   phone
   wechat
+  wechat_mini
 }
 
 model UserProfile {
@@ -944,6 +950,9 @@ enum BehaviorEventType {
   post_like
   post_comment
   user_follow
+  skip
+  outfit_save
+  calendar_edit
 }
 
 model UserPreferenceWeight {
@@ -1737,6 +1746,8 @@ model Outfit {
 
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   items       OutfitItem[]
+  diaryEntries OutfitDiary[]
+  plans       OutfitPlan[]
 
   @@index([userId])
   @@index([isFavorite])
@@ -1766,6 +1777,28 @@ model OutfitItem {
   
   @@index([outfitId])
   @@index([clothingId])
+}
+
+model OutfitPlan {
+  id              String   @id @default(uuid())
+  userId          String
+  plannedDate     DateTime
+  outfitId        String?
+  weatherContext  Json?
+  sceneTag        String?
+  isSpecialEvent  Boolean  @default(false)
+  eventName       String?
+  source          String   @default("ai_generated")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfit          Outfit?  @relation(fields: [outfitId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, plannedDate])
+  @@index([userId])
+  @@index([userId, plannedDate])
+  @@index([plannedDate])
 }
 
 model CommunityPost {
@@ -2615,4 +2648,62 @@ model AdminAuditLog {
   @@index([createdAt(sort: Desc)])
 }
 
+// ==================== Model Version Management (Data Flywheel) ====================
 
+model ModelVersion {
+  id          String   @id @default(uuid())
+  modelType   String   // "sasrec" | "fashionsiglip"
+  version     String
+  status      String   @default("active")  // "active" | "backup" | "rolled_back" | "superseded"
+  metrics     Json
+  createdAt   DateTime @default(now())
+
+  @@index([modelType, status])
+  @@index([modelType, createdAt(sort: Desc)])
+}
+
+// ==================== Phase 7: 穿搭日记 + 周报系统 ====================
+
+model OutfitDiary {
+  id                String   @id @default(uuid())
+  userId            String
+  outfitId          String?
+  date              DateTime
+  scene             String?
+  weather           String?
+  temperature       Float?
+  source            String   @default("auto")
+  satisfactionScore Float?
+  outfitSnapshot    Json?
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfit Outfit? @relation(fields: [outfitId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userId, date(sort: Desc)])
+  @@index([userId, createdAt])
+}
+
+model WeeklyReport {
+  id                String   @id @default(uuid())
+  userId            String
+  weekStart         DateTime
+  weekEnd           DateTime
+  satisfaction      Float?
+  styleDistribution Json?
+  trendSummary      String?   @db.Text
+  evolutionCurve    Json?
+  sceneCoverage     Json?
+  colorAnalysis     Json?
+  itemReuseRate     Float?
+  generatedAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStart])
+  @@index([userId])
+  @@index([userId, weekStart(sort: Desc)])
+}

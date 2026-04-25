@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma, Gender } from "@prisma/client";
+import { Prisma, Gender , AuthProvider } from "@prisma/client";
 import type { StringValue } from "ms";
 
 import { EmailService } from "../../../common/email/email.service";
@@ -573,6 +573,54 @@ export class AuthService {
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     this.logger.log("微信登录成功", { userId: user.id, openid });
+
+    return this.buildAuthResponse(user, tokens);
+  }
+
+  /**
+   * Mini-program login via jscode2session.
+   * Uses WECHAT_MINI_APP_ID/SECRET (different from open platform).
+   * Creates user with authProvider=wechat_mini if not found.
+   */
+  async loginWithMiniProgram(code: string): Promise<AuthResponseDto> {
+    this.logger.log("微信小程序登录请求");
+
+    const sessionResponse = await this.wechatService.jscode2session(code);
+    const { openid } = sessionResponse;
+
+    let user = await this.prisma.user.findFirst({
+      where: { wechatOpenId: openid },
+    });
+
+    if (!user) {
+      const [createdUser] = await this.prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            email: `wechat_mini_${openid}@internal.placeholder`,
+            emailHash: createHash("sha256")
+              .update(`wechat_mini_${openid}@internal.placeholder`.toLowerCase().trim())
+              .digest("hex"),
+            password: await bcrypt.hash(randomUUID()),
+            wechatOpenId: openid,
+            authProvider: AuthProvider.wechat_mini,
+            nickname: `mini_${openid.slice(-4)}`,
+          },
+        });
+
+        await tx.userProfile.create({
+          data: { userId: newUser.id },
+        });
+
+        return [newUser];
+      });
+      user = createdUser;
+      this.logger.log("微信小程序新用户自动注册", { userId: user.id, openid });
+    }
+
+    const tokens = await this.generateTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    this.logger.log("微信小程序登录成功", { userId: user.id, openid });
 
     return this.buildAuthResponse(user, tokens);
   }

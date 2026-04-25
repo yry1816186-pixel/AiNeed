@@ -12,6 +12,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   WechatLoginDto,
+  MiniProgramLoginDto,
   PhoneLoginDto,
   PhoneRegisterDto,
   SendSmsCodeDto,
@@ -393,6 +394,22 @@ export class AuthController {
   @ApiResponse({ status: 429, description: "请求过于频繁" })
   async wechatLogin(@Body() dto: WechatLoginDto): Promise<AuthResponseDto> {
     return this.authService.loginWithWechat(dto.code);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("wechat-mini")
+  @ApiOperation({
+    summary: "微信小程序登录 (Phase 08)",
+    description:
+      "使用微信小程序 wx.login 获取的 code 登录。通过 jscode2session 换取 openid，未注册用户将自动注册。",
+  })
+  @ApiBody({ type: MiniProgramLoginDto })
+  @ApiResponse({ status: 200, description: "登录成功", type: AuthResponseDto })
+  @ApiResponse({ status: 401, description: "微信小程序授权失败" })
+  @ApiResponse({ status: 429, description: "请求过于频繁，每分钟最多5次" })
+  async miniProgramLogin(@Body() dto: MiniProgramLoginDto): Promise<AuthResponseDto> {
+    return this.authService.loginWithMiniProgram(dto.code);
   }
 
   @Public()
