@@ -219,6 +219,14 @@ try:
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load image search API: %s", e)
 
+try:
+    from ml.api.routes.style_dna import router as style_dna_router
+
+    app.include_router(style_dna_router)
+    logging.getLogger(__name__).info("Style DNA API routes loaded")
+except Exception as e:
+    logging.getLogger(__name__).warning("Failed to load style DNA API: %s", e)
+
 
 if __name__ == "__main__":
     import uvicorn
