@@ -151,7 +151,7 @@
 
 ### Social Features (社交功能)
 
-- [ ] **SOC-01**: 风格 DNA 社交匹配（基于向量的"和你风格最像的人"推荐）
+- [x] **SOC-01**: 风格 DNA 社交匹配（基于向量的"和你风格最像的人"推荐） ✓ 08-02
 - [ ] **SOC-02**: 分享裂变（react-native-view-shot + QR，穿搭方案分享图+二维码）
 
 ### Recommendation Advanced (推荐进阶)
@@ -254,7 +254,7 @@
 | PHO-01 ~ PHO-02   | Phase 8     | PHO-01 ✓  | Image embedding + vector search endpoint (08-01)                                                                     |
 | CAL-03 ~ CAL-05   | Phase 7     | Pending   |                                                                                                                      |
 | MINI-01 ~ MINI-02 | Phase 8     | MINI-01 ✓ | Backend auth endpoint + jscode2session (08-01)                                                                       |
-| SOC-01 ~ SOC-02   | Phase 9     | Pending   |                                                                                                                      |
+| SOC-01 ~ SOC-02   | Phase 8     | SOC-01 ✓  | StyleDNAService + Qdrant user_style_dna + NestJS proxy (08-02)                                                       |
 | RAD-01 ~ RAD-04   | Phase 6-7   | Pending   |                                                                                                                      |
 | DAT-01 ~ DAT-05   | Phase 6     | Pending   |                                                                                                                      |
 | CMP-01 ~ CMP-05   | Phase 6     | Pending   |                                                                                                                      |
