@@ -2,4 +2,5 @@ packages:
   - 'apps/backend'
   - 'apps/mobile'
   - 'apps/admin'
+  - 'apps/mini-program'
   - 'packages/*'

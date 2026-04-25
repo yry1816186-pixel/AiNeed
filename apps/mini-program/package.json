@@ -1,0 +1,32 @@
+{
+  "name": "@xuno/mini-program",
+  "version": "1.0.0",
+  "private": true,
+  "description": "寻裳 XUNO 微信小程序 - AI 穿搭搭子",
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "dev:weapp": "taro build --type weapp --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tarojs/taro": "4.2.0",
+    "@tarojs/components": "4.2.0",
+    "@tarojs/runtime": "4.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.0",
+    "taro-ui": "3.3.1"
+  },
+  "devDependencies": {
+    "@tarojs/cli": "4.2.0",
+    "@tarojs/webpack5-runner": "4.2.0",
+    "typescript": "^5.3.0",
+    "@types/react": "^18.2.0",
+    "sass": "^1.70.0"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ]
+}
