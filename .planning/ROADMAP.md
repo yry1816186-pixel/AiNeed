@@ -175,7 +175,14 @@ Plans:
 4. Weekly "outfit diary" auto-generated: satisfaction + style distribution + trend + evolution curve
 5. Full calendar auto-generates 7-day plans based on weather forecast + calendar events + wardrobe
 6. Coordination model (10M params) trained and produces compatibility scores
-   **Plans**: TBD
+   **Plans**: 4 plans
+
+Plans:
+
+- [ ] 07-01-PLAN.md — Data Flywheel Pipeline: ETL + SASRec Retrain + SigLIP Threshold + Evaluation (FLY-01, FLY-02)
+- [ ] 07-02-PLAN.md — Outfit Diary + Style Evolution + Weekly Report (FLY-03, FLY-04)
+- [ ] 07-03-PLAN.md — Full Calendar: AI 7-Day Plan + Edit + Preference Signal (CAL-03, CAL-04, CAL-05)
+- [ ] 07-04-PLAN.md — Coordination Model: Training Data + Dual-Tower + Parallel L5 Integration (MOD-04)
 
 ### Phase 8: Mini Program + Photo Search + Social
 
@@ -233,7 +240,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
 | 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
 | 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 0/?            | Not started | -          |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 0/4            | Not started | -          |
 | 8. Mini Program + Photo Search + Social         | 0/?            | Not started | -          |
 | 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
 | 10. Production + Launch + Competition           | 0/?            | Not started | -          |
