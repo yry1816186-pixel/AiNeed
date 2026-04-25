@@ -227,14 +227,15 @@ Plans:
 4. Share images generated with QR codes for WeChat/Xiaohongshu
 5. Studio referral commission 15-20% operational
    **UI hint**: yes
-   **Plans**: 4 plans
+   **Plans**: 5 plans
 
 Plans:
 
 - [ ] 09-01-PLAN.md -- UsageLimitGuard + Redis INCR daily counters + ContentPurchase/StudioReferral Prisma models (MON-01)
-- [ ] 09-02-PLAN.md -- ContentProductModule + StudioCommissionModule + premium feature gating (MON-03) + capsule wardrobe AI generation (D-08) + payment event extension (MON-02, MON-03, SOC-02)
+- [ ] 09-02-PLAN.md -- ContentProductModule + StudioCommissionModule + premium feature gating (MON-02, MON-03, SOC-02)
 - [ ] 09-03-PLAN.md -- Mobile UsageLimitBottomSheet + ContentProductScreen + API interceptor (MON-01, MON-02)
 - [ ] 09-04-PLAN.md -- Share cards (Outfit/TryOn/Report) + QR encoder + capture hook (MON-04, SOC-02)
+- [ ] 09-05-PLAN.md -- Capsule Wardrobe AI Generation: BullMQ processor + DialogEngine integration + 30-piece plan (MON-02)
 
 ### Phase 10: Production + Launch + Competition
 
@@ -272,7 +273,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 6. Model Upgrade + Compliance + Security        | 6/6            | Complete          | 2026-04-25 |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete          | 2026-04-27 |
 | 8. Mini Program + Photo Search + Social         | 4/4            | Complete          | 2026-04-25 |
-| 9. Monetization + Community + Sharing           | 0/4            | Planning complete | -          |
+| 9. Monetization + Community + Sharing           | 0/5            | Planning complete | -          |
 | 10. Production + Launch + Competition           | 0/?            | Not started       | -          |
 
 ---
