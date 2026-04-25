@@ -19,7 +19,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 **Track B: Long-Term Build (Phases 6-10)**
 
 - [x] **Phase 6: Model Upgrade + Compliance + Security** - FashionSigLIP replacement + Chinese fine-tune, SASRec pipeline, compliance, security blockers, product contract frozen ✓ 2026-04-25
-- [ ] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization
+- [x] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization ✓ 2026-04-27
 - [ ] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching
 - [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission
 - [ ] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials submitted
@@ -179,10 +179,10 @@ Plans:
 
 Plans:
 
-- [ ] 07-01-PLAN.md — Data Flywheel Pipeline: ETL + SASRec Retrain + SigLIP Threshold + Evaluation (FLY-01, FLY-02)
-- [ ] 07-02-PLAN.md — Outfit Diary + Style Evolution + Weekly Report (FLY-03, FLY-04)
-- [ ] 07-03-PLAN.md — Full Calendar: AI 7-Day Plan + Edit + Preference Signal (CAL-03, CAL-04, CAL-05)
-- [ ] 07-04-PLAN.md — Coordination Model: Training Data + Dual-Tower + Parallel L5 Integration (MOD-04)
+- [x] 07-01-PLAN.md — Data Flywheel Pipeline: ETL + SASRec Retrain + SigLIP Threshold + Evaluation (FLY-01, FLY-02)
+- [x] 07-02-PLAN.md — Outfit Diary + Style Evolution + Weekly Report (FLY-03, FLY-04)
+- [x] 07-03-PLAN.md — Full Calendar: AI 7-Day Plan + Edit + Preference Signal (CAL-03, CAL-04, CAL-05)
+- [x] 07-04-PLAN.md — Coordination Model: Training Data + Dual-Tower + Parallel L5 Integration (MOD-04)
 
 ### Phase 8: Mini Program + Photo Search + Social
 
@@ -196,7 +196,14 @@ Plans:
 3. Photo → FashionSigLIP encode → Qdrant search → 5 similar items with prices
 4. "Find similar" flow naturally leads to "AI can dress you better" → registration
 5. Style DNA matches users by FashionSigLIP vector cosine similarity
-   **Plans**: TBD
+   **Plans**: 4 plans
+
+Plans:
+
+- [ ] 08-01-PLAN.md — Backend: mini-program login (jscode2session) + image embed/search endpoint (MINI-01, PHO-01)
+- [ ] 08-02-PLAN.md — Backend: style DNA service + social matching + Qdrant user_style_dna collection (SOC-01)
+- [ ] 08-03-PLAN.md — Taro mini-program: project init + auth + chat + profile pages + share hooks (MINI-01, MINI-02)
+- [ ] 08-04-PLAN.md — Taro mini-program: photo search page + social matching page + registration CTA (PHO-01, PHO-02, SOC-01, MINI-02)
 
 ### Phase 9: Monetization + Community + Sharing
 
@@ -240,8 +247,8 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
 | 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
 | 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 0/4            | Not started | -          |
-| 8. Mini Program + Photo Search + Social         | 0/?            | Not started | -          |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
+| 8. Mini Program + Photo Search + Social         | 0/4            | Not started | -          |
 | 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
 | 10. Production + Launch + Competition           | 0/?            | Not started | -          |
 
