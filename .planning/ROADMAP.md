@@ -202,7 +202,7 @@ Plans:
 
 - [x] 08-01-PLAN.md — Backend: mini-program login (jscode2session) + image embed/search endpoint (MINI-01, PHO-01) ✓ 2026-04-25
 - [x] 08-02-PLAN.md — Backend: style DNA service + social matching + Qdrant user_style_dna collection (SOC-01) ✓ 2026-04-25
-- [ ] 08-03-PLAN.md — Taro mini-program: project init + auth + chat + profile pages + share hooks (MINI-01, MINI-02)
+- [x] 08-03-PLAN.md — Taro mini-program: project init + auth + chat + profile pages + share hooks (MINI-01, MINI-02) ✓ 2026-04-25
 - [ ] 08-04-PLAN.md — Taro mini-program: photo search page + social matching page + registration CTA (PHO-01, PHO-02, SOC-01, MINI-02)
 
 ### Phase 9: Monetization + Community + Sharing

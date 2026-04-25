@@ -146,8 +146,8 @@
 
 ### Mini Program (微信小程序)
 
-- [x] **MINI-01**: 微信小程序 v1（核心功能：伊伊对话+试穿+分享） — 后端认证端点完成 ✓ Phase 08 Plan 01
-- [ ] **MINI-02**: 小程序分享到朋友圈/群（裂变零摩擦）
+- [x] **MINI-01**: 微信小程序 v1（核心功能：伊伊对话+试穿+分享） — 后端认证+Taro 项目+3 页面+分享 ✓ Phase 08 Plan 01+03
+- [x] **MINI-02**: 小程序分享到朋友圈/群（裂变零摩擦） — Taro useShareAppMessage + useShareTimeline ✓ Phase 08 Plan 03
 
 ### Social Features (社交功能)
 
@@ -232,36 +232,36 @@
 
 ## Traceability
 
-| Requirement       | Phase       | Status    | Notes                                                                                                                |
-| ----------------- | ----------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
-| FND-01 ~ FND-05   | Phase 1     | Complete  | Phase 1 VERIFICATION missing; FND-01 (TS errors) partially done (audit 2026-04-25: backend 0 errors, mobile unknown) |
-| GND-01 ~ GND-05   | Phase 1     | Complete  | Gender demotion executed in Phase 1 Plan 03                                                                          |
-| REC-01 ~ REC-06   | Phase 2     | Complete  | Phase 2 VERIFICATION: 7/7 must-haves SATISFIED                                                                       |
-| CUR-01 ~ CUR-02   | Phase 2     | Complete  | Phase 2 VERIFICATION: SATISFIED                                                                                      |
-| NAV-01 ~ NAV-05   | Phase 3     | Complete  | Phase 3 VERIFICATION missing; navigation refactored                                                                  |
-| TOD-01 ~ TOD-05   | Phase 3     | Partial   | UI components exist but TodayScreen data is hardcoded (audit 2026-04-25)                                             |
-| DIS-01 ~ DIS-04   | Phase 3     | Complete  | DiscoverScreen exists; DIS-01 empty state missing                                                                    |
-| CAL-01 ~ CAL-02   | Phase 3     | Complete  | Calendar exists; CAL-01 empty state in English                                                                       |
-| YIYI-01 ~ YIYI-07 | Phase 4     | Complete  | Phase 4 VERIFICATION: 9/9 must-haves SATISFIED; YIYI-07 preference memory implemented                                |
-| VOI-01 ~ VOI-03   | Phase 4     | Complete  | Phase 4 VERIFICATION: SATISFIED                                                                                      |
-| WKS-01 ~ WKS-04   | Phase 4     | Complete  | Phase 4 VERIFICATION: SATISFIED; WKS-01/03 partially (no real studios)                                               |
-| ONB-01 ~ ONB-05   | Phase 4     | Complete  | Phase 4 VERIFICATION: SATISFIED; ONB-04 implemented in Plan 06                                                       |
-| RUL-01 ~ RUL-03   | Phase 4     | Complete  | FashionRuleLoader + 7 JSON rule files + 264+ rules                                                                   |
-| ETH-01 ~ ETH-02   | Phase 4     | Complete  | BODY_POSITIVE_PROMPT in dialog_engine.py; audit found body-positive.filter.ts MISSING                                |
-| VIS-01 ~ VIS-04   | Phase 1,3,5 | Partial   | VIS-01: 84 hardcoded colors remain; VIS-04: deferred to Phase 5                                                      |
-| MOD-01 ~ MOD-04   | Phase 6     | Pending   |                                                                                                                      |
-| FLY-01 ~ FLY-04   | Phase 7     | Pending   |                                                                                                                      |
-| PHO-01 ~ PHO-02   | Phase 8     | PHO-01 ✓  | Image embedding + vector search endpoint (08-01)                                                                     |
-| CAL-03 ~ CAL-05   | Phase 7     | Pending   |                                                                                                                      |
-| MINI-01 ~ MINI-02 | Phase 8     | MINI-01 ✓ | Backend auth endpoint + jscode2session (08-01)                                                                       |
-| SOC-01 ~ SOC-02   | Phase 8     | SOC-01 ✓  | StyleDNAService + Qdrant user_style_dna + NestJS proxy (08-02)                                                       |
-| RAD-01 ~ RAD-04   | Phase 6-7   | Pending   |                                                                                                                      |
-| DAT-01 ~ DAT-05   | Phase 6     | Pending   |                                                                                                                      |
-| CMP-01 ~ CMP-05   | Phase 6     | Pending   |                                                                                                                      |
-| SEC-01 ~ SEC-04   | Phase 6     | Pending   |                                                                                                                      |
-| MON-01 ~ MON-04   | Phase 9     | Pending   |                                                                                                                      |
-| PRD-01 ~ PRD-05   | Phase 10    | Pending   |                                                                                                                      |
-| CMP-06 ~ CMP-09   | Phase 5+    | Pending   |                                                                                                                      |
+| Requirement       | Phase       | Status   | Notes                                                                                                                |
+| ----------------- | ----------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| FND-01 ~ FND-05   | Phase 1     | Complete | Phase 1 VERIFICATION missing; FND-01 (TS errors) partially done (audit 2026-04-25: backend 0 errors, mobile unknown) |
+| GND-01 ~ GND-05   | Phase 1     | Complete | Gender demotion executed in Phase 1 Plan 03                                                                          |
+| REC-01 ~ REC-06   | Phase 2     | Complete | Phase 2 VERIFICATION: 7/7 must-haves SATISFIED                                                                       |
+| CUR-01 ~ CUR-02   | Phase 2     | Complete | Phase 2 VERIFICATION: SATISFIED                                                                                      |
+| NAV-01 ~ NAV-05   | Phase 3     | Complete | Phase 3 VERIFICATION missing; navigation refactored                                                                  |
+| TOD-01 ~ TOD-05   | Phase 3     | Partial  | UI components exist but TodayScreen data is hardcoded (audit 2026-04-25)                                             |
+| DIS-01 ~ DIS-04   | Phase 3     | Complete | DiscoverScreen exists; DIS-01 empty state missing                                                                    |
+| CAL-01 ~ CAL-02   | Phase 3     | Complete | Calendar exists; CAL-01 empty state in English                                                                       |
+| YIYI-01 ~ YIYI-07 | Phase 4     | Complete | Phase 4 VERIFICATION: 9/9 must-haves SATISFIED; YIYI-07 preference memory implemented                                |
+| VOI-01 ~ VOI-03   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED                                                                                      |
+| WKS-01 ~ WKS-04   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; WKS-01/03 partially (no real studios)                                               |
+| ONB-01 ~ ONB-05   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; ONB-04 implemented in Plan 06                                                       |
+| RUL-01 ~ RUL-03   | Phase 4     | Complete | FashionRuleLoader + 7 JSON rule files + 264+ rules                                                                   |
+| ETH-01 ~ ETH-02   | Phase 4     | Complete | BODY_POSITIVE_PROMPT in dialog_engine.py; audit found body-positive.filter.ts MISSING                                |
+| VIS-01 ~ VIS-04   | Phase 1,3,5 | Partial  | VIS-01: 84 hardcoded colors remain; VIS-04: deferred to Phase 5                                                      |
+| MOD-01 ~ MOD-04   | Phase 6     | Pending  |                                                                                                                      |
+| FLY-01 ~ FLY-04   | Phase 7     | Pending  |                                                                                                                      |
+| PHO-01 ~ PHO-02   | Phase 8     | PHO-01 ✓ | Image embedding + vector search endpoint (08-01)                                                                     |
+| CAL-03 ~ CAL-05   | Phase 7     | Pending  |                                                                                                                      |
+| MINI-01 ~ MINI-02 | Phase 8     | All ✓    | Backend auth + jscode2session (08-01) + Taro project + share hooks (08-03)                                           |
+| SOC-01 ~ SOC-02   | Phase 8     | SOC-01 ✓ | StyleDNAService + Qdrant user_style_dna + NestJS proxy (08-02)                                                       |
+| RAD-01 ~ RAD-04   | Phase 6-7   | Pending  |                                                                                                                      |
+| DAT-01 ~ DAT-05   | Phase 6     | Pending  |                                                                                                                      |
+| CMP-01 ~ CMP-05   | Phase 6     | Pending  |                                                                                                                      |
+| SEC-01 ~ SEC-04   | Phase 6     | Pending  |                                                                                                                      |
+| MON-01 ~ MON-04   | Phase 9     | Pending  |                                                                                                                      |
+| PRD-01 ~ PRD-05   | Phase 10    | Pending  |                                                                                                                      |
+| CMP-06 ~ CMP-09   | Phase 5+    | Pending  |                                                                                                                      |
 
 ---
 
