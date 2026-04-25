@@ -18,7 +18,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 
 **Track B: Long-Term Build (Phases 6-10)**
 
-- [ ] **Phase 6: Model Upgrade + Compliance + Security** - FashionSigLIP replacement + Chinese fine-tune, SASRec pipeline, compliance, security blockers, product contract frozen
+- [x] **Phase 6: Model Upgrade + Compliance + Security** - FashionSigLIP replacement + Chinese fine-tune, SASRec pipeline, compliance, security blockers, product contract frozen ✓ 2026-04-25
 - [ ] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization
 - [ ] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching
 - [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission
@@ -232,7 +232,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
 | 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
-| 6. Model Upgrade + Compliance + Security        | 0/?            | Not started | -          |
+| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 0/?            | Not started | -          |
 | 8. Mini Program + Photo Search + Social         | 0/?            | Not started | -          |
 | 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
