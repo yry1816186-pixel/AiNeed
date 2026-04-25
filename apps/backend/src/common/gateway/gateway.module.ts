@@ -7,6 +7,7 @@ import { RedisService } from "../redis/redis.service";
 
 import { NotificationGateway } from "./notification.gateway";
 import { NotificationService } from "./notification.service";
+import { ProxyController } from "./proxy.controller";
 
 @Global()
 @Module({
@@ -29,6 +30,7 @@ import { NotificationService } from "./notification.service";
       inject: [ConfigService],
     }),
   ],
+  controllers: [ProxyController],
   providers: [NotificationGateway, NotificationService, RedisService],
   exports: [NotificationService],
 })

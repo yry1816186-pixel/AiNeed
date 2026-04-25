@@ -208,7 +208,7 @@ services:
       GLM_API_KEY: ${GLM_API_KEY}
       ZHIPU_API_KEY: ${ZHIPU_API_KEY}
     ports:
-      - "8002:8002"
+      - "127.0.0.1:8002:8002"
     volumes:
       - ./ml/models:/app/models:ro
       - ./ml/data:/app/data:ro
@@ -247,6 +247,11 @@ services:
       - no-new-privileges:true
     env_file:
       - .env.production
+    secrets:
+      - fal_api_key
+      - openai_api_key
+      - jwt_secret
+      - database_url
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-stylemind}?schema=public&connection_limit=20&pool_timeout=30
@@ -269,8 +274,13 @@ services:
       GLM_API_ENDPOINT: ${GLM_API_ENDPOINT:-https://open.bigmodel.cn/api/paas/v4}
       GLM_MODEL: ${GLM_MODEL:-glm-5}
       PORT: 3001
+      # Docker Secrets file paths - override env vars when present
+      FAL_KEY_FILE: /run/secrets/fal_api_key
+      OPENAI_KEY_FILE: /run/secrets/openai_api_key
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      DATABASE_URL_FILE: /run/secrets/database_url
     ports:
-      - "3001:3001"
+      - "127.0.0.1:3001:3001"
     depends_on:
       postgres:
         condition: service_healthy
@@ -360,7 +370,7 @@ services:
       GF_ALERTING_ENABLED: "true"
       GF_UNIFIED_ALERTING_ENABLED: "true"
     ports:
-      - "3002:3000"
+      - "127.0.0.1:3002:3000"
     volumes:
       - prod_grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
@@ -600,3 +610,15 @@ volumes:
   prod_prometheus_data:
   prod_grafana_data:
   prod_loki_data:
+
+# Docker Secrets - sensitive data stored as files, not environment variables
+# Place secret files in ./secrets/ directory (gitignored)
+secrets:
+  fal_api_key:
+    file: ./secrets/fal_api_key.txt
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  database_url:
+    file: ./secrets/database_url.txt
