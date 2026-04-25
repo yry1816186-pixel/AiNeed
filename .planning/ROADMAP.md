@@ -40,7 +40,16 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 5. gender field is @IsOptional in auth DTO, and onboardingStore requires primaryScenarios/ageBand/styleExpression instead of gender
 6. Design tokens applied: warm camel #C4956A + charcoal #2D3436 + warm orange #E17055 + warm white #FAFAF8
 7. FashionSigLIP similarity visualization component renders (even with mock data)
-   **Plans**: TBD
+   **Plans**: 6 plans
+
+Plans:
+
+- [ ] 06-01-PLAN.md — FashionSigLIP Hard Replace + Qdrant Rebuild (MOD-01, DAT-04)
+- [ ] 06-02-PLAN.md — SASRec Pipeline + 6-Layer Funnel + Mixed Explanation (RAD-01, RAD-02, RAD-04)
+- [ ] 06-03-PLAN.md — Chinese Fine-tune + Bias Audit + Preference Model (MOD-02, MOD-03, RAD-03, DAT-05)
+- [ ] 06-04-PLAN.md — Data Pipeline E-commerce APIs + Sync Schedule (DAT-01, DAT-02, DAT-03)
+- [ ] 06-05-PLAN.md — PIPL Compliance + Software Copyright + Algorithm Registration (CMP-01~05)
+- [ ] 06-06-PLAN.md — Security Hardening - Nginx+TLS+Port+API Keys+Proxy (SEC-01~04)
 
 ### Phase 2: Pipeline + Cold Start + Curated Wardrobe
 
