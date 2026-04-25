@@ -116,6 +116,7 @@ export type ProfileStackParamList = {
   Booking: { advisorId: string };
   Chat: { advisorId: string; sessionId?: string };
   Legal: { type: "terms" | "privacy" };
+  ContentProducts: undefined;
 };
 
 // ============================================================
