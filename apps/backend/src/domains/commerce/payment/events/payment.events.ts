@@ -12,6 +12,7 @@ export const PAYMENT_EVENTS = {
   PAYMENT_REFUNDED: "payment.refunded",
   PAYMENT_CLOSED: "payment.closed",
   SUBSCRIPTION_ACTIVATION_REQUIRED: "payment.subscription.activation",
+  CONTENT_PURCHASE_COMPLETED: "payment.content.purchase.completed",
 } as const;
 
 export type PaymentEventType = (typeof PAYMENT_EVENTS)[keyof typeof PAYMENT_EVENTS];
@@ -55,9 +56,17 @@ export interface SubscriptionActivationPayload {
   metadata?: PaymentOrderMetadata;
 }
 
+export interface ContentPurchasePayload {
+  userId: string;
+  orderId: string;
+  productType: "color_report" | "body_report" | "capsule_wardrobe";
+  amount: number;
+}
+
 // Union type for all payment event payloads
 export type PaymentEventPayload =
   | PaymentSucceededPayload
   | PaymentFailedPayload
   | PaymentRefundedPayload
-  | SubscriptionActivationPayload;
+  | SubscriptionActivationPayload
+  | ContentPurchasePayload;

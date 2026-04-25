@@ -17,6 +17,9 @@ export interface MembershipPlanConfig {
     support: "community" | "priority" | "vip";
     exclusiveBrands?: boolean;
     earlyAccess?: boolean;
+    continuousOutfitPlan?: number; // -1 = premium unlimited, 0 = not available
+    deepWardrobeDiagnosis?: number; // -1 = premium unlimited, 0 = not available
+    aiProactivePush?: number; // -1 = premium unlimited, 0 = not available
   };
   isActive: boolean;
   sortOrder: number;
@@ -72,6 +75,9 @@ export const MEMBERSHIP_PLANS: Record<string, MembershipPlanConfig> = {
       support: "vip",
       exclusiveBrands: true,
       earlyAccess: true,
+      continuousOutfitPlan: -1,
+      deepWardrobeDiagnosis: -1,
+      aiProactivePush: -1,
     },
     isActive: true,
     sortOrder: 2,

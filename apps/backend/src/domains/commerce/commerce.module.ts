@@ -7,11 +7,13 @@ import { RecommendationsModule } from "../platform/recommendations/recommendatio
 
 import { AddressModule } from "./address/address.module";
 import { CartModule } from "./cart/cart.module";
+import { ContentProductModule } from "./content-product/content-product.module";
 import { CouponModule } from "./coupon/coupon.module";
 import { OrderModule } from "./order/order.module";
 import { PaymentModule } from "./payment/payment.module";
 import { RefundRequestModule } from "./refund-request/refund-request.module";
 import { SizeRecommendationModule } from "./size-recommendation/size-recommendation.module";
+import { StudioCommissionModule } from "./studio-commission/studio-commission.module";
 import { SubscriptionModule } from "./subscription/subscription.module";
 import { UsageLimitModule } from "./usage-limit/usage-limit.module";
 import { JDClientService } from "./services/jd-client.service";
@@ -22,10 +24,12 @@ import { SYNC_QUEUE, SyncSchedulerService } from "./sync/sync-scheduler.service"
 @Module({
   imports: [
     CartModule,
+    ContentProductModule,
     CouponModule,
     OrderModule,
     PaymentModule,
     RefundRequestModule,
+    StudioCommissionModule,
     SubscriptionModule,
     UsageLimitModule,
     AddressModule,
@@ -50,10 +54,12 @@ import { SYNC_QUEUE, SyncSchedulerService } from "./sync/sync-scheduler.service"
   ],
   exports: [
     CartModule,
+    ContentProductModule,
     CouponModule,
     OrderModule,
     PaymentModule,
     RefundRequestModule,
+    StudioCommissionModule,
     SubscriptionModule,
     UsageLimitModule,
     AddressModule,
