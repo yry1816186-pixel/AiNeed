@@ -1,0 +1,42 @@
+$warm-camel: #c4956a;
+$warm-white: #fafaf8;
+
+.yiyi-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: $warm-camel;
+
+  &__icon {
+    color: $warm-white;
+    font-weight: 700;
+  }
+
+  &.avatar-small {
+    width: 64px;
+    height: 64px;
+
+    .yiyi-avatar__icon {
+      font-size: 28px;
+    }
+  }
+
+  &.avatar-medium {
+    width: 96px;
+    height: 96px;
+
+    .yiyi-avatar__icon {
+      font-size: 40px;
+    }
+  }
+
+  &.avatar-large {
+    width: 128px;
+    height: 128px;
+
+    .yiyi-avatar__icon {
+      font-size: 56px;
+    }
+  }
+}

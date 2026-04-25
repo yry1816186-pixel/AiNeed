@@ -1,0 +1,11 @@
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  &__placeholder {
+    font-size: 28px;
+    color: #999;
+  }
+}

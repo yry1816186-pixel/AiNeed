@@ -1,0 +1,78 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-white: #fafaf8;
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $warm-white;
+
+  &__messages {
+    flex: 1;
+    padding-top: 20px;
+    padding-bottom: 120px;
+  }
+
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 200px;
+  }
+
+  &__empty-text {
+    font-size: 28px;
+    color: #999;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+  }
+
+  &__loading-text {
+    font-size: 24px;
+    color: #999;
+  }
+
+  &__input-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  &__input {
+    flex: 1;
+    height: 72px;
+    padding: 0 24px;
+    background-color: #f5f5f5;
+    border-radius: 36px;
+    font-size: 28px;
+  }
+
+  &__send-btn {
+    margin-left: 16px;
+    padding: 16px 28px;
+    border-radius: 36px;
+    background-color: #ddd;
+  }
+
+  &__send-btn--active {
+    background-color: $warm-camel;
+  }
+
+  &__send-text {
+    font-size: 28px;
+    color: #fff;
+  }
+}

@@ -1,0 +1,27 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-white: #fafaf8;
+
+.quick-reply {
+  display: flex;
+  white-space: nowrap;
+  padding: 16px 24px;
+  margin-top: 16px;
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 28px;
+    margin-right: 16px;
+    border-radius: 32px;
+    border: 2px solid $warm-camel;
+    background-color: $warm-white;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    font-size: 24px;
+    color: $warm-camel;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,64 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-orange: #e17055;
+$warm-white: #fafaf8;
+
+.index {
+  min-height: 100vh;
+  padding: 40px 32px;
+  background-color: $warm-white;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    margin-bottom: 80px;
+  }
+
+  &__greeting {
+    font-size: 40px;
+    font-weight: 600;
+    color: $charcoal;
+    margin-top: 24px;
+  }
+
+  &__subtitle {
+    font-size: 26px;
+    color: $warm-camel;
+    margin-top: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  &__action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 32px;
+    background-color: #fff;
+    border-radius: 24px;
+    border: 2px solid #f0ebe5;
+  }
+
+  &__action-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  &__action-title {
+    font-size: 34px;
+    font-weight: 600;
+    color: $charcoal;
+    margin-bottom: 8px;
+  }
+
+  &__action-desc {
+    font-size: 24px;
+    color: #999;
+  }
+}

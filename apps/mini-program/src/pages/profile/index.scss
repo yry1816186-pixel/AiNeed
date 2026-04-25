@@ -1,0 +1,107 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-white: #fafaf8;
+
+.profile {
+  min-height: 100vh;
+  background-color: $warm-white;
+  padding: 40px 32px;
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+  }
+
+  &__avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: #eee;
+  }
+
+  &__avatar-placeholder {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: $warm-camel;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__avatar-text {
+    font-size: 64px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &__nickname {
+    font-size: 36px;
+    font-weight: 600;
+    color: $charcoal;
+    margin-top: 24px;
+  }
+
+  &__logout-btn {
+    margin-top: 48px;
+    padding: 16px 48px;
+    border-radius: 36px;
+    border: 2px solid #ddd;
+  }
+
+  &__logout-text {
+    font-size: 28px;
+    color: #999;
+  }
+
+  &__login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+  }
+
+  &__login-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__login-avatar-text {
+    font-size: 72px;
+    color: #ccc;
+  }
+
+  &__login-title {
+    font-size: 40px;
+    font-weight: 600;
+    color: $charcoal;
+    margin-top: 32px;
+  }
+
+  &__login-desc {
+    font-size: 26px;
+    color: #999;
+    margin-top: 12px;
+  }
+
+  &__login-btn {
+    margin-top: 48px;
+    background-color: $warm-camel;
+    border-radius: 36px;
+    padding: 16px 64px;
+    border: none;
+  }
+
+  &__login-btn-text {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 600;
+  }
+}
