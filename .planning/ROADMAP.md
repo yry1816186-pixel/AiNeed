@@ -14,7 +14,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 - [x] **Phase 2: Pipeline + Cold Start + Curated Wardrobe** - Recommendation pipeline single entry, cold start refactored, mock data seeded, curated wardrobe model, A/B experiment ID ✓ 2026-04-24
 - [x] **Phase 3: Navigation + Core Screens + Calendar** - 4-tab navigation, Today Screen with Yiyi proactive push, Discover Screen with curation space, simplified 7-day calendar ✓ 2026-04-24
 - [x] **Phase 4: Yiyi Agent + Voice + Onboarding + Studio** - Agent state machine, interview outfit dialog, voice button, Edge-TTS, new 4-step onboarding, studio smart recommendation ✓ 2026-04-25
-- [ ] **Phase 5: E2E Integration + Competition Demo** - Full flow test, visual consistency, competition-specific demo path, tech depth showcase
+- [x] **Phase 5: E2E Integration + Competition Demo** - Full flow test, visual consistency, competition-specific demo path, tech depth showcase ✓ 2026-04-25
 
 **Track B: Long-Term Build (Phases 6-10)**
 
@@ -127,7 +127,14 @@ Plans:
 4. Loading states and empty states handled on all screens
 5. Both backend and mobile compile with zero errors
    **UI hint**: yes
-   **Plans**: TBD
+   **Plans**: 4 plans
+
+Plans:
+
+- [x] 05-01-PLAN.md — E2E Data Wiring: Today/Discover API + Orchestrator breakdown (D-01, D-02, D-03) ✓ 2026-04-25
+- [x] 05-02-PLAN.md — Visual Consistency: Design tokens + three-state coverage (VIS) ✓ 2026-04-25
+- [x] 05-03-PLAN.md — Competition Demo Path: Funnel + ProfileDebug + Pre-cache + Demo script ✓ 2026-04-25
+- [x] 05-04-PLAN.md — Zero Errors + Verification: TS fixes + bug fixes + E2E checklist ✓ 2026-04-25
 
 ### Phase 6: Model Upgrade + Compliance + Security
 
@@ -215,7 +222,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
 | 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
 | 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
-| 5. E2E Integration + Competition Demo           | 0/?            | Not started | -          |
+| 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
 | 6. Model Upgrade + Compliance + Security        | 0/?            | Not started | -          |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 0/?            | Not started | -          |
 | 8. Mini Program + Photo Search + Social         | 0/?            | Not started | -          |
