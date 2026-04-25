@@ -136,7 +136,7 @@
 ### Photo Search (拍照识图找同款)
 
 - [x] **PHO-01**: 拍照 → FashionSigLIP 编码 → Qdrant 向量检索 → 展示 5 个相似款 ✓ Phase 08 Plan 01
-- [ ] **PHO-02**: 找到同款后自然引导 "AI 帮你搭更好的" → 注册转化
+- [x] **PHO-02**: 找到同款后自然引导 "AI 帮你搭更好的" → 注册转化 ✓ Phase 08 Plan 04
 
 ### Calendar Full (穿搭日历完整版)
 
@@ -251,7 +251,7 @@
 | VIS-01 ~ VIS-04   | Phase 1,3,5 | Partial  | VIS-01: 84 hardcoded colors remain; VIS-04: deferred to Phase 5                                                      |
 | MOD-01 ~ MOD-04   | Phase 6     | Pending  |                                                                                                                      |
 | FLY-01 ~ FLY-04   | Phase 7     | Pending  |                                                                                                                      |
-| PHO-01 ~ PHO-02   | Phase 8     | PHO-01 ✓ | Image embedding + vector search endpoint (08-01)                                                                     |
+| PHO-01 ~ PHO-02   | Phase 8     | All ✓    | Image embedding + vector search (08-01) + RegistrationCTA conversion (08-04)                                         |
 | CAL-03 ~ CAL-05   | Phase 7     | Pending  |                                                                                                                      |
 | MINI-01 ~ MINI-02 | Phase 8     | All ✓    | Backend auth + jscode2session (08-01) + Taro project + share hooks (08-03)                                           |
 | SOC-01 ~ SOC-02   | Phase 8     | SOC-01 ✓ | StyleDNAService + Qdrant user_style_dna + NestJS proxy (08-02)                                                       |

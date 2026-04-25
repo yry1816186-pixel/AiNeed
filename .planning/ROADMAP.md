@@ -20,7 +20,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 
 - [x] **Phase 6: Model Upgrade + Compliance + Security** - FashionSigLIP replacement + Chinese fine-tune, SASRec pipeline, compliance, security blockers, product contract frozen ✓ 2026-04-25
 - [x] **Phase 7: Data Flywheel + Calendar Full + Advanced Rec** - Feedback loop, FashionSigLIP iteration, full calendar with AI auto-planning, style evolution visualization ✓ 2026-04-27
-- [ ] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching
+- [x] **Phase 8: Mini Program + Photo Search + Social** - WeChat mini program v1, photo-based item search, style DNA social matching ✓ 2026-04-25
 - [ ] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission
 - [ ] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials submitted
 
@@ -203,7 +203,7 @@ Plans:
 - [x] 08-01-PLAN.md — Backend: mini-program login (jscode2session) + image embed/search endpoint (MINI-01, PHO-01) ✓ 2026-04-25
 - [x] 08-02-PLAN.md — Backend: style DNA service + social matching + Qdrant user_style_dna collection (SOC-01) ✓ 2026-04-25
 - [x] 08-03-PLAN.md — Taro mini-program: project init + auth + chat + profile pages + share hooks (MINI-01, MINI-02) ✓ 2026-04-25
-- [ ] 08-04-PLAN.md — Taro mini-program: photo search page + social matching page + registration CTA (PHO-01, PHO-02, SOC-01, MINI-02)
+- [x] 08-04-PLAN.md — Taro mini-program: photo search page + social matching page + registration CTA (PHO-01, PHO-02, SOC-01, MINI-02) ✓ 2026-04-25
 
 ### Phase 9: Monetization + Community + Sharing
 
@@ -248,7 +248,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
 | 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 1/4            | In progress | -          |
+| 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
 | 9. Monetization + Community + Sharing           | 0/?            | Not started | -          |
 | 10. Production + Launch + Competition           | 0/?            | Not started | -          |
 
