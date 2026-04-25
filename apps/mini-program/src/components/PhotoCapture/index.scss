@@ -1,0 +1,42 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-white: #fafaf8;
+
+.photo-capture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 32px;
+  background-color: #fff;
+  border: 4px dashed #ddd;
+  border-radius: 24px;
+  margin: 32px 0;
+
+  &__icon-wrap {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(196, 149, 106, 0.1);
+    border-radius: 50%;
+    margin-bottom: 24px;
+  }
+
+  &__icon {
+    font-size: 56px;
+  }
+
+  &__label {
+    font-size: 32px;
+    font-weight: 600;
+    color: $charcoal;
+    margin-bottom: 8px;
+  }
+
+  &__hint {
+    font-size: 24px;
+    color: #999;
+  }
+}

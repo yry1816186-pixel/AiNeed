@@ -1,0 +1,50 @@
+$warm-camel: #c4956a;
+$charcoal: #2d3436;
+$warm-orange: #e17055;
+$warm-white: #fafaf8;
+
+.registration-cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(196, 149, 106, 0.08), rgba(225, 112, 85, 0.08));
+  border: 2px solid rgba(196, 149, 106, 0.2);
+  border-radius: 20px;
+  margin-top: 24px;
+  margin-bottom: 32px;
+
+  &__content {
+    flex: 1;
+    margin-right: 24px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: $charcoal;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  &__desc {
+    font-size: 24px;
+    color: #999;
+    display: block;
+  }
+
+  &__button {
+    flex-shrink: 0;
+    background-color: $warm-orange;
+    border-radius: 40px;
+    padding: 16px 32px;
+  }
+
+  &__button-text {
+    font-size: 26px;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
