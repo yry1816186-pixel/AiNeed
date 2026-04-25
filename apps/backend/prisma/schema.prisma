@@ -94,6 +94,7 @@ model User {
   consultantWithdrawals ConsultantWithdrawal[]
 
   consents             UserConsent[]
+  consentRecords       ConsentRecord[]
   notificationSetting  UserNotificationSetting?
   pushDeviceTokens     PushDeviceToken[]
 
@@ -1217,11 +1218,23 @@ model PushDeviceToken {
 
 // ==================== 数据合规 ====================
 
+enum ConsentType {
+  tracking
+  analytics
+  marketing
+  body_metrics
+  photos
+  body_fat
+  ai_domestic_no_crossborder
+  data_export
+  account_deletion
+}
+
 model UserConsent {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   userId      String
 
-  consentType String
+  consentType ConsentType
   granted     Boolean
   grantedAt   DateTime?
   revokedAt   DateTime?
@@ -1236,6 +1249,35 @@ model UserConsent {
   @@index([userId])
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ConsentRecord {
+  id          String      @id @default(cuid())
+  userId      String
+  consentType ConsentType
+  action      String      // "granted" | "revoked" | "updated"
+  version     String
+  details     String?     // JSON details about what was consented
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, consentType])
+  @@map("consent_records")
+}
+
+model ConsentVersion {
+  id          String      @id @default(cuid())
+  consentType ConsentType
+  version     String
+  content     String      // Full consent text
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  @@unique([consentType, version])
+  @@map("consent_versions")
 }
 
 model DataExportRequest {

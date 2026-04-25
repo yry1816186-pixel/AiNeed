@@ -1,8 +1,20 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, ForbiddenException } from "@nestjs/common";
 
 import { EmailService } from "../../../common/email/email.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { StorageService } from "../../../common/storage/storage.service";
+
+// Re-export ConsentType from Prisma-generated types for use in guards and services
+export type ConsentType =
+  | "tracking"
+  | "analytics"
+  | "marketing"
+  | "body_metrics"
+  | "photos"
+  | "body_fat"
+  | "ai_domestic_no_crossborder"
+  | "data_export"
+  | "account_deletion";
 
 @Injectable()
 export class PrivacyService {
@@ -15,6 +27,66 @@ export class PrivacyService {
   ) {}
 
   /**
+   * 检查用户是否已授予特定类型的同意
+   */
+  async checkConsent(userId: string, consentType: ConsentType): Promise<boolean> {
+    const consent = await this.prisma.userConsent.findUnique({
+      where: { userId_consentType: { userId, consentType } },
+    });
+    return consent?.granted ?? false;
+  }
+
+  /**
+   * 要求用户已授予所有指定类型的同意，否则抛出 ForbiddenException
+   */
+  async requireConsent(userId: string, consentTypes: ConsentType[]): Promise<void> {
+    const missingConsents: ConsentType[] = [];
+
+    for (const consentType of consentTypes) {
+      const granted = await this.checkConsent(userId, consentType);
+      if (!granted) {
+        missingConsents.push(consentType);
+      }
+    }
+
+    if (missingConsents.length > 0) {
+      throw new ForbiddenException(
+        `需要以下授权才能继续: ${missingConsents.join(", ")}`,
+        "MISSING_CONSENT"
+      );
+    }
+  }
+
+  /**
+   * 记录同意操作到审计追踪表 (ConsentRecord)
+   */
+  async recordConsentAction(
+    userId: string,
+    consentType: ConsentType,
+    action: string,
+    details?: string,
+    metadata?: { ipAddress?: string; userAgent?: string }
+  ) {
+    // 获取当前活跃版本的同意文本
+    const activeVersion = await this.prisma.consentVersion.findFirst({
+      where: { consentType, isActive: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return this.prisma.consentRecord.create({
+      data: {
+        userId,
+        consentType,
+        action,
+        version: activeVersion?.version ?? "1.0",
+        details: details ?? null,
+        ipAddress: metadata?.ipAddress ?? null,
+        userAgent: metadata?.userAgent ?? null,
+      },
+    });
+  }
+
+  /**
    * 记录用户同意
    */
   async recordConsent(
@@ -23,7 +95,7 @@ export class PrivacyService {
     granted: boolean,
     metadata: { ipAddress?: string; userAgent?: string; version?: string }
   ) {
-    return this.prisma.userConsent.upsert({
+    const result = await this.prisma.userConsent.upsert({
       where: {
         userId_consentType: { userId, consentType },
       },
@@ -45,6 +117,20 @@ export class PrivacyService {
         version: metadata.version || "1.0",
       },
     });
+
+    // 同步创建审计记录到 ConsentRecord
+    await this.recordConsentAction(
+      userId,
+      consentType as ConsentType,
+      granted ? "granted" : "revoked",
+      JSON.stringify({ previousGranted: !granted }),
+      metadata
+    ).catch((err) => {
+      // 审计记录失败不应阻塞主流程，仅记录日志
+      this.logger.warn(`Failed to create consent audit record: ${err.message}`);
+    });
+
+    return result;
   }
 
   /**
