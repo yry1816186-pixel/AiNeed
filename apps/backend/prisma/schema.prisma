@@ -117,6 +117,9 @@ model User {
   outfitDiaries        OutfitDiary[]
   weeklyReports        WeeklyReport[]
 
+  // Phase 9: Content products + Studio referrals
+  contentPurchases     ContentPurchase[]
+
   @@index([email])
   @@index([phone])
   @@index([isActive])
@@ -2706,4 +2709,105 @@ model WeeklyReport {
   @@unique([userId, weekStart])
   @@index([userId])
   @@index([userId, weekStart(sort: Desc)])
+}
+
+// ==================== Phase 9: 免费层限额 + 内容产品 + 工作室佣金 ====================
+
+enum ContentProductType {
+  color_report
+  body_report
+  capsule_wardrobe
+}
+
+enum ContentPurchaseStatus {
+  active
+  refunded
+  expired
+}
+
+model ContentPurchase {
+  id          String   @id @default(uuid())
+  userId      String
+  productType ContentProductType
+  orderId     String?  // 关联 PaymentOrder
+  amount      Decimal  @db.Decimal(10, 2)
+  currency    String   @default("CNY")
+  status      ContentPurchaseStatus @default(active)
+  unlockedAt  DateTime @default(now())
+  expiresAt   DateTime? // null = permanent
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, productType])
+  @@index([userId])
+  @@index([productType])
+  @@index([userId, status])
+}
+
+enum StudioReferralStatus {
+  pending
+  converted
+  expired
+  cancelled
+}
+
+model StudioReferral {
+  id          String   @id @default(uuid())
+  studioId    String   // maps to ConsultantProfile.id per D-14
+  userId      String
+  source      String   // "chat_recommend" | "profile" | "share_link"
+  orderId     String?  // filled when user places order within 7-day window
+  referredAt  DateTime @default(now())
+  convertedAt DateTime?
+  status      StudioReferralStatus @default(pending)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([studioId])
+  @@index([userId])
+  @@index([userId, studioId])
+  @@index([referredAt])
+  @@index([status])
+  @@index([userId, referredAt]) // 7-day window query
+}
+
+enum CommissionBillStatus {
+  pending
+  confirmed
+  paid
+  disputed
+}
+
+model StudioCommissionBill {
+  id            String   @id @default(uuid())
+  studioId      String
+  period        String   // "2026-04" format
+  totalReferrals Int     @default(0)
+  convertedOrders Int    @default(0)
+  totalOrderAmount Decimal @db.Decimal(12, 2) @default(0)
+  commissionRate Decimal @db.Decimal(5, 4) // 0.15 ~ 0.20
+  commissionAmount Decimal @db.Decimal(12, 2) @default(0)
+  status        CommissionBillStatus @default(pending)
+  confirmedAt   DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([studioId, period])
+  @@index([studioId])
+  @@index([status])
+  @@index([period])
+}
+
+model StudioCommissionRate {
+  id              String   @id @default(uuid())
+  studioId        String   @unique
+  rate            Decimal  @db.Decimal(5, 4) // 0.15 ~ 0.20
+  effectiveFrom   DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([studioId])
 }
