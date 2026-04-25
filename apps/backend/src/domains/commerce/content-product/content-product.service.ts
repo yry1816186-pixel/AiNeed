@@ -1,7 +1,11 @@
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
+
+import { CAPSULE_WARDROBE_QUEUE } from "./capsule-wardrobe.processor";
 
 import {
   ContentProductInfo,
@@ -43,7 +47,8 @@ export class ContentProductService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService
+    private readonly paymentService: PaymentService,
+    @InjectQueue(CAPSULE_WARDROBE_QUEUE) private readonly capsuleQueue: Queue
   ) {}
 
   /**
@@ -155,7 +160,7 @@ export class ContentProductService {
 
   /**
    * Dispatch capsule wardrobe AI generation job.
-   * Actual AI generation consumer is implemented in Plan 09-05.
+   * Actual AI generation runs in CapsuleWardrobeProcessor (BullMQ consumer).
    */
   async generateCapsuleWardrobe(userId: string): Promise<{ status: string; message: string }> {
     // Verify user has purchased capsule wardrobe
@@ -167,12 +172,72 @@ export class ContentProductService {
       throw new BadRequestException("Please purchase capsule wardrobe first");
     }
 
-    // TODO: Dispatch BullMQ job for async AI generation in Plan 09-05
+    // Check if already generated or in progress
+    if (purchase.metadata && typeof purchase.metadata === "object") {
+      const metadata = purchase.metadata as Record<string, unknown>;
+      if (metadata.capsulePlan) {
+        return {
+          status: "ready",
+          message: "胶囊衣橱方案已生成",
+        };
+      }
+      if (metadata.error) {
+        // Previous generation failed -- allow retry by dispatching new job
+        this.logger.log(`Retrying failed capsule wardrobe generation for user ${userId}`);
+      }
+    }
+
+    // Dispatch BullMQ job for async AI generation
+    await this.capsuleQueue.add(
+      "generate",
+      { userId },
+      {
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 2000,
+        },
+        removeOnComplete: true,
+        removeOnFail: false,
+      }
+    );
+
     this.logger.log(`Capsule wardrobe generation dispatched for user ${userId}`);
 
     return {
       status: "generating",
       message: "胶囊衣橱方案正在生成中，预计 5 分钟后完成",
+    };
+  }
+
+  /**
+   * Get the generated capsule wardrobe result.
+   * Returns status: "ready" | "generating" | "not_purchased"
+   */
+  async getCapsuleWardrobeResult(
+    userId: string
+  ): Promise<{ status: string; capsulePlan?: unknown; message?: string }> {
+    const purchase = await this.prisma.contentPurchase.findUnique({
+      where: { userId_productType: { userId, productType: "capsule_wardrobe" } },
+    });
+
+    if (!purchase) {
+      return { status: "not_purchased" };
+    }
+
+    if (purchase.metadata && typeof purchase.metadata === "object") {
+      const metadata = purchase.metadata as Record<string, unknown>;
+      if (metadata.capsulePlan) {
+        return {
+          status: "ready",
+          capsulePlan: metadata.capsulePlan,
+        };
+      }
+    }
+
+    return {
+      status: "generating",
+      message: "胶囊衣橱方案正在生成中",
     };
   }
 }

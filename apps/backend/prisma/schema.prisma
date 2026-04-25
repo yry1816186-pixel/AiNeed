@@ -2733,6 +2733,7 @@ model ContentPurchase {
   amount      Decimal  @db.Decimal(10, 2)
   currency    String   @default("CNY")
   status      ContentPurchaseStatus @default(active)
+  metadata    Json?    // Stores capsulePlan result and other product-specific data
   unlockedAt  DateTime @default(now())
   expiresAt   DateTime? // null = permanent
   createdAt   DateTime @default(now())

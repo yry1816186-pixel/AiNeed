@@ -48,6 +48,10 @@ describe("ContentProductService", () => {
           provide: PaymentService,
           useValue: paymentService,
         },
+        {
+          provide: "BullQueue_capsule-wardrobe-generate",
+          useValue: { add: jest.fn() },
+        },
       ],
     }).compile();
 

@@ -79,4 +79,14 @@ export class ContentProductController {
   generateCapsuleWardrobe(@Request() req: RequestWithUser) {
     return this.contentProductService.generateCapsuleWardrobe(req.user.id);
   }
+
+  /**
+   * GET /content-products/capsule-wardrobe/result
+   * Get the generated capsule wardrobe plan.
+   * Returns { status: "ready" | "generating" | "not_purchased" }
+   */
+  @Get("capsule-wardrobe/result")
+  getCapsuleWardrobeResult(@Request() req: RequestWithUser) {
+    return this.contentProductService.getCapsuleWardrobeResult(req.user.id);
+  }
 }
