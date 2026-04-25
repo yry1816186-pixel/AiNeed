@@ -211,6 +211,14 @@ try:
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load vector search API: %s", e)
 
+try:
+    from ml.api.routes.image_search import router as image_search_router
+
+    app.include_router(image_search_router)
+    logging.getLogger(__name__).info("Image search API routes loaded")
+except Exception as e:
+    logging.getLogger(__name__).warning("Failed to load image search API: %s", e)
+
 
 if __name__ == "__main__":
     import uvicorn
