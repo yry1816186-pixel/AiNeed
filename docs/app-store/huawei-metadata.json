@@ -1,0 +1,31 @@
+{
+  "appName": "寻裳 - AI 穿搭搭子",
+  "packageName": "com.xuno.app",
+  "versionName": "1.0.0",
+  "versionCode": 1,
+  "category": "生活",
+  "secondaryCategory": "购物",
+  "developerName": "XUNO Team",
+  "agpFormat": true,
+  "huaweiAppId": "",
+  "description": {
+    "zh-CN": "寻裳是你的 AI 穿搭搭子伊伊。打开 App 即获当日穿搭方案，对话逼近最优决策，虚拟试穿看得见效果。\n\n核心功能：\n- AI 造型师伊伊：基于体型、肤色、风格偏好的个性化推荐\n- 虚拟试穿：上传照片即可看到试穿效果\n- 每日推荐：天气+场景+衣橱的智能搭配方案\n- 风格测试：视觉化风格 DNA 建立\n- 智能购物：从推荐到购买一步到位\n- 7天穿搭日历：AI 自动规划一周穿搭"
+  },
+  "keywords": "穿搭,AI造型师,虚拟试穿,每日推荐,风格测试,智能穿搭,衣橱管理",
+  "ageRating": "所有人",
+  "privacyPolicyUrl": "https://xuno.cn/privacy",
+  "supportEmail": "support@xuno.cn",
+  "screenshots": {
+    "count": 6,
+    "resolution": "1080x2160",
+    "strategy": [
+      "AI 造型师推荐页",
+      "虚拟试穿效果对比",
+      "每日推荐流",
+      "风格测试",
+      "购物推荐",
+      "个人中心+衣橱"
+    ]
+  },
+  "updateDescription": "v1.0 首次发布\n- AI 穿搭推荐基于个人风格画像\n- 虚拟试穿：看到自己穿上推荐搭配\n- 智能每日穿搭方案考虑天气和场景\n- 视觉风格测试建立你的风格 DNA\n- 个性化购物推荐"
+}
