@@ -1,0 +1,2731 @@
+{
+  "meta": {
+    "generatedAt": "2026-04-26T13:39:42.286495+00:00",
+    "version": "2.0.0",
+    "description": "寻裳 XUNO 10 个精心构造的演示用 seed profile (v2)",
+    "totalUsers": 10,
+    "coverage": "6 body types x 9 styles x 7 scenarios x 4 age bands"
+  },
+  "users": [
+    {
+      "email": "seed_v2_1@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "rectangle",
+        "styleExpression": "minimalist",
+        "primaryScenarios": ["interview"],
+        "budget": "3000",
+        "ageBand": "22-25",
+        "nickname": "面试达人",
+        "gender": "male"
+      },
+      "onboarding": {
+        "step1_scenes": ["interview"],
+        "step2_profile": {
+          "ageBand": "22-25",
+          "height": 180,
+          "weight": 70,
+          "garmentPreference": "fitted"
+        },
+        "step3_style": "minimalist",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_面试达人"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_minimalist_001",
+          "name": "白色纯棉T恤",
+          "category": "top",
+          "color": "white",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_002",
+          "name": "灰色高领毛衣",
+          "category": "top",
+          "color": "gray",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_003",
+          "name": "黑色修身衬衫",
+          "category": "top",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_004",
+          "name": "驼色针织衫",
+          "category": "top",
+          "color": "camel",
+          "material": "cashmere",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_005",
+          "name": "黑色直筒西裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "polyester",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_006",
+          "name": "深蓝色牛仔裤",
+          "category": "bottom",
+          "color": "navy",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_007",
+          "name": "灰色休闲裤",
+          "category": "bottom",
+          "color": "gray",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_008",
+          "name": "黑色西装外套",
+          "category": "jacket",
+          "color": "black",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_009",
+          "name": "驼色大衣",
+          "category": "jacket",
+          "color": "camel",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_010",
+          "name": "黑色牛津鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_011",
+          "name": "白色板鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_012",
+          "name": "银色简约手表",
+          "category": "accessory",
+          "color": "silver",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_013",
+          "name": "黑色皮带",
+          "category": "accessory",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "white", "gray", "navy", "camel"],
+        "materials": ["cotton", "wool", "cashmere"],
+        "brands": ["Uniqlo", "MUJI", "COS"]
+      },
+      "events": [
+        {
+          "id": "evt_面试达人_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_面试达人_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_面试达人_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_面试达人_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_面试达人_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_面试达人_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_面试达人_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_面试达人_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — interview场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "面试场景主角 — 演示核心",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_2@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "hourglass",
+        "styleExpression": "vintage",
+        "primaryScenarios": ["date", "party"],
+        "budget": "2000",
+        "ageBand": "22-25",
+        "nickname": "文艺女孩",
+        "gender": "female"
+      },
+      "onboarding": {
+        "step1_scenes": ["date", "party"],
+        "step2_profile": {
+          "ageBand": "22-25",
+          "height": 158,
+          "weight": 55,
+          "garmentPreference": "regular"
+        },
+        "step3_style": "vintage",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_文艺女孩"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_vintage_001",
+          "name": "碎花雪纺衬衫",
+          "category": "top",
+          "color": "pink",
+          "material": "chiffon",
+          "season": "spring",
+          "isFavorite": true
+        },
+        {
+          "id": "item_vintage_002",
+          "name": "酒红色丝绒吊带",
+          "category": "top",
+          "color": "burgundy",
+          "material": "velvet",
+          "season": "autumn",
+          "isFavorite": true
+        },
+        {
+          "id": "item_vintage_003",
+          "name": "米白色蕾丝上衣",
+          "category": "top",
+          "color": "cream",
+          "material": "lace",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_vintage_004",
+          "name": "墨绿色复古针织",
+          "category": "top",
+          "color": "green",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_005",
+          "name": "高腰A字半裙",
+          "category": "skirt",
+          "color": "brown",
+          "material": "wool",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_006",
+          "name": "复古喇叭裤",
+          "category": "bottom",
+          "color": "denim",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_007",
+          "name": "格纹百褶裙",
+          "category": "skirt",
+          "color": "burgundy",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_008",
+          "name": "焦糖色风衣",
+          "category": "jacket",
+          "color": "camel",
+          "material": "cotton",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_009",
+          "name": "酒红色短外套",
+          "category": "jacket",
+          "color": "burgundy",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_010",
+          "name": "棕色玛丽珍鞋",
+          "category": "shoes",
+          "color": "brown",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_011",
+          "name": "米色乐福鞋",
+          "category": "shoes",
+          "color": "cream",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_012",
+          "name": "珍珠耳环",
+          "category": "accessory",
+          "color": "white",
+          "material": "pearl",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_vintage_013",
+          "name": "棕色手提包",
+          "category": "accessory",
+          "color": "brown",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["burgundy", "brown", "cream", "forest_green", "mustard"],
+        "materials": ["wool", "lace", "chiffon", "velvet"],
+        "brands": ["Urban Outfitters", "ModCloth", "经典复古品牌"]
+      },
+      "events": [
+        {
+          "id": "evt_文艺女孩_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_文艺女孩_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_文艺女孩_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_文艺女孩_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_文艺女孩_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_文艺女孩_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_文艺女孩_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_文艺女孩_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — date场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "约会场景 — 复古风格展示",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_3@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "slim",
+        "styleExpression": "streetwear",
+        "primaryScenarios": ["daily", "party"],
+        "budget": "5000",
+        "ageBand": "18-21",
+        "nickname": "街头潮人",
+        "gender": "male"
+      },
+      "onboarding": {
+        "step1_scenes": ["daily", "party"],
+        "step2_profile": {
+          "ageBand": "18-21",
+          "height": 180,
+          "weight": 65,
+          "garmentPreference": "oversized"
+        },
+        "step3_style": "streetwear",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_街头潮人"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_streetwear_001",
+          "name": "Oversize印花卫衣",
+          "category": "top",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_streetwear_002",
+          "name": "白色短袖T恤",
+          "category": "top",
+          "color": "white",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": true
+        },
+        {
+          "id": "item_streetwear_003",
+          "name": "迷彩夹克",
+          "category": "top",
+          "color": "green",
+          "material": "nylon",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_streetwear_004",
+          "name": "黑色连帽衫",
+          "category": "top",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_005",
+          "name": "破洞宽松牛仔裤",
+          "category": "bottom",
+          "color": "blue",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_006",
+          "name": "黑色束脚裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_007",
+          "name": "军绿色工装裤",
+          "category": "bottom",
+          "color": "green",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_008",
+          "name": "飞行员夹克",
+          "category": "jacket",
+          "color": "black",
+          "material": "nylon",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_009",
+          "name": "黑色机能外套",
+          "category": "jacket",
+          "color": "black",
+          "material": "polyester",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_010",
+          "name": "白色高帮板鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_011",
+          "name": "黑色跑鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "mesh",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_012",
+          "name": "黑色棒球帽",
+          "category": "accessory",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_streetwear_013",
+          "name": "银色链条项链",
+          "category": "accessory",
+          "color": "silver",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "white", "red", "camo", "neon"],
+        "materials": ["cotton", "nylon", "mesh"],
+        "brands": ["Supreme", "Stussy", "Nike", "李宁"]
+      },
+      "events": [
+        {
+          "id": "evt_街头潮人_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_街头潮人_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_街头潮人_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_街头潮人_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_街头潮人_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_街头潮人_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_街头潮人_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_街头潮人_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — daily场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "潮流风格 — 高预算展示",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_4@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "athletic",
+        "styleExpression": "professional",
+        "primaryScenarios": ["commute", "interview"],
+        "budget": "8000",
+        "ageBand": "26-30",
+        "nickname": "职场精英",
+        "gender": "female"
+      },
+      "onboarding": {
+        "step1_scenes": ["commute", "interview"],
+        "step2_profile": {
+          "ageBand": "26-30",
+          "height": 158,
+          "weight": 58,
+          "garmentPreference": "fitted"
+        },
+        "step3_style": "professional",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_职场精英"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_professional_001",
+          "name": "白色真丝衬衫",
+          "category": "top",
+          "color": "white",
+          "material": "silk",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_professional_002",
+          "name": "浅蓝色商务衬衫",
+          "category": "top",
+          "color": "blue",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_professional_003",
+          "name": "黑色高领打底",
+          "category": "top",
+          "color": "black",
+          "material": "cashmere",
+          "season": "winter",
+          "isFavorite": true
+        },
+        {
+          "id": "item_professional_004",
+          "name": "米色针织开衫",
+          "category": "top",
+          "color": "cream",
+          "material": "cashmere",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_005",
+          "name": "黑色修身西裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_006",
+          "name": "灰色铅笔裙",
+          "category": "skirt",
+          "color": "gray",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_007",
+          "name": "藏蓝色直筒裤",
+          "category": "bottom",
+          "color": "navy",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_008",
+          "name": "藏蓝色西装外套",
+          "category": "jacket",
+          "color": "navy",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_009",
+          "name": "驼色羊绒大衣",
+          "category": "jacket",
+          "color": "camel",
+          "material": "cashmere",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_010",
+          "name": "黑色尖头高跟鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_011",
+          "name": "裸色平底鞋",
+          "category": "shoes",
+          "color": "nude",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_012",
+          "name": "简约金属手表",
+          "category": "accessory",
+          "color": "gold",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_professional_013",
+          "name": "黑色托特包",
+          "category": "accessory",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "navy", "gray", "white", "camel"],
+        "materials": ["wool", "silk", "cashmere", "leather"],
+        "brands": ["Zara", "Massimo Dutti", "COS"]
+      },
+      "events": [
+        {
+          "id": "evt_职场精英_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_职场精英_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_职场精英_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_职场精英_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_职场精英_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_职场精英_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_职场精英_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_职场精英_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — commute场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "高预算职场 — 面试+通勤双场景",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_5@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "muscular",
+        "styleExpression": "sporty",
+        "primaryScenarios": ["daily", "travel"],
+        "budget": "1500",
+        "ageBand": "26-30",
+        "nickname": "运动达人",
+        "gender": "male"
+      },
+      "onboarding": {
+        "step1_scenes": ["daily", "travel"],
+        "step2_profile": {
+          "ageBand": "26-30",
+          "height": 180,
+          "weight": 80,
+          "garmentPreference": "regular"
+        },
+        "step3_style": "sporty",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_运动达人"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_sporty_001",
+          "name": "速干运动T恤",
+          "category": "top",
+          "color": "black",
+          "material": "polyester",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_sporty_002",
+          "name": "灰色运动背心",
+          "category": "top",
+          "color": "gray",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": true
+        },
+        {
+          "id": "item_sporty_003",
+          "name": "拉链运动外套",
+          "category": "top",
+          "color": "navy",
+          "material": "polyester",
+          "season": "spring",
+          "isFavorite": true
+        },
+        {
+          "id": "item_sporty_004",
+          "name": "长袖压缩衣",
+          "category": "top",
+          "color": "black",
+          "material": "spandex",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_005",
+          "name": "黑色运动短裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "polyester",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_006",
+          "name": "深灰色运动长裤",
+          "category": "bottom",
+          "color": "gray",
+          "material": "polyester",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_007",
+          "name": "军绿工装短裤",
+          "category": "bottom",
+          "color": "green",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_008",
+          "name": "防风冲锋衣",
+          "category": "jacket",
+          "color": "black",
+          "material": "nylon",
+          "season": "spring",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_009",
+          "name": "抓绒马甲",
+          "category": "jacket",
+          "color": "gray",
+          "material": "fleece",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_010",
+          "name": "黑色跑步鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "mesh",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_011",
+          "name": "白色训练鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "mesh",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_012",
+          "name": "运动手表",
+          "category": "accessory",
+          "color": "black",
+          "material": "silicone",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_sporty_013",
+          "name": "黑色运动腰包",
+          "category": "accessory",
+          "color": "black",
+          "material": "nylon",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "gray", "navy", "white", "red"],
+        "materials": ["polyester", "spandex", "mesh", "nylon"],
+        "brands": ["Nike", "Adidas", "Under Armour"]
+      },
+      "events": [
+        {
+          "id": "evt_运动达人_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_运动达人_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "travel",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_运动达人_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_运动达人_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "travel",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_运动达人_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_运动达人_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "travel",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_运动达人_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_运动达人_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "travel",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — daily场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "运动休闲 — 低预算场景",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_6@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "pear",
+        "styleExpression": "romantic",
+        "primaryScenarios": ["date", "party"],
+        "budget": "3000",
+        "ageBand": "22-25",
+        "nickname": "温柔淑女",
+        "gender": "female"
+      },
+      "onboarding": {
+        "step1_scenes": ["date", "party"],
+        "step2_profile": {
+          "ageBand": "22-25",
+          "height": 158,
+          "weight": 56,
+          "garmentPreference": "regular"
+        },
+        "step3_style": "romantic",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_温柔淑女"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_romantic_001",
+          "name": "粉色蝴蝶结衬衫",
+          "category": "top",
+          "color": "pink",
+          "material": "chiffon",
+          "season": "spring",
+          "isFavorite": true
+        },
+        {
+          "id": "item_romantic_002",
+          "name": "白色蕾丝上衣",
+          "category": "top",
+          "color": "white",
+          "material": "lace",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_romantic_003",
+          "name": "薰衣草色针织衫",
+          "category": "top",
+          "color": "purple",
+          "material": "cashmere",
+          "season": "autumn",
+          "isFavorite": true
+        },
+        {
+          "id": "item_romantic_004",
+          "name": "浅蓝色泡泡袖",
+          "category": "top",
+          "color": "blue",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_005",
+          "name": "粉色百褶半裙",
+          "category": "skirt",
+          "color": "pink",
+          "material": "chiffon",
+          "season": "spring",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_006",
+          "name": "白色阔腿裤",
+          "category": "bottom",
+          "color": "white",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_007",
+          "name": "米色A字裙",
+          "category": "skirt",
+          "color": "cream",
+          "material": "wool",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_008",
+          "name": "浅粉色西装外套",
+          "category": "jacket",
+          "color": "pink",
+          "material": "wool",
+          "season": "spring",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_009",
+          "name": "白色毛绒外套",
+          "category": "jacket",
+          "color": "white",
+          "material": "faux_fur",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_010",
+          "name": "粉色尖头平底",
+          "category": "shoes",
+          "color": "pink",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_011",
+          "name": "白色绑带凉鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "leather",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_012",
+          "name": "珍珠项链",
+          "category": "accessory",
+          "color": "white",
+          "material": "pearl",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_romantic_013",
+          "name": "粉色手提包",
+          "category": "accessory",
+          "color": "pink",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["pink", "white", "cream", "lavender", "light_blue"],
+        "materials": ["lace", "chiffon", "silk", "cashmere"],
+        "brands": ["Lulus", " Anthropologie", "Free People"]
+      },
+      "events": [
+        {
+          "id": "evt_温柔淑女_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_温柔淑女_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_温柔淑女_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_温柔淑女_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_温柔淑女_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_温柔淑女_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_温柔淑女_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_温柔淑女_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — date场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "甜美约会 — 日常推荐场景",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_7@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "invertedTriangle",
+        "styleExpression": "minimalist",
+        "primaryScenarios": ["daily", "commute"],
+        "budget": "4000",
+        "ageBand": "31-35",
+        "nickname": "极简主义",
+        "gender": "male"
+      },
+      "onboarding": {
+        "step1_scenes": ["daily", "commute"],
+        "step2_profile": {
+          "ageBand": "31-35",
+          "height": 180,
+          "weight": 78,
+          "garmentPreference": "fitted"
+        },
+        "step3_style": "minimalist",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_极简主义"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_minimalist_001",
+          "name": "白色纯棉T恤",
+          "category": "top",
+          "color": "white",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_002",
+          "name": "灰色高领毛衣",
+          "category": "top",
+          "color": "gray",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_003",
+          "name": "黑色修身衬衫",
+          "category": "top",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_minimalist_004",
+          "name": "驼色针织衫",
+          "category": "top",
+          "color": "camel",
+          "material": "cashmere",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_005",
+          "name": "黑色直筒西裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "polyester",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_006",
+          "name": "深蓝色牛仔裤",
+          "category": "bottom",
+          "color": "navy",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_007",
+          "name": "灰色休闲裤",
+          "category": "bottom",
+          "color": "gray",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_008",
+          "name": "黑色西装外套",
+          "category": "jacket",
+          "color": "black",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_009",
+          "name": "驼色大衣",
+          "category": "jacket",
+          "color": "camel",
+          "material": "wool",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_010",
+          "name": "黑色牛津鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_011",
+          "name": "白色板鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_012",
+          "name": "银色简约手表",
+          "category": "accessory",
+          "color": "silver",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_minimalist_013",
+          "name": "黑色皮带",
+          "category": "accessory",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "white", "gray", "navy", "camel"],
+        "materials": ["cotton", "wool", "cashmere"],
+        "brands": ["Uniqlo", "MUJI", "COS"]
+      },
+      "events": [
+        {
+          "id": "evt_极简主义_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_极简主义_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_极简主义_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_极简主义_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_极简主义_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_极简主义_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_极简主义_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_极简主义_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — daily场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "日常通勤极简 — 成熟风格",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_8@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "slim",
+        "styleExpression": "avant-garde",
+        "primaryScenarios": ["party", "date"],
+        "budget": "2000",
+        "ageBand": "18-21",
+        "nickname": "国潮少年",
+        "gender": "male"
+      },
+      "onboarding": {
+        "step1_scenes": ["party", "date"],
+        "step2_profile": {
+          "ageBand": "18-21",
+          "height": 180,
+          "weight": 65,
+          "garmentPreference": "oversized"
+        },
+        "step3_style": "avant-garde",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_国潮少年"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_avant-garde_001",
+          "name": "黑色不对称剪裁上衣",
+          "category": "top",
+          "color": "black",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_avant-garde_002",
+          "name": "中国红刺绣卫衣",
+          "category": "top",
+          "color": "red",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_avant-garde_003",
+          "name": "白色解构衬衫",
+          "category": "top",
+          "color": "white",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_avant-garde_004",
+          "name": "荧光绿字母T恤",
+          "category": "top",
+          "color": "green",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_005",
+          "name": "黑色工装短裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_006",
+          "name": "迷彩拼接长裤",
+          "category": "bottom",
+          "color": "green",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_007",
+          "name": "白色阔腿裤",
+          "category": "bottom",
+          "color": "white",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_008",
+          "name": "龙纹刺绣夹克",
+          "category": "jacket",
+          "color": "black",
+          "material": "satin",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_009",
+          "name": "机能风冲锋衣",
+          "category": "jacket",
+          "color": "black",
+          "material": "nylon",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_010",
+          "name": "黑色厚底靴",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_011",
+          "name": "白色老爹鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "mesh",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_012",
+          "name": "金属耳饰",
+          "category": "accessory",
+          "color": "gold",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_avant-garde_013",
+          "name": "黑色链条包",
+          "category": "accessory",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["black", "white", "red", "gold", "neon"],
+        "materials": ["cotton", "nylon", "leather", "metal"],
+        "brands": ["Alexander Wang", "Off-White", "国潮品牌"]
+      },
+      "events": [
+        {
+          "id": "evt_国潮少年_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_国潮少年_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_国潮少年_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_国潮少年_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_国潮少年_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_国潮少年_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_国潮少年_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "party",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_国潮少年_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — party场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "前卫风格 — 国潮风格展示",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_9@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "hourglass",
+        "styleExpression": "classic",
+        "primaryScenarios": ["interview", "commute"],
+        "budget": "6000",
+        "ageBand": "26-30",
+        "nickname": "知性女性",
+        "gender": "female"
+      },
+      "onboarding": {
+        "step1_scenes": ["interview", "commute"],
+        "step2_profile": {
+          "ageBand": "26-30",
+          "height": 158,
+          "weight": 55,
+          "garmentPreference": "fitted"
+        },
+        "step3_style": "classic",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_知性女性"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_classic_001",
+          "name": "白色真丝衬衫",
+          "category": "top",
+          "color": "white",
+          "material": "silk",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_classic_002",
+          "name": "黑色高领羊绒衫",
+          "category": "top",
+          "color": "black",
+          "material": "cashmere",
+          "season": "winter",
+          "isFavorite": true
+        },
+        {
+          "id": "item_classic_003",
+          "name": "条纹海魂衫",
+          "category": "top",
+          "color": "navy",
+          "material": "cotton",
+          "season": "spring",
+          "isFavorite": true
+        },
+        {
+          "id": "item_classic_004",
+          "name": "米色V领针织",
+          "category": "top",
+          "color": "cream",
+          "material": "wool",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_005",
+          "name": "黑色西装裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_006",
+          "name": "深蓝色直筒牛仔裤",
+          "category": "bottom",
+          "color": "navy",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_007",
+          "name": "卡其色阔腿裤",
+          "category": "bottom",
+          "color": "khaki",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_008",
+          "name": "藏蓝色西装外套",
+          "category": "jacket",
+          "color": "navy",
+          "material": "wool",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_009",
+          "name": "驼色羊绒大衣",
+          "category": "jacket",
+          "color": "camel",
+          "material": "cashmere",
+          "season": "winter",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_010",
+          "name": "黑色乐福鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_011",
+          "name": "裸色中跟鞋",
+          "category": "shoes",
+          "color": "nude",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_012",
+          "name": "金色简约手表",
+          "category": "accessory",
+          "color": "gold",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_classic_013",
+          "name": "棕色公文包",
+          "category": "accessory",
+          "color": "brown",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["navy", "black", "white", "camel", "khaki"],
+        "materials": ["wool", "cotton", "silk", "cashmere"],
+        "brands": ["Brooks Brothers", "Ralph Lauren", "Burberry"]
+      },
+      "events": [
+        {
+          "id": "evt_知性女性_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_知性女性_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_知性女性_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_知性女性_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_知性女性_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_知性女性_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_知性女性_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "interview",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_知性女性_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "commute",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — interview场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "面试+通勤 — 经典知性风",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "email": "seed_v2_10@xuno.test",
+      "credential": "SeedTest2026!",
+      "profile": {
+        "bodyType": "rectangle",
+        "styleExpression": "casual",
+        "primaryScenarios": ["daily", "date"],
+        "budget": "800",
+        "ageBand": "18-21",
+        "nickname": "阳光学生",
+        "gender": "female"
+      },
+      "onboarding": {
+        "step1_scenes": ["daily", "date"],
+        "step2_profile": {
+          "ageBand": "18-21",
+          "height": 158,
+          "weight": 55,
+          "garmentPreference": "regular"
+        },
+        "step3_style": "casual",
+        "step4_first_outfit": {
+          "completed": true,
+          "savedOutfitId": "first_outfit_阳光学生"
+        }
+      },
+      "wardrobe": [
+        {
+          "id": "item_casual_001",
+          "name": "白色基础T恤",
+          "category": "top",
+          "color": "white",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_casual_002",
+          "name": "条纹长袖",
+          "category": "top",
+          "color": "navy",
+          "material": "cotton",
+          "season": "spring",
+          "isFavorite": true
+        },
+        {
+          "id": "item_casual_003",
+          "name": "牛仔衬衫",
+          "category": "top",
+          "color": "blue",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": true
+        },
+        {
+          "id": "item_casual_004",
+          "name": "黄色卡通卫衣",
+          "category": "top",
+          "color": "yellow",
+          "material": "cotton",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_005",
+          "name": "浅蓝色牛仔裤",
+          "category": "bottom",
+          "color": "blue",
+          "material": "denim",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_006",
+          "name": "黑色休闲短裤",
+          "category": "bottom",
+          "color": "black",
+          "material": "cotton",
+          "season": "summer",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_007",
+          "name": "灰色运动裤",
+          "category": "bottom",
+          "color": "gray",
+          "material": "cotton",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_008",
+          "name": "牛仔外套",
+          "category": "jacket",
+          "color": "blue",
+          "material": "denim",
+          "season": "spring",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_009",
+          "name": "灰色连帽卫衣",
+          "category": "jacket",
+          "color": "gray",
+          "material": "cotton",
+          "season": "autumn",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_010",
+          "name": "白色帆布鞋",
+          "category": "shoes",
+          "color": "white",
+          "material": "canvas",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_011",
+          "name": "黑色板鞋",
+          "category": "shoes",
+          "color": "black",
+          "material": "leather",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_012",
+          "name": "帆布背包",
+          "category": "accessory",
+          "color": "navy",
+          "material": "canvas",
+          "season": "all",
+          "isFavorite": false
+        },
+        {
+          "id": "item_casual_013",
+          "name": "简约手链",
+          "category": "accessory",
+          "color": "silver",
+          "material": "metal",
+          "season": "all",
+          "isFavorite": false
+        }
+      ],
+      "preferences": {
+        "colors": ["blue", "white", "gray", "navy", "yellow"],
+        "materials": ["cotton", "denim", "canvas"],
+        "brands": ["Nike", "Adidas", "Vans", "Converse"]
+      },
+      "events": [
+        {
+          "id": "evt_阳光学生_1",
+          "type": "view_recommendation",
+          "timestamp": "2026-04-20T00:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "sunny",
+            "timeOfDay": "morning",
+            "satisfaction": 3.5
+          }
+        },
+        {
+          "id": "evt_阳光学生_2",
+          "type": "view_item",
+          "timestamp": "2026-04-20T03:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cloudy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 3.67
+          }
+        },
+        {
+          "id": "evt_阳光学生_3",
+          "type": "click",
+          "timestamp": "2026-04-20T06:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "rainy",
+            "timeOfDay": "evening",
+            "satisfaction": 3.84
+          }
+        },
+        {
+          "id": "evt_阳光学生_4",
+          "type": "save_outfit",
+          "timestamp": "2026-04-21T09:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "cold",
+            "timeOfDay": "morning",
+            "satisfaction": 4.01
+          }
+        },
+        {
+          "id": "evt_阳光学生_5",
+          "type": "share",
+          "timestamp": "2026-04-21T12:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "hot",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.18
+          }
+        },
+        {
+          "id": "evt_阳光学生_6",
+          "type": "purchase",
+          "timestamp": "2026-04-21T15:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "sunny",
+            "timeOfDay": "evening",
+            "satisfaction": 4.35
+          }
+        },
+        {
+          "id": "evt_阳光学生_7",
+          "type": "try_on",
+          "timestamp": "2026-04-22T18:00:00+00:00",
+          "context": {
+            "scenario": "daily",
+            "weather": "cloudy",
+            "timeOfDay": "morning",
+            "satisfaction": 4.52
+          }
+        },
+        {
+          "id": "evt_阳光学生_8",
+          "type": "chat_with_yiyi",
+          "timestamp": "2026-04-22T21:00:00+00:00",
+          "context": {
+            "scenario": "date",
+            "weather": "rainy",
+            "timeOfDay": "afternoon",
+            "satisfaction": 4.69
+          }
+        }
+      ],
+      "journey": [
+        {
+          "step": "register",
+          "description": "注册账号",
+          "timestamp": "2026-04-15T09:00:00+00:00"
+        },
+        {
+          "step": "onboarding_complete",
+          "description": "完成4步引导",
+          "timestamp": "2026-04-16T10:00:00+00:00"
+        },
+        {
+          "step": "first_chat",
+          "description": "第一次与伊伊聊天 — daily场景",
+          "timestamp": "2026-04-17T11:00:00+00:00"
+        },
+        {
+          "step": "first_outfit_saved",
+          "description": "保存第一套搭配",
+          "timestamp": "2026-04-18T12:00:00+00:00"
+        },
+        {
+          "step": "first_try_on",
+          "description": "首次虚拟试穿",
+          "timestamp": "2026-04-19T13:00:00+00:00"
+        }
+      ],
+      "meta": {
+        "highlight": "低预算学生 — 日常约会场景",
+        "version": "2.0.0"
+      }
+    }
+  ]
+}
