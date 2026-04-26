@@ -153,7 +153,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
 
 1. Marqo-FashionSigLIP replaces FashionCLIP in all vector operations, Recall@10 improves >=15% vs old model
-2. Chinese fine-tune on 5000 Taobao items + DeepFashion Chinese subset completes successfully on AutoDL
+2. Chinese fine-tune on 5000 Taobao items + DeepFashion Chinese subset completes successfully on AutoDT
 3. SASRec trained on user behavior sequences, scoring weight increases with interaction count
 4. 6-layer funnel pipeline executes L1-L4 hard filters then L5-L6 soft scoring
 5. FashionSigLIP bias audit: 5 profiles with same scenario but different styleExpression produce visibly different results
@@ -241,7 +241,7 @@ Plans:
 
 **Goal**: Production deployment, app store listing, offline capability, competition materials submitted
 **Depends on**: Phase 9
-**Requirements**: PRD-01, PRD-02, PRD-03, PRD-04, PRD-05, CMP-06, CMP-07, CMP-08, CMP-09
+**Requirements**: PRD-01, PRD-03, PRD-04, PRD-05, CMP-06, CMP-07, CMP-08, CMP-09 (PRD-02 superseded by D-04: remote API replaces local inference)
 **Success Criteria** (what must be TRUE):
 
 1. Nginx + TLS + monitoring + alerting active
@@ -249,14 +249,15 @@ Plans:
 3. Load test passes without degradation, security audit no CRITICAL findings
 4. App listed on 2+ Chinese Android stores (Huawei, Xiaomi, OPPO, or Vivo)
 5. Competition materials submitted: PPT + demo video + seed user data + advisor letter
-   **Plans**: 4 plans
+   **Plans**: 5 plans
 
 Plans:
 
-- [ ] 10-01-PLAN.md -- [To be planned]
-- [ ] 10-02-PLAN.md -- [To be planned]
-- [ ] 10-03-PLAN.md -- [To be planned]
-- [ ] 10-04-PLAN.md -- [To be planned]
+- [ ] 10-01-PLAN.md -- Docker Compose 8G 内存压缩 + Nginx rate limiting + 一键部署脚本 (PRD-01)
+- [ ] 10-02-PLAN.md -- WatermelonDB 离线存储 + 同步引擎 + 网络检测 + 离线 UX (PRD-03; note: PRD-02 superseded by D-04 remote API)
+- [ ] 10-03-PLAN.md -- Android APK 签名 + 4 家商店 metadata + 截图策略 (PRD-05)
+- [ ] 10-04-PLAN.md -- k6 负载测试 + OWASP 安全审计脚本 (PRD-04) ✓ 2026-04-26
+- [ ] 10-05-PLAN.md -- 比赛材料: PPT 结构 + Demo 视频 + 种子数据 + 推荐信 (CMP-06, CMP-07, CMP-08, CMP-09)
 
 ## Progress
 
@@ -274,7 +275,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4 → 5 (sprint) → 6 → 7 → 
 | 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
 | 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
 | 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
-| 10. Production + Launch + Competition           | 0/?            | Not started | -          |
+| 10. Production + Launch + Competition           | 4/5            | In progress | -          |
 
 ---
 
