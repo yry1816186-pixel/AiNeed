@@ -20,6 +20,7 @@ import aiohttp
 
 from ..common.secure_api_key import SecureAPIKeyManager, api_key_manager
 from ..common.rate_limiter import rate_limiter
+from .ai_service_router import AIServiceRouter
 
 # Lazy import RAG to avoid circular dependencies
 _fashion_rag = None
@@ -322,6 +323,9 @@ class GLMStylistEngine:
         self._token_counter = 0
         self._request_counter = 0
         self._truncation_counter = 0  # 截断计数
+        # AIServiceRouter for GLM-4-Flash -> GLM-5 fallback (per D-08/D-09/D-10)
+        self._fallback_enabled = os.getenv("GLM_FALLBACK_ENABLED", "true").lower() == "true"
+        self._router = AIServiceRouter() if self._fallback_enabled else None
 
     @property
     def api_key(self) -> str:
@@ -1631,30 +1635,55 @@ class IntelligentStylistService:
     ) -> str:
         """
         带熔断和重试机制的 LLM 调用
-        
+
+        Uses AIServiceRouter for GLM-4-Flash -> GLM-5 fallback (per D-08/D-09/D-10).
+        Fallback is transparent to the caller.
+
         Args:
             messages: 对话消息列表
             max_tokens: 最大输出 token 数
-            
+
         Returns:
             LLM 响应内容
         """
+        # AIServiceRouter fallback path (per D-08)
+        if self.engine._router is not None:
+            try:
+                router_result = await self.engine._router.call(
+                    messages=messages,
+                    max_tokens=max_tokens,
+                )
+                if router_result.fallback_triggered:
+                    logger.info(
+                        "AIServiceRouter used fallback model %s (latency: %.0fms)",
+                        router_result.model_used,
+                        router_result.latency_ms,
+                    )
+                self.engine.circuit_breaker.record_success()
+                return router_result.text
+            except RuntimeError:
+                # Both models failed in router, fall through to direct call
+                logger.warning("AIServiceRouter fallback exhausted, trying direct call")
+            except Exception as router_err:
+                logger.warning("AIServiceRouter error: %s, falling back to direct call", router_err)
+
+        # Direct call path (original logic, used when router is disabled or exhausted)
         # 估算 token 数量
         total_tokens = sum(self.engine._count_tokens(m.get("content", "")) for m in messages) + max_tokens
-        
+
         # 使用 rate_limiter 控制请求频率
         if not await rate_limiter.wait_and_acquire("glm", total_tokens, max_wait_ms=30000):
             raise Exception("Rate limit exceeded - please try again later")
-        
+
         # 检查熔断器状态
         if not self.engine.circuit_breaker.can_execute():
             raise Exception("Circuit breaker is OPEN - LLM service unavailable")
-        
+
         headers = {
             "Authorization": f"Bearer {self.engine.api_key}",
             "Content-Type": "application/json"
         }
-        
+
         payload = {
             "model": self.engine.model,
             "messages": messages,
@@ -1662,7 +1691,7 @@ class IntelligentStylistService:
             "temperature": 0.8,
             "top_p": 0.9
         }
-        
+
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(

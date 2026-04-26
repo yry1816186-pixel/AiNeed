@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     GLM_API_ENDPOINT: str = "https://open.bigmodel.cn/api/paas/v4"
     GLM_MODEL: str = "glm-5"
 
+    # AIServiceRouter config (per D-08/D-09/D-10)
+    GLM_PRIMARY_MODEL: str = "glm-4-flash"
+    GLM_FALLBACK_MODEL: str = "glm-5"
+    GLM_TIMEOUT_SECONDS: float = 5.0
+    GLM_FALLBACK_ENABLED: bool = True
+
     DOUBAO_SEEDREAM_API_KEY: str = ""
     DOUBAO_SEEDREAM_API_URL: str = "https://visual.volcengineapi.com/v1/aigc/generate"
     DOUBAO_SEEDREAM_RESULT_URL: str = "https://visual.volcengineapi.com/v1/aigc/result"
