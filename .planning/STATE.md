@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 11 Plan 03 complete
-last_updated: "2026-04-26T13:24:00Z"
-last_activity: 2026-04-26 -- Phase 11 Plan 03: TypeScript zero errors (27 errors fixed)
+stopped_at: Phase 11 Plan 05 complete
+last_updated: "2026-04-26T13:41:00Z"
+last_activity: 2026-04-26 -- Phase 11 Plan 05: Demo Script calibration + OBS recording guide
 progress:
   total_phases: 11
   completed_phases: 10
   total_plans: 51
-  completed_plans: 48
-  percent: 94
+  completed_plans: 49
+  percent: 96
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 ## Current Position
 
 Phase: 11 (competition-demo-sprint-production-validation) — EXECUTING
-Status: Plan 03 complete (3/6)
-Last activity: 2026-04-26 -- Plan 03: TypeScript zero errors (27 errors fixed in ProfileScreen.tsx)
+Status: Plan 05 complete (5/6)
+Last activity: 2026-04-26 -- Plan 05: Demo Script calibration + OBS recording guide
 
-Progress: [###############.] 94% (48/51 plans done)
+Progress: [################] 96% (49/51 plans done)
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [###############.] 94% (48/51 plans done)
 - Phase 11 Plan 01 completed in 6min (2 tasks, 3 files created, 1 modified).
 - Phase 11 Plan 02 completed in 12min (2 tasks, 6 files, 8 pytest tests, TDD).
 - Phase 11 Plan 03 completed in 14min (1 task, 1 file, 27 TS errors fixed).
+- Phase 11 Plan 05 completed in 9min (2 tasks, 3 files, demo script calibrated).
 - Phase 2 completed in 3 plans across 2 waves. Plan 01 (orchestrator+cold-start+quiz+AB) took 14min, Plan 02 (curated wardrobe+complementary) took 18min, Plan 03 (output std+degraded+seed) took 17min.
 
 ## Accumulated Context
@@ -134,6 +135,7 @@ Critical decisions affecting current work:
 - **Plan 01**: Docker 全链路演示环境 — demo-local.sh (一键启动 15 服务) + demo-warmup.sh (健康检查+缓存预热) + DEMO_MODE 端口绑定 + DEMO-CHECKLIST.md (17 项检查清单) (6min, 2 commits)
 - **Plan 02**: AIServiceRouter GLM Fallback + Edge-TTS Precache — GLM-4-Flash -> retry -> GLM-5 fallback (5s timeout), 8 unit tests, 14 TTS precache phrases, getCachedAudio cache-first lookup (12min, 2 commits)
 - **Plan 03**: TypeScript zero errors — fixed 27 compilation errors in ProfileScreen.tsx (import paths, navigation types, color references, Alert types); apps/mobile + apps/backend tsc --noEmit both zero errors (14min, 1 commit)
+- **Plan 05**: Demo Script calibration + recording guide — FashionCLIP replaced with FashionSigLIP, confirmed radar/item-replacement/preference-memory all implemented, created demo-script-verify.py (10 API checks), restructured recording guide for OBS + emulator (9min, 2 commits)
 
 ### Phase 10 Complete (5 plans, 3 waves)
 
@@ -199,6 +201,6 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-26T13:24:00Z
-Stopped at: Phase 11 Plan 03 complete
-Resume file: .planning/phases/11-competition-demo-sprint-production-validation/11-03-SUMMARY.md
+Last session: 2026-04-26T13:41:00Z
+Stopped at: Phase 11 Plan 05 complete
+Resume file: .planning/phases/11-competition-demo-sprint-production-validation/11-05-SUMMARY.md
