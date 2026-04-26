@@ -1,0 +1,6 @@
+{
+  "name": "xuno-load-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Load tests for XUNO API"
+}
