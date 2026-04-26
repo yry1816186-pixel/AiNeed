@@ -2,19 +2,42 @@ import type { DesignTokens } from "./tokens/design-tokens";
 
 type TokenSet = typeof DesignTokens;
 
+/** Numeric shade palette (50-900) for color sub-palettes */
+export interface ColorShadePalette {
+  50: string;
+  100: string;
+  200: string;
+  300: string;
+  400: string;
+  500: string;
+  600: string;
+  700: string;
+  800: string;
+  900: string;
+}
+
+/** WarmPrimary palette with ocean/mint/coral sub-palettes */
+export interface WarmPrimaryPalette {
+  main: string;
+  ocean: ColorShadePalette;
+  mint: ColorShadePalette;
+  coral: ColorShadePalette;
+}
+
 type BrandColors = TokenSet["colors"]["brand"] & {
   primary: string;
-  warmPrimary: string;
+  warmPrimary: WarmPrimaryPalette;
   warmAccent: string;
   warmSecondary: string;
 };
 
 type GradientColors = TokenSet["gradients"] & {
-  warm: string[];
-  cool: string[];
-  hero: string[];
+  warmAccent: string[];
+  coolAccent: string[];
+  heroAccent: string[];
   coralRose: string[];
   oceanMint: string[];
+  oceanDeep: string[];
 };
 
 export interface FlatColors {
@@ -84,7 +107,7 @@ export interface FlatColors {
   amber: string;
   secondary: string;
   secondaryLight: string;
-  warmPrimary: string;
+  warmPrimary: WarmPrimaryPalette;
   warmAccent: string;
   warmSecondary: string;
   like: string;

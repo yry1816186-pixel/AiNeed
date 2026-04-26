@@ -1,7 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Dimensions, Platform, StatusBar } from "react-native";
-import { DesignTokens } from "./tokens/design-tokens";
-import type { FlatColors } from "./FlatColors";
+import { DesignTokens, darkTokens } from "./tokens/design-tokens";
+import {
+  WarmPrimaryColors,
+  BrandColors,
+  NeutralColors,
+  PrimaryColors,
+  SecondaryColors,
+  GradientPresets,
+  SemanticColors,
+  FashionColors,
+} from "./tokens/colors";
+import type { FlatColors, WarmPrimaryPalette, ColorShadePalette } from "./FlatColors";
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
 
@@ -27,6 +37,97 @@ type TokenSet = typeof DesignTokens;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
+
+/** Ocean sub-palette (blue tones) */
+const oceanPalette: ColorShadePalette = {
+  50: "#F0F6FF",
+  100: "#DCEAFB",
+  200: "#B8D5F7",
+  300: "#7DB8F0",
+  400: "#4A9BE6",
+  500: "#4A90D9",
+  600: "#3A7BC2",
+  700: "#2D6199",
+  800: "#234D7A",
+  900: "#1A3A5C",
+};
+
+/** Mint sub-palette (green tones) */
+const mintPalette: ColorShadePalette = {
+  50: "#EDFBF4",
+  100: "#D1F5E4",
+  200: "#A8EBCD",
+  300: "#7EDCB5",
+  400: "#5DD4A3",
+  500: "#7ED4AD",
+  600: "#4DB88A",
+  700: "#3A9A72",
+  800: "#2D7A5B",
+  900: "#1F5C43",
+};
+
+/** Coral sub-palette (warm pink/red tones) */
+const coralPalette: ColorShadePalette = {
+  50: "#FFF1F1",
+  100: "#FFE0E0",
+  200: "#FFC8C8",
+  300: "#FFA8A8",
+  400: "#FF9090",
+  500: "#FF7F7F",
+  600: "#E86666",
+  700: "#CC4D4D",
+  800: "#A63C3C",
+  900: "#802E2E",
+};
+
+/** WarmPrimary palette object for light theme */
+const warmPrimaryLight: WarmPrimaryPalette = {
+  main: "#C67C4E",
+  ocean: oceanPalette,
+  mint: mintPalette,
+  coral: coralPalette,
+};
+
+/** WarmPrimary palette object for dark theme */
+const warmPrimaryDark: WarmPrimaryPalette = {
+  main: "#D68B6C",
+  ocean: {
+    50: "#1A2536",
+    100: "#1F2E42",
+    200: "#2A3D56",
+    300: "#3A5575",
+    400: "#4A6E94",
+    500: "#5A88B3",
+    600: "#6FA2CC",
+    700: "#89B5D6",
+    800: "#A3C8E0",
+    900: "#BDDBEA",
+  },
+  mint: {
+    50: "#122A1F",
+    100: "#163527",
+    200: "#1E4A38",
+    300: "#2A6650",
+    400: "#368268",
+    500: "#4A9E84",
+    600: "#5EB89C",
+    700: "#76CCB2",
+    800: "#92DCC6",
+    900: "#AEEADA",
+  },
+  coral: {
+    50: "#2D1A1A",
+    100: "#3A2020",
+    200: "#4D2E2E",
+    300: "#664040",
+    400: "#805252",
+    500: "#996464",
+    600: "#B37A7A",
+    700: "#CC9494",
+    800: "#D9AAAA",
+    900: "#E6C0C0",
+  },
+};
 
 const neutralPalette = {
   0: DesignTokens.colors.neutral.white,
@@ -85,33 +186,9 @@ export const Colors = {
     fashion: DesignTokens.colors.fashion,
   },
 
-  primary: {
-    50: "#FDF8F5",
-    100: "#FAEDE6",
-    200: "#F5DBC9",
-    300: "#EDC4A8",
-    400: "#E2A782",
-    500: DesignTokens.colors.brand.terracotta,
-    600: DesignTokens.colors.brand.terracottaDark,
-    700: "#8A533B",
-    800: "#714532",
-    900: "#5D3A2A",
-    950: "#321E16",
-  },
+  primary: PrimaryColors,
 
-  sage: {
-    50: "#F5F7F3",
-    100: "#EBEEE7",
-    200: "#D7DDD0",
-    300: "#B8C4AD",
-    400: "#9AA88C",
-    500: DesignTokens.colors.brand.sage,
-    600: DesignTokens.colors.brand.sageDark,
-    700: "#5A6451",
-    800: "#4A5243",
-    900: "#3E4438",
-    950: "#21241C",
-  },
+  sage: SecondaryColors,
 
   success: {
     50: "#F3F9F6",
@@ -464,12 +541,15 @@ export const ZIndex = {
   max: 999,
 };
 
-function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
+function buildFlatThemeColors(
+  base: typeof DesignTokens.colors,
+  wp: WarmPrimaryPalette
+): FlatColors {
   return {
     brand: {
       ...base.brand,
       primary: base.brand.terracotta,
-      warmPrimary: "#C67C4E",
+      warmPrimary: wp,
       warmAccent: "#E8A87C",
       warmSecondary: "#D4917A",
     } as FlatColors["brand"],
@@ -519,7 +599,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: "#D4A853",
+    gold: base.semantic.gold,
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -534,37 +614,38 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     info: base.semantic.info,
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
-    cartLight: "#FFF5F0",
+    cartLight: base.backgrounds.cartLight,
     terracottaDark: base.brand.terracottaDark,
-    amber: DesignTokens.colors.semantic.warning,
+    amber: base.semantic.warning,
     secondary: base.brand.sage,
-    warmPrimary: "#C67C4E",
-    warmAccent: "#E8A87C",
-    warmSecondary: "#D4917A",
+    warmPrimary: wp,
+    warmAccent: base.semantic.warmAccent,
+    warmSecondary: base.brand.terracottaLight,
     like: base.semantic.error,
-    ocean: "#4A90D9",
-    mint: "#7ED4AD",
-    coral: "#FF7F7F",
-    main: "#C67C4E",
-    light: "#F5E6D3",
-    dark: "#8B5E3C",
-    oceanMint: "#5BB5A2",
-    fashion: "#C67C4E",
-    purple: "#9B59B6",
-    secondaryLight: "#A3B096",
+    ocean: base.semantic.ocean,
+    mint: base.semantic.mint,
+    coral: base.semantic.coral,
+    main: base.xuno.main,
+    light: base.xuno.light,
+    dark: base.xuno.dark,
+    oceanMint: base.semantic.oceanMint,
+    fashion: base.xuno.main,
+    purple: base.semantic.purple,
+    secondaryLight: base.brand.sageLight,
     gradients: {
       ...DesignTokens.gradients,
-      warm: ["#C67C4E", "#E8A87C"],
-      cool: ["#4A90D9", "#7ED4AD"],
-      hero: ["#C67C4E", "#4A90D9"],
-      coralRose: ["#FF7F7F", "#FF6B6B"],
-      oceanMint: ["#4A90D9", "#7ED4AD"],
+      warmAccent: [...DesignTokens.gradients.warmAccent] as [string, string],
+      coolAccent: [...DesignTokens.gradients.coolAccent] as [string, string],
+      heroAccent: [...DesignTokens.gradients.heroAccent] as [string, string],
+      coralRose: [...DesignTokens.gradients.coralRose] as [string, string],
+      oceanMint: [...DesignTokens.gradients.oceanMint] as [string, string],
+      oceanDeep: [...DesignTokens.gradients.oceanDeep] as [string, string],
     },
   };
 }
 
-export const flatColors = buildFlatThemeColors(DesignTokens.colors);
-export const darkFlatColors = buildFlatThemeColors(darkTokens.colors);
+export const flatColors = buildFlatThemeColors(DesignTokens.colors, warmPrimaryLight);
+export const darkFlatColors = buildFlatThemeColors(darkTokens.colors, warmPrimaryDark);
 export { flatColors as colors };
 
 export const themeColors = {
