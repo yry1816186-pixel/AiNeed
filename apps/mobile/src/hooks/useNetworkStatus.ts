@@ -1,9 +1,13 @@
 /**
- * useNetworkStatus - Deprecated re-export from useNetwork
+ * useNetworkStatus - 网络状态检测 Hook
  *
- * @deprecated Use `useNetwork` from `./useNetwork` instead.
- * This file is kept for backward compatibility.
- * The useNetworkStatus hook is now available directly from useNetwork.ts
- * and uses the same checkNetworkConnection mechanism (no NetInfo dependency).
+ * Re-exports:
+ * - useNetworkStatus from useNetwork.ts (fetch-ping based, with offline queue)
+ * - useOfflineNetworkStatus from useOfflineNetworkStatus.ts (NetInfo based, for offline UX)
+ *
+ * For offline UX scenarios (OfflineBanner, sync triggers), use useOfflineNetworkStatus.
+ * For offline queue support, use useNetwork() from useNetwork.ts.
  */
 export { useNetworkStatus } from "./useNetwork";
+export { useOfflineNetworkStatus } from "./useOfflineNetworkStatus";
+export type { OfflineNetworkState } from "./useOfflineNetworkStatus";
