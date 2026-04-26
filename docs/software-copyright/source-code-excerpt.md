@@ -51,7 +51,7 @@
 
 **文件路径**：`ml/services/stylist/style_understanding_service.py`
 
-**功能说明**：用户风格偏好理解与建模服务，结合 FashionCLIP 语义特征和用户行为数据进行风格画像构建。
+**功能说明**：用户风格偏好理解与建模服务，结合 FashionSigLIP 语义特征和用户行为数据进行风格画像构建。
 
 **代码行数**：约 250 行
 

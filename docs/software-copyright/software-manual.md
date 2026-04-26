@@ -51,7 +51,7 @@
 
 ```
 用户请求 → NestJS API → Python FastAPI
-                          ├── DialogEngine (状态机 + GLM-4)
+                          ├── DialogEngine (状态机 + GLM-4-Flash)
                           ├── IntelligentStyleRecommender (FashionSigLIP + 规则)
                           ├── SASRecService (序列推荐)
                           ├── EmbeddingsService (向量嵌入)
@@ -167,7 +167,7 @@
 
 ### 6.3 AI 服务合规
 
-- 大语言模型：智谱 AI GLM-4（国内服务商）
+- 大语言模型：智谱 AI GLM-4-Flash（主） + GLM-5（自动降级），国内服务商
 - 向量检索：Marqo FashionSigLIP（国内部署）
 - 语音合成：Edge-TTS（微软中国节点）
 - 所有 AI 服务数据不出境
@@ -176,4 +176,10 @@
 
 _文档版本：1.0_
 _编制日期：2026-04-25_
-_[截图占位符：需补充系统架构图、界面截图、操作流程截图]_
+
+<!-- SCREENSHOT: 需要在运行 App 后截取 [系统架构图 — Docker 15 服务部署拓扑] -->
+<!-- SCREENSHOT: 需要在运行 App 后截取 [Today 页面 — 伊伊问候 + 推荐方案卡片] -->
+<!-- SCREENSHOT: 需要在运行 App 后截取 [Onboarding 4 步流程] -->
+<!-- SCREENSHOT: 需要在运行 App 后截取 [Stylist 对话界面 — 面试穿搭场景] -->
+<!-- SCREENSHOT: 需要在运行 App 后截取 [虚拟试穿效果预览] -->
+<!-- SCREENSHOT: 需要在运行 App 后截取 [隐私授权弹窗] -->
