@@ -1,3 +1,12 @@
+# 寻裳 XUNO — Production Docker Compose (15 services, 8G memory budget)
+#
+# 本地演示模式 (Android 模拟器可访问):
+#   DEMO_MODE=true docker compose -f docker-compose.production.yml up -d
+#   或运行: bash infrastructure/scripts/demo-local.sh
+#
+# 注意: DEMO_MODE=true 时 backend 端口绑定 0.0.0.0:3001
+#       默认 127.0.0.1:3001 (仅本地访问, 生产环境安全)
+
 networks:
   production-network:
     driver: bridge
@@ -207,8 +216,9 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD is required}@redis:6379
       GLM_API_KEY: ${GLM_API_KEY}
       ZHIPU_API_KEY: ${ZHIPU_API_KEY}
+      DEMO_MODE: ${DEMO_MODE:-false}
     ports:
-      - "127.0.0.1:8002:8002"
+      - "${DEMO_AI_BIND:-127.0.0.1}:8002:8002"
     volumes:
       - ./ml/data:/app/data:ro
     depends_on:
@@ -273,13 +283,16 @@ services:
       GLM_API_ENDPOINT: ${GLM_API_ENDPOINT:-https://open.bigmodel.cn/api/paas/v4}
       GLM_MODEL: ${GLM_MODEL:-glm-5}
       PORT: 3001
+      # Demo mode: allows Android emulator/device to connect (0.0.0.0 binding)
+      DEMO_MODE: ${DEMO_MODE:-false}
       # Docker Secrets file paths - override env vars when present
       FAL_KEY_FILE: /run/secrets/fal_api_key
       OPENAI_KEY_FILE: /run/secrets/openai_api_key
       JWT_SECRET_FILE: /run/secrets/jwt_secret
       DATABASE_URL_FILE: /run/secrets/database_url
     ports:
-      - "127.0.0.1:3001:3001"
+      # DEMO_MODE=true 时绑定 0.0.0.0 (模拟器/真机可访问); 默认 127.0.0.1 (仅本地)
+      - "${DEMO_BACKEND_BIND:-127.0.0.1}:3001:3001"
     depends_on:
       postgres:
         condition: service_healthy
