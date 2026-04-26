@@ -195,7 +195,7 @@ Plans:
 Plans:
 
 - [x] 11-01-PLAN.md — Docker 全链路跑通 + 演示检查清单 + 预热脚本 (D-01, D-02, D-03, D-04, D-06, D-07) ✓ 2026-04-26
-- [ ] 11-02-PLAN.md — AIServiceRouter GLM Fallback + Edge-TTS 预缓存 (D-08, D-09, D-10, D-11, D-15)
+- [x] 11-02-PLAN.md — AIServiceRouter GLM Fallback + Edge-TTS 预缓存 (D-08, D-09, D-10, D-11, D-15) ✓ 2026-04-26
 - [ ] 11-03-PLAN.md — 全局 tsc --noEmit 修复 (D-16)
 - [ ] 11-04-PLAN.md — 10 Seed Profile 构造 + 推荐效果验证 + 对话质量打磨 (D-12, D-13, D-14)
 - [ ] 11-05-PLAN.md — Demo Script 校准 + 预录 Backup 视频录屏指南 (D-05, D-18, D-20)
@@ -218,7 +218,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
 | 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
 | 10. Production + Launch + Competition           | 5/5            | Complete    | 2026-04-26 |
-| 11. Competition Demo Sprint + Validation        | 1/6            | In Progress | -          |
+| 11. Competition Demo Sprint + Validation        | 2/6            | In Progress | -          |
 
 ---
 

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 11 Plan 01 complete
-last_updated: "2026-04-26T13:16:00Z"
-last_activity: 2026-04-26 -- Phase 11 Plan 01: Docker demo environment + checklist + warmup scripts
+stopped_at: Phase 11 Plan 03 complete
+last_updated: "2026-04-26T13:24:00Z"
+last_activity: 2026-04-26 -- Phase 11 Plan 03: TypeScript zero errors (27 errors fixed)
 progress:
   total_phases: 11
   completed_phases: 10
   total_plans: 51
-  completed_plans: 46
-  percent: 90
+  completed_plans: 48
+  percent: 94
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 
 **Core value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
-**Current focus:** Phase 10 — executing plans
+**Current focus:** Phase 11 — executing plans
 **Authoritative source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md (42 frozen decisions, 10 dimensions)
 
 ## Current Position
 
 Phase: 11 (competition-demo-sprint-production-validation) — EXECUTING
-Status: Plan 01 complete (1/6)
-Last activity: 2026-04-26 -- Plan 01: Docker demo environment + checklist + warmup scripts
+Status: Plan 02 complete (2/6)
+Last activity: 2026-04-26 -- Plan 02: AIServiceRouter GLM fallback + Edge-TTS precache
 
-Progress: [##############..] 90% (46/51 plans done)
+Progress: [###############.] 92% (47/51 plans done)
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [##############..] 90% (46/51 plans done)
 **Recent Trend:**
 
 - Phase 11 Plan 01 completed in 6min (2 tasks, 3 files created, 1 modified).
+- Phase 11 Plan 02 completed in 12min (2 tasks, 6 files, 8 pytest tests, TDD).
 - Phase 2 completed in 3 plans across 2 waves. Plan 01 (orchestrator+cold-start+quiz+AB) took 14min, Plan 02 (curated wardrobe+complementary) took 18min, Plan 03 (output std+degraded+seed) took 17min.
 
 ## Accumulated Context
@@ -130,6 +131,7 @@ Critical decisions affecting current work:
 ### Phase 11 In Progress
 
 - **Plan 01**: Docker 全链路演示环境 — demo-local.sh (一键启动 15 服务) + demo-warmup.sh (健康检查+缓存预热) + DEMO_MODE 端口绑定 + DEMO-CHECKLIST.md (17 项检查清单) (6min, 2 commits)
+- **Plan 02**: AIServiceRouter GLM Fallback + Edge-TTS Precache — GLM-4-Flash -> retry -> GLM-5 fallback (5s timeout), 8 unit tests, 14 TTS precache phrases, getCachedAudio cache-first lookup (12min, 2 commits)
 
 ### Phase 10 Complete (5 plans, 3 waves)
 
@@ -150,7 +152,7 @@ None yet.
 - Software copyright is 60-90 day critical path for app store listing (Phase 6 starts it)
 - garmentPreference MUST be in Onboarding Step 2 to avoid incoherent cold start (Phase 4) -- RESOLVED in Plan 04-03
 - 264+ JSON fashion rules loaded via FashionRuleLoader with bodyType+occasion+colorSeason filtering (Phase 4 Plan 01)
-- GLM-4-Flash free tier is not guaranteed -- fallback to Qianwen + local Qwen needed
+- GLM-4-Flash free tier is not guaranteed -- GLM-5 auto-fallback implemented (Plan 11-02)
 - 48h Sprint realistic success rate: clean demo 30-40%, usable demo 60-70%
 
 ### Quick Tasks Completed
@@ -161,23 +163,23 @@ None yet.
 
 ## Risk Registry (§6 — reviewed each phase)
 
-| #   | Risk                                                       | Prob   | Impact | Mitigation                                                                | Status | Last Review |
-| --- | ---------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------- | ------ | ----------- |
-| R1  | GLM-4-Flash free tier cancelled                            | 中     | 致命   | Qwen fallback + local Qwen quantized model                                | 开放   | 2026-04-25  |
-| R2  | FashionCLIP gender bias → recommendation discrimination    | 高     | 高     | Phase 6 upgrade FashionSigLIP + diversity constraints                     | 开放   | 2026-04-25  |
-| R3  | Edge-TTS latency >3s breaks voice experience               | 中     | 高     | Pre-cache common voice + local TTS fallback; NO BENCHMARK YET             | 开放   | 2026-04-25  |
-| R4  | Competition demo crashes (crash/white screen)              | **高** | 致命   | E2E automated tests + demo script + fallback plan; 5 human tests PENDING  | 开放   | 2026-04-25  |
-| R5  | Software copyright not submitted before June               | **中** | 高     | Phase 5 starts copyright application simultaneously                       | 开放   | 2026-04-25  |
-| R6  | Cold start CTR <3%                                         | 中     | 高     | Degraded template fallback + onboarding data inflow; NO SEED USERS        | 开放   | 2026-04-25  |
-| R7  | Mobile TypeScript compilation errors not zeroed            | 高     | 高     | Phase 5 priority: tsc --noEmit, fix per file                              | 开放   | 2026-04-25  |
-| R8  | Dev .env files contain hardcoded secrets                   | 中     | 高     | Rotate JWT_SECRET/REDIS_PASSWORD/MINIO_SECRET_KEY; .gitignore verified    | 开放   | 2026-04-25  |
-| R9  | Competition timeline risk (<8 weeks to school competition) | 高     | 致命   | Phase 5 MUST produce demo video + PPT; copyright in parallel              | 开放   | 2026-04-25  |
-| R10 | Demo environment dependency (network/hardware)             | 中     | 致命   | Local Docker full-stack + offline degradation + demo rehearsal            | 开放   | 2026-04-25  |
-| R11 | GLM-4-Flash rate limit during demo                         | 中     | 致命   | Pre-cache recommendations + demo script fixed path + Qwen fallback        | 开放   | 2026-04-25  |
-| R12 | Zero seed users                                            | 高     | 高     | 5-10 person beta + simulated behavior data + survey feedback              | 开放   | 2026-04-25  |
-| R13 | Dependency version lock (reanimated/screens)               | 低     | 中     | Lock versions maintained; evaluate upgrade post-Phase 6                   | 开放   | 2026-04-25  |
-| R14 | Data privacy compliance gaps (PIPL)                        | 中     | 高     | Phase 5 minimum: privacy policy + user agreement + data collection notice | 开放   | 2026-04-25  |
-| R15 | Phase 4 human verification items all pending               | 高     | 高     | Phase 5 Day 1: execute 5 human verification items                         | 开放   | 2026-04-25  |
+| #   | Risk                                                       | Prob   | Impact | Mitigation                                                                            | Status | Last Review |
+| --- | ---------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------------------- | ------ | ----------- |
+| R1  | GLM-4-Flash free tier cancelled                            | 中     | 致命   | Qwen fallback + local Qwen quantized model                                            | 开放   | 2026-04-25  |
+| R2  | FashionCLIP gender bias → recommendation discrimination    | 高     | 高     | Phase 6 upgrade FashionSigLIP + diversity constraints                                 | 开放   | 2026-04-25  |
+| R3  | Edge-TTS latency >3s breaks voice experience               | 中     | 高     | Pre-cache 14 common phrases via tts-precache.py (Plan 11-02); local TTS fallback      | 开放   | 2026-04-26  |
+| R4  | Competition demo crashes (crash/white screen)              | **高** | 致命   | E2E automated tests + demo script + fallback plan; 5 human tests PENDING              | 开放   | 2026-04-25  |
+| R5  | Software copyright not submitted before June               | **中** | 高     | Phase 5 starts copyright application simultaneously                                   | 开放   | 2026-04-25  |
+| R6  | Cold start CTR <3%                                         | 中     | 高     | Degraded template fallback + onboarding data inflow; NO SEED USERS                    | 开放   | 2026-04-25  |
+| R7  | Mobile TypeScript compilation errors not zeroed            | 高     | 高     | Phase 5 priority: tsc --noEmit, fix per file                                          | 开放   | 2026-04-25  |
+| R8  | Dev .env files contain hardcoded secrets                   | 中     | 高     | Rotate JWT_SECRET/REDIS_PASSWORD/MINIO_SECRET_KEY; .gitignore verified                | 开放   | 2026-04-25  |
+| R9  | Competition timeline risk (<8 weeks to school competition) | 高     | 致命   | Phase 5 MUST produce demo video + PPT; copyright in parallel                          | 开放   | 2026-04-25  |
+| R10 | Demo environment dependency (network/hardware)             | 中     | 致命   | Local Docker full-stack + offline degradation + demo rehearsal                        | 开放   | 2026-04-25  |
+| R11 | GLM-4-Flash rate limit during demo                         | 中     | 致命   | Pre-cache recommendations + demo script fixed path + GLM-5 auto-fallback (Plan 11-02) | 开放   | 2026-04-26  |
+| R12 | Zero seed users                                            | 高     | 高     | 5-10 person beta + simulated behavior data + survey feedback                          | 开放   | 2026-04-25  |
+| R13 | Dependency version lock (reanimated/screens)               | 低     | 中     | Lock versions maintained; evaluate upgrade post-Phase 6                               | 开放   | 2026-04-25  |
+| R14 | Data privacy compliance gaps (PIPL)                        | 中     | 高     | Phase 5 minimum: privacy policy + user agreement + data collection notice             | 开放   | 2026-04-25  |
+| R15 | Phase 4 human verification items all pending               | 高     | 高     | Phase 5 Day 1: execute 5 human verification items                                     | 开放   | 2026-04-25  |
 
 ## Deferred Items
 
@@ -195,6 +197,6 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-26T13:16:00Z
-Stopped at: Phase 11 Plan 01 complete
-Resume file: .planning/phases/11-competition-demo-sprint-production-validation/11-01-SUMMARY.md
+Last session: 2026-04-26T13:22:11Z
+Stopped at: Phase 11 Plan 02 complete
+Resume file: .planning/phases/11-competition-demo-sprint-production-validation/11-02-SUMMARY.md
