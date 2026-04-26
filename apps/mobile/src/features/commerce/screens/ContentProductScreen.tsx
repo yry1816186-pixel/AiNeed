@@ -160,8 +160,7 @@ export const ContentProductScreen: React.FC = () => {
         const response = await contentProductService.purchase(product.productType, "wechat");
         if (response.success && response.data) {
           // Navigate to Payment screen with orderId
-          // @ts-expect-error -- Payment route exists in ProfileStackParamList
-          navigation.navigate("Payment" as never, { orderId: response.data.orderId } as never);
+          (navigation as any).navigate("Payment", { orderId: response.data.orderId });
         } else {
           Alert.alert("购买失败", response.error?.message ?? "请稍后重试");
         }
@@ -179,10 +178,8 @@ export const ContentProductScreen: React.FC = () => {
   const handleView = useCallback(
     (product: ContentProductInfo) => {
       if (product.productType === "color_report") {
-        // @ts-expect-error -- ColorAnalysis route exists in ProfileStackParamList
         navigation.navigate("ColorAnalysis" as never);
       } else if (product.productType === "body_report") {
-        // @ts-expect-error -- BodyAnalysis route exists in ProfileStackParamList
         navigation.navigate("BodyAnalysis" as never);
       }
     },

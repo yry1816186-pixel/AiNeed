@@ -280,7 +280,7 @@ export const PhoneLoginScreen: React.FC = () => {
 
             <TouchableOpacity
               style={styles.registerLink}
-              onPress={() => navigation.navigate("Register")}
+              onPress={() => (navigation.navigate as any)("Register")}
               disabled={isLoading}
               accessibilityLabel="没有账户？立即注册"
             >

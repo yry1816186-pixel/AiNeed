@@ -92,7 +92,7 @@ export function EmptyRecommendations({ onChat }: { onChat?: () => void }) {
       description="和AI造型师聊聊你的风格偏好，获取专属穿搭推荐"
       actionLabel="和AI聊聊"
       onAction={onChat}
-      iconGradient={[Colors.primary[400], Colors.primary[600]]}
+      iconGradient={[colors.primary, DesignTokens.colors.brand.camel]}
     />
   );
 }
@@ -176,7 +176,7 @@ export function EmptyPosts({ onPublish }: { onPublish?: () => void }) {
       description="分享你的穿搭灵感，让更多人看到你的风格"
       actionLabel="发布动态"
       onAction={onPublish}
-      iconGradient={[Colors.primary[400], Colors.primary[600]]}
+      iconGradient={[colors.primary, DesignTokens.colors.brand.camel]}
     />
   );
 }

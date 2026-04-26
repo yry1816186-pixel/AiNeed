@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   cancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   publishText: {
@@ -713,7 +713,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: colors.background,
   },
-  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.text },
+  searchResultName: {
+    flex: 1,
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textPrimary,
+  },
 });
 
 export default CreatePostScreen;

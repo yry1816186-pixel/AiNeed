@@ -163,6 +163,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate Lockfile Integrity
+        run: |
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "::error::pnpm-lock.yaml not found"
+            exit 1
+          fi
+          pnpm install --frozen-lockfile --dry-run 2>&1 | tee /tmp/lockfile-check.txt
+          if grep -qi "ERR_PNPM_LOCKFILE_MISSING" /tmp/lockfile-check.txt; then
+            echo "::error::Lockfile is out of sync with package.json"
+            exit 1
+          fi
+          echo "Lockfile integrity validated"
+
       - name: Run Security Audit
         run: pnpm audit --audit-level=moderate
 

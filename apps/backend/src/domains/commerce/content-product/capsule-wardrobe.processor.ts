@@ -127,7 +127,10 @@ export class CapsuleWardrobeProcessor extends WorkerHost {
       });
 
       const aiRecommendations: AiRecommendation[] = aiResponse.recommendations ?? [];
-      const outfitCombinations = aiResponse.outfitCombinations ?? [];
+      const outfitCombinations = (aiResponse.outfitCombinations ?? []) as Array<{
+        occasion: string;
+        items: string[];
+      }>;
 
       // Step 6: Build capsule plan
       const capsulePlan: CapsulePlan = {
@@ -142,10 +145,10 @@ export class CapsuleWardrobeProcessor extends WorkerHost {
       // Step 7: Store result in ContentPurchase metadata
       await this.prisma.contentPurchase.update({
         where: {
-          userId_productType: { userId, productType: "capsule_wardrobe" },
+          userId_productType: { userId, productType: "capsule_wardrobe" as any },
         },
         data: {
-          metadata: { capsulePlan },
+          metadata: { capsulePlan } as any,
         },
       });
 

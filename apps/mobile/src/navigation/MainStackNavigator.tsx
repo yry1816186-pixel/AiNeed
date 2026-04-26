@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useMemo } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type {
@@ -8,7 +8,6 @@ import type {
   StylistStackParamList,
   ProfileStackParamList,
 } from "./types";
-import { useTheme } from "../shared/contexts/ThemeContext";
 import { GuardedScreen } from "./RouteGuards";
 
 import { flatColors as colors } from "../design-system/theme";
@@ -137,7 +136,10 @@ const AddClothingScreen = lazy(() => import("../features/wardrobe/screens/AddClo
 const CustomDesignScreen = lazy(
   () => import("../features/customization/screens/CustomizationScreen")
 );
-const LegalScreen = lazy(() => import("../features/profile/screens/LegalScreen"));
+const LegalScreenLazy = lazy(() => import("../features/profile/screens/LegalScreen"));
+function LegalScreenWrapper() {
+  return <LegalScreenLazy type="terms" />;
+}
 
 const AdvisorListScreen = lazy(() => import("../features/consultant/screens/AdvisorListScreen"));
 const AdvisorProfileScreen = lazy(
@@ -146,497 +148,312 @@ const AdvisorProfileScreen = lazy(
 const BookingScreen = lazy(() => import("../features/consultant/screens/BookingScreen"));
 const ChatScreen = lazy(() => import("../features/consultant/screens/ChatScreen"));
 
-function SuspenseScreen({ children }: { children: React.ReactNode }) {
-  const { colors } = useTheme();
+function withGuard(Component: React.LazyExoticComponent<React.ComponentType>, route: string) {
+  return function GuardedComponent() {
+    return (
+      <GuardedScreen routeName={route}>
+        <Component />
+      </GuardedScreen>
+    );
+  };
+}
+
+function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={screenLoader}>{children}</Suspense>;
 }
 
-function G({ route, children }: { route: string; children: React.ReactNode }) {
-  return <GuardedScreen routeName={route}>{children}</GuardedScreen>;
-}
-
 // ============================================================
-// Today Stack (replaces Home)
+// Today Stack
 // ============================================================
 const TodayStack = createNativeStackNavigator<TodayStackParamList>();
 
 export function TodayStackNavigator() {
   return (
-    <TodayStack.Navigator screenOptions={commonScreenOptions} initialRouteName="TodayMain">
-      <TodayStack.Screen
-        name="TodayMain"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <TodayScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <TodayStack.Screen
-        name="Search"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <SearchScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <TodayStack.Screen
-        name="Notifications"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="Notifications">
-            <SuspenseScreen>
-              <NotificationsScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <TodayStack.Screen
-        name="RecommendationDetail"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <RecommendationDetailScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <TodayStack.Screen
-        name="Product"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <ProductScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <TodayStack.Screen
-        name="OutfitDetail"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <OutfitDetailScreen />
-          </SuspenseScreen>
-        )}
-      />
-    </TodayStack.Navigator>
+    <SuspenseWrapper>
+      <TodayStack.Navigator screenOptions={commonScreenOptions} initialRouteName="TodayMain">
+        <TodayStack.Screen
+          name="TodayMain"
+          options={{ animation: "slide_from_right" }}
+          component={TodayScreen}
+        />
+        <TodayStack.Screen
+          name="Search"
+          options={{ animation: "slide_from_right" }}
+          component={SearchScreen}
+        />
+        <TodayStack.Screen
+          name="Notifications"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(NotificationsScreen, "Notifications")}
+        />
+        <TodayStack.Screen
+          name="RecommendationDetail"
+          options={{ animation: "slide_from_right" }}
+          component={RecommendationDetailScreen}
+        />
+        <TodayStack.Screen
+          name="Product"
+          options={{ animation: "slide_from_right" }}
+          component={ProductScreen}
+        />
+        <TodayStack.Screen
+          name="OutfitDetail"
+          options={{ animation: "slide_from_right" }}
+          component={OutfitDetailScreen}
+        />
+      </TodayStack.Navigator>
+    </SuspenseWrapper>
   );
 }
 
 // ============================================================
-// Discover Stack (replaces Community + TryOn)
+// Discover Stack
 // ============================================================
 const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
 
 export function DiscoverStackNavigator() {
   return (
-    <DiscoverStack.Navigator screenOptions={commonScreenOptions} initialRouteName="DiscoverMain">
-      <DiscoverStack.Screen
-        name="DiscoverMain"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <DiscoverScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="CommunityFeed"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <CommunityFeedScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="PostDetail"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <PostDetailScreenLazy />
-          </SuspenseScreen>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="PostCreate"
-        options={{ animation: "slide_from_bottom" }}
-        component={() => (
-          <G route="PostCreate">
-            <SuspenseScreen>
-              <PostCreateScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="InfluencerProfile"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="InfluencerProfile">
-            <SuspenseScreen>
-              <InfluencerProfileScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="InspirationWardrobe"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="InspirationWardrobe">
-            <SuspenseScreen>
-              <InspirationWardrobeScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="BloggerDashboard"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <G route="BloggerDashboard">
-            <SuspenseScreen>
-              <BloggerDashboardScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="BloggerProfile"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <BloggerProfileScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <DiscoverStack.Screen
-        name="BloggerProduct"
-        options={{ animation: "slide_from_right" }}
-        component={() => (
-          <SuspenseScreen>
-            <BloggerProductScreen />
-          </SuspenseScreen>
-        )}
-      />
-      <DiscoverStack.Screen name="VirtualTryOn" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="VirtualTryOn">
-            <SuspenseScreen>
-              <VirtualTryOnScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </DiscoverStack.Screen>
-      <DiscoverStack.Screen name="TryOnResult" options={{ animation: "fade" }}>
-        {() => (
-          <G route="TryOnResult">
-            <SuspenseScreen>
-              <TryOnResultScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </DiscoverStack.Screen>
-      <DiscoverStack.Screen name="TryOnHistory" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="TryOnHistory">
-            <SuspenseScreen>
-              <TryOnHistoryScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </DiscoverStack.Screen>
-      <DiscoverStack.Screen name="Wardrobe" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Wardrobe">
-            <SuspenseScreen>
-              <WardrobeScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </DiscoverStack.Screen>
-      <DiscoverStack.Screen name="Favorites" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Favorites">
-            <SuspenseScreen>
-              <FavoritesScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </DiscoverStack.Screen>
-    </DiscoverStack.Navigator>
+    <SuspenseWrapper>
+      <DiscoverStack.Navigator screenOptions={commonScreenOptions} initialRouteName="DiscoverMain">
+        <DiscoverStack.Screen
+          name="DiscoverMain"
+          options={{ animation: "slide_from_right" }}
+          component={DiscoverScreen}
+        />
+        <DiscoverStack.Screen
+          name="CommunityFeed"
+          options={{ animation: "slide_from_right" }}
+          component={CommunityFeedScreen}
+        />
+        <DiscoverStack.Screen
+          name="PostDetail"
+          options={{ animation: "slide_from_right" }}
+          component={PostDetailScreenLazy}
+        />
+        <DiscoverStack.Screen
+          name="PostCreate"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(PostCreateScreenLazy, "PostCreate")}
+        />
+        <DiscoverStack.Screen
+          name="InfluencerProfile"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(InfluencerProfileScreenLazy, "InfluencerProfile")}
+        />
+        <DiscoverStack.Screen
+          name="InspirationWardrobe"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(InspirationWardrobeScreenLazy, "InspirationWardrobe")}
+        />
+        <DiscoverStack.Screen
+          name="BloggerDashboard"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(BloggerDashboardScreen, "BloggerDashboard")}
+        />
+        <DiscoverStack.Screen
+          name="BloggerProfile"
+          options={{ animation: "slide_from_right" }}
+          component={BloggerProfileScreen}
+        />
+        <DiscoverStack.Screen
+          name="BloggerProduct"
+          options={{ animation: "slide_from_right" }}
+          component={BloggerProductScreen}
+        />
+        <DiscoverStack.Screen
+          name="VirtualTryOn"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(VirtualTryOnScreen, "VirtualTryOn")}
+        />
+        <DiscoverStack.Screen
+          name="TryOnResult"
+          options={{ animation: "fade" }}
+          component={withGuard(TryOnResultScreenLazy, "TryOnResult")}
+        />
+        <DiscoverStack.Screen
+          name="TryOnHistory"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(TryOnHistoryScreenLazy, "TryOnHistory")}
+        />
+        <DiscoverStack.Screen
+          name="Wardrobe"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(WardrobeScreen, "Wardrobe")}
+        />
+        <DiscoverStack.Screen
+          name="Favorites"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(FavoritesScreen, "Favorites")}
+        />
+      </DiscoverStack.Navigator>
+    </SuspenseWrapper>
   );
 }
 
 // ============================================================
-// Stylist Stack (Phase 2 - AI 造型师)
+// Stylist Stack
 // ============================================================
 const StylistStack = createNativeStackNavigator<StylistStackParamList>();
 
 export function StylistStackNavigator() {
   return (
-    <StylistStack.Navigator screenOptions={commonScreenOptions} initialRouteName="AIStylist">
-      <StylistStack.Screen name="AIStylist" options={{ animation: "fade" }}>
-        {() => (
-          <G route="AIStylist">
-            <SuspenseScreen>
-              <AIStylistScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </StylistStack.Screen>
-      <StylistStack.Screen name="OutfitPlan" options={{ animation: "fade" }}>
-        {() => (
-          <G route="OutfitPlan">
-            <SuspenseScreen>
-              <OutfitPlanScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </StylistStack.Screen>
-      <StylistStack.Screen name="ChatHistory" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="ChatHistory">
-            <SuspenseScreen>
-              <ChatHistoryScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </StylistStack.Screen>
-      <StylistStack.Screen name="AiStylistChat" options={{ animation: "fade" }}>
-        {() => (
-          <G route="AiStylistChat">
-            <SuspenseScreen>
-              <AIStylistScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </StylistStack.Screen>
-      <StylistStack.Screen name="SessionCalendar" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="SessionCalendar">
-            <SuspenseScreen>
-              <SessionCalendarScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </StylistStack.Screen>
-    </StylistStack.Navigator>
+    <SuspenseWrapper>
+      <StylistStack.Navigator screenOptions={commonScreenOptions} initialRouteName="AIStylist">
+        <StylistStack.Screen
+          name="AIStylist"
+          options={{ animation: "fade" }}
+          component={withGuard(AIStylistScreen, "AIStylist")}
+        />
+        <StylistStack.Screen
+          name="OutfitPlan"
+          options={{ animation: "fade" }}
+          component={withGuard(OutfitPlanScreenLazy, "OutfitPlan")}
+        />
+        <StylistStack.Screen
+          name="ChatHistory"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(ChatHistoryScreenLazy, "ChatHistory")}
+        />
+        <StylistStack.Screen
+          name="AiStylistChat"
+          options={{ animation: "fade" }}
+          component={withGuard(AIStylistScreen, "AiStylistChat")}
+        />
+        <StylistStack.Screen
+          name="SessionCalendar"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(SessionCalendarScreen, "SessionCalendar")}
+        />
+      </StylistStack.Navigator>
+    </SuspenseWrapper>
   );
 }
 
 // ============================================================
-// Profile Stack (Me Tab - Phase 1/5/7/8 - 综合)
+// Profile Stack (Me Tab)
 // ============================================================
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 export function ProfileStackNavigator() {
   return (
-    <ProfileStack.Navigator screenOptions={commonScreenOptions} initialRouteName="ProfileMain">
-      <ProfileStack.Screen name="ProfileMain" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <SuspenseScreen>
-            <ProfileMainScreen />
-          </SuspenseScreen>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="ProfileEdit" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="ProfileEdit">
-            <SuspenseScreen>
-              <ProfileEditScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="StyleQuiz" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="StyleQuiz">
-            <SuspenseScreen>
-              <StyleQuizScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="BodyAnalysis" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="BodyAnalysis">
-            <SuspenseScreen>
-              <BodyAnalysisScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="ColorAnalysis" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="ColorAnalysis">
-            <SuspenseScreen>
-              <ColorAnalysisScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="SharePoster" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="SharePoster">
-            <SuspenseScreen>
-              <SharePosterScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Settings" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Settings">
-            <SuspenseScreen>
-              <SettingsScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="NotificationSettings" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="NotificationSettings">
-            <SuspenseScreen>
-              <NotificationSettingsScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Subscription" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="Subscription">
-            <SuspenseScreen>
-              <SubscriptionScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Cart" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Cart">
-            <SuspenseScreen>
-              <CartScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Checkout" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Checkout">
-            <SuspenseScreen>
-              <CheckoutScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Payment" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="Payment">
-            <SuspenseScreen>
-              <PaymentScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Orders" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Orders">
-            <SuspenseScreen>
-              <OrdersScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="OrderDetail" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="OrderDetail">
-            <SuspenseScreen>
-              <OrderDetailScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="AddClothing" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="AddClothing">
-            <SuspenseScreen>
-              <AddClothingScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="CustomDesign" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="CustomDesign">
-            <SuspenseScreen>
-              <CustomDesignScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="CustomEditor" options={{ animation: "fade" }}>
-        {() => (
-          <G route="CustomEditor">
-            <SuspenseScreen>
-              <CustomEditorScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Brand" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Brand">
-            <SuspenseScreen>
-              <BrandScreenLazy />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="AdvisorList" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="AdvisorList">
-            <SuspenseScreen>
-              <AdvisorListScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="AdvisorProfile" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="AdvisorProfile">
-            <SuspenseScreen>
-              <AdvisorProfileScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Booking" options={{ animation: "slide_from_bottom" }}>
-        {() => (
-          <G route="Booking">
-            <SuspenseScreen>
-              <BookingScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Chat" options={{ animation: "slide_from_right" }}>
-        {() => (
-          <G route="Chat">
-            <SuspenseScreen>
-              <ChatScreen />
-            </SuspenseScreen>
-          </G>
-        )}
-      </ProfileStack.Screen>
-      <ProfileStack.Screen name="Legal" options={{ animation: "slide_from_bottom" }}>
-        {(props) => (
-          <SuspenseScreen>
-            <LegalScreen type={props.route.params?.type ?? "terms"} />
-          </SuspenseScreen>
-        )}
-      </ProfileStack.Screen>
-    </ProfileStack.Navigator>
+    <SuspenseWrapper>
+      <ProfileStack.Navigator screenOptions={commonScreenOptions} initialRouteName="ProfileMain">
+        <ProfileStack.Screen
+          name="ProfileMain"
+          options={{ animation: "slide_from_right" }}
+          component={ProfileMainScreen}
+        />
+        <ProfileStack.Screen
+          name="ProfileEdit"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(ProfileEditScreen, "ProfileEdit")}
+        />
+        <ProfileStack.Screen
+          name="StyleQuiz"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(StyleQuizScreen, "StyleQuiz")}
+        />
+        <ProfileStack.Screen
+          name="BodyAnalysis"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(BodyAnalysisScreen, "BodyAnalysis")}
+        />
+        <ProfileStack.Screen
+          name="ColorAnalysis"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(ColorAnalysisScreen, "ColorAnalysis")}
+        />
+        <ProfileStack.Screen
+          name="SharePoster"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(SharePosterScreen, "SharePoster")}
+        />
+        <ProfileStack.Screen
+          name="Settings"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(SettingsScreen, "Settings")}
+        />
+        <ProfileStack.Screen
+          name="NotificationSettings"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(NotificationSettingsScreen, "NotificationSettings")}
+        />
+        <ProfileStack.Screen
+          name="Subscription"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(SubscriptionScreen, "Subscription")}
+        />
+        <ProfileStack.Screen
+          name="Cart"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(CartScreen, "Cart")}
+        />
+        <ProfileStack.Screen
+          name="Checkout"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(CheckoutScreen, "Checkout")}
+        />
+        <ProfileStack.Screen
+          name="Payment"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(PaymentScreenLazy, "Payment")}
+        />
+        <ProfileStack.Screen
+          name="Orders"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(OrdersScreen, "Orders")}
+        />
+        <ProfileStack.Screen
+          name="OrderDetail"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(OrderDetailScreen, "OrderDetail")}
+        />
+        <ProfileStack.Screen
+          name="AddClothing"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(AddClothingScreen, "AddClothing")}
+        />
+        <ProfileStack.Screen
+          name="CustomDesign"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(CustomDesignScreen, "CustomDesign")}
+        />
+        <ProfileStack.Screen
+          name="CustomEditor"
+          options={{ animation: "fade" }}
+          component={withGuard(CustomEditorScreenLazy, "CustomEditor")}
+        />
+        <ProfileStack.Screen
+          name="Brand"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(BrandScreenLazy, "Brand")}
+        />
+        <ProfileStack.Screen
+          name="AdvisorList"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(AdvisorListScreen, "AdvisorList")}
+        />
+        <ProfileStack.Screen
+          name="AdvisorProfile"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(AdvisorProfileScreen, "AdvisorProfile")}
+        />
+        <ProfileStack.Screen
+          name="Booking"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(BookingScreen, "Booking")}
+        />
+        <ProfileStack.Screen
+          name="Chat"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(ChatScreen, "Chat")}
+        />
+        <ProfileStack.Screen
+          name="Legal"
+          options={{ animation: "slide_from_bottom" }}
+          component={LegalScreenWrapper}
+        />
+      </ProfileStack.Navigator>
+    </SuspenseWrapper>
   );
 }

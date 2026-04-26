@@ -180,11 +180,15 @@ export class OnboardingService {
     return { percentage, steps };
   }
 
-  private async recordConsentInternal(userId: string, consentType: string, granted: boolean) {
+  private async recordConsentInternal(
+    userId: string,
+    consentType: string,
+    granted: boolean
+  ): Promise<void> {
     try {
       await this.prisma.userConsent.upsert({
         where: {
-          userId_consentType: { userId, consentType },
+          userId_consentType: { userId, consentType: consentType as any },
         },
         update: {
           granted,
@@ -194,7 +198,7 @@ export class OnboardingService {
         },
         create: {
           userId,
-          consentType,
+          consentType: consentType as any,
           granted,
           grantedAt: granted ? new Date() : null,
           version: "1.0",

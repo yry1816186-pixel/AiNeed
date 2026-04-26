@@ -11,6 +11,8 @@
     "noEmit": true,
     "isolatedModules": true,
     "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -30,20 +32,21 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["react", "react-native"]
   },
-  "include": [
-    "index.js",
-    "App.tsx",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
-  ],
+  "include": ["index.js", "App.tsx", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "exclude": [
     "node_modules",
+    "scripts",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js",
-    "e2e"
-  ]
+    "e2e",
+    "**/__tests__",
+    "**/__mocks__",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "extends": "expo/tsconfig.base"
 }

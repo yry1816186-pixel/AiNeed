@@ -1,9 +1,9 @@
-﻿import { logger } from "../../../shared/utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { AISizeBadge } from "./AISizeBadge";
-import type { SizeRecommendation } from "../services/api/commerce.api";
-import { stockNotificationApi } from "../services/api/commerce.api";
+import type { SizeRecommendation } from "../../../services/api/commerce.api";
+import { stockNotificationApi } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -90,30 +90,30 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
               </View>
               <View style={styles.sizeRow}>
                 {sizes.map((s) => {
-                  const styles = useStyles(colors);
+                  const sizeStyles = useStyles(themeColors);
                   const outOfStock = stock <= 0;
                   const isRecommended = aiRecommendation?.recommendedSize === s;
                   return (
-                    <View key={s} style={styles.sizeWrapper}>
+                    <View key={s} style={sizeStyles.sizeWrapper}>
                       <TouchableOpacity
                         style={[
-                          styles.sizeButton,
-                          s === size && styles.sizeButtonSelected,
-                          outOfStock && styles.sizeButtonDisabled,
+                          sizeStyles.sizeButton,
+                          s === size && sizeStyles.sizeButtonSelected,
+                          outOfStock && sizeStyles.sizeButtonDisabled,
                         ]}
                         onPress={() => !outOfStock && setSize(s)}
                         disabled={outOfStock}
                       >
                         <Text
                           style={[
-                            styles.sizeText,
-                            s === size && styles.sizeTextSelected,
-                            outOfStock && styles.sizeTextDisabled,
+                            sizeStyles.sizeText,
+                            s === size && sizeStyles.sizeTextSelected,
+                            outOfStock && sizeStyles.sizeTextDisabled,
                           ]}
                         >
                           {s}
                         </Text>
-                        {isRecommended && !outOfStock && <Text style={styles.recDot}>AI</Text>}
+                        {isRecommended && !outOfStock && <Text style={sizeStyles.recDot}>AI</Text>}
                       </TouchableOpacity>
                       {outOfStock && (
                         <TouchableOpacity onPress={() => handleSubscribeStock(s)}>

@@ -1,4 +1,4 @@
-﻿import { logger } from "../../../shared/utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -12,7 +12,7 @@ import {
   TextInput,
   Modal,
 } from "react-native";
-import { communityApi } from "../../services/api/community.api";
+import { communityApi } from "../../../services/api/community.api";
 import { theme } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -243,7 +243,7 @@ const useStyles = createStyles((colors) => ({
   collectionName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   collectionCount: {
     fontSize: DesignTokens.typography.sizes.sm,

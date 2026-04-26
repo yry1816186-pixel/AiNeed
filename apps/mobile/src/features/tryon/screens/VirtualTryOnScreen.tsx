@@ -7,7 +7,7 @@ import { DesignTokens, flatColors as colors } from "../../../design-system/theme
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { logger } from "../../../shared/utils/logger";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useFeatureFlags } from "../../../shared/contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../../../constants/feature-flags";
 import { useTranslation } from "../../../i18n";
@@ -46,7 +46,7 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
         </View>
       }
     >
-      <LazyTryOn isV2={isV2TryOn} />
+      <LazyTryOn />
     </React.Suspense>
   );
 };

@@ -5,7 +5,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../design-system/theme";
 import { Rating } from "./Rating";
-import { OptimizedImage } from "../common/OptimizedImage";
+import { OptimizedImage } from "../../shared/components/common/OptimizedImage";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { flatColors as colors } from "../theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
@@ -121,7 +121,7 @@ export const ProductGrid = memo(function ProductGrid({
   onItemPress,
   onFavorite,
   favorites,
-  _loading = false,
+  loading = false,
   onEndReached,
 }: ProductGridProps) {
   const styles = useStyles(colors);

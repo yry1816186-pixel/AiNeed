@@ -4,7 +4,7 @@ import { useApi } from "../useApi";
 import type { ApiResponse } from "../../types";
 
 // Mock the API client
-jest.mock("../../services/api/client", () => ({
+jest.mock("../services/api/client", () => ({
   __esModule: true,
   default: {
     get: jest.fn(),

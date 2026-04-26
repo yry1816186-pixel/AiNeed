@@ -525,11 +525,11 @@ const InlineOutfitCard: React.FC<InlineOutfitCardProps> = ({
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.itemsScrollContent}
           >
-            {activeOutfit.items.map((item, index) => (
+            {activeOutfit.items.map((item: any, index) => (
               <Pressable
                 key={`${item.itemId ?? index}-${index}`}
                 style={styles.inlineItemCard}
-                onPress={() => onItemPress?.(item)}
+                onPress={() => onItemPress?.(item as any)}
               >
                 {item.imageUrl ? (
                   <Image
@@ -624,7 +624,7 @@ const AnimatedMessageBubble: React.FC<{
             <Ionicons name="sparkles" size={12} color={colors.surface} />
           </View>
           <View style={s.assistantBubbleContent}>
-            <TypewriterMessage text={msg.content} speed={40} textStyle={[s.assistantText]} />
+            <TypewriterMessage text={msg.content} speed={40} textStyle={s.assistantText as any} />
             {outfitPlan && (
               <InlineOutfitCard
                 plan={outfitPlan}
@@ -888,8 +888,8 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       }
 
       // Handle try-on action from dialog response
-      if (result.action === "try_on") {
-        const outfits = result.outfits as unknown[] | undefined;
+      if (result.studioSignal === "try_on") {
+        const outfits = (result as any).outfits as unknown[] | undefined;
         if (outfits && outfits.length > 0) {
           setSelectedOutfit(outfits[0] as OutfitData);
         }
@@ -1098,7 +1098,7 @@ export const AiStylistUnifiedScreen: React.FC = () => {
       await submitFeedback(
         currentSessionId,
         0,
-        data.action,
+        data.action as any,
         undefined,
         data.rating,
         data.dislikeReason

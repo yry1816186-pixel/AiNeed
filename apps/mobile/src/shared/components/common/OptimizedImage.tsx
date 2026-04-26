@@ -127,6 +127,6 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
 }));

@@ -1,9 +1,9 @@
-﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
 import { logger } from "../../shared/utils/logger";
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../../utils/secureStorage";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../shared/utils/secureStorage";
 import { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from "../../types";
 import { AuthTokens } from "../../types/user";
 import { AppError, AppErrorCode, classifyAxiosError } from "./error";
@@ -150,7 +150,7 @@ class ApiClient {
       (response) => {
         const requestId = response.headers["x-request-id"];
         if (requestId && typeof requestId === "string") {
-          (response as unknown as Record<string, unknown>).__requestId = requestId;
+          (response as unknown as any).__requestId = requestId;
         }
         if (__DEV__) {
           logger.debug(`[API] ${response.status} ${response.config.url}`);
@@ -181,7 +181,7 @@ class ApiClient {
 
         // D-04: Handle 429 Usage Limit Exceeded
         if (error.response?.status === 429) {
-          const data = error.response.data as Record<string, unknown> | undefined;
+          const data = error.response.data as any | undefined;
           if (data) {
             usageEventEmitter.emit("usage:exceeded", {
               limit: (data.limit as number) ?? 0,

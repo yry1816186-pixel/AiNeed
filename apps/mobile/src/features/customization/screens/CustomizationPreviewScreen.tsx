@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "../polyfills/expo-vector-icons";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
 import { useCustomizationEditorStore } from "../stores/customizationEditorStore";
@@ -17,12 +17,12 @@ import customizationApi from "../../../services/api/customization.api";
 import type { RootStackParamList } from "../../../types/navigation";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
-type PreviewRoute = RouteProp<RootStackParamList, "CustomizationPreview">;
+type PreviewRoute = RouteProp<RootStackParamList, keyof RootStackParamList>;
 
 export const CustomizationPreviewScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute<PreviewRoute>();
-  const { designId } = route.params;
+  const { designId } = route.params as any;
   const store = useCustomizationEditorStore();
 
   const [printSide, setPrintSide] = useState<"front" | "back" | "both">("front");
@@ -38,7 +38,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
     try {
       const response = await customizationApi.getDesign(designId);
       if (response.success && response.data) {
-        setDesignData(response.data);
+        setDesignData(response.data as any);
       }
     } catch {
       // handle
@@ -68,7 +68,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           {
             text: "查看订单",
             onPress: () => {
-              navigation.replace("CustomizationOrderDetail" as keyof RootStackParamList, {
+              (navigation as any).navigate("CustomizationOrderDetail", {
                 requestId,
               });
             },

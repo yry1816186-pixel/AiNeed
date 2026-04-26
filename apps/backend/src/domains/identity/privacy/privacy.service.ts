@@ -97,7 +97,7 @@ export class PrivacyService {
   ) {
     const result = await this.prisma.userConsent.upsert({
       where: {
-        userId_consentType: { userId, consentType },
+        userId_consentType: { userId, consentType: consentType as any },
       },
       update: {
         granted,
@@ -109,7 +109,7 @@ export class PrivacyService {
       },
       create: {
         userId,
-        consentType,
+        consentType: consentType as any,
         granted,
         grantedAt: granted ? new Date() : null,
         ipAddress: metadata.ipAddress,

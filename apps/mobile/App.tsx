@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, no-useless-escape */
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, LogBox, StatusBar, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -28,7 +28,6 @@ import apiClient from "./src/shared/services/apiClient";
 import { authApi } from "./src/features/auth/services/auth.api";
 import { analytics } from "./src/shared/services/analytics";
 
-// Suppress known benign warnings from polyfill stubs
 LogBox.ignoreLogs([
   "FileSystem.w+Async is a stub",
   "expo-media-library.saveToLibraryAsync is a stub",
@@ -36,6 +35,8 @@ LogBox.ignoreLogs([
   "setNavigationRef is deprecated",
   "EXPO_OS is not defined",
 ]);
+
+initSentry();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,11 +68,36 @@ function SplashScreen() {
   return <AnimatedSplashScreen onFinish={() => setLoading(false)} />;
 }
 
+function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <GestureHandlerRootView style={rootStyles.root}>
+      <UnifiedThemeProvider>
+        <PaperThemeProvider>
+          <I18nProvider>
+            <FeatureFlagProvider>
+              <SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+              </SafeAreaProvider>
+            </FeatureFlagProvider>
+          </I18nProvider>
+        </PaperThemeProvider>
+      </UnifiedThemeProvider>
+    </GestureHandlerRootView>
+  );
+}
+
 export default function App() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const authToken = useAuthStore((state) => state.token);
-  const setLoading = useAuthStore((state) => state.setLoading);
+  const {
+    isAuthenticated,
+    isLoading,
+    token: authToken,
+    setLoading,
+  } = useAuthStore((state) => ({
+    isAuthenticated: state.isAuthenticated,
+    isLoading: state.isLoading,
+    token: state.token,
+    setLoading: state.setLoading,
+  }));
 
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
@@ -139,7 +165,6 @@ export default function App() {
   }, [authToken, isAuthenticated, isLoading]);
 
   useEffect(() => {
-    initSentry();
     apiClient.onAuthExpired(() => {
       useAuthStore.getState().logout();
     });
@@ -151,31 +176,20 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const checkHydration = () => {
-      if (useAuthStore.persist.hasHydrated()) {
-        setLoading(false);
-        return true;
-      }
-      return false;
-    };
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setLoading(false);
+    });
 
-    if (checkHydration()) {
-      return;
+    if (useAuthStore.persist.hasHydrated()) {
+      setLoading(false);
     }
 
-    const interval = setInterval(() => {
-      if (checkHydration()) {
-        clearInterval(interval);
-      }
-    }, 100);
-
     const timeout = setTimeout(() => {
-      clearInterval(interval);
       setLoading(false);
     }, 3000);
 
     return () => {
-      clearInterval(interval);
+      unsub();
       clearTimeout(timeout);
     };
   }, [setLoading]);
@@ -210,6 +224,27 @@ export default function App() {
     flushPendingDeepLink();
   }, [currentRouteName, flushPendingDeepLink, isAuthenticated]);
 
+  const navigationReadyHandler = useMemo(
+    () => ({
+      onReady: () => {
+        setNavigationReady(true);
+        const routeName = navigationRef.getCurrentRoute()?.name;
+        setCurrentRouteName(routeName);
+        if (routeName) {
+          analytics.trackScreen(routeName);
+        }
+      },
+      onStateChange: () => {
+        const routeName = navigationRef.getCurrentRoute()?.name;
+        setCurrentRouteName(routeName);
+        if (routeName) {
+          analytics.trackScreen(routeName);
+        }
+      },
+    }),
+    []
+  );
+
   if (isLoading) {
     return (
       <ErrorBoundary
@@ -219,20 +254,10 @@ export default function App() {
           console.error("[App:Loading] Error:", structuredError);
         }}
       >
-        <GestureHandlerRootView style={rootStyles.root}>
-          <UnifiedThemeProvider>
-            <PaperThemeProvider>
-              <I18nProvider>
-                <FeatureFlagProvider>
-                  <SafeAreaProvider>
-                    <ThemedStatusBar />
-                    <SplashScreen />
-                  </SafeAreaProvider>
-                </FeatureFlagProvider>
-              </I18nProvider>
-            </PaperThemeProvider>
-          </UnifiedThemeProvider>
-        </GestureHandlerRootView>
+        <AppProviders>
+          <ThemedStatusBar />
+          <SplashScreen />
+        </AppProviders>
       </ErrorBoundary>
     );
   }
@@ -249,42 +274,17 @@ export default function App() {
         console.log("[App:Root] Error boundary reset");
       }}
     >
-      <GestureHandlerRootView style={rootStyles.root}>
-        <UnifiedThemeProvider>
-          <PaperThemeProvider>
-            <I18nProvider>
-              <FeatureFlagProvider>
-                <SafeAreaProvider>
-                  <QueryClientProvider client={queryClient}>
-                    <NavigationContainer
-                      ref={navigationRef}
-                      onReady={() => {
-                        setNavigationReady(true);
-                        const routeName = navigationRef.getCurrentRoute()?.name;
-                        setCurrentRouteName(routeName);
-                        if (routeName) {
-                          analytics.trackScreen(routeName);
-                        }
-                      }}
-                      onStateChange={() => {
-                        const routeName = navigationRef.getCurrentRoute()?.name;
-                        setCurrentRouteName(routeName);
-                        if (routeName) {
-                          analytics.trackScreen(routeName);
-                        }
-                      }}
-                    >
-                      <ThemedStatusBar />
-                      <OfflineBanner />
-                      <RootNavigator isAuthenticated={isAuthenticated} />
-                    </NavigationContainer>
-                  </QueryClientProvider>
-                </SafeAreaProvider>
-              </FeatureFlagProvider>
-            </I18nProvider>
-          </PaperThemeProvider>
-        </UnifiedThemeProvider>
-      </GestureHandlerRootView>
+      <AppProviders>
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={navigationReadyHandler.onReady}
+          onStateChange={navigationReadyHandler.onStateChange}
+        >
+          <ThemedStatusBar />
+          <OfflineBanner />
+          <RootNavigator isAuthenticated={isAuthenticated} />
+        </NavigationContainer>
+      </AppProviders>
     </ErrorBoundary>
   );
 }

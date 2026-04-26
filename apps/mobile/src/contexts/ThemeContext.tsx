@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @deprecated Use ThemeProvider from shared/contexts/ThemeContext instead.
  * This file will be removed in a future version.
  */
@@ -12,7 +12,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { useColorScheme, Appearance, type ColorValue } from "react-native";
+import { useColorScheme, Appearance } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DesignTokens, darkTokens } from "../design-system/theme";
 import {
@@ -27,7 +27,6 @@ import {
   type SeasonAccentColors,
 } from "../design-system/theme/tokens/season-colors";
 import type { FlatColors } from "../design-system/theme/FlatColors";
-import { flatColors as colors } from "../design-system/theme";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -64,7 +63,6 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { colors, isDark } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);

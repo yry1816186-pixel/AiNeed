@@ -9,7 +9,7 @@ import type { RootStackParamList } from "../../../types/navigation";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { clothingApi } from "../../../services/api/clothing.api";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import {
   searchApi,
@@ -513,7 +513,7 @@ export const SearchScreen: React.FC = () => {
 
       <CategoryNavigation
         selectedCategory={selectedCategory}
-        onSelectCategory={(cat: ClothingCategory) => {
+        onSelectCategory={(cat: string | null) => {
           setSelectedCategory(cat as ClothingCategory | null);
           if (cat) {
             void clothingEnhancementApi.getSubcategories(cat).then((res) => {
@@ -544,7 +544,10 @@ export const SearchScreen: React.FC = () => {
       <FilterTags
         filterOptions={filterOptions}
         activeFilters={activeFilterDimensions}
-        onApplyFilter={(dimension: string, value: string) => {
+        onApplyFilter={(
+          dimension: string,
+          value: string | string[] | { min: number; max: number }
+        ) => {
           setActiveFilterDimensions((prev) => ({
             ...prev,
             [dimension]: value,

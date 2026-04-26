@@ -300,7 +300,11 @@ const collectionStyles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  name: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   actions: { flexDirection: "row", gap: 4 },
   actionBtn: { padding: 8 },

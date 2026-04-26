@@ -89,7 +89,7 @@ class RateLimiter {
 
     if (this.timestamps.length >= this.maxRequests) {
       // Calculate wait time until the oldest request exits the window
-      const oldestInWindow = this.timestamps[0];
+      const oldestInWindow = this.timestamps[0]!;
       const waitTime = this.windowMs - (now - oldestInWindow) + 1;
       if (waitTime > 0) {
         await new Promise((resolve) => setTimeout(resolve, waitTime));
@@ -223,7 +223,7 @@ export class TaobaoClientService {
         throw new Error(`Taobao item not found: ${itemId}`);
       }
 
-      return this.normalizeItem(rawItems[0]);
+      return this.normalizeItem(rawItems[0]!);
     }, `getItemDetails("${itemId}")`);
   }
 

@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { logger } from "../utils/logger";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";

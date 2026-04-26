@@ -17,6 +17,18 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthenticatedRequest } from "../types/auth.types";
 
+class ProxyStylistRequestDto {
+  message!: string;
+  sessionId?: string;
+  context?: Record<string, unknown>;
+}
+
+class ProxyTryonRequestDto {
+  garmentImageUrl!: string;
+  userImageUrl!: string;
+  category?: string;
+}
+
 /**
  * Server-side proxy for AI service requests.
  *
@@ -160,22 +172,4 @@ export class ProxyController {
       throw new HttpException("AI service temporarily unavailable", HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
-}
-
-/**
- * DTO for stylist proxy requests
- */
-class ProxyStylistRequestDto {
-  message!: string;
-  sessionId?: string;
-  context?: Record<string, unknown>;
-}
-
-/**
- * DTO for try-on proxy requests
- */
-class ProxyTryonRequestDto {
-  garmentImageUrl!: string;
-  userImageUrl!: string;
-  category?: string;
 }

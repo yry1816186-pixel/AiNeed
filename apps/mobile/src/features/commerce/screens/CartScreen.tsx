@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
 import { logger } from "../../../shared/utils/logger";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -22,13 +22,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { cartApi, cartEnhancementApi } from "../../../services/api/commerce.api";
+import type { ClothingItem } from "../../../types/clothing";
 import { useCartStore } from "../stores/cart.store";
 import { useCouponStore } from "../stores/couponStore";
 
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
-import { haptics } from "../../../utils/haptics";
+import { haptics } from "../../../shared/utils/haptics";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { EmptyCartView } from "../components/EmptyCartView";
 import { FreeShippingProgress } from "../components/FreeShippingProgress";
@@ -80,15 +81,7 @@ export const CartScreenComponent: React.FC = () => {
             size: item.size,
             quantity: item.quantity,
             selected: item.selected ?? false,
-          })) as {
-            id: string;
-            item: ClothingItem;
-            color: string;
-            size: string;
-            quantity: number;
-            originalPrice?: number;
-            selected: boolean;
-          }[]
+          })) as any
         );
         setSelectedIds(selected);
       }

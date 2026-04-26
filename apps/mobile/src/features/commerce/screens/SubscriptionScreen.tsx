@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import {

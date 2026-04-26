@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import uuid
 import logging
 from typing import Callable
@@ -24,11 +25,23 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         if not settings.ML_API_KEY:
+            if settings.is_production:
+                logger.critical("ML_API_KEY is not set in production — rejecting all requests")
+                return JSONResponse(
+                    status_code=503,
+                    content={
+                        "success": False,
+                        "error": {
+                            "code": "SERVICE_MISCONFIGURED",
+                            "message": "API key not configured",
+                        },
+                    },
+                )
             return await call_next(request)
 
         api_key = request.headers.get("X-ML-API-Key", "")
 
-        if api_key != settings.ML_API_KEY:
+        if not hmac.compare_digest(api_key.encode("utf-8"), settings.ML_API_KEY.encode("utf-8")):
             request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
             logger.warning(
                 "API key authentication failed",

@@ -35,7 +35,7 @@ export function MainTabNavigator() {
 
   return (
     <Tab.Navigator
-      tabBar={(props: BottomTabBarProps) => <AnimatedTabBar {...props} />}
+      tabBar={(props: BottomTabBarProps) => <AnimatedTabBar {...(props as any)} />}
       screenOptions={{
         headerShown: false,
       }}

@@ -16,6 +16,7 @@ import { AIModule } from "../../../../ai-core/ai/ai.module";
 import { ColorMatchingService } from "../../services/color-matching.service";
 import { MultimodalFusionService } from "../../services/multimodal-fusion.service";
 import { SASRecService } from "../../services/sasrec.service";
+import { SASRecClientService } from "../../services/sasrec-client.service";
 import { TransformerEncoderService } from "../../services/transformer-encoder.service";
 import { VectorSimilarityService } from "../../services/vector-similarity.service";
 
@@ -26,6 +27,7 @@ import { VectorSimilarityService } from "../../services/vector-similarity.servic
     ColorMatchingService,
     MultimodalFusionService,
     TransformerEncoderService,
+    SASRecClientService,
     SASRecService,
   ],
   exports: [

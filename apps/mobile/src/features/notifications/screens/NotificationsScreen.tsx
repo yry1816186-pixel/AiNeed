@@ -20,7 +20,7 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
 import type { NotificationItem } from "../../../services/api/notification.api";
-import { wsService } from "../../../services/websocket";
+import { wsService } from "../../../shared/services/websocket";
 import { flatColors as colors } from "../../../design-system/theme";
 import { navigateHome } from "../../../navigation/navigationService";
 
@@ -37,7 +37,7 @@ const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
 ];
 
 const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
-  order: { icon: "bag-outline", color: DesignTokens.colors.brand.primary },
+  order: { icon: "bag-outline", color: DesignTokens.colors.brand.terracotta },
   recommendation: { icon: "sparkles-outline", color: colors.warning },
   community: { icon: "people-outline", color: colors.success },
   system: { icon: "information-circle-outline", color: DesignTokens.colors.brand.slate },
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   placeholder: { width: 40 },
 

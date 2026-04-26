@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { logger } from "../logger";
 import { Platform } from "react-native";
 import { Sentry } from "../../services/sentry";

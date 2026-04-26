@@ -378,9 +378,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   };
 
   return (
-    <AnimatedView
-      style={[styles.container, cardOpacity as Animated.AnimatedStyle<ViewStyle>, style]}
-    >
+    <AnimatedView style={[styles.container, cardOpacity as any, style]}>
       {renderHeader()}
       <ScrollView
         horizontal
@@ -415,7 +413,7 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   onItemPress,
   onSeeAll,
   onRefresh,
-  _refreshing = false,
+  refreshing = false,
   style,
 }) => {
   const styles = useStyles(colors);

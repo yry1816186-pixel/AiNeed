@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
 import { logger } from "../../../shared/utils/logger";
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { AppState, AppStateStatus } from "react-native";

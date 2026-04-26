@@ -24,7 +24,7 @@ interface ColorSeasonCardProps {
   onToggle: () => void;
 }
 
-const COLOR_MAP: Record<string, string> = {
+const COLOR_MAP: Record<string, any> = {
   珊瑚色: "colors.errorLight",
   桃色: "colors.errorLight",
   杏色: "colors.primaryLight",
@@ -39,7 +39,7 @@ const COLOR_MAP: Record<string, string> = {
   薄荷绿: "colors.successLight",
   淡紫色: colors.primaryLight,
   雾蓝色: DesignTokens.colors.brand.slate,
-  驼色: DesignTokens.colors.fashion.camel,
+  驼色: DesignTokens.colors.fashion,
   棕色: colors.primaryDark,
   橄榄绿: DesignTokens.colors.fashion.olive,
   铁锈红: DesignTokens.colors.fashion.rust,
@@ -54,7 +54,7 @@ const COLOR_MAP: Record<string, string> = {
   深紫色: DesignTokens.colors.fashion.deepPurple,
   玫红色: "colors.primary",
   暖米色: colors.backgroundTertiary,
-  棕褐色: "DesignTokens.colors.brand.camel",
+  棕褐色: "DesignTokens.colors.brand",
   奶油白: "colors.backgroundTertiary",
   柔和灰色: "DesignTokens.colors.neutral[400]",
   米白色: colors.backgroundTertiary,
@@ -284,7 +284,7 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
           )}
 
           <View style={styles.metalSection}>
-            <Ionicons name="diamond-outline" size={16} color={colors.fashion.champagne} />
+            <Ionicons name="diamond-outline" size={16} color={colors.fashion} />
             <Text style={styles.metalLabel}>饰品偏好：</Text>
             <Text style={styles.metalValue}>
               {METAL_LABELS[metalPreference] || metalPreference}

@@ -138,20 +138,26 @@ function BodySilhouette({
       >
         臀
       </SvgText>
-      <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.brand.warmPrimary} opacity={0.15} />
+      <Circle
+        cx={centerX}
+        cy={topY - 8}
+        r={14}
+        fill={colors.brand.warmPrimary.main}
+        opacity={0.15}
+      />
       <Circle
         cx={centerX}
         cy={topY - 8}
         r={14}
         fill="transparent"
-        stroke={colors.brand.warmPrimary}
+        stroke={colors.brand.warmPrimary.main}
         strokeWidth={1.5}
       />
       <SvgText
         x={centerX}
         y={topY - 4}
         textAnchor="middle"
-        fill={colors.brand.warmPrimary}
+        fill={colors.brand.warmPrimary.main}
         fontSize={10}
         fontWeight="600"
       >
@@ -165,8 +171,8 @@ function BodySilhouette({
           ? "Y"
           : "O"}
       </SvgText>
-      <Path d={pathD} fill={colors.brand.warmPrimary} opacity={0.12} />
-      <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={2} />
+      <Path d={pathD} fill={colors.brand.warmPrimary.main} opacity={0.12} />
+      <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary.main} strokeWidth={2} />
     </Svg>
   );
 }
@@ -224,7 +230,7 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
         accessibilityRole="button"
       >
         <View style={styles.cardHeaderLeft}>
-          <Ionicons name={bodyTypeIcon} size={20} color={colors.brand.warmPrimary} />
+          <Ionicons name={bodyTypeIcon} size={20} color={colors.brand.warmPrimary.main} />
           <Text style={styles.cardHeaderTitle}>体型分析</Text>
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>{bodyTypeName}</Text>
@@ -347,7 +353,7 @@ const useStyles = createStyles((colors) => ({
   typeBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brand.warmPrimary,
+    color: colors.brand.warmPrimary.main,
   },
   cardContent: {
     marginTop: spacing.scale[4],
@@ -394,7 +400,7 @@ const useStyles = createStyles((colors) => ({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.brand.warmPrimary,
+    backgroundColor: colors.brand.warmPrimary.main,
     marginTop: 7,
   },
   recommendationText: {
@@ -417,7 +423,7 @@ const useStyles = createStyles((colors) => ({
   idealTagText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brand.warmPrimary,
+    color: colors.brand.warmPrimary.main,
   },
   avoidTag: {
     backgroundColor: colors.neutral[100],

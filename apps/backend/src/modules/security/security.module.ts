@@ -1,6 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
+import { SecurityAuditService } from "./audit/security-audit.service";
 import { ContentFilterService } from "./content-filter/content-filter.service";
 import { AiCircuitBreakerService } from "./degradation/ai-circuit-breaker.service";
 import { SecurityPIIEncryptionService } from "./encryption/pii-encryption.service";
@@ -13,6 +14,7 @@ import { VaultService } from "./vault/vault.service";
 @Module({
   imports: [ConfigModule],
   providers: [
+    SecurityAuditService,
     VaultService,
     SecurityPIIEncryptionService,
     PrismaEncryptionMiddleware,
@@ -22,6 +24,7 @@ import { VaultService } from "./vault/vault.service";
     AiCircuitBreakerService,
   ],
   exports: [
+    SecurityAuditService,
     VaultService,
     SecurityPIIEncryptionService,
     ContentFilterService,

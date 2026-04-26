@@ -29,6 +29,7 @@ interface RequestWithUser {
     avatar?: string;
   };
   headers: Record<string, string>;
+  ip?: string;
 }
 
 /**
@@ -120,8 +121,9 @@ export class AuthController {
     status: 429,
     description: "请求过于频繁，每分钟最多5次",
   })
-  async login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(dto);
+  async login(@Body() dto: LoginDto, @Request() req: RequestWithUser): Promise<AuthResponseDto> {
+    const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.ip;
+    return this.authService.login(dto, ip);
   }
 
   /**

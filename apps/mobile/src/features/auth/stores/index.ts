@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../../shared/utils/secureStorage";
 import apiClient from "../../../services/api/client";
 
 import { AppError, AppErrorCode, toAppError } from "../../../services/api/error";

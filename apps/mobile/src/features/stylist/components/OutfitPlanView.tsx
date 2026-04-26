@@ -15,7 +15,7 @@ import {
   Duration,
   flatColors as colors,
 } from "../../../design-system/theme";
-import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
 import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
 import { ReasoningCard } from "./ReasoningCard";

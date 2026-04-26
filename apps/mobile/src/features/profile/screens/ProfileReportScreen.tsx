@@ -26,10 +26,10 @@ import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { shadows } from "@/src/design-system/theme/tokens/shadows";
 import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
-import { BodyTypeCard } from "../../../components/BodyTypeCard";
-import { ColorSeasonCard } from "../../../components/ColorSeasonCard";
-import { StyleTagsCard } from "../../../components/StyleTagsCard";
-import { SharePosterPreview } from "../../../components/SharePosterPreview";
+import { BodyTypeCard } from "./components/BodyTypeCard";
+import { ColorSeasonCard } from "./components/ColorSeasonCard";
+import { StyleTagsCard } from "./components/StyleTagsCard";
+import { SharePosterPreview } from "./components/SharePosterPreview";
 import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -174,7 +174,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <View style={styles.headerRight} />
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.brand.warmPrimary} />
+          <ActivityIndicator size="large" color={colors.brand.warmPrimary.main} />
           <Text style={styles.loadingText}>正在生成你的风格画像...</Text>
         </View>
       </SafeAreaView>
@@ -201,7 +201,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <Text style={styles.emptySubtitle}>完善你的体型和色彩信息，解锁专属风格画像报告</Text>
           <TouchableOpacity
             style={styles.emptyButton}
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() => (navigation.navigate as any)("Settings")}
             accessibilityLabel="去完善画像"
             accessibilityRole="button"
           >

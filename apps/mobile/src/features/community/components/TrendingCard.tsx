@@ -1,4 +1,4 @@
-﻿import { logger } from "../../../shared/utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";

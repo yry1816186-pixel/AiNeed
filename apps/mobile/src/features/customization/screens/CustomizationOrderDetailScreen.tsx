@@ -25,7 +25,7 @@ import customizationApi from "../../../services/api/customization.api";
 import type { RootStackParamList } from "../../../types/navigation";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
-type OrderDetailRoute = RouteProp<RootStackParamList, "CustomizationOrderDetail">;
+type OrderDetailRoute = RouteProp<RootStackParamList, keyof RootStackParamList>;
 
 interface OrderDetail {
   id: string;
@@ -66,7 +66,7 @@ const STATUS_STEPS = [
 export const CustomizationOrderDetailScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute<OrderDetailRoute>();
-  const { requestId } = route.params;
+  const { requestId } = route.params as any;
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);

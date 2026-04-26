@@ -137,7 +137,7 @@ export const ChatBubbleSkeleton: React.FC<ChatBubbleSkeletonProps> = ({
       height={48}
       borderRadius={16}
       duration={animate ? undefined : 0}
-      style={[styles.chatBubble, isUser ? styles.chatBubbleUser : undefined] as ViewStyle[]}
+      style={[styles.chatBubble, isUser ? styles.chatBubbleUser : undefined] as ViewStyle[] as any}
     />
   </View>
 );

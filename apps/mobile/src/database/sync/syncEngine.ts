@@ -57,7 +57,7 @@ export class SyncEngine {
         const allRecs = await database
           .get<CachedRecommendation>("cached_recommendations")
           .query()
-          .fetchAll();
+          .fetch();
 
         const expired = allRecs.filter((r) => r.expiresAt < now);
         if (expired.length > 0) {
@@ -95,7 +95,7 @@ export class SyncEngine {
       const dirtyItems = await database
         .get<WardrobeItem>("wardrobe_items")
         .query(Q.where("is_dirty", true))
-        .fetchAll();
+        .fetch();
 
       if (dirtyItems.length === 0) return;
 
@@ -184,7 +184,7 @@ export class SyncEngine {
       await database.write(async () => {
         const collection = database.get<UserProfile>("user_profiles");
         // Upsert: delete existing then create new
-        const existing = await collection.query().fetchAll();
+        const existing = await collection.query().fetch();
         const operations = [
           ...existing.map((r) => r.prepareMarkAsDeleted()),
           collection.prepareCreate((record) => {

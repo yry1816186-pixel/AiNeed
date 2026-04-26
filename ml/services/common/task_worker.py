@@ -26,6 +26,8 @@ from enum import Enum
 import redis.asyncio as redis
 from redis.asyncio import Redis
 
+from ml.services.common.ssrf_protection import validate_image_url, validate_image_response
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -441,15 +443,18 @@ class TaskWorker:
         """Download an image from URL and convert to base64."""
         import aiohttp
 
+        validate_image_url(image_url)
+
         async with aiohttp.ClientSession() as session:
             async with session.get(image_url, timeout=aiohttp.ClientTimeout(total=30)) as resp:
                 if resp.status != 200:
                     raise ValueError(f"Failed to download image: HTTP {resp.status}")
 
+                validate_image_response(resp.headers.get("Content-Type"))
+
                 image_data = await resp.read()
                 image_base64 = base64.b64encode(image_data).decode("utf-8")
 
-                # Detect content type
                 content_type = resp.headers.get("Content-Type", "image/png")
                 return f"data:{content_type};base64,{image_base64}"
 

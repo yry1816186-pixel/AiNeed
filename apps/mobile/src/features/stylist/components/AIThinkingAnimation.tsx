@@ -13,8 +13,8 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { useReducedMotion } from "../../../hooks/useReducedMotion";
-import { useGlow } from "../../../hooks/useAdvancedAnimations";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
+import { useGlow } from "../../../shared/hooks/useAdvancedAnimations";
 import {
   DesignTokens,
   SpringConfigs,
@@ -23,10 +23,10 @@ import {
 } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
-const TERRACOTTA = colors.primary; // #C67B5C
-const CAMEL = DesignTokens.colors.brand.camel; // #B5A08C
-const SAGE = colors.secondary; // #8B9A7D
-const _TERRACOTTA_LIGHT = colors.primaryLight; // #D4917A
+const TERRACOTTA = colors.primary; // DesignTokens.colors.brand.terracotta
+const CAMEL = DesignTokens.colors.brand.camel;
+const SAGE = colors.secondary; // DesignTokens.colors.brand.sage
+const _TERRACOTTA_LIGHT = colors.primaryLight; // DesignTokens.colors.brand.terracottaLight
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_WIDTH = SCREEN_WIDTH * 0.6;
@@ -111,7 +111,7 @@ const r = StyleSheet.create({
 
 // ============ Stage 1: Terracotta Gradient Lines (0-2s) ============
 
-function GradientLines({ stageProgress }: { _stageProgress: Animated.SharedValue<number> }) {
+function GradientLines({ _stageProgress }: { _stageProgress: Animated.SharedValue<number> }) {
   const line1X = useSharedValue(-BUBBLE_WIDTH);
   const line2X = useSharedValue(-BUBBLE_WIDTH);
   const line3X = useSharedValue(-BUBBLE_WIDTH);
@@ -276,7 +276,7 @@ function AIThinkingAnimationInner() {
 
   return (
     <Animated.View style={[s.container, glowStyle]}>
-      {stage === 1 && <GradientLines stageProgress={gradientProgress} />}
+      {stage === 1 && <GradientLines _stageProgress={gradientProgress} />}
       {stage === 2 && <ClothingSilhouette visible={stage >= 2} />}
       {stage === 3 && <CompleteOutfit visible={stage >= 3} />}
     </Animated.View>

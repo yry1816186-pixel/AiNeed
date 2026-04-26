@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { logger } from "../../../shared/utils/logger";
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
@@ -11,9 +11,9 @@ import {
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
-import { pickImageSecurely } from "../../../utils/imagePicker";
+import { pickImageSecurely } from "../../../shared/utils/imagePicker";
 import { useCameraPermissions } from "../hooks/useCameraPermissions";
-import { useReferenceLines } from "../../../hooks/useReferenceLines";
+import { useReferenceLines } from "../../../shared/hooks/useReferenceLines";
 import { usePhotoStore } from "../stores/photoStore";
 
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";

@@ -1,6 +1,6 @@
 import apiClient from "./client";
 import { ApiResponse, PaginatedResponse, ClothingAnalysisResult } from "../../types";
-import { compressImage } from "../../utils/imageCompressor";
+import { compressImage } from "../../shared/utils/imageCompressor";
 import {
   ClothingItem,
   ClothingFilter,

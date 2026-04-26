@@ -21,13 +21,13 @@ import { SharedElement } from "react-navigation-shared-element";
 import { theme } from "../../../design-system/theme";
 import { communityApi, PostComment } from "../../../services/api/community.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { BookmarkSheet } from "../../../components/community/BookmarkSheet";
+import { BookmarkSheet } from "../components/BookmarkSheet";
 import type { RootStackParamList } from "../../../types/navigation";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
 
-type Navigation = NativeStackNavigationProp<RootStackParamList>;
-type _PostDetailRoute = RouteProp<RootStackParamList, "Community">;
+type Navigation = any;
+type _PostDetailRoute = RouteProp<RootStackParamList, keyof RootStackParamList>;
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -494,7 +494,7 @@ const useStyles = createStyles((colors) => ({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   moreBtn: { width: 40, height: 40, alignItems: "flex-end", justifyContent: "center" },
@@ -550,7 +550,7 @@ const useStyles = createStyles((colors) => ({
   authorName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   postTime: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -678,7 +678,7 @@ const useStyles = createStyles((colors) => ({
   commentAuthor: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   commentContent: {
     fontSize: DesignTokens.typography.sizes.base,

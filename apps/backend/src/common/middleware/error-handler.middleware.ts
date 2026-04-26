@@ -140,7 +140,20 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
     res.on("finish", () => {
       const duration = Date.now() - req.requestStartTime;
 
-      if (res.statusCode >= 400) {
+      if (res.statusCode === 401 || res.statusCode === 403) {
+        const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip;
+        this.logger.warn({
+          _type: "SECURITY_EVENT",
+          eventType: res.statusCode === 401 ? "ACCESS_DENIED" : "ACCESS_DENIED",
+          requestId: req.requestId,
+          method: req.method,
+          url: req.url,
+          statusCode: res.statusCode,
+          ip: this.maskIp(ip),
+          userAgent: req.headers["user-agent"],
+          duration,
+        });
+      } else if (res.statusCode >= 400) {
         this.logger.warn({
           message: "Request completed with error",
           requestId: req.requestId,
@@ -151,6 +164,17 @@ export class ErrorHandlerMiddleware implements NestMiddleware {
         });
       }
     });
+  }
+
+  private maskIp(ip: string | undefined): string {
+    if (!ip) {
+      return "unknown";
+    }
+    const parts = ip.split(".");
+    if (parts.length === 4) {
+      return `${parts[0]}.${parts[1]}.*.*`;
+    }
+    return ip.slice(0, 4) + "***";
   }
 
   /**

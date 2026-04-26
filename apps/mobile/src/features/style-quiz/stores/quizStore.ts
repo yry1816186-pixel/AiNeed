@@ -1,4 +1,4 @@
-﻿import { logger } from "../../../shared/utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import { createWithEqualityFn } from "zustand/traditional";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { shallow } from "zustand/shallow";

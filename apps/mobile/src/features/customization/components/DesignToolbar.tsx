@@ -59,7 +59,7 @@ export const DesignToolbar: React.FC<DesignToolbarProps> = ({
           <Ionicons
             name={tool.icon}
             size={22}
-            color={tool.disabled ? colors.neutral[300] : colors.text}
+            color={tool.disabled ? colors.neutral[300] : colors.textPrimary}
           />
           <Text style={[styles.toolLabel, tool.disabled && styles.toolLabelDisabled]}>
             {tool.label}

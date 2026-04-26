@@ -5,6 +5,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
 import * as bcrypt from "../../../common/security/bcrypt";
+import { SecurityAuditService } from "../../../modules/security/audit/security-audit.service";
 
 export interface ValidatedUserForAuth {
   id: string;
@@ -20,12 +21,26 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 
 @Injectable()
 export class AuthHelpersService {
-  constructor(private prisma: PrismaService, private redisService: RedisService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redisService: RedisService,
+    private securityAudit: SecurityAuditService
+  ) {}
 
-  async validateCredentials(email: string, password: string): Promise<ValidatedUserForAuth> {
+  async validateCredentials(
+    email: string,
+    password: string,
+    ip?: string
+  ): Promise<ValidatedUserForAuth> {
     const lockoutKey = `auth:lockout:${email.toLowerCase()}`;
     const isLocked = await this.redisService.exists(lockoutKey);
     if (isLocked) {
+      this.securityAudit.log({
+        type: "AUTH_ACCOUNT_LOCKOUT",
+        ip,
+        resource: "auth:login",
+        details: { reason: "account_locked" },
+      });
       throw new UnauthorizedException("账户已被锁定，请15分钟后再试");
     }
 
@@ -43,6 +58,12 @@ export class AuthHelpersService {
 
     if (!user) {
       const remaining = await this.recordFailedAttempt(email);
+      this.securityAudit.log({
+        type: "AUTH_LOGIN_FAILURE",
+        ip,
+        resource: "auth:login",
+        details: { reason: "user_not_found", attemptsRemaining: MAX_LOGIN_ATTEMPTS - remaining },
+      });
       throw new UnauthorizedException(`邮箱或密码错误，剩余尝试次数: ${remaining}`);
     }
 
@@ -50,6 +71,13 @@ export class AuthHelpersService {
     if (!isPasswordValid) {
       const attempts = await this.recordFailedAttempt(email);
       const remaining = MAX_LOGIN_ATTEMPTS - attempts;
+      this.securityAudit.log({
+        type: "AUTH_LOGIN_FAILURE",
+        userId: user.id,
+        ip,
+        resource: "auth:login",
+        details: { reason: "wrong_password", attemptsRemaining: remaining },
+      });
       if (remaining > 0) {
         throw new UnauthorizedException(`邮箱或密码错误，剩余尝试次数: ${remaining}`);
       } else {

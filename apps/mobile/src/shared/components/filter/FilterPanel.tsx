@@ -1,4 +1,3 @@
-import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import React, { useState } from "react";
@@ -32,27 +31,38 @@ function FilterSection({
   sectionStyles,
 }: FilterSectionProps & { sectionStyles: Record<string, unknown> }) {
   return (
-    <View style={sectionStyles.section}>
-      <Text style={sectionStyles.sectionTitle}>{title}</Text>
-      <View style={sectionStyles.options}>
+    <View style={sectionStyles.section as any as any}>
+      <Text style={sectionStyles.sectionTitle as any as any}>{title}</Text>
+      <View style={sectionStyles.options as any as any}>
         {options.map((option) => {
           const isSelected = selected.includes(option.value);
           return (
             <TouchableOpacity
               key={option.value}
-              style={[sectionStyles.option, isSelected && sectionStyles.optionSelected]}
+              style={
+                [sectionStyles.option, isSelected && sectionStyles.optionSelected] as any as any
+              }
               onPress={() => {
                 haptics.selection();
                 onSelect(option.value);
               }}
             >
               <Text
-                style={[sectionStyles.optionText, isSelected && sectionStyles.optionTextSelected]}
+                style={
+                  [
+                    sectionStyles.optionText,
+                    isSelected && sectionStyles.optionTextSelected,
+                  ] as any as any
+                }
               >
                 {option.label}
               </Text>
               {option.count !== undefined && (
-                <Text style={[sectionStyles.count, isSelected && sectionStyles.countSelected]}>
+                <Text
+                  style={
+                    [sectionStyles.count, isSelected && sectionStyles.countSelected] as any as any
+                  }
+                >
                   ({option.count})
                 </Text>
               )}
@@ -158,7 +168,7 @@ export function FilterPanel({
 
         <ScrollView style={styles.content}>
           <FilterSection
-            sectionStyles={styles as unknown as Record<string, unknown>}
+            sectionStyles={styles as any as Record<string, unknown>}
             title="分类"
             options={categories.map((c) => ({
               label: CATEGORY_LABELS[c.value] || c.value,
@@ -170,7 +180,7 @@ export function FilterPanel({
           />
 
           <FilterSection
-            sectionStyles={styles as unknown as Record<string, unknown>}
+            sectionStyles={styles as any as Record<string, unknown>}
             title="季节"
             options={seasons.map((s) => ({
               label: s.value,
@@ -182,7 +192,7 @@ export function FilterPanel({
           />
 
           <FilterSection
-            sectionStyles={styles as unknown as Record<string, unknown>}
+            sectionStyles={styles as any as Record<string, unknown>}
             title="场合"
             options={occasions.map((o) => ({
               label: o.value,

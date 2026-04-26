@@ -1,4 +1,3 @@
-import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable import/no-unresolved */
@@ -39,7 +38,7 @@ export const AdvisorProfileScreen: React.FC = () => {
   const { currentConsultant, fetchConsultantById, isLoading } = useConsultantStore();
   const [cases, setCases] = useState<Record<string, unknown>[]>([]);
 
-  const consultantId = route.params?.id;
+  const consultantId = (route.params as any)?.id;
 
   useFocusEffect(
     useCallback(() => {
@@ -73,7 +72,7 @@ export const AdvisorProfileScreen: React.FC = () => {
       ? (currentConsultant as unknown as { data: ConsultantProfile }).data
       : (currentConsultant as unknown as ConsultantProfile);
   const specialties = Array.isArray(profile.specialties) ? profile.specialties : [];
-  const bookingCount = profile._count?.bookings || 0;
+  const bookingCount = (profile as any)?.bookingCount || 0;
 
   return (
     <View style={styles.container}>
@@ -151,7 +150,9 @@ export const AdvisorProfileScreen: React.FC = () => {
               horizontal
               data={cases}
               keyExtractor={(item: Record<string, unknown>) => String(item.bookingId)}
-              renderItem={({ item }: { item: Record<string, unknown> }) => <CaseCard {...item} />}
+              renderItem={({ item }: { item: Record<string, unknown> }) => (
+                <CaseCard {...(item as any)} />
+              )}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.casesList}
             />

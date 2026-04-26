@@ -31,6 +31,7 @@ export const FastImage: React.FC<FastImageProps> & {
   priority: typeof priority;
   resizeMode: typeof resizeMode;
   cacheControl: typeof cacheControl;
+  preload: (sources: { uri: string }[]) => void;
 } = ({ source, resizeMode = "cover", onLoad, onError, style, ...props }) => {
   const imageSource = typeof source === "object" && "uri" in source ? { uri: source.uri } : source;
 
@@ -49,5 +50,6 @@ export const FastImage: React.FC<FastImageProps> & {
 FastImage.priority = priority;
 FastImage.resizeMode = resizeMode;
 FastImage.cacheControl = cacheControl;
+FastImage.preload = () => {};
 
 export default FastImage;

@@ -1,4 +1,6 @@
-﻿import { View, ScrollView } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { View } from "react-native";
+import { FlashList } from "../../../polyfills/flash-list";
 import { WeatherSceneCard } from "../components/WeatherSceneCard";
 import { RecommendationCarousel } from "../components/RecommendationCarousel";
 import { RecommendationFunnel } from "../components/RecommendationFunnel";
@@ -12,6 +14,13 @@ import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSk
 import { navigateStylist } from "../../../navigation/navigationService";
 import { useTodayRecommendations, useWeather } from "../../../shared/hooks/useQueryHooks";
 import { useDemoStore } from "../../../shared/stores/demoStore";
+
+type TodaySection =
+  | { type: "weather" }
+  | { type: "carousel" }
+  | { type: "funnel" }
+  | { type: "insight" }
+  | { type: "quickReply" };
 
 export function TodayScreen() {
   const { colors } = useTheme();
@@ -27,6 +36,70 @@ export function TodayScreen() {
   const { data: weather, isLoading: weatherLoading } = useWeather();
 
   const isLoading = recLoading || weatherLoading;
+
+  const handleQuickReply = useCallback((option: string) => {
+    navigateStylist("AIStylist", { initialMessage: option });
+  }, []);
+
+  const sections: TodaySection[] = useMemo(() => {
+    const items: TodaySection[] = [{ type: "weather" }, { type: "carousel" }];
+    if (recommendations?.breakdown && (__DEV__ || demoMode)) {
+      items.push({ type: "funnel" });
+    }
+    items.push({ type: "insight" }, { type: "quickReply" });
+    return items;
+  }, [recommendations?.breakdown, demoMode]);
+
+  const keyExtractor = useCallback((item: TodaySection, index: number) => item.type + index, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: TodaySection }) => {
+      if (!recommendations) {
+        return null;
+      }
+      switch (item.type) {
+        case "weather":
+          return (
+            <WeatherSceneCard
+              weather={
+                weather
+                  ? {
+                      temp: weather.temperature,
+                      condition: weather.condition || weather.description,
+                      icon: weather.icon || "sun",
+                    }
+                  : undefined
+              }
+              scene={{
+                title: recommendations.outfit?.name || "今日推荐",
+                description:
+                  recommendations.outfit?.description || recommendations.explanation?.why || "",
+              }}
+            />
+          );
+        case "carousel":
+          return <RecommendationCarousel items={recommendations.items} />;
+        case "funnel":
+          return recommendations?.breakdown ? (
+            <RecommendationFunnel breakdown={recommendations.breakdown} />
+          ) : null;
+        case "insight":
+          return <AiInsightBubble message={recommendations.explanation?.why || ""} />;
+        case "quickReply":
+          return (
+            <QuickReplyButtons
+              options={[
+                recommendations.explanation?.nextAction || "换一套",
+                "推荐通勤穿搭",
+                "约会风格",
+              ]}
+              onSelect={handleQuickReply}
+            />
+          );
+      }
+    },
+    [weather, recommendations, handleQuickReply]
+  );
 
   if (isLoading) {
     return (
@@ -50,7 +123,9 @@ export function TodayScreen() {
           <ErrorState
             title="加载失败"
             message="抱歉，发生了一些错误，请稍后重试"
-            onRetry={() => refetchRec()}
+            onRetry={() => {
+              void refetchRec();
+            }}
             actionLabel="重新加载推荐"
           />
         </View>
@@ -77,48 +152,17 @@ export function TodayScreen() {
     );
   }
 
-  const handleQuickReply = (option: string) => {
-    navigateStylist("AIStylist", { initialMessage: option });
-  };
-
   return (
     <View style={styles.container}>
       <GlassHeader title="今天穿什么" subtitle="让伊伊为你推荐" />
-      <ScrollView
-        style={styles.scrollView}
+      <FlashList
+        data={sections}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        estimatedItemSize={200}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-      >
-        <WeatherSceneCard
-          weather={
-            weather
-              ? {
-                  temp: weather.temperature,
-                  condition: weather.condition || weather.description,
-                  icon: weather.icon || "sun",
-                }
-              : undefined
-          }
-          scene={{
-            title: recommendations.outfit?.name || "今日推荐",
-            description:
-              recommendations.outfit?.description || recommendations.explanation?.why || "",
-          }}
-        />
-        <RecommendationCarousel items={recommendations.items} />
-        {recommendations?.breakdown && (__DEV__ || demoMode) && (
-          <RecommendationFunnel breakdown={recommendations.breakdown} />
-        )}
-        <AiInsightBubble message={recommendations.explanation?.why || ""} />
-        <QuickReplyButtons
-          options={[
-            recommendations.explanation?.nextAction || "换一套",
-            "推荐通勤穿搭",
-            "约会风格",
-          ]}
-          onSelect={handleQuickReply}
-        />
-      </ScrollView>
+      />
       <QuickChatBar />
     </View>
   );
@@ -128,9 +172,6 @@ const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  scrollView: {
-    flex: 1,
   },
   scrollContent: {
     paddingBottom: 80,

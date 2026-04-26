@@ -28,6 +28,7 @@
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@react-native/codegen": "^0.84.1",
+    "@types/minimatch": "6",
     "concurrently": "^9.2.1",
     "expo-modules-autolinking": "~55.0.11",
     "husky": "^9.1.7",
@@ -58,7 +59,8 @@
       "@nestjs/core@<=11.1.17": ">=11.1.18",
       "nodemailer@<=8.0.4": ">=8.0.5",
       "follow-redirects@<=1.15.11": ">=1.16.0",
-      "axios@>=1.0.0 <1.15.0": ">=1.15.0"
+      "axios@>=1.0.0 <1.15.0": ">=1.15.0",
+      "swiper": ">=12.1.2"
     }
   },
   "engines": {

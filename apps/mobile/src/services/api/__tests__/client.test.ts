@@ -2,7 +2,7 @@
 import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 
 import { apiClient } from "../client";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../../shared/utils/secureStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ---- Mocks ----
@@ -18,7 +18,7 @@ jest.mock("../../../config/runtime", () => ({
   requireMobileUrl: (_url: string, _label: string) => "http://localhost:3001",
 }));
 
-jest.mock("../../../utils/secureStorage", () => ({
+jest.mock("../../utils/secureStorage", () => ({
   secureStorage: {
     getItem: jest.fn(),
     setItem: jest.fn(),

@@ -23,7 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { addressApi, cartApi, orderApi, paymentApi } from "../../../services/api/commerce.api";
 import { useCartStore } from "../stores/cart.store";
@@ -624,7 +624,7 @@ export const CheckoutScreen: React.FC = () => {
                   style={styles.primaryButton}
                   onPress={() =>
                     navigation.navigate("MainTabs", {
-                      screen: "Profile",
+                      screen: "Me" as any,
                       params: { screen: "Orders" },
                     })
                   }
@@ -634,7 +634,7 @@ export const CheckoutScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButtonWide}
-                  onPress={() => navigation.navigate("MainTabs", { screen: "Home" })}
+                  onPress={() => (navigation as any).navigate("MainTabs", { screen: "Today" })}
                   accessibilityLabel={t.checkout.backToHome}
                 >
                   <Text style={styles.secondaryText}>{t.checkout.backToHome}</Text>

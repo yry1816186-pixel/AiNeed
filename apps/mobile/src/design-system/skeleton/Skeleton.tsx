@@ -12,7 +12,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, DesignTokens, Spacing, BorderRadius } from "../../design-system/theme";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

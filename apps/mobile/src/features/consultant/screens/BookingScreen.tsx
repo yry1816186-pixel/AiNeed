@@ -1,4 +1,3 @@
-import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable import/no-unresolved */
@@ -19,7 +18,7 @@ import { useConsultantStore } from "../stores/consultantStore";
 import { CalendarGrid } from "../components/CalendarGrid";
 import { TimeSlotItem } from "../components/TimeSlotItem";
 import { ServiceTypeChip } from "../components/ServiceTypeChip";
-import type { ServiceType } from "../../types/consultant";
+import type { ServiceType } from "../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -41,7 +40,7 @@ export const BookingScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<Record<string, unknown>>>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
-  const { consultantId, consultant } = route.params || {};
+  const { consultantId, consultant } = (route.params as any) || {};
 
   const [selectedServiceType, setSelectedServiceType] =
     useState<ServiceType>("styling_consultation");
@@ -140,7 +139,7 @@ export const BookingScreen: React.FC = () => {
                   key={`${slot.startTime}-${slot.endTime}`}
                   startTime={slot.startTime}
                   endTime={slot.endTime}
-                  isAvailable={slot.isAvailable}
+                  isAvailable={(slot as any)?.isAvailable}
                   isSelected={
                     selectedSlot?.startTime === slot.startTime &&
                     selectedSlot?.endTime === slot.endTime

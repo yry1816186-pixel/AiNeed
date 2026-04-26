@@ -1,31 +1,106 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Logger,
+  BadRequestException,
+} from "@nestjs/common";
 import { Request } from "express";
 
-import { PaymentRawCallbackData } from "../types/common.types";
+const MAX_CALLBACK_BODY_SIZE = 64 * 1024;
+const WECHAT_CALLBACK_REQUIRED_FIELDS = [
+  "id",
+  "create_time",
+  "resource_type",
+  "event_type",
+  "resource",
+];
+const ALIPAY_CALLBACK_REQUIRED_FIELDS = [
+  "out_trade_no",
+  "trade_no",
+  "trade_status",
+  "sign",
+  "sign_type",
+];
 
-/**
- * 支付安全守卫
- * 验证支付请求的有效性和安全性
- */
 @Injectable()
 export class PaymentSecurityGuard implements CanActivate {
+  private readonly logger = new Logger(PaymentSecurityGuard.name);
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // 检查是否为 POST 请求
     if (request.method !== "POST") {
       return true;
     }
 
-    const body = request.body as PaymentRawCallbackData;
-    const orderId = body?.orderId;
+    const path = request.path || request.url;
+    const body = request.body;
 
-    // 检查订单ID是否存在（仅对需要订单ID的操作）
-    if (orderId === undefined && request.path.includes("/close")) {
-      throw new BadRequestException("订单ID不能为空");
+    if (!body || typeof body !== "object") {
+      this.logger.warn(
+        `Payment callback rejected: invalid body type from ${this.maskIp(request.ip)}`
+      );
+      throw new BadRequestException("Invalid callback payload");
     }
 
-    // 基本安全检查通过
+    const bodyStr = JSON.stringify(body);
+    if (bodyStr.length > MAX_CALLBACK_BODY_SIZE) {
+      this.logger.warn(
+        `Payment callback rejected: body too large (${bodyStr.length} bytes) from ${this.maskIp(
+          request.ip
+        )}`
+      );
+      throw new BadRequestException("Callback payload too large");
+    }
+
+    if (path.includes("/callback/wechat")) {
+      this.validateWechatCallback(body, request.ip);
+    } else if (path.includes("/callback/alipay")) {
+      this.validateAlipayCallback(body, request.ip);
+    }
+
     return true;
+  }
+
+  private validateWechatCallback(body: Record<string, unknown>, ip: string | undefined): void {
+    for (const field of WECHAT_CALLBACK_REQUIRED_FIELDS) {
+      if (!body[field]) {
+        this.logger.warn(
+          `Wechat callback rejected: missing required field '${field}' from ${this.maskIp(ip)}`
+        );
+        throw new BadRequestException(`Missing required field: ${field}`);
+      }
+    }
+
+    const resource = body.resource as Record<string, unknown> | undefined;
+    if (!resource?.ciphertext || !resource.nonce || !resource.algorithm) {
+      this.logger.warn(
+        `Wechat callback rejected: invalid resource structure from ${this.maskIp(ip)}`
+      );
+      throw new BadRequestException("Invalid callback resource structure");
+    }
+  }
+
+  private validateAlipayCallback(body: Record<string, unknown>, ip: string | undefined): void {
+    for (const field of ALIPAY_CALLBACK_REQUIRED_FIELDS) {
+      if (!body[field]) {
+        this.logger.warn(
+          `Alipay callback rejected: missing required field '${field}' from ${this.maskIp(ip)}`
+        );
+        throw new BadRequestException(`Missing required field: ${field}`);
+      }
+    }
+  }
+
+  private maskIp(ip: string | undefined): string {
+    if (!ip) {
+      return "unknown";
+    }
+    const parts = ip.split(".");
+    if (parts.length === 4) {
+      return `${parts[0]}.${parts[1]}.*.*`;
+    }
+    return ip.slice(0, 4) + "***";
   }
 }

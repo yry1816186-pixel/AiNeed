@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   productTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes["2xl"],
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   bloggerName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   bloggerBadgeSmall: {
     width: 14,

@@ -66,7 +66,6 @@ export const UsageLimitBottomSheet = React.forwardRef<BottomSheetModal, UsageLim
     );
 
     const handleUpgrade = useCallback(() => {
-      // @ts-expect-error -- Subscription route exists in ProfileStackParamList
       navigation.navigate("Subscription" as never);
       onClose();
     }, [navigation, onClose]);

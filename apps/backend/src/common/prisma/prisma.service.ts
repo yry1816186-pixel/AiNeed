@@ -144,7 +144,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error("Cannot clean database in production");
     }
 
-    // 获取所有表名并按依赖关系顺序执行 TRUNCATE CASCADE
     const tablenames = await this.$queryRaw<
       Array<{ tablename: string }>
     >`SELECT tablename FROM pg_tables WHERE schemaname = 'public'`;
@@ -153,20 +152,34 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       return;
     }
 
-    // 使用 TRUNCATE CASCADE 一次性清理所有表，自动处理外键依赖
-    const tables = tablenames.map((row: { tablename: string }) => `"${row.tablename}"`).join(", ");
+    const safeTableNames = tablenames
+      .map((row: { tablename: string }) => row.tablename)
+      .filter((name) => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name));
+    if (safeTableNames.length !== tablenames.length) {
+      const invalid = tablenames
+        .map((r) => r.tablename)
+        .filter((n) => !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(n));
+      throw new Error(`Invalid table names detected: ${invalid.join(", ")}`);
+    }
+    const tables = safeTableNames.map((name) => `"${name}"`).join(", ");
     await this.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
 
-    // 重置所有序列（自增 ID）
     const sequences = await this.$queryRaw<
       Array<{ sequencename: string }>
     >`SELECT sequencename FROM pg_sequences WHERE schemaname = 'public'`;
 
     if (sequences.length > 0) {
-      const resetStatements = sequences
-        .map(
-          (row: { sequencename: string }) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`
-        )
+      const safeSequenceNames = sequences
+        .map((row: { sequencename: string }) => row.sequencename)
+        .filter((name) => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name));
+      if (safeSequenceNames.length !== sequences.length) {
+        const invalid = sequences
+          .map((r) => r.sequencename)
+          .filter((n) => !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(n));
+        throw new Error(`Invalid sequence names detected: ${invalid.join(", ")}`);
+      }
+      const resetStatements = safeSequenceNames
+        .map((name) => `ALTER SEQUENCE "${name}" RESTART WITH 1;`)
         .join("\n");
       await this.$executeRawUnsafe(resetStatements);
     }

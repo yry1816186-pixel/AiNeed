@@ -746,6 +746,9 @@ export class BehaviorTrackerService {
       post_like: 0.3,
       post_comment: 0.4,
       user_follow: 0.3,
+      skip: -0.05,
+      outfit_save: 0.4,
+      calendar_edit: 0.15,
     };
     return impacts[type] ?? 0.05;
   }

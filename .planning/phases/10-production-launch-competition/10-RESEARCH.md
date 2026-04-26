@@ -625,7 +625,7 @@ services:
 | A8  | 8G 机器压缩后总 memory limit ~8.4G 可实际运行（limit != 实际使用） | Architecture Patterns | 容器被 OOM kill                       |
 | A9  | 软著材料已在 Phase 6 准备完毕可直接使用                            | User Constraints      | 软著未就绪阻塞商店上架                |
 
-## Open Questions
+## Open Questions (RESOLVED — addressed by Phase 10 plans)
 
 1. **ICP 备案进度**
 

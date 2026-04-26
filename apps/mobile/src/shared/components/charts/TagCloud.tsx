@@ -45,9 +45,9 @@ const getTagStyle = (weight: number, active: boolean) => {
     fontSize,
     paddingVertical,
     paddingHorizontal,
-    backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
+    backgroundColor: active ? colors.brand.warmPrimary.main : colors.neutral[100],
     color: active ? colors.surface : colors.neutral[600],
-    borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
+    borderColor: active ? colors.brand.warmPrimary.main : colors.neutral[200],
     borderWidth: 1,
   };
 };

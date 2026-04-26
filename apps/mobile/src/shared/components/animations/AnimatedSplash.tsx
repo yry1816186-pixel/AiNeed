@@ -28,7 +28,7 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onComplete }) =>
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
-  const DOT_COLORS = [colors.primary, colors.gold, colors.warmSecondary, colors.warmPrimary];
+  const DOT_COLORS = [colors.primary, colors.gold, colors.warmSecondary, colors.warmPrimary.main];
 
   const logoScale = useSharedValue(0.5);
   const logoOpacity = useSharedValue(0);

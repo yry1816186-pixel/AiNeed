@@ -1,4 +1,5 @@
-﻿import { logger } from "../../shared/utils/logger";
+declare const process: { env: Record<string, string | undefined> };
+import { logger } from "../../shared/utils/logger";
 import { Platform, Linking, Alert } from "react-native";
 import apiClient from "../api/client";
 import { ApiResponse } from "../../types";

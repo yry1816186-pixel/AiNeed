@@ -1,4 +1,3 @@
-import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable import/no-unresolved */
@@ -26,11 +25,11 @@ import {
 } from "@react-navigation/native";
 import { useChatStore } from "../stores/chatStore";
 import { useConsultantStore } from "../stores/consultantStore";
-import type { ChatMessage, ChatTypingPayload } from "../../types/chat";
+import type { ChatMessage, ChatTypingPayload } from "../types/chat";
 import { ChatBubble } from "../../../design-system/ui/ChatBubble";
 import { TypingIndicator } from "../components/TypingIndicator";
 import { ProposalCard } from "../components/ProposalCard";
-import wsService from "../../../services/websocket";
+import wsService from "../../../shared/services/websocket";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -41,7 +40,7 @@ export const ChatScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const { roomId, consultantName } = route.params || {};
+  const { roomId, consultantName } = (route.params as any) || {};
 
   const { messages, fetchMessages, sendMessage, markAsRead, addMessage } = useChatStore();
 
@@ -133,8 +132,8 @@ export const ChatScreen: React.FC = () => {
       return (
         <View style={styles.proposalWrapper}>
           <ProposalCard
-            title={item.proposalData?.title || "造型方案"}
-            summary={item.proposalData?.summary || item.content}
+            title={(item as any)?.metadata?.title || "造型方案"}
+            summary={(item as any)?.metadata?.summary || item.content}
             onViewProposal={() => Alert.alert("查看方案", "方案详情功能即将上线")}
             onSaveToWardrobe={() => Alert.alert("保存", "已保存到灵感衣橱")}
           />
@@ -150,14 +149,7 @@ export const ChatScreen: React.FC = () => {
       );
     }
 
-    return (
-      <ChatBubble
-        message={item.content}
-        isUser={isUser}
-        timestamp={item.createdAt}
-        avatar={isUser ? undefined : "🎨"}
-      />
-    );
+    return <ChatBubble message={item.content} isUser={isUser} timestamp={item.createdAt} />;
   };
 
   const displayName = consultantName || currentConsultant?.studioName || "造型顾问";

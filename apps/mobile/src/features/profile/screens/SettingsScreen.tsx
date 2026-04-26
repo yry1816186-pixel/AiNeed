@@ -337,7 +337,7 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => navigation.navigate("NotificationSettings")}
+            onPress={() => (navigation.navigate as any)("NotificationSettings")}
             accessibilityLabel="Notification settings"
           >
             <Ionicons name="notifications-outline" size={22} color={colors.textSecondary} />
@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   placeholder: { width: 40 },
   content: { flex: 1 },
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.divider,
   },
   settingItemLast: { borderBottomWidth: 0 },
-  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: "center",

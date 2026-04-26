@@ -161,7 +161,7 @@ const useStyles = createStyles((colors) => ({
   dot: { position: "absolute" },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlay.dark,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },

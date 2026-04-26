@@ -54,16 +54,16 @@ export class ConsentController {
     const allTypes = [...REQUIRED_CONSENTS, ...OPTIONAL_CONSENTS];
     const consentMap = new Map(consents.map((c) => [c.consentType, c]));
 
-    const status = allTypes.map((type) => {
-      const record = consentMap.get(type);
+    const status = allTypes.map((type: string) => {
+      const record = consentMap.get(type as any);
       return {
         consentType: type,
-        label: CONSENT_LABELS[type],
-        description: CONSENT_DESCRIPTIONS[type],
+        label: (CONSENT_LABELS as Record<string, string>)[type] ?? type,
+        description: (CONSENT_DESCRIPTIONS as Record<string, string>)[type] ?? "",
         granted: record?.granted ?? false,
         grantedAt: record?.grantedAt ?? null,
         revokedAt: record?.revokedAt ?? null,
-        isRequired: REQUIRED_CONSENTS.includes(type),
+        isRequired: (REQUIRED_CONSENTS as string[]).includes(type),
       };
     });
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { View } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 /**
  * QR Code component for share cards.
@@ -19,7 +20,14 @@ const ShareQRCode: React.FC<ShareQRCodeProps> = ({ path, size = QR_SIZE }) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
     const QRCode = require("react-native-qrcode-svg").default;
-    return <QRCode value={path} size={size} color="#2D3436" backgroundColor="#FAFAF8" />;
+    return (
+      <QRCode
+        value={path}
+        size={size}
+        color={DesignTokens.colors.neutral[800]}
+        backgroundColor={DesignTokens.colors.backgrounds.secondary}
+      />
+    );
   } catch {
     // Fallback: render placeholder when native module is unavailable
     return (
@@ -27,9 +35,9 @@ const ShareQRCode: React.FC<ShareQRCodeProps> = ({ path, size = QR_SIZE }) => {
         style={{
           width: size,
           height: size,
-          backgroundColor: "#FAFAF8",
+          backgroundColor: DesignTokens.colors.backgrounds.secondary,
           borderWidth: 1,
-          borderColor: "#2D3436",
+          borderColor: DesignTokens.colors.neutral[800],
           borderRadius: 4,
         }}
       />

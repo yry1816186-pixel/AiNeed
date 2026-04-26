@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SpringConfigs, Duration } from "../../design-system/theme/tokens/animations";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion";
 import { Colors } from "../../theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 

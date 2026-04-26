@@ -9,6 +9,13 @@ from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
+_jieba_available = False
+try:
+    import jieba
+    _jieba_available = True
+except ImportError:
+    pass
+
 
 @dataclass
 class BM25Document:
@@ -31,9 +38,12 @@ class BM25Retriever:
         self._doc_freq: Counter = Counter()
         self._avg_dl: float = 0.0
         self._tokenized: Dict[str, List[str]] = {}
-        logger.info("BM25Retriever initialized")
+        logger.info("BM25Retriever initialized (jieba=%s)", _jieba_available)
 
     def _tokenize(self, text: str) -> List[str]:
+        if _jieba_available:
+            tokens = list(jieba.cut(text))
+            return [t.strip() for t in tokens if t.strip()]
         return re.findall(r'\w+', text.lower())
 
     def index(self, documents: List[BM25Document]):

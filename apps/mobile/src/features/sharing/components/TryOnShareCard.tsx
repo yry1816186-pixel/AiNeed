@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import ShareCardLayout from "./ShareCardLayout";
 import { encodeMiniProgramPath } from "../utils/qr-encoder";
 import { useSharePrivacy } from "../hooks/useSharePrivacy";
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 3 / 4,
     borderRadius: 8,
-    backgroundColor: "#F5F5F3",
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   reviewContainer: {
     marginTop: 12,
@@ -105,35 +106,35 @@ const styles = StyleSheet.create({
   reviewLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#C67B5C",
+    color: DesignTokens.colors.brand.terracotta,
     marginBottom: 4,
   },
   reviewText: {
     fontSize: 13,
-    color: "#52524D",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 20,
   },
   shareActionButton: {
-    backgroundColor: "#2D3436",
+    backgroundColor: DesignTokens.colors.neutral[800],
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: "center",
     marginTop: 16,
   },
   shareActionText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontSize: 14,
     fontWeight: "600",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: DesignTokens.colors.backgrounds.overlay,
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
   },
   privacyDialog: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.neutral.white,
     borderRadius: 16,
     padding: 24,
     width: "100%",
@@ -142,13 +143,13 @@ const styles = StyleSheet.create({
   privacyTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1A1A18",
+    color: DesignTokens.colors.text.primary,
     marginBottom: 12,
     textAlign: "center",
   },
   privacyText: {
     fontSize: 14,
-    color: "#52524D",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 22,
     textAlign: "center",
     marginBottom: 24,
@@ -164,20 +165,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#F5F5F3",
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   cancelButtonText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#52524D",
+    color: DesignTokens.colors.text.secondary,
   },
   confirmButton: {
-    backgroundColor: "#2D3436",
+    backgroundColor: DesignTokens.colors.neutral[800],
   },
   confirmButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
 });
 

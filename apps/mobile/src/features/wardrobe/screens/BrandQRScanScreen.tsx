@@ -71,7 +71,7 @@ export const BrandQRScanScreen: React.FC = () => {
         Alert.alert("导入成功", "商品已添加到您的衣橱", [
           {
             text: "查看衣橱",
-            onPress: () => navigation.navigate("Wardrobe"),
+            onPress: () => (navigation.navigate as any)("Wardrobe"),
           },
           {
             text: "继续扫码",

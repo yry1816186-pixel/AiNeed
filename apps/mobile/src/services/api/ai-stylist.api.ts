@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import apiClient from "./client";
 import type { ApiResponse } from "../../types/api";
-import { compressImage } from "../../utils/imageCompressor";
+import { compressImage } from "../../shared/utils/imageCompressor";
 
 export type AiStylistActionType =
   | "ask_question"

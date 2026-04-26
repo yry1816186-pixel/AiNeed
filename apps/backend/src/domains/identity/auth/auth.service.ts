@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma, Gender , AuthProvider } from "@prisma/client";
+import { Prisma, Gender, AuthProvider } from "@prisma/client";
 import type { StringValue } from "ms";
 
 import { EmailService } from "../../../common/email/email.service";
@@ -144,14 +144,14 @@ export class AuthService {
         data: [
           {
             userId: createdUser.id,
-            consentType: "terms_of_service",
+            consentType: "terms_of_service" as any,
             granted: true,
             grantedAt: new Date(),
             version: CURRENT_TERMS_VERSION,
           },
           {
             userId: createdUser.id,
-            consentType: "privacy_policy",
+            consentType: "privacy_policy" as any,
             granted: true,
             grantedAt: new Date(),
             version: CURRENT_PRIVACY_VERSION,
@@ -171,10 +171,10 @@ export class AuthService {
     return this.buildAuthResponse(user, tokens);
   }
 
-  async login(dto: LoginDto): Promise<AuthResponseDto> {
+  async login(dto: LoginDto, ip?: string): Promise<AuthResponseDto> {
     this.logger.log("用户登录请求", { email: dto.email });
 
-    const user = await this.authHelpersService.validateCredentials(dto.email, dto.password);
+    const user = await this.authHelpersService.validateCredentials(dto.email, dto.password, ip);
 
     const tokens = await this.generateTokens(user.id, user.email);
 
@@ -675,14 +675,14 @@ export class AuthService {
         data: [
           {
             userId: createdUser.id,
-            consentType: "terms_of_service",
+            consentType: "terms_of_service" as any,
             granted: true,
             grantedAt: new Date(),
             version: CURRENT_TERMS_VERSION,
           },
           {
             userId: createdUser.id,
-            consentType: "privacy_policy",
+            consentType: "privacy_policy" as any,
             granted: true,
             grantedAt: new Date(),
             version: CURRENT_PRIVACY_VERSION,

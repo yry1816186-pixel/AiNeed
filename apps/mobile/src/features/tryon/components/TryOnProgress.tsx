@@ -22,8 +22,8 @@ import {
   LoadingAnimations,
   Colors,
 } from "../../../design-system/theme";
-import { useReducedMotion } from "../../../hooks/useReducedMotion";
-import { useStaggeredAnimation } from "../../../hooks/useAdvancedAnimations";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
+import { useStaggeredAnimation } from "../../../shared/hooks/useAdvancedAnimations";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

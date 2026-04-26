@@ -1,6 +1,6 @@
-﻿import { logger } from "../../shared/utils/logger";
+import { logger } from "../../shared/utils/logger";
 import { Platform } from "react-native";
-import { Sentry } from "../../services/sentry";
+import { Sentry } from "../../shared/services/sentry";
 
 export interface DeviceSecurityStatus {
   isCompromised: boolean;

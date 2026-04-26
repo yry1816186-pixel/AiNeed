@@ -6,6 +6,12 @@ export {
 } from "./vault/vault.service";
 
 export {
+  SecurityAuditService,
+  type SecurityEventType,
+  type SecurityEvent,
+} from "./audit/security-audit.service";
+
+export {
   SecurityPIIEncryptionService,
   PII_FIELDS,
   type PIIModel,

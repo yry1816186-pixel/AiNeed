@@ -17,7 +17,7 @@ import { useAuthStore } from "../../auth/stores/index";
 import { useRecommendationFeedStore } from "../stores/recommendationFeedStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { useFeatureFlags } from "../../../contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../../../constants/feature-flags";

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import ShareQRCode from "./ShareQRCode";
 
 /**
@@ -38,7 +39,7 @@ const ShareCardLayout: React.FC<ShareCardLayoutProps> = ({ children, qrPath }) =
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FAFAF8",
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
     borderRadius: 16,
     overflow: "hidden",
     aspectRatio: 3 / 4,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#2D3436",
+    backgroundColor: DesignTokens.colors.neutral[800],
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -61,12 +62,12 @@ const styles = StyleSheet.create({
   brandLogo: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     letterSpacing: 1,
   },
   brandTagline: {
     fontSize: 12,
-    color: "#FAFAF8",
+    color: DesignTokens.colors.backgrounds.secondary,
     marginTop: 2,
     opacity: 0.8,
   },

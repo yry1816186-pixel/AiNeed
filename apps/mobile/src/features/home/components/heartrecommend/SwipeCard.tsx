@@ -22,7 +22,7 @@ import {
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 import { SpringConfigs } from "../../../../design-system/theme/tokens/animations";
-import { useReducedMotion } from "../../../../hooks/useReducedMotion";
+import { useReducedMotion } from "../../../../shared/hooks/useReducedMotion";
 import { AnimatedHeartButton } from "../../../../design-system/ui/AnimatedHeartButton";
 import { ActionButtons } from "./ActionButtons";
 

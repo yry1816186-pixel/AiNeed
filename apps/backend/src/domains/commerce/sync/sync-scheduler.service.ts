@@ -278,6 +278,7 @@ export class SyncSchedulerService implements OnModuleInit, OnModuleDestroy {
           max: 1,
           duration: 1000,
         },
+        connection: {},
       }
     );
 

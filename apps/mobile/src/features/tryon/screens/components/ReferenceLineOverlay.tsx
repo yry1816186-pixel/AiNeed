@@ -6,7 +6,7 @@ import type {
   AlignmentStatus,
   AlignmentLevel,
   OverallAlignment,
-} from "../../../../hooks/useReferenceLines";
+} from "../../../../shared/hooks/useReferenceLines";
 import { flatColors as colors } from "../../../../design-system/theme";
 import { createStyles } from "../../../../shared/contexts/ThemeContext";
 

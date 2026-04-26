@@ -1,4 +1,4 @@
-﻿import apiClient from "../../../services/api/client";
+import apiClient from "../../../services/api/client";
 import type { ApiResponse, PaginatedResponse } from "../../../types/api";
 import type { FormDataValue } from "../../../types";
 import type {

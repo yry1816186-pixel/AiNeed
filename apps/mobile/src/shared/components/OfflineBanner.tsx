@@ -11,7 +11,10 @@ import { View, Text, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useOfflineNetworkStatus } from "../../hooks/useOfflineNetworkStatus";
 
-const OFFLINE_COLOR = "#E17055";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+
+// DesignTokens 颜色体系已覆盖 semantic.warning (#D9A441)，用于离线状态提示
+const OFFLINE_COLOR = DesignTokens.colors.semantic.warning; // #D9A441
 const BANNER_HEIGHT = 36;
 
 interface OfflineBannerProps {
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   text: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontSize: 13,
     fontWeight: "600",
   },

@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client";
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+import { SecurityAuditService } from "../../../modules/security/audit/security-audit.service";
 import { OrderStatus } from "../../../types/prisma-enums";
 
 import {
@@ -56,7 +57,8 @@ export class PaymentService {
     private readonly alipayProvider: AlipayProvider,
     private readonly wechatProvider: WechatProvider,
     private readonly redisService: RedisService,
-    private readonly eventEmitter: EventEmitter2
+    private readonly eventEmitter: EventEmitter2,
+    private readonly securityAudit: SecurityAuditService
   ) {
     this.providers = new Map<PaymentProvider, PaymentProviderInterface>([
       ["alipay", alipayProvider as PaymentProviderInterface],
@@ -236,6 +238,11 @@ export class PaymentService {
     // 验证签名
     if (!provider.verifyCallbackSign(callbackData)) {
       this.logger.warn("支付回调签名验证失败", { provider: providerName });
+      this.securityAudit.log({
+        type: "PAYMENT_CALLBACK_INVALID_SIGNATURE",
+        resource: `payment:callback:${providerName}`,
+        details: { provider: providerName },
+      });
       return { success: false, message: "Invalid signature" };
     }
 

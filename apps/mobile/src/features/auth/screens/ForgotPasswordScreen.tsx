@@ -279,7 +279,9 @@ export const ForgotPasswordScreen: React.FC = () => {
             <View style={[styles.stripSeg, { backgroundColor: colors.primary, flex: 2 }]} />
             <View style={[styles.stripSeg, { backgroundColor: colors.gold, flex: 1.5 }]} />
             <View style={[styles.stripSeg, { backgroundColor: colors.warmSecondary, flex: 1.2 }]} />
-            <View style={[styles.stripSeg, { backgroundColor: colors.warmPrimary, flex: 1 }]} />
+            <View
+              style={[styles.stripSeg, { backgroundColor: colors.warmPrimary.main, flex: 1 }]}
+            />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -316,7 +318,7 @@ const useStyles = createStyles((colors) => ({
     width: 120,
     height: 120,
     borderRadius: BorderRadius.full,
-    backgroundColor: colors.warmPrimary,
+    backgroundColor: colors.warmPrimary.main,
     opacity: 0.25,
   },
   headerArea: {

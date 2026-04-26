@@ -2,7 +2,7 @@ import { useCartStore } from "../cart.store";
 
 import { cartApi } from "../../../../services/api/commerce.api";
 
-jest.mock("../../../../services/api/commerce.api", () => ({
+jest.mock("../../../services/api/commerce.api", () => ({
   cartApi: {
     get: jest.fn(),
     add: jest.fn(),

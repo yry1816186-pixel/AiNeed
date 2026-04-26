@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import base64
 import io
@@ -12,6 +12,7 @@ from PIL import Image
 import numpy as np
 
 from ml.api.middleware.error_handler import ModelNotLoadedError, InferenceError, ValidationError
+from ml.services.common.ssrf_protection import validate_image_url, validate_image_response
 from ml.api.schemas.analysis import (
     BodyAnalysisRequest,
     BodyAnalysisResponse,
@@ -31,6 +32,25 @@ from ml.api.schemas.analysis import (
 )
 
 logger = logging.getLogger(__name__)
+
+ALLOWED_IMAGE_DIRS: List[str] = []
+try:
+    from ml.config.paths import DATA_DIR
+    ALLOWED_IMAGE_DIRS.append(str(DATA_DIR))
+except Exception:
+    pass
+
+
+def _validate_image_path(image_path: str) -> Path:
+    path = Path(image_path).resolve()
+    if not path.exists():
+        raise ValidationError(message=f"Image file not found: {image_path}")
+    if ".." in Path(image_path).parts:
+        raise ValidationError(message="Invalid image path: directory traversal detected")
+    if ALLOWED_IMAGE_DIRS:
+        if not any(str(path).startswith(allowed_dir) for allowed_dir in ALLOWED_IMAGE_DIRS):
+            raise ValidationError(message="Image path is outside allowed directories")
+    return path
 
 try:
     from ml.services.analysis.body_analyzer import get_body_analyzer_service
@@ -179,9 +199,7 @@ async def analyze_body(
             except Exception as e:
                 raise ValidationError(message=f"Invalid base64 image: {e}")
         elif request.image_path:
-            path = Path(request.image_path)
-            if not path.exists():
-                raise ValidationError(message=f"Image file not found: {request.image_path}")
+            path = _validate_image_path(request.image_path)
             try:
                 image = Image.open(str(path)).convert("RGB")
             except Exception as e:
@@ -372,7 +390,8 @@ async def analyze_photo_quality(
                 raise ValidationError(message=f"图片解码失败: {e}")
         elif request.image_path:
             try:
-                image = Image.open(request.image_path).convert("RGB")
+                path = _validate_image_path(request.image_path)
+                image = Image.open(str(path)).convert("RGB")
                 image_array = np.array(image)
             except Exception as e:
                 raise ValidationError(message=f"无法打开图片: {e}")
@@ -419,10 +438,14 @@ async def enhance_photo(
                 raise ValidationError(message=f"Image decode failed: {e}")
         elif request.image_url:
             try:
+                validate_image_url(request.image_url)
                 import requests as http_requests
                 resp = http_requests.get(request.image_url, timeout=30)
                 resp.raise_for_status()
+                validate_image_response(resp.headers.get("Content-Type"))
                 image = Image.open(io.BytesIO(resp.content)).convert("RGB")
+            except ValidationError:
+                raise
             except Exception as e:
                 raise ValidationError(message=f"Image download failed: {e}")
     else:

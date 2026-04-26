@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   PanResponder,
   GestureResponderEvent,
+  type ViewStyle,
 } from "react-native";
 import {
   Spacing,

@@ -1,6 +1,6 @@
 import { useNotificationStore } from "../notificationStore";
 
-jest.mock("../../../../services/api/notification.api", () => ({
+jest.mock("../../../services/api/notification.api", () => ({
   notificationApi: {
     getNotifications: jest.fn(),
     markAsRead: jest.fn(),

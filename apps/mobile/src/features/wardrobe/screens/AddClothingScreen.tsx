@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { pickImageSecurely, ImageValidationError } from "../../../utils/imagePicker";
+import { pickImageSecurely, ImageValidationError } from "../../../shared/utils/imagePicker";
 import { clothingApi } from "../../../services/api/clothing.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../../../types/clothing";

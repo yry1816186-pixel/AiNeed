@@ -1,4 +1,4 @@
-﻿import { logger } from "../../../shared/utils/logger";
+import { logger } from "../../../shared/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,

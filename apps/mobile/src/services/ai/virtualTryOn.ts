@@ -1,6 +1,6 @@
 import { tryOnApi } from "../api/tryon.api";
 import type { TryOnResult } from "../api/tryon.api";
-import { wsService } from "../websocket";
+import { wsService } from "../../shared/services/websocket";
 
 interface TryOnOptions {
   category?: string;

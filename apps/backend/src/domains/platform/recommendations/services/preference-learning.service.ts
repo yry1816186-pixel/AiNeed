@@ -493,7 +493,7 @@ export class PreferenceLearningService {
         id: item.id,
         category: String(item.category),
         colors: (item.colors as string[]) || [],
-        attributes: item.attributes as Record<string, unknown> | null,
+        attributes: (item.attributes as Record<string, unknown> | null) ?? undefined,
       },
     ]);
 

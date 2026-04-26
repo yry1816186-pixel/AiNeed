@@ -1,4 +1,4 @@
-import { secureStorage, SECURE_STORAGE_KEYS } from "../../utils/secureStorage";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../shared/utils/secureStorage";
 
 const TOKEN_EXPIRY_BUFFER_MS = 30_000;
 

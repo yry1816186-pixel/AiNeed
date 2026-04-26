@@ -29,6 +29,7 @@ import {
   RefundResponseDto,
   PaymentListResponseDto,
 } from "./dto";
+import { PaymentSecurityGuard } from "./guards/payment-security.guard";
 import { PaymentService } from "./payment.service";
 import { PaymentProvider } from "./providers/payment-provider.interface";
 import { PaymentRawCallbackData } from "./types/common.types";
@@ -112,6 +113,7 @@ export class PaymentController {
    */
   @Post("callback/alipay")
   @Public()
+  @UseGuards(PaymentSecurityGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "支付宝支付回调" })
   @ApiResponse({ status: 200, description: "回调处理成功" })
@@ -142,6 +144,7 @@ export class PaymentController {
    */
   @Post("callback/wechat")
   @Public()
+  @UseGuards(PaymentSecurityGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "微信支付回调" })
   @ApiResponse({ status: 200, description: "回调处理成功" })

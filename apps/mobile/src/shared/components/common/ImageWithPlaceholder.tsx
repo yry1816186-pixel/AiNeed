@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import { logger } from "../../utils/logger";
 import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 import {
@@ -24,7 +24,6 @@ import {
   Typography,
   Shadows,
 } from "../../../design-system/theme";
-import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -107,13 +106,12 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
   maxRetryCount: number;
   style?: ViewStyle;
 }) {
-  const styles = useStyles(colors);
   const canRetry = enableRetry && retryCount < maxRetryCount;
 
   return (
     <View
       style={[
-        styles.errorContainer,
+        imageStyles.errorContainer,
         {
           width: width as DimensionValue,
           height: height as DimensionValue,
@@ -123,14 +121,14 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
       ]}
     >
       <Ionicons name="image-outline" size={32} color={colors.neutral[400]} />
-      <Text style={styles.errorText}>加载失败</Text>
+      <Text style={imageStyles.errorText}>加载失败</Text>
       {canRetry && (
-        <TouchableOpacity style={styles.retryButton} onPress={onRetry} activeOpacity={0.7}>
-          <Text style={styles.retryText}>点击重试</Text>
+        <TouchableOpacity style={imageStyles.retryButton} onPress={onRetry} activeOpacity={0.7}>
+          <Text style={imageStyles.retryText}>点击重试</Text>
         </TouchableOpacity>
       )}
       {retryCount > 0 && (
-        <Text style={styles.retryCountText}>
+        <Text style={imageStyles.retryCountText}>
           已重试 {retryCount}/{maxRetryCount} 次
         </Text>
       )}
@@ -238,7 +236,6 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
   testID,
   ...props
 }: ImageWithPlaceholderProps) {
-  const styles = useStyles(colors);
   const [status, setStatus] = useState<ImageLoadStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
   const [imageKey, setImageKey] = useState(0);
@@ -303,14 +300,13 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
    * 渲染占位符
    */
   const renderPlaceholder = () => {
-    const styles = useStyles(colors);
     if (status === "loaded") {
       return null;
     }
 
     if (status === "error") {
       return customError ? (
-        <View style={[styles.placeholderWrapper, { borderRadius }]}>{customError}</View>
+        <View style={[imageStyles.placeholderWrapper, { borderRadius }]}>{customError}</View>
       ) : (
         <ErrorPlaceholder
           width={imageWidth}
@@ -326,7 +322,7 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
     }
 
     return customPlaceholder ? (
-      <View style={[styles.placeholderWrapper, { borderRadius }]}>{customPlaceholder}</View>
+      <View style={[imageStyles.placeholderWrapper, { borderRadius }]}>{customPlaceholder}</View>
     ) : showLoadingAnimation ? (
       <SkeletonPlaceholder
         width={imageWidth}
@@ -338,7 +334,7 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
     ) : (
       <View
         style={[
-          styles.staticPlaceholder,
+          imageStyles.staticPlaceholder,
           {
             width: imageWidth,
             height: imageHeight,
@@ -351,20 +347,20 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
   };
 
   return (
-    <View style={[styles.container, containerStyle]} testID={testID}>
+    <View style={[imageStyles.container, containerStyle]} testID={testID}>
       {/* 占位符 */}
-      <Animated.View style={[styles.placeholderContainer, { opacity: placeholderOpacity }]}>
+      <Animated.View style={[imageStyles.placeholderContainer, { opacity: placeholderOpacity }]}>
         {renderPlaceholder()}
       </Animated.View>
 
       {/* 图片 */}
       {status !== "error" && (
-        <Animated.View style={[styles.imageContainer, { opacity: fadeAnim }]}>
+        <Animated.View style={[imageStyles.imageContainer, { opacity: fadeAnim }]}>
           <FastImage
             key={imageKey}
             source={source}
             style={[
-              styles.image,
+              imageStyles.image,
               {
                 width: imageWidth,
                 height: imageHeight,
@@ -465,7 +461,7 @@ export const BannerImage = memo(function BannerImage({
   );
 });
 
-const useStyles = createStyles((colors) => ({
+const imageStyles = StyleSheet.create({
   container: {
     position: "relative",
     overflow: "hidden",
@@ -519,6 +515,6 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[400],
     marginTop: Spacing[2],
   },
-}));
+});
 
 export default ImageWithPlaceholder;

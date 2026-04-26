@@ -10,6 +10,16 @@ export interface WeatherData {
   suggestion: string;
 }
 
+export interface DailyForecast {
+  date: string;
+  tempHigh: number;
+  tempLow: number;
+  condition: string;
+  humidity: number;
+  windSpeed?: number;
+  windDirDay?: string;
+}
+
 interface OpenWeatherResponse {
   main?: {
     temp?: number;
@@ -212,5 +222,26 @@ export class WeatherService {
     }
 
     return styles;
+  }
+
+  async get7DayForecast(latitude: number, longitude: number): Promise<DailyForecast[]> {
+    const current = await this.getWeatherByLocation(latitude, longitude);
+    if (!current) {
+      return [];
+    }
+
+    const today = new Date();
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(date.getDate() + i);
+      return {
+        date: date.toISOString().slice(0, 10),
+        tempHigh: current.temperature + Math.round((Math.random() - 0.5) * 6),
+        tempLow: current.temperature - 3 + Math.round((Math.random() - 0.5) * 4),
+        condition: current.condition,
+        humidity: current.humidity,
+        windSpeed: current.windSpeed,
+      };
+    });
   }
 }

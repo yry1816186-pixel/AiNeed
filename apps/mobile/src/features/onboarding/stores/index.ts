@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/require-await */
 import { logger } from "../../../shared/utils/logger";
 import { create } from "zustand";
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import ShareCardLayout from "./ShareCardLayout";
 import { encodeMiniProgramPath } from "../utils/qr-encoder";
 
@@ -71,8 +72,8 @@ const styles = StyleSheet.create({
   sceneTag: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#C67B5C",
-    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    color: DesignTokens.colors.brand.terracotta,
+    backgroundColor: `${DesignTokens.colors.brand.terracotta}1A`, // 10% opacity
     alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     width: "47%",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.neutral.white,
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 4,
@@ -96,11 +97,11 @@ const styles = StyleSheet.create({
   itemImage: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: "#F5F5F3",
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   itemName: {
     fontSize: 12,
-    color: "#282825",
+    color: DesignTokens.colors.neutral[800],
     fontWeight: "500",
     paddingHorizontal: 8,
     paddingTop: 6,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   itemPrice: {
     fontSize: 12,
-    color: "#C67B5C",
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "600",
     paddingHorizontal: 8,
     paddingBottom: 8,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#2D3436",
+    color: DesignTokens.colors.neutral[800],
     marginTop: 16,
     textAlign: "center",
   },

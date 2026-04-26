@@ -128,7 +128,7 @@ export const RecommendationsScreen: React.FC = () => {
 
   const handleItemPress = useCallback(
     (item: RecommendedItem) => {
-      navigation.navigate("RecommendationDetail", {
+      (navigation as any).navigate("RecommendationDetail", {
         id: item.id,
         recommendation: item,
       });
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   filterButton: { padding: 8 },
   tabBar: {

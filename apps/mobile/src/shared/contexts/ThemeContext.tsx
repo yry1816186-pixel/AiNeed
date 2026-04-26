@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import { logger } from "../utils/logger";
 import React, {
   createContext,
@@ -111,7 +111,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     (mode === "dark" || (mode === "system" && systemColorScheme === "dark"));
   const resolvedTheme: ResolvedTheme = isDark ? "dark" : "light";
 
-  const tokens: TokenSet = isDark ? darkTokens : DesignTokens;
+  const tokens = (isDark ? darkTokens : DesignTokens) as TokenSet;
   const resolvedFlatColors: FlatColors = isDark ? builtDarkFlatColors : lightFlatColors;
 
   const setMode = useCallback(async (newMode: ThemeMode) => {

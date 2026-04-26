@@ -1,13 +1,13 @@
-import axios from 'axios';
-import type { AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { message as antdMessage } from 'antd';
+import axios from "axios";
+import type { AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from "axios";
+import { message as antdMessage } from "antd";
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
 const request = axios.create({
-  baseURL: '/api/v1',
+  baseURL: "/api/v1",
   timeout: 15000,
 });
 
@@ -19,8 +19,12 @@ function onTokenRefreshed(token: string) {
   pendingRequests = [];
 }
 
+function encodeToken(token: string): string {
+  return btoa(encodeURIComponent(token));
+}
+
 request.interceptors.request.use((config) => {
-  const encodedToken = localStorage.getItem('accessToken');
+  const encodedToken = localStorage.getItem("accessToken");
   if (encodedToken) {
     try {
       const token = decodeURIComponent(atob(encodedToken));
@@ -42,13 +46,21 @@ request.interceptors.response.use(
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      const encodedRefresh = localStorage.getItem('refreshToken');
-      const refreshToken = encodedRefresh ? (() => { try { return decodeURIComponent(atob(encodedRefresh)); } catch { return encodedRefresh; } })() : null;
+      const encodedRefresh = localStorage.getItem("refreshToken");
+      const refreshToken = encodedRefresh
+        ? (() => {
+            try {
+              return decodeURIComponent(atob(encodedRefresh));
+            } catch {
+              return encodedRefresh;
+            }
+          })()
+        : null;
       if (!refreshToken) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('adminUser');
-        window.location.href = '/login';
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("adminUser");
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
@@ -65,34 +77,35 @@ request.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken });
+        const { data } = await axios.post("/api/v1/auth/refresh", { refreshToken });
         const newAccessToken = data.accessToken;
-        localStorage.setItem('accessToken', newAccessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem("accessToken", encodeToken(newAccessToken));
+        localStorage.setItem("refreshToken", encodeToken(data.refreshToken));
         onTokenRefreshed(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return request(originalRequest);
       } catch {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('adminUser');
-        window.location.href = '/login';
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("adminUser");
+        window.location.href = "/login";
         return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }
     }
 
-    const errorMessage = (error.response?.data as Record<string, unknown>)?.message || error.message;
+    const errorMessage =
+      (error.response?.data as Record<string, unknown>)?.message || error.message;
     console.error(errorMessage);
 
     // Show user-facing error notification for non-401 errors
     if (error.response?.status !== 401) {
-      antdMessage.error(typeof errorMessage === 'string' ? errorMessage : '请求失败，请稍后重试');
+      antdMessage.error(typeof errorMessage === "string" ? errorMessage : "请求失败，请稍后重试");
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export function get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

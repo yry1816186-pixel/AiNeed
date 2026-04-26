@@ -1,11 +1,10 @@
-﻿import { logger } from "../../../shared/utils/logger";
-import React from "react";
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+import { logger } from "../../../shared/utils/logger";
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -33,7 +32,7 @@ import type {
   CustomizationType,
   CustomizationStatus,
   CustomizationRequest,
-} from "../../types/customization";
+} from "../types/customization";
 import type { RootStackParamList } from "../../../types/navigation";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
@@ -227,7 +226,7 @@ export const CustomizationScreen: React.FC = () => {
       <View style={styles.quickActions}>
         <TouchableOpacity
           style={styles.quickActionCard}
-          onPress={() => navigation.navigate("CustomizationEditor")}
+          onPress={() => (navigation.navigate as any)("CustomizationEditor")}
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>
@@ -238,7 +237,7 @@ export const CustomizationScreen: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quickActionCard}
-          onPress={() => navigation.navigate("BrandQRScan")}
+          onPress={() => (navigation.navigate as any)("BrandQRScan")}
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>

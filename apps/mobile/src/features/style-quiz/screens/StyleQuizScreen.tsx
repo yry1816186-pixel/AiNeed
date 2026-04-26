@@ -19,8 +19,8 @@ import {
   useStyleQuizResult,
   useStyleQuizLoading,
   useStyleQuizError,
-} from "../stores/index";
-import { QuizProgress } from "../../../components/QuizProgress";
+} from "../stores/quizStore";
+import { QuizProgress } from "../components/QuizProgress";
 import type { RootStackParamList } from "../../../types/navigation";
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
@@ -36,7 +36,7 @@ export const StyleQuizScreen: React.FC = () => {
   const loadProgress = useStyleQuizStore((s) => s.loadProgress);
   const selectAnswer = useStyleQuizStore((s) => s.selectAnswer);
   const submitAll = useStyleQuizStore((s) => s.submitAll);
-  const reset = useStyleQuizStore((s) => s.reset);
+  const resetQuiz = useStyleQuizStore((s) => s.resetQuiz);
 
   const currentQuiz = useStyleQuizCurrentQuiz();
   const progress = useStyleQuizProgress();
@@ -85,7 +85,7 @@ export const StyleQuizScreen: React.FC = () => {
       setSelectedOption(optionId);
 
       // Auto-save answer via store (non-blocking)
-      void selectAnswer(QUIZ_ID, currentQuestion.id, optionId);
+      void selectAnswer(currentQuestion.id, optionId);
 
       // Auto-advance after 300ms delay
       if (autoAdvanceTimer.current) {
@@ -109,11 +109,11 @@ export const StyleQuizScreen: React.FC = () => {
   }, [submitAll]);
 
   const handleSkip = useCallback(() => {
-    reset();
+    resetQuiz();
     if (navigation.canGoBack()) {
       navigation.goBack();
     }
-  }, [reset, navigation]);
+  }, [resetQuiz, navigation]);
 
   // Show result after submission
   if (result) {
@@ -156,7 +156,7 @@ export const StyleQuizScreen: React.FC = () => {
 
           <TouchableOpacity
             style={styles.resultButton}
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => (navigation.navigate as any)("Profile")}
             activeOpacity={0.7}
             accessibilityLabel="查看完整画像"
             accessibilityRole="button"

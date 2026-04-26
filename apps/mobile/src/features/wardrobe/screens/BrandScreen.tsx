@@ -17,7 +17,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { clothingApi } from "../../../services/api/clothing.api";
-import type { ClothingItem } from "../../types/clothing";
+import type { ClothingItem } from "../types/clothing";
 
 import type { ProfileStackParamList } from "../../../navigation/types";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -220,7 +220,7 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   qrBanner: {
@@ -249,7 +249,7 @@ const s = StyleSheet.create({
   qrBannerTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   qrBannerDesc: {
     fontSize: DesignTokens.typography.sizes.sm,

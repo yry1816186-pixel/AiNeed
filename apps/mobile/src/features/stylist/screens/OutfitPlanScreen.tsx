@@ -221,7 +221,7 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
@@ -304,7 +304,7 @@ const s = StyleSheet.create({
   outfitTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   outfitPrice: {
     fontSize: DesignTokens.typography.sizes.base,

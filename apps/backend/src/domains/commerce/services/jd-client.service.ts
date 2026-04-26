@@ -80,7 +80,7 @@ class RateLimiter {
     this.timestamps = this.timestamps.filter((ts) => now - ts < this.windowMs);
 
     if (this.timestamps.length >= this.maxRequests) {
-      const oldestInWindow = this.timestamps[0];
+      const oldestInWindow = this.timestamps[0]!;
       const waitTime = this.windowMs - (now - oldestInWindow) + 1;
       if (waitTime > 0) {
         await new Promise((resolve) => setTimeout(resolve, waitTime));
@@ -217,7 +217,7 @@ export class JDClientService {
         throw new Error(`JD item not found: ${skuId}`);
       }
 
-      return this.normalizeItem(rawItems[0]);
+      return this.normalizeItem(rawItems[0]!);
     }, `getItemDetails("${skuId}")`);
   }
 

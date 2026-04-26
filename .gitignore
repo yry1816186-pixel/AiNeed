@@ -185,3 +185,4 @@ read_pdf.py
 
 # --- Node.js Cache ---
 0/
+*.keystore

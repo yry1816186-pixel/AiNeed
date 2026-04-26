@@ -176,7 +176,7 @@ export const SharedElement: React.FC<SharedElementTransitionProps> = ({
   children,
   sharedId,
   style,
-  _isActive = false,
+  isActive = false,
 }) => {
   const elementRef = useRef<View>(null);
   const context = useSharedElement();

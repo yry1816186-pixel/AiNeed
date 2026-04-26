@@ -20,16 +20,16 @@ import { outfitApi } from "../../../services/api/outfit.api";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
-import type { Outfit } from "../../types/outfit";
+import type { Outfit } from "../types/outfit";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-type OutfitDetailRouteProp = RouteProp<RootStackParamList, "OutfitDetail">;
+type OutfitDetailRouteProp = RouteProp<RootStackParamList, keyof RootStackParamList>;
 
 export const OutfitDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<OutfitDetailRouteProp>();
-  const { outfitId } = route.params;
+  const { outfitId } = route.params as any;
 
   const [outfit, setOutfit] = useState<Outfit | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,7 +157,7 @@ export const OutfitDetailScreen: React.FC = () => {
           <Ionicons
             name={outfit.isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={outfit.isFavorite ? colors.error : colors.text}
+            color={outfit.isFavorite ? colors.error : colors.textPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   actionButton: {
     width: 40,

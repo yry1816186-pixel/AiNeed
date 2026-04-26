@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import { Animated, Text, View } from "react-native";
-import type { AlignmentStatus } from "../../../../hooks/useReferenceLines";
+import type { AlignmentStatus } from "../../../../shared/hooks/useReferenceLines";
 import { DesignTokens, flatColors as colors } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 

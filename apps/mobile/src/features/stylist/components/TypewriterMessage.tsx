@@ -10,8 +10,8 @@ import Animated, {
   Easing,
   cancelAnimation,
 } from "react-native-reanimated";
-import { useReducedMotion } from "../../../hooks/useReducedMotion";
-import { useTypewriter } from "../../../hooks/useAdvancedAnimations";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
+import { useTypewriter } from "../../../shared/hooks/useAdvancedAnimations";
 import { Duration, DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 

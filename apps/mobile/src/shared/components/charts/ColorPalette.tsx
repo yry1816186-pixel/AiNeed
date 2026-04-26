@@ -53,7 +53,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             height={indicatorSize}
             rx={indicatorSize / 2}
             ry={indicatorSize / 2}
-            fill={colors.brand.warmPrimary}
+            fill={colors.brand.warmPrimary.main}
           />
           <Path
             d={CheckPath}

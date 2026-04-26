@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { clothingApi } from "../../../services/api/clothing.api";
@@ -331,7 +331,6 @@ export const WardrobeScreen: React.FC = () => {
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
         getItemLayout={getItemLayout}
-        removeClippedSubviews={true}
         maxToRenderPerBatch={10}
         windowSize={5}
         initialNumToRender={10}

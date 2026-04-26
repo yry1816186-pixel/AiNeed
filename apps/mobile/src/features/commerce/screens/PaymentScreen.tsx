@@ -5,10 +5,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { haptics } from "../../../utils/haptics";
+import { haptics } from "../../../shared/utils/haptics";
 import { paymentApi, orderApi } from "../../../services/api/commerce.api";
 import type { Order } from "../../../types";
 import type { ProfileStackParamList } from "../../../navigation/types";
@@ -90,7 +90,7 @@ export const PaymentScreen: React.FC = () => {
               text: "查看订单",
               onPress: () => navigation.navigate("OrderDetail", { orderId }),
             },
-            { text: "返回首页", onPress: () => navigation.navigate("HomeFeed") },
+            { text: "返回首页", onPress: () => (navigation.navigate as any)("HomeFeed") },
           ]);
         }
       } catch {
@@ -264,7 +264,7 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -307,7 +307,7 @@ const s = StyleSheet.create({
   totalLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   totalPrice: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -353,7 +353,7 @@ const s = StyleSheet.create({
   providerName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   providerDesc: {
     fontSize: DesignTokens.typography.sizes.sm,

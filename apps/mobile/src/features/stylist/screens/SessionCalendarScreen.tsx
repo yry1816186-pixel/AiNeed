@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: colors.text,
+    color: colors.textPrimary,
   },
   monthNav: {
     flexDirection: "row",
@@ -206,7 +206,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   navButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  monthLabel: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   weekHeader: { flexDirection: "row", paddingHorizontal: 8, marginBottom: 4 },
   weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: 4 },
   weekHeaderText: {
@@ -228,7 +232,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   dayCellSelected: { backgroundColor: colors.primary },
-  dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
+  dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   dayTextSelected: { color: colors.surface, fontWeight: "600" },
   dotMarker: {
     width: 4,
@@ -265,7 +269,7 @@ const styles = StyleSheet.create({
   },
   planBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: colors.secondaryDark,
+    color: colors.primaryDark,
     fontWeight: "600",
   },
   emptyState: { alignItems: "center", paddingVertical: 24 },

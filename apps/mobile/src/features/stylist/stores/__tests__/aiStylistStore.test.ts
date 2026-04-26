@@ -4,7 +4,7 @@ import type { OutfitPlanDetail } from "../aiStylistStore";
 
 import { aiStylistApi } from "../../../../services/api/ai-stylist.api";
 
-jest.mock("../../../../services/api/ai-stylist.api", () => ({
+jest.mock("../../../services/api/ai-stylist.api", () => ({
   aiStylistApi: {
     createSession: jest.fn(),
     sendMessage: jest.fn(),

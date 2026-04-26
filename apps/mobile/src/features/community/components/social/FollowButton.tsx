@@ -1,4 +1,4 @@
-﻿import { logger } from "../../../../shared/utils/logger";
+import { logger } from "../../../../shared/utils/logger";
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../../../services/api/community.api";

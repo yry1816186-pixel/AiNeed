@@ -63,7 +63,7 @@ export class ContentProductService {
    */
   async checkPurchased(userId: string, productType: string): Promise<CheckPurchasedResult> {
     const record = await this.prisma.contentPurchase.findUnique({
-      where: { userId_productType: { userId, productType } },
+      where: { userId_productType: { userId, productType: productType as any } },
     });
 
     return {
@@ -82,7 +82,7 @@ export class ContentProductService {
   ): Promise<PurchaseResult> {
     // Check if already purchased
     const existing = await this.prisma.contentPurchase.findUnique({
-      where: { userId_productType: { userId, productType: dto.productType } },
+      where: { userId_productType: { userId, productType: dto.productType as any } },
     });
 
     if (existing) {
@@ -98,11 +98,11 @@ export class ContentProductService {
     // Create payment order
     const result = await this.paymentService.createPayment(userId, {
       orderId: `cp_${userId.slice(0, 8)}_${dto.productType}_${Date.now()}`,
-      provider: dto.provider,
+      provider: dto.provider as any,
       amount: product.price,
       subject: product.name,
       body: product.description,
-      method: (dto.method as "qrcode" | "h5" | "app" | "native") || "qrcode",
+      method: ((dto.method as "qrcode" | "h5" | "app" | "native") || "qrcode") as any,
     });
 
     return {
@@ -133,12 +133,12 @@ export class ContentProductService {
       where: {
         userId_productType: {
           userId: payload.userId,
-          productType: payload.productType,
+          productType: payload.productType as any,
         },
       },
       create: {
         userId: payload.userId,
-        productType: payload.productType,
+        productType: payload.productType as any,
         orderId: payload.orderId,
         amount: payload.amount,
         currency: "CNY",

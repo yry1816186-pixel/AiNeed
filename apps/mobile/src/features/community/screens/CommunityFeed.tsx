@@ -1,16 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
 import { FlashList } from "../../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { flatColors as colors, DesignTokens } from "../../../design-system/theme";
 import { PostMasonryCard } from "../components/PostMasonryCard";
 import type { PostCardData } from "../components/PostMasonryCard";
@@ -36,6 +34,9 @@ interface CommunityFeedProps {
   viewabilityConfig: { itemVisiblePercentThreshold: number };
 }
 
+const followingKeyExtractor = (item: PostCardDataInternal) => item.id;
+const discoverKeyExtractor = (item: PostCardDataInternal) => item.id;
+
 function CommunityFeedInner({
   activeMainTab,
   posts,
@@ -54,31 +55,58 @@ function CommunityFeedInner({
 }: CommunityFeedProps) {
   const currentPosts = activeMainTab === "discover" ? posts : followingFeed;
 
-  const renderFollowingFeedItem = (item: PostCardDataInternal, index: number) => {
-    if (item.feedType === "like" || item.feedType === "tryon") {
-      return (
-        <View key={item.id} style={s.feedActivityCard}>
-          <View style={s.feedActivityContent}>
-            <Ionicons
-              name={item.feedType === "like" ? "heart" : "shirt-outline"}
-              size={16}
-              color={item.feedType === "like" ? "colors.error" : DesignTokens.colors.brand.slate} // custom color
-            />
-            <Text style={s.feedActivityText}>{item.title}</Text>
+  const renderFollowingItem = useCallback(
+    ({ item, index }: { item: PostCardDataInternal; index: number }) => {
+      if (item.feedType === "like" || item.feedType === "tryon") {
+        return (
+          <View style={s.feedActivityCard}>
+            <View style={s.feedActivityContent}>
+              <Ionicons
+                name={item.feedType === "like" ? "heart" : "shirt-outline"}
+                size={16}
+                color={item.feedType === "like" ? colors.error : DesignTokens.colors.brand.slate}
+              />
+              <Text style={s.feedActivityText}>{item.title}</Text>
+            </View>
           </View>
-        </View>
+        );
+      }
+      return (
+        <PostMasonryCard
+          item={item}
+          index={index}
+          onPress={() => {}}
+          visible={visibleIds.has(item.id)}
+        />
       );
-    }
-    return (
+    },
+    [visibleIds]
+  );
+
+  const renderDiscoverItem = useCallback(
+    ({ item, index }: { item: PostCardData; index: number }) => (
       <PostMasonryCard
-        key={item.id}
         item={item}
         index={index}
         onPress={() => {}}
         visible={visibleIds.has(item.id)}
+        onHeightMeasured={(height: number) => onHeightMeasured(item.id, height)}
       />
-    );
-  };
+    ),
+    [visibleIds, onHeightMeasured]
+  );
+
+  const renderFooter = useCallback(() => {
+    if (loading && currentPosts.length > 0) {
+      return (
+        <View style={s.loadingMore}>
+          <ActivityIndicator size="small" color={colors.primary} />
+          <Text style={s.loadingMoreText}>加载更多...</Text>
+        </View>
+      );
+    }
+    return null;
+  }, [loading, currentPosts.length]);
 
   if (loading && currentPosts.length === 0) {
     return (
@@ -117,8 +145,13 @@ function CommunityFeedInner({
 
   if (activeMainTab === "following") {
     return (
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+      <FlashList
+        data={followingFeed}
+        renderItem={renderFollowingItem}
+        keyExtractor={followingKeyExtractor}
+        estimatedItemSize={80}
+        onEndReached={onLoadMore}
+        onEndReachedThreshold={0.5}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -127,27 +160,18 @@ function CommunityFeedInner({
           />
         }
         contentContainerStyle={s.scrollContent}
-      >
-        {followingFeed.map((item, idx) => renderFollowingFeedItem(item, idx))}
-        <View style={{ height: 80 }} />
-      </ScrollView>
+        ListFooterComponent={renderFooter}
+      />
     );
   }
 
   return (
     <FlashList
-      masonry
       data={posts}
+      renderItem={renderDiscoverItem}
+      keyExtractor={discoverKeyExtractor}
+      estimatedItemSize={240}
       numColumns={2}
-      renderItem={({ item, index }: { item: PostCardData; index: number }) => (
-        <PostMasonryCard
-          item={item}
-          index={index}
-          onPress={() => {}}
-          visible={visibleIds.has(item.id)}
-          onHeightMeasured={(height: number) => onHeightMeasured(item.id, height)}
-        />
-      )}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
       refreshControl={
@@ -156,14 +180,7 @@ function CommunityFeedInner({
       contentContainerStyle={s.masonryListContent}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={viewabilityConfig}
-      ListFooterComponent={
-        loading && posts.length > 0 ? (
-          <View style={s.loadingMore}>
-            <ActivityIndicator size="small" color={colors.primary} />
-            <Text style={s.loadingMoreText}>加载更多...</Text>
-          </View>
-        ) : null
-      }
+      ListFooterComponent={renderFooter}
     />
   );
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import ShareCardLayout from "./ShareCardLayout";
 import { encodeMiniProgramPath } from "../utils/qr-encoder";
 
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   styleTypeBadge: {
-    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    backgroundColor: `${DesignTokens.colors.brand.terracotta}1A`,
     alignSelf: "flex-start",
     paddingHorizontal: 14,
     paddingVertical: 6,
@@ -74,12 +75,12 @@ const styles = StyleSheet.create({
   styleType: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#2D3436",
+    color: DesignTokens.colors.neutral[800],
   },
   paletteLabel: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#73736D",
+    color: DesignTokens.colors.text.tertiary,
     marginBottom: 10,
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -94,11 +95,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "rgba(0, 0, 0, 0.06)",
+    borderColor: DesignTokens.colors.borders.light,
   },
   summary: {
     fontSize: 14,
-    color: "#52524D",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 22,
   },
 });
