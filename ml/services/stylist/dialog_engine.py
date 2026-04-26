@@ -18,12 +18,79 @@
 
 import json
 import logging
+import re
 from typing import Dict, List, Optional
 
 from ml.services.stylist.dialog_state import DialogState, DialogContext, DialogSlot
 from ml.services.stylist.slot_extractor import SlotExtractor
 
 logger = logging.getLogger(__name__)
+
+BLOCKED_PATTERNS = [
+    # Safety: self-harm
+    re.compile(r"(?:自杀|自残|割腕|跳楼|服药.*死|结束生命)", re.IGNORECASE),
+    # Safety: violence
+    re.compile(r"(?:暴力|杀人|伤害.*人|攻击|炸弹|武器)", re.IGNORECASE),
+    # Safety: sexual content
+    re.compile(r"(?:色情|裸体|性交|淫秽)", re.IGNORECASE),
+    # Safety: discrimination
+    re.compile(r"(?:歧视|侮辱|贬低|嘲笑).*(?:种族|民族|性别|残疾|宗教)", re.IGNORECASE),
+    # Persona: banned nicknames (D-14: 禁用词)
+    re.compile(r"亲[~～]", re.IGNORECASE),
+    re.compile(r"宝子|宝～|亲爱滴"),
+    # Persona: AI exposure (D-14: 禁用词)
+    re.compile(r"系统推荐|算法分析|数据分析显示|模型为你|AI为你"),
+]
+
+BODY_NEGATIVE_PATTERNS = [
+    re.compile(r"适合你的体型"),
+    re.compile(r"遮住你的"),
+    re.compile(r"修饰你的"),
+    re.compile(r"显瘦"),
+    re.compile(r"遮肉"),
+    re.compile(r"藏肉"),
+    re.compile(r"掩盖.*缺点"),
+]
+
+BODY_POSITIVE_REPLACEMENTS = {
+    "适合你的体型": "适合你的风格",
+    "遮住你的": "这件衣服的版型",
+    "修饰你的": "这件衣服的剪裁",
+    "显瘦": "利落的剪裁让整体线条更流畅",
+    "遮肉": "舒适宽松的版型",
+    "藏肉": "舒适有型的版型",
+    "掩盖你的缺点": "突出你的个人风格",
+}
+
+
+def filter_llm_output(text: str) -> str:
+    for pattern in BLOCKED_PATTERNS:
+        if pattern.search(text):
+            logger.warning("LLM output blocked by content safety filter")
+            return "抱歉，我无法回答这个问题。有什么穿搭方面的问题我可以帮你吗？"
+
+    for pattern in BODY_NEGATIVE_PATTERNS:
+        text = pattern.sub(lambda m: BODY_POSITIVE_REPLACEMENTS.get(m.group(), m.group()), text)
+
+    # Length check: truncate if over 200 characters to prevent verbosity
+    if len(text) > 200:
+        # Find the last sentence boundary before 200 chars
+        truncated = text[:200]
+        last_punct = max(truncated.rfind("。"), truncated.rfind("！"), truncated.rfind("？"), truncated.rfind("；"))
+        if last_punct > 50:
+            text = truncated[: last_punct + 1]
+        else:
+            text = truncated + "..."
+        logger.info("LLM output truncated to <= 200 chars")
+
+    # Ending punctuation: ensure reply ends with proper punctuation
+    if text and text[-1] not in ("。", "！", "？", "…", "~", "）", ")"):
+        text += "。"
+
+    # Consecutive character repetition: fix triple repeats (e.g. "好好好" -> "好")
+    text = re.sub(r"(.)\1{2,}", r"\1", text)
+
+    return text
 
 YIYI_PERSONALITY_PROMPT = """你是伊伊(Yiyi)，用户最信任的穿搭搭子。
 
@@ -32,9 +99,9 @@ YIYI_PERSONALITY_PROMPT = """你是伊伊(Yiyi)，用户最信任的穿搭搭子
 你有自己的审美判断，但永远尊重用户的选择。
 
 ## 禁止用语（绝对不能出现）
-- "亲~"、"亲爱的"、"宝子"
-- "根据算法分析"、"系统推荐"、"数据分析显示"
-- 任何描述身体缺点或身材缺陷的语言
+- "亲~"、"亲～"、"亲爱的"、"宝子"、"宝～"、"亲爱滴"
+- "根据算法分析"、"系统推荐"、"数据分析显示"、"模型为你"、"AI为你"
+- 任何描述身体缺点或身材缺陷的语言（显瘦、遮肉、藏肉）
 - "这个风格很适合你的体型"（改为"这个风格很适合你的气质"）
 
 ## 必须遵循
@@ -43,11 +110,14 @@ YIYI_PERSONALITY_PROMPT = """你是伊伊(Yiyi)，用户最信任的穿搭搭子
 - 推荐时从"衣服特点"出发，不从"身体缺点"出发
 - 试穿失败时归因于"这件衣服的剪裁可能不是最佳选择"
 - 语气像一个25-28岁的有品味的朋友，温暖但不甜腻
+- 回答控制在100字以内，宁可短不要长，简洁有力
+- 如果用户问非穿搭问题，礼貌引导回穿搭话题
 
 ## 说话风格
-- 简短自然，不啰嗦
+- 简短自然，不啰嗦，直接给建议
 - 可以用"我觉得"、"依我看"表达观点
 - 偶尔用"诶"、"嗯"等语气词让对话更自然
+- 每条回复不超过3句话
 """
 
 BODY_POSITIVE_PROMPT = """你必须遵循以下措辞原则：
@@ -162,7 +232,10 @@ class DialogEngine:
             DialogState.WRAP: self._handle_wrap,
         }
         handler = handler_map.get(context.state, self._handle_wrap)
-        return await handler(user_message, context)
+        result = await handler(user_message, context)
+        if "reply" in result and isinstance(result["reply"], str):
+            result["reply"] = filter_llm_output(result["reply"])
+        return result
 
     def _classify_greet_intent(
         self, message: str, context: DialogContext
