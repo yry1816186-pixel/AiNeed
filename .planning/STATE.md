@@ -55,6 +55,7 @@ Progress: [################] 96% (49/51 plans done)
 - Phase 11 Plan 01 completed in 6min (2 tasks, 3 files created, 1 modified).
 - Phase 11 Plan 02 completed in 12min (2 tasks, 6 files, 8 pytest tests, TDD).
 - Phase 11 Plan 03 completed in 14min (1 task, 1 file, 27 TS errors fixed).
+- Phase 11 Plan 04 completed in 17min (2 tasks, 5 files, 10 seed profiles + dialog quality enhancement).
 - Phase 11 Plan 05 completed in 9min (2 tasks, 3 files, demo script calibrated).
 - Phase 2 completed in 3 plans across 2 waves. Plan 01 (orchestrator+cold-start+quiz+AB) took 14min, Plan 02 (curated wardrobe+complementary) took 18min, Plan 03 (output std+degraded+seed) took 17min.
 
@@ -135,6 +136,7 @@ Critical decisions affecting current work:
 - **Plan 01**: Docker 全链路演示环境 — demo-local.sh (一键启动 15 服务) + demo-warmup.sh (健康检查+缓存预热) + DEMO_MODE 端口绑定 + DEMO-CHECKLIST.md (17 项检查清单) (6min, 2 commits)
 - **Plan 02**: AIServiceRouter GLM Fallback + Edge-TTS Precache — GLM-4-Flash -> retry -> GLM-5 fallback (5s timeout), 8 unit tests, 14 TTS precache phrases, getCachedAudio cache-first lookup (12min, 2 commits)
 - **Plan 03**: TypeScript zero errors — fixed 27 compilation errors in ProfileScreen.tsx (import paths, navigation types, color references, Alert types); apps/mobile + apps/backend tsc --noEmit both zero errors (14min, 1 commit)
+- **Plan 04**: 10 Seed Profile + Recommendation Verification + Dialog Quality — 10 diverse profiles (6 body types x 9 styles x 7 scenarios), verify-recommendations.py (format+outfit+latency), BLOCKED_PATTERNS 4->14, filter_llm_output length/punctuation/repetition, dialog-quality-check.py (4 scenarios) (17min, 2 commits)
 - **Plan 05**: Demo Script calibration + recording guide — FashionCLIP replaced with FashionSigLIP, confirmed radar/item-replacement/preference-memory all implemented, created demo-script-verify.py (10 API checks), restructured recording guide for OBS + emulator (9min, 2 commits)
 
 ### Phase 10 Complete (5 plans, 3 waves)

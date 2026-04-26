@@ -197,7 +197,7 @@ Plans:
 - [x] 11-01-PLAN.md — Docker 全链路跑通 + 演示检查清单 + 预热脚本 (D-01, D-02, D-03, D-04, D-06, D-07) ✓ 2026-04-26
 - [x] 11-02-PLAN.md — AIServiceRouter GLM Fallback + Edge-TTS 预缓存 (D-08, D-09, D-10, D-11, D-15) ✓ 2026-04-26
 - [x] 11-03-PLAN.md — 全局 tsc --noEmit 修复 (D-16) ✓ 2026-04-26
-- [ ] 11-04-PLAN.md — 10 Seed Profile 构造 + 推荐效果验证 + 对话质量打磨 (D-12, D-13, D-14)
+- [x] 11-04-PLAN.md — 10 Seed Profile 构造 + 推荐效果验证 + 对话质量打磨 (D-12, D-13, D-14) ✓ 2026-04-26
 - [x] 11-05-PLAN.md — Demo Script 校准 + 预录 Backup 视频录屏指南 (D-05, D-18, D-20) ✓ 2026-04-26
 - [ ] 11-06-PLAN.md — PPT 微调清单 + 软著提交 + Q&A 追问补充 (D-17, D-19, D-21)
 
