@@ -219,7 +219,7 @@ Plans:
 Plans:
 
 - [x] 12-01-PLAN.md — TypeScript any 清扫 + ErrorBoundary 加固
-- [ ] 12-02-PLAN.md — 视觉体验打磨 (Skeleton + 对话气泡 + 卡片 + 空状态)
+- [x] 12-02-PLAN.md — 视觉体验打磨 (Skeleton + 对话气泡 + 卡片 + 空状态) ✓ 2026-04-27
 - [ ] 12-03-PLAN.md — Demo 路径加固 (对话链路 + Onboarding + 语音 fallback)
 - [ ] 12-04-PLAN.md — Docker 全链路验证 + 预热脚本 + Demo Checklist
 - [ ] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志
