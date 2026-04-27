@@ -624,7 +624,7 @@ export const CheckoutScreen: React.FC = () => {
                   style={styles.primaryButton}
                   onPress={() =>
                     navigation.navigate("MainTabs", {
-                      screen: "Me" as any,
+                      screen: "Me",
                       params: { screen: "Orders" },
                     })
                   }
@@ -634,7 +634,9 @@ export const CheckoutScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButtonWide}
-                  onPress={() => (navigation as any).navigate("MainTabs", { screen: "Today" })}
+                  onPress={() =>
+                    navigation.navigate("MainTabs" as never, { screen: "Today" } as never)
+                  }
                   accessibilityLabel={t.checkout.backToHome}
                 >
                   <Text style={styles.secondaryText}>{t.checkout.backToHome}</Text>

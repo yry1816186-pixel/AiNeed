@@ -29,7 +29,7 @@ type OutfitDetailRouteProp = RouteProp<RootStackParamList, keyof RootStackParamL
 export const OutfitDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<OutfitDetailRouteProp>();
-  const { outfitId } = route.params as any;
+  const { outfitId } = route.params as { outfitId: string };
 
   const [outfit, setOutfit] = useState<Outfit | null>(null);
   const [isLoading, setIsLoading] = useState(true);

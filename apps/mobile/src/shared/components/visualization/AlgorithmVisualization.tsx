@@ -62,7 +62,7 @@ const BreakdownItem: React.FC<{
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ item, index, getScoreColor }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const itemWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const ColorBarRow: React.FC<{
   index: number;
   showAnimation: boolean;
 }> = ({ colorItem, index, showAnimation }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
   const barOpacity = useSharedValue(0);
 
@@ -145,7 +145,7 @@ const ColorSwatchItem: React.FC<{
   index: number;
   baseDelay: number;
 }> = ({ colorItem, index, baseDelay }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const swatchScale = useSharedValue(0);
 
   useEffect(() => {
@@ -170,7 +170,7 @@ const MeasurementItem: React.FC<{
   value: number;
   index: number;
 }> = ({ label, value, index }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const itemOpacity = useSharedValue(0);
   const itemTranslateY = useSharedValue(20);
 
@@ -194,7 +194,7 @@ const MeasurementItem: React.FC<{
 };
 
 const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, index }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const recOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -219,7 +219,7 @@ const ItemPreviewCard: React.FC<{
   isSelected: boolean;
   onPress: () => void;
 }> = ({ item, index, isSelected, onPress }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const itemScale = useSharedValue(0);
 
   useEffect(() => {
@@ -251,7 +251,7 @@ const AnalysisBarItem: React.FC<{
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ label, value, index, getScoreColor }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -296,7 +296,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   breakdown,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const animatedScore = useSharedValue(0);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
@@ -483,7 +483,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   showAnimation = true,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -651,12 +651,12 @@ export interface ColorPaletteAnalysisProps {
 }
 
 export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
-  colors,
+  colors: paletteColors,
   title,
   showAnimation = true,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -680,7 +680,7 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
       {title && <Text style={styles.colorPaletteTitle}>{title}</Text>}
 
       <View style={styles.colorBarsContainer}>
-        {colors.map((colorItem, index) => (
+        {paletteColors.map((colorItem, index) => (
           <ColorBarRow
             key={index}
             colorItem={colorItem}
@@ -691,12 +691,12 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
       </View>
 
       <View style={styles.colorSwatches}>
-        {colors.map((colorItem, index) => (
+        {paletteColors.map((colorItem, index) => (
           <ColorSwatchItem
             key={index}
             colorItem={colorItem}
             index={index}
-            baseDelay={colors.length * 80}
+            baseDelay={paletteColors.length * 80}
           />
         ))}
       </View>
@@ -724,7 +724,7 @@ export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
   showAnimation = true,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const bodyOpacity = useSharedValue(0);
   const highlightScale = useSharedValue(1);
@@ -847,7 +847,7 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   suggestions,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -941,7 +941,7 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
   period,
   style,
 }) => {
-  const styles = useStyles(colors as any);
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const arrowTranslateY = useSharedValue(0);
 

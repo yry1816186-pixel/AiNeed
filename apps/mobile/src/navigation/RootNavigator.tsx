@@ -35,6 +35,8 @@ export function MainTabNavigator() {
 
   return (
     <Tab.Navigator
+      // AnimatedTabBar uses a subset of BottomTabBarProps; spread is safe at runtime
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tabBar={(props: BottomTabBarProps) => <AnimatedTabBar {...(props as any)} />}
       screenOptions={{
         headerShown: false,

@@ -13,6 +13,13 @@ export interface ChatRoom {
   updatedAt: string;
 }
 
+export interface ProposalMetadata {
+  title?: string;
+  summary?: string;
+  details?: Record<string, unknown>;
+  wardrobeCollectionId?: string;
+}
+
 export interface ChatMessage {
   id: string;
   roomId: string;
@@ -22,6 +29,7 @@ export interface ChatMessage {
   messageType: MessageType;
   imageUrl?: string;
   fileUrl?: string;
+  metadata?: ProposalMetadata;
   isRead: boolean;
   readAt?: string;
   createdAt: string;

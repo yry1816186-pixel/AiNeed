@@ -22,7 +22,7 @@ import { navigateHome } from "../../../navigation/navigationService";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 
-type Navigation = CompositeScreenProps<any, any>["navigation"];
+type Navigation = NativeStackNavigationProp<ProfileStackParamList, "OrderDetail">;
 type ScreenRoute = RouteProp<ProfileStackParamList, "OrderDetail">;
 
 interface TrackingStep {
@@ -363,7 +363,7 @@ export const OrderDetailScreen: React.FC = () => {
               <TouchableOpacity
                 style={styles.secondaryButton}
                 onPress={() => {
-                  (navigateHome as any)("HomeFeed");
+                  navigateHome("TodayMain");
                 }}
               >
                 <Text style={styles.secondaryButtonText}>再次购买</Text>

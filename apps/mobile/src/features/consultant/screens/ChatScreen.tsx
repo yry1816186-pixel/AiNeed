@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
@@ -35,12 +30,19 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 import { flatColors as colors } from "../../../design-system/theme";
 import { createStyles } from "../../../shared/contexts/ThemeContext";
 
+interface ChatScreenParams {
+  roomId: string;
+  consultantName?: string;
+}
+
 export const ChatScreen: React.FC = () => {
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
-  const route = useRoute<RouteProp<ParamListBase>>();
+  const route = useRoute<RouteProp<ParamListBase, string>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const { roomId, consultantName } = (route.params as any) || {};
+  const params = (route.params ?? {}) as ChatScreenParams;
+  const roomId = params.roomId;
+  const consultantName = params.consultantName;
 
   const { messages, fetchMessages, sendMessage, markAsRead, addMessage } = useChatStore();
 
@@ -49,7 +51,7 @@ export const ChatScreen: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const flatListRef = useRef<any>(null);
+  const flatListRef = useRef<React.ElementRef<typeof FlashList>>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -132,8 +134,8 @@ export const ChatScreen: React.FC = () => {
       return (
         <View style={styles.proposalWrapper}>
           <ProposalCard
-            title={(item as any)?.metadata?.title || "造型方案"}
-            summary={(item as any)?.metadata?.summary || item.content}
+            title={item.metadata?.title || "造型方案"}
+            summary={item.metadata?.summary || item.content}
             onViewProposal={() => Alert.alert("查看方案", "方案详情功能即将上线")}
             onSaveToWardrobe={() => Alert.alert("保存", "已保存到灵感衣橱")}
           />
