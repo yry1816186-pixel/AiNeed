@@ -250,7 +250,13 @@ Plans:
 4. 性能基线数据已记录：首屏加载时间、TTI、列表滚动 FPS、图片加载时间
 5. WCAG 2.1 AA 审计完成，列出所有缺失的 accessibilityLabel、触控目标、对比度违规
 
-Plans: (none yet)
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] 13-01-PLAN.md — Playwright 截图自动化 + 屏幕清单 (AUDIT-01)
+- [ ] 13-02-PLAN.md — 标杆差距分析 + 组件一致性审计脚本 (AUDIT-02, AUDIT-03)
+- [ ] 13-03-PLAN.md — 性能基线测量 + WCAG 2.1 AA 无障碍审计 (AUDIT-04, AUDIT-05)
 
 ### Phase 14: 品牌视觉 + 设计系统重建
 
