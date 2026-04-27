@@ -225,10 +225,136 @@ Plans:
 - [x] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志 ✓ 2026-04-27
 - [x] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著) ✓ 2026-04-27
 
+**Track D: v2.0 Frontend Restructuring (Phases 13-19)**
+
+- [ ] **Phase 13: 全流程深度审计** - Playwright 逐页截图, 标杆差距分析, 组件一致性审计, 性能基线, WCAG 2.1 AA 审计
+- [ ] **Phase 14: 品牌视觉 + 设计系统重建** - Logo/App Icon/Splash, 三层 Design Token, 替换 ThemeManager, 暗色模式独立设计
+- [ ] **Phase 15: 原子组件库 + 动效基础** - 8 原子组件, SmartImage, animationPresets, 启动画面 Lottie
+- [ ] **Phase 16: 首页 + Onboarding 重构** - 沉浸式 Today 页, 场景卡, 推荐轮播, 语音按钮, Onboarding 动画
+- [ ] **Phase 17: AI 对话 + 发现页重构** - 流式对话气泡, 打字机效果, 内嵌搭配卡, 瀑布流发现页
+- [ ] **Phase 18: 衣橱 + 个人页重构** - 分类管理, 拖拽排序, 穿搭组合, Style DNA 雷达图, 穿搭日历
+- [ ] **Phase 19: 技术升级 + 微交互 + 暗色模式完善** - FlashList, expo-image, 离线体验, 共享元素过渡, 点赞/刷新动效
+
+## Phase Details (v2.0)
+
+### Phase 13: 全流程深度审计
+
+**Goal**: 捕获当前前端完整基线状态，输出差距分析报告，为后续重构提供精确的起点和优先级依据
+**Depends on**: Phase 12 (v1.0 complete)
+**Requirements**: AUDIT-01, AUDIT-02, AUDIT-03, AUDIT-04, AUDIT-05
+**Success Criteria** (what must be TRUE):
+
+1. 所有页面截图已保存至 `.planning/audit/screenshots/`，覆盖每个 Tab 和子页面
+2. 标杆差距分析文档完成，每个页面与小红书/得物/NET-A-PORTER 的具体 UI/UX 差距已记录
+3. 组件一致性审计完成，列出所有间距/圆角/字号/颜色/动效不一致项
+4. 性能基线数据已记录：首屏加载时间、TTI、列表滚动 FPS、图片加载时间
+5. WCAG 2.1 AA 审计完成，列出所有缺失的 accessibilityLabel、触控目标、对比度违规
+
+Plans: (none yet)
+
+### Phase 14: 品牌视觉 + 设计系统重建
+
+**Goal**: 建立完整的品牌视觉资产体系（Logo/Icon/Splash/图案）和三层 Design Token 系统，替换损坏的 ThemeManager，实现暗色模式独立设计
+**Depends on**: Phase 13
+**Requirements**: BRAND-01, BRAND-02, BRAND-03, BRAND-04, BRAND-05, BRAND-06, DSTK-01, DSTK-02, DSTK-03, DSTK-04, DSTK-05, DSTK-06
+**Success Criteria** (what must be TRUE):
+
+1. Logo 设计完成（horizontal/square/monochrome 3 变体），App Icon 导出（iOS + Android adaptive）
+2. Splash Lottie 动画完成，冷启动播放 ≤1.5s，品牌色 + Logo 揭示
+3. 三层 Token 系统（primitive → semantic → component）覆盖 Color/Typography/Spacing/Radius/Shadow/Motion
+4. ThemeManager.ts 已替换为 Zustand themeStore + MMKV + Appearance API，零 Web API 调用
+5. 暗色模式独立色板设计完成，WCAG AA 4.5:1 对比度验证通过
+6. 现有 DesignTokens 全部保留，通过 legacyTokenMap 桥接，零破坏性变更
+
+Plans: (none yet)
+
+### Phase 15: 原子组件库 + 动效基础
+
+**Goal**: 构建完整的原子组件库（8 个核心组件），建立统一的动效预设系统和 SmartImage 渐进式加载组件
+**Depends on**: Phase 14
+**Requirements**: COMP-01, COMP-02, COMP-03, COMP-04, COMP-05, COMP-06, COMP-07, COMP-08, TECH-05, ANIM-06
+**Success Criteria** (what must be TRUE):
+
+1. 8 个原子组件（Button/Input/Card/Avatar/Badge/Skeleton/BottomSheet/Toast）在亮色/暗色模式下正确渲染
+2. 所有组件使用 Design Token 引用，零硬编码颜色/字号/间距
+3. Skeleton 组件 shimmer 动画使用 Reanimated（无额外原生依赖），匹配组件形状
+4. SmartImage 组件支持 blurhash 占位 + 渐进式加载 + 内存/磁盘缓存 + CDN URL 参数
+5. animationPresets 集中定义所有 easing/duration/spring 配置，组件引用预设而非硬编码
+6. Splash Lottie 动画集成到 App 启动流程，≤1.5s 播放，亮/暗变体
+
+Plans: (none yet)
+
+### Phase 16: 首页 + Onboarding 重构
+
+**Goal**: 重构 Today 页对标小红书沉浸式卡片流品质，重构 Onboarding 为流畅的品牌化引导体验
+**Depends on**: Phase 15
+**Requirements**: TODAY-01, TODAY-02, TODAY-03, TODAY-04, TODAY-05, ONBD-01, ONBD-02, ONBD-03, ONBD-04, ONBD-05
+**Success Criteria** (what must be TRUE):
+
+1. Today 页视觉层级清晰：hero 场景卡 → 推荐轮播 → 语音按钮，信息密度匹配小红书发现页
+2. 天气/场景卡显示动态天气图标、温度、场合上下文、AI 每日摘要
+3. 推荐卡片水平轮播：大图 + 穿搭名 + 场合标签 + 试穿按钮，snap 分页 + 触觉反馈
+4. 语音按钮显著位置，按住说话视觉反馈（脉冲动画 + 波形显示）
+5. Onboarding 步骤间 slide+fade 过渡动画，进度条 spring 更新
+6. 场景选择卡片视觉吸引力：插图 + 图标 + 标题，选中态品牌色边框动画
+7. "让伊伊搭第一套" 揭示时刻：搭配卡片逐一 stagger 出现 + 品牌光效
+
+Plans: (none yet)
+
+### Phase 17: AI 对话 + 发现页重构
+
+**Goal**: 重构 Stylist 对话页对标 ChatGPT/豆包品质，重构 Discover 为瀑布流灵感发现页
+**Depends on**: Phase 15
+**Requirements**: CHAT-01, CHAT-02, CHAT-03, CHAT-04, CHAT-05, CHAT-06, DISC-01, DISC-02, DISC-03, DISC-04, DISC-05
+**Success Criteria** (what must be TRUE):
+
+1. 对话气泡品质对标 ChatGPT：伊伊 vs 用户区分样式，圆角流畅，文字换行正确，时间戳显示
+2. AI 回复打字机效果：逐字显示，保持滚动位置，用户可在生成中向上滚动
+3. 对话流内嵌搭配/产品卡：图片 + 名称 + 价格 + 操作按钮（试穿/收藏/查看）
+4. Quick Reply 圆角药片样式，水平滚动，3-5 个上下文建议
+5. 发现页 2 列瀑布流布局（MasonryFlashList），Pinterest 级品质
+6. 瀑布流 60fps 滚动，blurhash 占位，分类 Tab 筛选 + 平滑切换
+7. 下拉刷新自定义品牌动画（非默认 spinner）
+
+Plans: (none yet)
+
+### Phase 18: 衣橱 + 个人页重构
+
+**Goal**: 重构衣橱页为分类管理 + 拖拽排序 + 穿搭组合展示，重构个人页为 Style DNA 可视化 + 穿搭日历
+**Depends on**: Phase 15
+**Requirements**: WARD-01, WARD-02, WARD-03, WARD-04, WARD-05, PROF-01, PROF-02, PROF-03, PROF-04, PROF-05
+**Success Criteria** (what must be TRUE):
+
+1. 衣橱分类 Tab（全部/上装/下装/外套/鞋履/配饰）+ 物品数量 Badge + 平滑切换
+2. 长按进入选择模式 → 拖拽排序：跟随手指动画 + 透明度变化 + 阴影提升
+3. 穿搭组合以 flat-lay 展示（物品视觉排列，非列表），Whering/Stylebook 级品质
+4. Style DNA 雷达图 6 维度（色彩/风格/场景/价位/品牌/复杂度）+ 加载动画
+5. 穿搭日历 7 天视图：穿搭缩略图 + 天气图标 + 场合标签，点击查看详情
+6. 个人统计（总穿搭/最常穿/风格匹配分）+ count-up 动画
+
+Plans: (none yet)
+
+### Phase 19: 技术升级 + 微交互 + 暗色模式完善
+
+**Goal**: FlashList 替换 FlatList，共享元素过渡，完整微交互动效体系，暗色模式全页面验证
+**Depends on**: Phase 16, Phase 17, Phase 18
+**Requirements**: TECH-01, TECH-02, TECH-03, TECH-04, ANIM-01, ANIM-02, ANIM-03, ANIM-04, ANIM-05
+**Success Criteria** (what must be TRUE):
+
+1. 所有列表页使用 FlashList v2 替换 FlatList，中端 Android (Snapdragon 680) 60fps 验证
+2. 所有图片使用 expo-image 加载：blurhash 占位 + 渐进式加载 + 内存/磁盘缓存
+3. 核心功能离线可用：缓存 50 条推荐 + 衣橱数据 + 日历，断网显示离线横幅
+4. 卡片 → 详情页共享元素过渡平滑（无闪烁/布局跳动）
+5. 点赞/收藏动画：心形图标 spring 缩放 + 粒子效果 + 颜色填充（400ms 内完成）
+6. AI 推荐渐进式展示：搭配物品逐一出现（stagger delay）+ 背景微光脉冲 + 置信度条动画
+7. 暗色模式全页面验证通过：每个页面亮/暗双模式截图对比
+
+Plans: (none yet)
+
 ## Progress
 
 **Execution Order:**
-Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term) -> 11 (competition sprint)
+Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term) -> 11-12 (competition) -> 13 (audit) -> 14 (design system) -> 15 (components) -> 16/17/18 (pages, partially parallelizable) -> 19 (polish)
 
 | Phase                                           | Plans Complete | Status   | Completed  |
 | ----------------------------------------------- | -------------- | -------- | ---------- |
@@ -244,9 +370,17 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 10. Production + Launch + Competition           | 5/5            | Complete | 2026-04-26 |
 | 11. Competition Demo Sprint + Validation        | 6/6            | Complete | 2026-04-26 |
 | 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 6/6            | Complete | 2026-04-27 |
+| 13. 全流程深度审计                              | 0/?            | Pending  |            |
+| 14. 品牌视觉 + 设计系统重建                     | 0/?            | Pending  |            |
+| 15. 原子组件库 + 动效基础                       | 0/?            | Pending  |            |
+| 16. 首页 + Onboarding 重构                      | 0/?            | Pending  |            |
+| 17. AI 对话 + 发现页重构                        | 0/?            | Pending  |            |
+| 18. 衣橱 + 个人页重构                           | 0/?            | Pending  |            |
+| 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending  |            |
 
 ---
 
 _Roadmap re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
 _Phase 11 added: 2026-04-26_
 _Phase 12 added: 2026-04-27_
+_v2.0 phases 13-19 added: 2026-04-27_

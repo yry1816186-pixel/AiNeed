@@ -140,17 +140,81 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
-| Requirement                         | Phase | Status |
-| ----------------------------------- | ----- | ------ |
-| (Populated during roadmap creation) |       |        |
+| Requirement | Phase    | Status  |
+| ----------- | -------- | ------- |
+| AUDIT-01    | Phase 13 | Pending |
+| AUDIT-02    | Phase 13 | Pending |
+| AUDIT-03    | Phase 13 | Pending |
+| AUDIT-04    | Phase 13 | Pending |
+| AUDIT-05    | Phase 13 | Pending |
+| BRAND-01    | Phase 14 | Pending |
+| BRAND-02    | Phase 14 | Pending |
+| BRAND-03    | Phase 14 | Pending |
+| BRAND-04    | Phase 14 | Pending |
+| BRAND-05    | Phase 14 | Pending |
+| BRAND-06    | Phase 14 | Pending |
+| DSTK-01     | Phase 14 | Pending |
+| DSTK-02     | Phase 14 | Pending |
+| DSTK-03     | Phase 14 | Pending |
+| DSTK-04     | Phase 14 | Pending |
+| DSTK-05     | Phase 14 | Pending |
+| DSTK-06     | Phase 14 | Pending |
+| COMP-01     | Phase 15 | Pending |
+| COMP-02     | Phase 15 | Pending |
+| COMP-03     | Phase 15 | Pending |
+| COMP-04     | Phase 15 | Pending |
+| COMP-05     | Phase 15 | Pending |
+| COMP-06     | Phase 15 | Pending |
+| COMP-07     | Phase 15 | Pending |
+| COMP-08     | Phase 15 | Pending |
+| TECH-05     | Phase 15 | Pending |
+| ANIM-06     | Phase 15 | Pending |
+| TODAY-01    | Phase 16 | Pending |
+| TODAY-02    | Phase 16 | Pending |
+| TODAY-03    | Phase 16 | Pending |
+| TODAY-04    | Phase 16 | Pending |
+| TODAY-05    | Phase 16 | Pending |
+| ONBD-01     | Phase 16 | Pending |
+| ONBD-02     | Phase 16 | Pending |
+| ONBD-03     | Phase 16 | Pending |
+| ONBD-04     | Phase 16 | Pending |
+| ONBD-05     | Phase 16 | Pending |
+| CHAT-01     | Phase 17 | Pending |
+| CHAT-02     | Phase 17 | Pending |
+| CHAT-03     | Phase 17 | Pending |
+| CHAT-04     | Phase 17 | Pending |
+| CHAT-05     | Phase 17 | Pending |
+| CHAT-06     | Phase 17 | Pending |
+| DISC-01     | Phase 17 | Pending |
+| DISC-02     | Phase 17 | Pending |
+| DISC-03     | Phase 17 | Pending |
+| DISC-04     | Phase 17 | Pending |
+| DISC-05     | Phase 17 | Pending |
+| WARD-01     | Phase 18 | Pending |
+| WARD-02     | Phase 18 | Pending |
+| WARD-03     | Phase 18 | Pending |
+| WARD-04     | Phase 18 | Pending |
+| WARD-05     | Phase 18 | Pending |
+| PROF-01     | Phase 18 | Pending |
+| PROF-02     | Phase 18 | Pending |
+| PROF-03     | Phase 18 | Pending |
+| PROF-04     | Phase 18 | Pending |
+| PROF-05     | Phase 18 | Pending |
+| TECH-01     | Phase 19 | Pending |
+| TECH-02     | Phase 19 | Pending |
+| TECH-03     | Phase 19 | Pending |
+| TECH-04     | Phase 19 | Pending |
+| ANIM-01     | Phase 19 | Pending |
+| ANIM-02     | Phase 19 | Pending |
+| ANIM-03     | Phase 19 | Pending |
+| ANIM-04     | Phase 19 | Pending |
+| ANIM-05     | Phase 19 | Pending |
 
 **Coverage:**
 
 - v2.0 requirements: 52 total
-- Mapped to phases: 0
-- Unmapped: 52 ⚠️
+- Mapped to phases: 52
+- Unmapped: 0 ✓
 
 ---
 
