@@ -220,8 +220,8 @@ Plans:
 
 - [x] 12-01-PLAN.md — TypeScript any 清扫 + ErrorBoundary 加固
 - [x] 12-02-PLAN.md — 视觉体验打磨 (Skeleton + 对话气泡 + 卡片 + 空状态) ✓ 2026-04-27
-- [ ] 12-03-PLAN.md — Demo 路径加固 (对话链路 + Onboarding + 语音 fallback)
-- [ ] 12-04-PLAN.md — Docker 全链路验证 + 预热脚本 + Demo Checklist
+- [x] 12-03-PLAN.md — Demo 路径加固 (对话链路 + Onboarding + 语音 fallback) ✓ 2026-04-27
+- [x] 12-04-PLAN.md — Docker 全链路验证 + 预热脚本 + Demo Checklist ✓ 2026-04-27
 - [ ] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志
 - [ ] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著)
 
@@ -243,7 +243,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
 | 10. Production + Launch + Competition           | 5/5            | Complete    | 2026-04-26 |
 | 11. Competition Demo Sprint + Validation        | 6/6            | Complete    | 2026-04-26 |
-| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 1/6            | In Progress | —          |
+| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 4/6            | In Progress | —          |
 
 ---
 
