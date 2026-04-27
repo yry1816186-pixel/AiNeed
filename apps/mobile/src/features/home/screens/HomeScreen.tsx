@@ -25,6 +25,8 @@ import { WeatherGreeting } from "./components/WeatherGreeting";
 import { ProfileCompletionBanner } from "./components/ProfileCompletionBanner";
 import QuickActions from "./components/QuickActions";
 import { RecommendationCard } from "../components/RecommendationFeedCard";
+import { CardSkeleton } from "../../../design-system/skeleton/AdvancedSkeleton";
+import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
 import type { RootStackParamList, TodayStackParamList } from "../../../types/navigation";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { FeedItem } from "../../../services/api/recommendation-feed.api";
@@ -310,6 +312,37 @@ const HomeScreen: React.FC = () => {
       t.search.placeholder,
     ]
   );
+
+  // Show skeleton on first load (no items yet and feed is loading)
+  const showSkeleton = feedItems.length === 0 && isFeedLoading;
+
+  if (showSkeleton) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
+        <View style={{ paddingHorizontal: HORIZONTAL_PADDING }}>
+          {/* Greeting skeleton */}
+          <View style={{ marginBottom: 20 }}>
+            <ShimmerSkeleton width="60%" height={28} style={{ marginBottom: 8 }} />
+            <ShimmerSkeleton width="40%" height={16} />
+          </View>
+          {/* Quick actions skeleton */}
+          <View style={{ flexDirection: "row", gap: 12, marginBottom: 24 }}>
+            <ShimmerSkeleton width="18%" height={72} borderRadius={12} />
+            <ShimmerSkeleton width="18%" height={72} borderRadius={12} />
+            <ShimmerSkeleton width="18%" height={72} borderRadius={12} />
+            <ShimmerSkeleton width="18%" height={72} borderRadius={12} />
+            <ShimmerSkeleton width="18%" height={72} borderRadius={12} />
+          </View>
+          {/* Section header skeleton */}
+          <ShimmerSkeleton width="35%" height={20} style={{ marginBottom: 16 }} />
+          {/* Card skeletons */}
+          <CardSkeleton />
+          <View style={{ height: 12 }} />
+          <CardSkeleton />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

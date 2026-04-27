@@ -60,6 +60,7 @@ import { useVoiceRecognition } from "../../../services/speech/voiceRecognitionHo
 import { speakFromUrl } from "../../../services/speech/ttsService";
 import { ProfileDebugPanel } from "../components/ProfileDebugPanel";
 import { useDemoStore } from "../../../shared/stores/demoStore";
+import { ChatBubbleSkeleton } from "../../../design-system/skeleton/AdvancedSkeleton";
 
 // ============ Scene Chips Config ============
 
@@ -1138,8 +1139,20 @@ export const AiStylistUnifiedScreen: React.FC = () => {
   if (authLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color={colors.primary} />
+        <View style={styles.header}>
+          <View style={styles.headerCenter}>
+            <View style={styles.headerAvatar}>
+              <Ionicons name="sparkles" size={14} color={colors.surface} />
+            </View>
+            <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
+          </View>
+        </View>
+        <View style={styles.messagesContainer}>
+          <ChatBubbleSkeleton />
+          <View style={{ height: DesignTokens.spacing[3] }} />
+          <ChatBubbleSkeleton isUser />
+          <View style={{ height: DesignTokens.spacing[3] }} />
+          <ChatBubbleSkeleton />
         </View>
       </SafeAreaView>
     );
