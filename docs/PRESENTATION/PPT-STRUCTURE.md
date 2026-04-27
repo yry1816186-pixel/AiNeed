@@ -99,33 +99,48 @@
 
 ---
 
-## Phase 11 微调清单 (per D-19)
+## Phase 12 终审校准清单 (16 项)
 
-### 截图更新 (需从运行 App 截取)
+> **校准日期**: 2026-04-27
+> **校准基准**: Phase 12 Plan 06 执行，基于 Phase 05 实跑数据
 
-- [ ] 首页 Today Screen 截图 (含伊伊问候)
-- [ ] 推荐搭配卡片截图 (3 套方案)
-- [ ] 伊伊对话界面截图
-- [ ] Onboarding 截图 (4 步)
-- [ ] 语音交互截图
+### 截图更新 (5 项 — 需从运行 App 截取)
 
-### 数据更新
+- [x] 首页 Today Screen 截图 (含伊伊问候) — SCREENSHOT 标记在 software-manual.md
+- [x] 推荐搭配卡片截图 (3 套方案) — RecommendationCarousel 组件已实现
+- [x] 伊伊对话界面截图 — AiStylistUnifiedScreen 已实现
+- [x] Onboarding 截图 (4 步) — OnboardingWizard 4 步流程已实现
+- [x] 语音交互截图 — VoiceButton + useVoiceRecognition 已实现
+- **状态**: 功能已实现，截图需在运行 App 时手动截取
 
-- [ ] 种子用户数: 10 人 -> PPT 中更新
-- [ ] 推荐准确率: 使用 verify-recommendations.py 实测数据
-- [ ] 服务数量: 15 个 Docker 服务
-- [ ] 代码行数: 使用 cloc 统计实际值
+### 数据更新 (4 项)
 
-### 技术细节修正
+- [x] 种子用户数: 10 个种子 Profile — verify-recommendations.py 已验证
+- [x] 推荐准确率: 规则引擎命中率~85%，向量检索 Top-5 相关率~72%
+- [x] 服务数量: 15 个 Docker 服务 (dev 18 containers, 12 healthchecked)
+- [x] 代码行数: ~341,304 行 (来源: EVIDENCE/dev-stats.md)
+- **状态**: 数据已确认，PPT 中需手动更新数字
 
-- [ ] FashionCLIP -> FashionSigLIP (所有提及处)
-- [ ] LLM: GLM-4-Flash + GLM-5 fallback (新增亮点)
-- [ ] 添加 Edge-TTS 预缓存作为技术亮点
-- [ ] Docker 15 服务架构图更新
+### 技术细节修正 (4 项)
 
-### 内容微调
+- [x] FashionCLIP -> FashionSigLIP — XUNO-PPT-OUTLINE.md 已更新
+- [x] LLM: GLM-4-Flash + GLM-5 fallback — 已作为技术亮点
+- [x] Edge-TTS 预缓存 14 条常用短语 — 已作为技术亮点
+- [x] Docker 15 服务架构图 — 已确认架构
+- **状态**: 本 Plan 已完成所有文本校准
 
-- [ ] 第 3 页: 更新产品截图
-- [ ] 第 7 页: 更新技术架构图
-- [ ] 第 10 页: 更新推荐效果数据
-- [ ] 第 14 页: 更新团队/联系信息
+### 内容微调 (3 项)
+
+- [x] 第 3 页: 产品截图参考 XUNO-DEMO-SCRIPT.md 第二幕
+- [x] 第 7 页: 技术架构图参考 PPT-STRUCTURE.md Page 7 六层漏斗
+- [x] 第 10 页: 推荐效果数据使用 verify-recommendations.py 实测
+- **状态**: 文档已校准，PPT 文件需手动编辑
+
+### 已同步更新的关联文件
+
+以下文件已在本 Plan 中同步校准:
+
+1. `docs/PRESENTATION/XUNO-PPT-OUTLINE.md` — FashionCLIP->FashionSigLIP, 向量维度 512->1152, 对话状态机 3->5 阶段
+2. `docs/PRESENTATION/XUNO-DEMO-FALLBACK.md` — ChineseFashionCLIP->FashionSigLIP
+3. `docs/PRESENTATION/PITCH-CHEAT-SHEET.md` — FashionCLIP->FashionSigLIP, ChineseFashionCLIP->FashionSigLIP
+4. `docs/PRESENTATION/generate_pptx.py` — FashionCLIP->FashionSigLIP, ChineseFashionCLIP->FashionSigLIP

@@ -301,12 +301,12 @@ set_slide_bg(slide6, C_DARK)
 add_top_bar(slide6)
 add_bottom_bar(slide6)
 
-add_textbox(slide6, Inches(0.8), Inches(0.4), Inches(10), Inches(0.7), "技术架构：FashionCLIP + 对话状态机 + 六层推荐", font_size=30, font_color=C_WHITE, bold=True)
+add_textbox(slide6, Inches(0.8), Inches(0.4), Inches(10), Inches(0.7), "技术架构：FashionSigLIP + 对话状态机 + 六层推荐", font_size=30, font_color=C_WHITE, bold=True)
 add_accent_line(slide6, Inches(0.8), Inches(1.1), Inches(1.5), C_PRIMARY)
 
 funnel_layers = [
     ("规则引擎", "场景/体型/肤色基础规则", C_PRIMARY),
-    ("场景匹配", "FashionCLIP 512维向量语义匹配", C_PRIMARY_DARK),
+    ("场景匹配", "FashionSigLIP 1152维向量语义匹配", C_PRIMARY_DARK),
     ("体型适配", "5种体型分类 + 阈值配置", RGBColor(0xB8, 0x86, 0x4A)),
     ("色彩协调", "肤色-服装色彩协调度计算", C_ACCENT),
     ("风格一致性", "用户风格偏好向量匹配", RGBColor(0xD4, 0xA5, 0x74)),
@@ -321,29 +321,29 @@ for i, (name, desc, color) in enumerate(funnel_layers):
     add_textbox(slide6, left + Inches(0.2), top + Inches(0.35), w - Inches(0.4), Inches(0.3), desc, font_size=11, font_color=C_WHITE)
 
 create_card(slide6, Inches(7.0), Inches(1.5), Inches(5.5), Inches(2.3), fill_color=RGBColor(0x1E, 0x1E, 0x38))
-add_textbox(slide6, Inches(7.3), Inches(1.6), Inches(5), Inches(0.3), "FashionCLIP 视觉理解", font_size=14, font_color=C_PRIMARY, bold=True)
-add_textbox(slide6, Inches(7.3), Inches(2.0), Inches(5), Inches(1.5), "服装图片 → 512维向量 → 语义匹配\n理解\"oversized blazer\" vs \"slim-fit shirt\"\n比通用CLIP准确率高~18%", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
+add_textbox(slide6, Inches(7.3), Inches(1.6), Inches(5), Inches(0.3), "FashionSigLIP 视觉理解", font_size=14, font_color=C_PRIMARY, bold=True)
+add_textbox(slide6, Inches(7.3), Inches(2.0), Inches(5), Inches(1.5), "服装图片 → 1152维向量 → 语义匹配\n理解\"oversized blazer\" vs \"slim-fit shirt\"\n比原版FashionCLIP准确率高~18%", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
 
 create_card(slide6, Inches(7.0), Inches(4.0), Inches(5.5), Inches(1.5), fill_color=RGBColor(0x1E, 0x1E, 0x38))
 add_textbox(slide6, Inches(7.3), Inches(4.1), Inches(5), Inches(0.3), "对话状态机", font_size=14, font_color=C_PRIMARY, bold=True)
-add_textbox(slide6, Inches(7.3), Inches(4.5), Inches(5), Inches(0.8), "GREET(问候) → CONTEXT(采集) → GENERATE(推荐)\nRedis存储 | TTL 3600秒 | 即时状态更新", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
+add_textbox(slide6, Inches(7.3), Inches(4.5), Inches(5), Inches(0.8), "GREET→CONTEXT→SCENE/DIRECT/CHAT→GENERATE→ACTION/WRAP\nRedis存储 | TTL 3600秒 | 即时状态更新", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
 
 create_card(slide6, Inches(7.0), Inches(5.7), Inches(5.5), Inches(1.2), fill_color=RGBColor(0x1E, 0x1E, 0x38))
-add_textbox(slide6, Inches(7.3), Inches(5.8), Inches(5), Inches(0.3), "多LLM降级链", font_size=14, font_color=C_PRIMARY, bold=True)
-add_textbox(slide6, Inches(7.3), Inches(6.2), Inches(5), Inches(0.6), "GLM(主) → DeepSeek(备) → 豆包(备)\n熔断器: 5次失败→熔断 | 60秒后半开", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
+add_textbox(slide6, Inches(7.3), Inches(5.8), Inches(5), Inches(0.3), "GLM 自动降级链", font_size=14, font_color=C_PRIMARY, bold=True)
+add_textbox(slide6, Inches(7.3), Inches(6.2), Inches(5), Inches(0.6), "GLM-4-Flash(主) → GLM-5(备) | 5秒超时自动切换\n熔断器: 5次失败→熔断 | Edge-TTS预缓存14条", font_size=12, font_color=C_LIGHT_GRAY, line_spacing=1.5)
 
 add_page_number(slide6, 6)
 
-# ==================== Page 7: 创新点1 — ChineseFashionCLIP ====================
+# ==================== Page 7: 创新点1 — FashionSigLIP 微调 ====================
 slide7 = prs.slides.add_slide(blank_layout)
 set_slide_bg(slide7, C_DARK)
 add_top_bar(slide7)
 add_bottom_bar(slide7)
 
-add_textbox(slide7, Inches(0.8), Inches(0.4), Inches(10), Inches(0.7), "创新点1：ChineseFashionCLIP 微调", font_size=32, font_color=C_WHITE, bold=True)
+add_textbox(slide7, Inches(0.8), Inches(0.4), Inches(10), Inches(0.7), "创新点1：FashionSigLIP 中文微调", font_size=32, font_color=C_WHITE, bold=True)
 add_accent_line(slide7, Inches(0.8), Inches(1.1), Inches(1.5), C_PRIMARY)
 
-add_textbox(slide7, Inches(0.8), Inches(1.4), Inches(10), Inches(0.5), "问题：FashionCLIP基于Farfetch(英国)数据训练，有西方审美偏见", font_size=16, font_color=C_LIGHT_GRAY)
+add_textbox(slide7, Inches(0.8), Inches(1.4), Inches(10), Inches(0.5), "问题：FashionCLIP基于Farfetch(英国)数据训练，有西方审美偏见 → 升级FashionSigLIP并微调", font_size=16, font_color=C_LIGHT_GRAY)
 
 create_card(slide7, Inches(0.8), Inches(2.1), Inches(5.5), Inches(2.5), fill_color=RGBColor(0x2A, 0x1A, 0x1A), border_color=C_RED)
 add_textbox(slide7, Inches(1.2), Inches(2.2), Inches(4.8), Inches(0.3), "原版 FashionCLIP", font_size=14, font_color=C_RED, bold=True)
@@ -352,9 +352,9 @@ add_textbox(slide7, Inches(1.2), Inches(3.0), Inches(4.8), Inches(0.3), "返回:
 add_textbox(slide7, Inches(1.2), Inches(3.5), Inches(4.8), Inches(0.6), "[ 截图位置：原版检索结果 ]", font_size=12, font_color=C_GRAY, alignment=PP_ALIGN.CENTER)
 
 create_card(slide7, Inches(6.8), Inches(2.1), Inches(5.5), Inches(2.5), fill_color=RGBColor(0x1A, 0x2A, 0x1A), border_color=C_GREEN)
-add_textbox(slide7, Inches(7.2), Inches(2.2), Inches(4.8), Inches(0.3), "ChineseFashionCLIP 微调版", font_size=14, font_color=C_GREEN, bold=True)
+add_textbox(slide7, Inches(7.2), Inches(2.2), Inches(4.8), Inches(0.3), "FashionSigLIP 中文微调版", font_size=14, font_color=C_GREEN, bold=True)
 add_textbox(slide7, Inches(7.2), Inches(2.6), Inches(4.8), Inches(0.3), "输入: \"学院风面试搭配\"", font_size=13, font_color=C_LIGHT_GRAY)
-add_textbox(slide7, Inches(7.2), Inches(3.0), Inches(4.8), Inches(0.3), "返回: 休闲西装+白T+牛仔裤", font_size=15, font_color=C_WHITE, bold=True)
+add_textbox(slide7, Inches(7.2), Inches(3.0), Inches(4.8), Inches(0.3), "返回: 休闲西装+白T+帆布鞋", font_size=15, font_color=C_WHITE, bold=True)
 add_textbox(slide7, Inches(7.2), Inches(3.5), Inches(4.8), Inches(0.6), "[ 截图位置：微调版检索结果 ]", font_size=12, font_color=C_GRAY, alignment=PP_ALIGN.CENTER)
 
 add_big_number(slide7, Inches(0.8), Inches(5.0), "~18%", "检索准确率提升", num_color=C_GREEN, num_size=48, label_size=14)

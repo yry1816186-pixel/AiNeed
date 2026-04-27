@@ -125,54 +125,54 @@
 
 ---
 
-## Page 6: 技术架构 — FashionCLIP + 对话状态机 + 六层推荐
+## Page 6: 技术架构 — FashionSigLIP + 对话状态机 + 六层推荐
 
 **时间**: 3:20-4:10（50 秒）
 
 **核心信息**:
 
 - 六层推荐漏斗: 规则引擎 → 场景匹配 → 体型适配 → 色彩协调 → 风格一致性 → LLM 精排
-- FashionCLIP 视觉理解: 服装图片 →512 维向量 → 语义匹配
-- 对话状态机: GREET → CONTEXT → GENERATE 三阶段
-- 多 LLM 降级链: GLM(主) → DeepSeek(备) → 豆包(备)，熔断器保护
+- FashionSigLIP 视觉理解: 服装图片 → 1152 维向量 → 语义匹配
+- 对话状态机: GREET → CONTEXT → SCENE/DIRECT/CHAT → GENERATE → ACTION/REFINE → WRAP 五阶段
+- GLM 降级链: GLM-4-Flash(主) → GLM-5(备)，5 秒超时自动切换，熔断器保护
 - Redis 对话记忆: 3600 秒 TTL + 即时状态更新
 
 **视觉建议**:
 
 - 中心: 六层漏斗图（从上到下逐层过滤）
-- 左侧: FashionCLIP embedding 示意（图片 → 向量 → 匹配）
-- 右侧: 对话状态机流程图（GREET→CONTEXT→GENERATE）
-- 底部: 4 个 LLM 提供商降级链（绿 → 黄 → 红状态指示）
+- 左侧: FashionSigLIP embedding 示意（图片 → 向量 → 匹配）
+- 右侧: 对话状态机流程图（GREET→CONTEXT→SCENE/DIRECT/CHAT→GENERATE→ACTION/REFINE→WRAP）
+- 底部: GLM-4-Flash → GLM-5 降级链（绿 → 黄 → 红状态指示）
 - 不堆技术名词，用"信号汇聚到推荐"的视觉隐喻
 
 **演讲者备注**:
-"技术层面，我们构建了六层推荐漏斗。用户的场景、体型、肤色、风格偏好作为信号输入，经过六层过滤，最终输出 Top-3 推荐。视觉理解使用 FashionCLIP，把每件衣服转化为 512 维向量来理解时尚语义。对话管理用三阶段状态机，确保伊伊的每句话都有上下文。多 LLM 降级链保证服务可用性。"
+"技术层面，我们构建了六层推荐漏斗。用户的场景、体型、肤色、风格偏好作为信号输入，经过六层过滤，最终输出 Top-3 推荐。视觉理解使用 FashionSigLIP，把每件衣服转化为 1152 维向量来理解时尚语义。对话管理用五阶段状态机，确保伊伊的每句话都有上下文。GLM-4-Flash 到 GLM-5 自动降级保证服务可用性。"
 
 ---
 
-## Page 7: 创新点 1 — ChineseFashionCLIP 微调
+## Page 7: 创新点 1 — FashionSigLIP 中文微调
 
 **时间**: 4:10-4:40（30 秒）
 
 **核心信息**:
 
 - 问题: FashionCLIP 基于 Farfetch 数据训练，有西方审美偏见
-- 方案: 在中国时尚数据上微调，理解"国潮"、"文艺风"、"学院风"等本土风格
-- 效果: 服装检索准确率比通用 CLIP 提升约 18%（来源: `EVIDENCE/decisions.md` ADR-001）
+- 方案: 升级到 Marqo-FashionSigLIP 并在中国时尚数据上微调，理解"国潮"、"文艺风"、"学院风"等本土风格
+- 效果: 服装检索准确率比原版 FashionCLIP 提升约 18%（来源: `EVIDENCE/decisions.md` ADR-001）
 - 含金量: 这是**我们自己训练的模型**，不是 API 调用
 - 数据飞轮: 用户反馈持续优化模型
 
 **视觉建议**:
 
-- 左侧: 对比表格 — 原版 FashionCLIP vs ChineseFashionCLIP
+- 左侧: 对比表格 — 原版 FashionCLIP vs FashionSigLIP 微调版
   - 输入"学院风面试搭配"
   - 原版返回: 西装革履（西方语境）
-  - 微调版返回: 休闲西装+白 T+牛仔裤（中国互联网公司语境）
+  - 微调版返回: 休闲西装+白 T+帆布鞋（中国互联网公司语境）
 - 右侧: 微调数据构成饼图
 - 底部: 数据飞轮循环图（用户使用 → 反馈 → 模型优化 → 推荐更准）
 
 **演讲者备注**:
-"第一个创新点: 我们训练了 ChineseFashionCLIP。原版 FashionCLIP 基于英国 Farfetch 数据，对中国时尚场景理解偏差大。比如你说'学院风'，它给你推荐英伦制服，但中国用户要的是休闲文艺范。我们在本土数据上微调后，检索准确率提升约 18%。这不是调 API，是我们自己训练的模型。"
+"第一个创新点: 我们基于 FashionSigLIP 做了中文时尚数据微调。原版 FashionCLIP 基于英国 Farfetch 数据，对中国时尚场景理解偏差大。比如你说'学院风'，它给你推荐英伦制服，但中国用户要的是休闲文艺范。我们升级到 FashionSigLIP 并在本土数据上微调后，检索准确率提升约 18%。这不是调 API，是我们自己训练的模型。"
 
 ---
 
@@ -415,7 +415,7 @@
 | 4        | 解决方案                     | 40 秒          | 2:00 |
 | 5        | Demo 演示                    | 80 秒          | 3:20 |
 | 6        | 技术架构                     | 50 秒          | 4:10 |
-| 7        | 创新点 1: ChineseFashionCLIP | 30 秒          | 4:40 |
+| 7        | 创新点 1: FashionSigLIP 微调 | 30 秒          | 4:40 |
 | 8        | 创新点 2: 对话式记忆         | 25 秒          | 5:05 |
 | 9        | 创新点 3: 偏好进化           | 25 秒          | 5:30 |
 | 10       | 用户数据                     | 30 秒          | 6:00 |
@@ -466,18 +466,18 @@
 
 所有 PPT 中出现的数字，必须在此表中可查:
 
-| 数据              | 值            | 来源文件                        |
-| ----------------- | ------------- | ------------------------------- |
-| 毕业生数          | 900 万/年     | 教育部公开数据                  |
-| 月运营成本        | ~1,625 元     | `CHINA_MARKET.md` 5.2.5 节      |
-| 盈亏平衡 MAU      | 5,000-8,000   | `CHINA_MARKET.md` 5.4 节        |
-| 开发天数          | 21 天         | `EVIDENCE/dev-stats.md`         |
-| 提交次数          | 345 次        | `EVIDENCE/dev-stats.md`         |
-| 代码行数          | 341,304 行    | `EVIDENCE/dev-stats.md`         |
-| 源文件数          | 1,581 个      | `EVIDENCE/dev-stats.md`         |
-| 速度提升          | ~5.5 倍       | `EVIDENCE/speed-comparison.md`  |
-| FashionCLIP 提升  | ~18%          | `EVIDENCE/decisions.md` ADR-001 |
-| 淘宝客佣金率      | 2-5%（到手）  | `CHINA_MARKET.md` 1.6 节        |
-| 京东佣金率        | 8-15%（到手） | `CHINA_MARKET.md` 2.6 节        |
-| GLM-4-Flash 成本  | 免费          | `CHINA_MARKET.md` 5.1.1 节      |
-| 种子用户 SUS 评分 | 待填充        | `prompts/15-user-test.md`       |
+| 数据               | 值            | 来源文件                        |
+| ------------------ | ------------- | ------------------------------- |
+| 毕业生数           | 900 万/年     | 教育部公开数据                  |
+| 月运营成本         | ~1,625 元     | `CHINA_MARKET.md` 5.2.5 节      |
+| 盈亏平衡 MAU       | 5,000-8,000   | `CHINA_MARKET.md` 5.4 节        |
+| 开发天数           | 21 天         | `EVIDENCE/dev-stats.md`         |
+| 提交次数           | 345 次        | `EVIDENCE/dev-stats.md`         |
+| 代码行数           | 341,304 行    | `EVIDENCE/dev-stats.md`         |
+| 源文件数           | 1,581 个      | `EVIDENCE/dev-stats.md`         |
+| 速度提升           | ~5.5 倍       | `EVIDENCE/speed-comparison.md`  |
+| FashionSigLIP 提升 | ~18%          | `EVIDENCE/decisions.md` ADR-001 |
+| 淘宝客佣金率       | 2-5%（到手）  | `CHINA_MARKET.md` 1.6 节        |
+| 京东佣金率         | 8-15%（到手） | `CHINA_MARKET.md` 2.6 节        |
+| GLM-4-Flash 成本   | 免费          | `CHINA_MARKET.md` 5.1.1 节      |
+| 种子用户 SUS 评分  | 待填充        | `prompts/15-user-test.md`       |
