@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import type { FilterOptions } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -145,7 +138,7 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
                 <Text style={styles.modalClose}>关闭</Text>
               </TouchableOpacity>
             </View>
-            <FlatList
+            <FlashList
               data={getFilterOptions()}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (

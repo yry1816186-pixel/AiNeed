@@ -21,7 +21,7 @@ import type {
   ColorAnalysisReport,
 } from "@/src/services/api/profile.api";
 import type { RootStackParamList } from "@/src/types/navigation";
-import { colors } from "@/src/theme/tokens/colors";
+import { colors } from "@/src/design-system/theme";
 import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { shadows } from "@/src/design-system/theme/tokens/shadows";

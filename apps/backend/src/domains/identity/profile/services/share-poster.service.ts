@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import { v4 as uuidv4 } from "uuid";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -40,8 +39,9 @@ export class SharePosterService {
 
     const canvasWidth = 750;
     const canvasHeight = 1334;
+    const { createCanvas } = await import("canvas");
     const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as any;
 
     // Draw background
     const layoutConfig = (template.layoutConfig as Record<string, unknown>) ?? {};
@@ -56,7 +56,7 @@ export class SharePosterService {
     this.drawColorPalette(ctx, profileData, layoutConfig);
 
     // Draw user avatar and nickname
-    this.drawUserInfo(ctx, profileData, layoutConfig);
+    await this.drawUserInfo(ctx, profileData, layoutConfig);
 
     // Draw QR code placeholder
     this.drawQrCodePlaceholder(ctx, layoutConfig);
@@ -130,11 +130,11 @@ export class SharePosterService {
     }
   }
 
-  private drawUserInfo(
-    ctx: CanvasRenderingContext2D,
+  private async drawUserInfo(
+    ctx: any,
     profileData: UserProfileSummary,
     layoutConfig: Record<string, unknown>
-  ): void {
+  ): Promise<void> {
     const userSection = (layoutConfig.userSection as Record<string, unknown>) ?? {};
     const avatarY = (userSection.avatarY as number) ?? 800;
     const nicknameY = (userSection.nicknameY as number) ?? 900;
@@ -152,7 +152,8 @@ export class SharePosterService {
     // Try to load avatar image
     if (profileData.avatar) {
       try {
-        const img = new Image();
+        const { Image } = await import("canvas");
+        const img = new Image() as any;
         img.src = profileData.avatar;
         ctx.save();
         ctx.beginPath();

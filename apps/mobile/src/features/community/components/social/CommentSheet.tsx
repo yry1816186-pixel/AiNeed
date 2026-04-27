@@ -1,14 +1,6 @@
 import React, { useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-  Modal,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Modal } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
 import {
   useSharedValue,
@@ -143,7 +135,7 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
           </TouchableOpacity>
         </View>
 
-        <FlatList
+        <FlashList
           data={comments}
           renderItem={({ item, index }) => (
             <CommentItem item={item} index={index} onLikeComment={onLikeComment} />

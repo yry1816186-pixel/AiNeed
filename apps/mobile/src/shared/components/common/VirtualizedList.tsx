@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { memo, useCallback } from "react";
-import { FlatList, type ListRenderItemInfo, RefreshControl, StyleSheet, View } from "react-native";
+import { RefreshControl, StyleSheet, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
 import { useLazyLoad } from "../../hooks/useLazyLoad";
 import { Spacing } from "../../../design-system/theme";
@@ -8,7 +9,7 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 
 export interface VirtualizedListProps<T> {
   data: T[];
-  renderItem: (info: ListRenderItemInfo<T>) => React.ReactElement | null;
+  renderItem: (info: { item: T; index: number }) => React.ReactElement | null;
   keyExtractor: (item: T, index: number) => string;
   estimatedItemSize?: number;
   numColumns?: 1 | 2;
@@ -56,7 +57,7 @@ function VirtualizedListInner<T>({
   ) : undefined;
 
   return (
-    <FlatList
+    <FlashList
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}

@@ -9,9 +9,9 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  FlatList,
   Dimensions,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";

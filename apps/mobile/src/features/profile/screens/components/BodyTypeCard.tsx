@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Svg, Circle, Rect, Text as SvgText, Line, Path } from "react-native-svg";
-import { colors } from "@/src/theme/tokens/colors";
+import { colors } from "@/src/design-system/theme";
 import { typography } from "@/src/design-system/theme/tokens/typography";
 import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { shadows } from "@/src/design-system/theme/tokens/shadows";

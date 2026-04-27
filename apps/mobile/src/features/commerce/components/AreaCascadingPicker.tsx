@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -168,7 +169,7 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
         <View style={styles.columnsContainer}>
           <View style={styles.column}>
             <Text style={styles.columnTitle}>省份</Text>
-            <FlatList
+            <FlashList
               data={PROVINCES}
               keyExtractor={(item) => item}
               renderItem={({ item }) =>
@@ -183,7 +184,7 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
 
           <View style={styles.column}>
             <Text style={styles.columnTitle}>城市</Text>
-            <FlatList
+            <FlashList
               data={cities}
               keyExtractor={(item) => item}
               renderItem={({ item }) =>
@@ -199,7 +200,7 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
 
           <View style={styles.column}>
             <Text style={styles.columnTitle}>区县</Text>
-            <FlatList
+            <FlashList
               data={districts}
               keyExtractor={(item) => item}
               renderItem={({ item }) =>

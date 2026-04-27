@@ -5,12 +5,12 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -142,7 +142,7 @@ export const FavoritesScreen: React.FC = () => {
 
   const keyExtractor = useCallback((item: ClothingItem) => item.id, []);
 
-  // 使用 getItemLayout 优化 FlatList 性能
+  // 使用 getItemLayout 优化 FlashList 性能
   const getItemLayout = useCallback(
     (_data: unknown, index: number) => ({
       length: LIST_ITEM_HEIGHT,
@@ -172,7 +172,7 @@ export const FavoritesScreen: React.FC = () => {
         <Text style={styles.headerTitle}>{t.profile.myFavorites}</Text>
         <View style={styles.backBtn} />
       </View>
-      <FlatList
+      <FlashList
         data={items}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -196,7 +196,7 @@ export const FavoritesScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         }
-        // FlatList 性能优化参数
+        // FlashList 性能优化参数
         getItemLayout={getItemLayout}
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}

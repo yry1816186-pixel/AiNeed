@@ -6,10 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  FlatList,
   RefreshControl,
   Alert,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -220,7 +220,7 @@ export const TryOnHistoryScreen: React.FC = () => {
         ))}
       </View>
 
-      <FlatList
+      <FlashList
         data={filteredItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}

@@ -12,18 +12,22 @@ export interface FlashListProps<T> extends Omit<FlatListProps<T>, "renderItem"> 
   ListEmptyComponent?: React.ComponentType | React.ReactElement | null;
 }
 
-export function FlashList<T>({
-  data,
-  renderItem,
-  estimatedItemSize,
-  masonry,
-  ListHeaderComponent,
-  ListFooterComponent,
-  ListEmptyComponent,
-  ...props
-}: FlashListProps<T>): React.ReactElement {
+export const FlashList = React.forwardRef(function FlashList<T>(
+  {
+    data,
+    renderItem,
+    estimatedItemSize,
+    masonry,
+    ListHeaderComponent,
+    ListFooterComponent,
+    ListEmptyComponent,
+    ...props
+  }: FlashListProps<T>,
+  ref: React.Ref<any>
+): React.ReactElement {
   return (
     <ShopifyFlashList
+      ref={ref}
       data={data}
       renderItem={renderItem}
       estimatedItemSize={estimatedItemSize ?? 200}
@@ -34,6 +38,6 @@ export function FlashList<T>({
       {...props}
     />
   );
-}
+}) as <T>(props: FlashListProps<T> & { ref?: React.Ref<any> }) => React.ReactElement;
 
 export default FlashList;

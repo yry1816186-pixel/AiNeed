@@ -15,7 +15,7 @@ import {
   normalizeColorSeason,
   type ColorSeason,
   type SeasonAccentColors,
-} from "../../theme/tokens/season-colors";
+} from "../../design-system/theme/tokens/season-colors";
 
 interface UseSeasonAccentReturn {
   /** 当前色彩季型（null 表示未分析或已清除） */

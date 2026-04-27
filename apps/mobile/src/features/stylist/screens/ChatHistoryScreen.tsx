@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -161,7 +155,7 @@ export const ChatHistoryScreen: React.FC = () => {
           <ActivityIndicator size="large" color={staticColors.primary} />
         </View>
       ) : (
-        <FlatList
+        <FlashList
           data={archivedSessions}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}

@@ -9,13 +9,13 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
-  FlatList,
   Animated,
   Alert,
   PanResponder,
   type ViewStyle,
   type ImageStyle,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Snackbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -273,7 +273,7 @@ export const CartScreenComponent: React.FC = () => {
         )}
       </View>
 
-      <FlatList
+      <FlashList
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item: cartItem }) => (

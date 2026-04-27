@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  FlatList,
   Animated,
   StyleProp,
   ViewStyle,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";

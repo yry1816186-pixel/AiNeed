@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import { View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";
@@ -58,10 +59,10 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             )}
           </TouchableOpacity>
 
-          <FlatList
+          <FlashList<UserCoupon>
             data={coupons}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
+            keyExtractor={(item: UserCoupon) => item.id}
+            renderItem={({ item }: { item: UserCoupon }) => {
               const isSelected = selectedCouponId === item.id;
               return (
                 <TouchableOpacity

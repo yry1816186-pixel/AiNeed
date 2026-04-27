@@ -51,6 +51,7 @@ interface AuthState {
   logout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
   setUser: (user: User | null) => void;
+  setToken: (token: string) => void;
   clearError: () => void;
   fetchProfile: () => Promise<void>;
   fetchPreferences: () => Promise<void>;
@@ -59,6 +60,7 @@ interface AuthState {
   updatePreferences: (data: Partial<UserPreferences>) => Promise<void>;
   updateStyleProfile: (data: Partial<StyleProfile>) => Promise<void>;
   refreshAll: () => Promise<void>;
+  setLoading: (loading: boolean) => void;
 }
 
 const secureStorageAdapter: StateStorage = {
@@ -370,6 +372,11 @@ export const useAuthStore = create<AuthState>()(
           isVip: deriveIsVip(user),
         })),
 
+      setToken: (token: string) => {
+        void persistTokens(token);
+        set({ accessToken: token, isAuthenticated: true });
+      },
+
       clearError: () => set({ error: null }),
 
       fetchProfile: async () => {
@@ -505,6 +512,9 @@ export const useAuthStore = create<AuthState>()(
         } catch (err) {
           set({ error: toAppError(err), isLoading: false });
         }
+      },
+      setLoading: (loading: boolean) => {
+        set({ isLoading: loading });
       },
     }),
     {

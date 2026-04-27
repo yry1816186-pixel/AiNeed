@@ -4,13 +4,13 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
   Image,
   Alert,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { stockNotificationApi, type StockNotification } from "../../../services/api/commerce.api";
@@ -134,7 +134,7 @@ export const StockNotificationScreen: React.FC = () => {
         <Text style={styles.headerTitle}>到货通知</Text>
       </View>
 
-      <FlatList
+      <FlashList
         data={notifications}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}

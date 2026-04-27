@@ -7,8 +7,8 @@ import {
   RefreshControl,
   Dimensions,
   ActivityIndicator,
-  FlatList,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -143,7 +143,7 @@ export const RecommendationsScreen: React.FC = () => {
     [handleItemPress]
   );
 
-  // 固定高度的卡片，使用 getItemLayout 优化 FlatList 性能
+  // 固定高度的卡片，使用 getItemLayout 优化 FlashList 性能
   const getItemLayout = useCallback(
     (_data: unknown, index: number) => ({
       length: CARD_HEIGHT,
@@ -224,7 +224,7 @@ export const RecommendationsScreen: React.FC = () => {
         ))}
       </View>
 
-      <FlatList
+      <FlashList
         data={items}
         keyExtractor={keyExtractor}
         renderItem={renderCard}
@@ -239,7 +239,7 @@ export const RecommendationsScreen: React.FC = () => {
           />
         }
         showsVerticalScrollIndicator={false}
-        // FlatList 性能优化参数
+        // FlashList 性能优化参数
         getItemLayout={getItemLayout}
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}

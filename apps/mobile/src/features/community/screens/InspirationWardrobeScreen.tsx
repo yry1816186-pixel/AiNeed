@@ -6,12 +6,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  FlatList,
   Image,
   RefreshControl,
   Alert,
   ScrollView,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
@@ -226,7 +226,7 @@ export const InspirationWardrobeScreen: React.FC = () => {
         </View>
       )}
 
-      <FlatList
+      <FlashList
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}

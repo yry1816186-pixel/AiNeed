@@ -5,12 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  FlatList,
   ActivityIndicator,
   type ViewStyle,
   type TextStyle,
   type ImageStyle,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -214,7 +214,7 @@ export const OutfitEditBottomSheet = React.forwardRef<BottomSheetModal, OutfitEd
               <Text style={styles.loadingText}>加载穿搭方案...</Text>
             </View>
           ) : (
-            <FlatList
+            <FlashList
               data={outfitOptions}
               keyExtractor={(item) => item.id}
               renderItem={renderOutfitOption}

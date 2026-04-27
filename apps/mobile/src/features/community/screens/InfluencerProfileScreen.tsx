@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  FlatList,
   Dimensions,
   type ImageStyle,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
@@ -303,7 +303,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         </View>
 
         {/* Posts grid */}
-        <FlatList
+        <FlashList
           data={posts}
           keyExtractor={(item) => item.id}
           renderItem={renderPostItem}

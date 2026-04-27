@@ -4,15 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import {
   useRoute,
   useNavigation,
@@ -146,7 +139,7 @@ export const AdvisorProfileScreen: React.FC = () => {
         {cases.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>服务案例</Text>
-            <FlatList
+            <FlashList
               horizontal
               data={cases}
               keyExtractor={(item: Record<string, unknown>) => String(item.bookingId)}

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
@@ -138,10 +139,12 @@ export const useUIStore = create<UIState>()(
 /** @deprecated 使用 `useTheme` from `../../../../contexts/ThemeContext` 代替 */
 export const useTheme = () => useUIStore((state) => state.theme);
 export const useModal = () =>
-  useUIStore((state) => ({
-    activeModal: state.activeModal,
-    modalData: state.modalData,
-  }));
+  useUIStore(
+    useShallow((state) => ({
+      activeModal: state.activeModal,
+      modalData: state.modalData,
+    }))
+  );
 export const useLoading = (key: string) => useUIStore((state) => state.isLoading[key] ?? false);
 export const useNotifications = () => useUIStore((state) => state.notifications);
 export const useOnline = () => useUIStore((state) => state.isOnline);

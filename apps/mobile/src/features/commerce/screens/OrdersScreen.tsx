@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   Image,
   RefreshControl,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -322,9 +322,9 @@ export const OrdersScreen: React.FC = () => {
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : orders.length === 0 ? (
-        <FlatList
+        <FlashList
           data={[]}
-          renderItem={null}
+          renderItem={() => null}
           ListEmptyComponent={
             <View style={styles.emptyState}>
               <Ionicons name="bag-handle-outline" size={64} color={colors.textTertiary} />
@@ -347,7 +347,7 @@ export const OrdersScreen: React.FC = () => {
           }
         />
       ) : (
-        <FlatList
+        <FlashList
           data={orders}
           keyExtractor={(item) => item.id}
           renderItem={renderOrderCard}

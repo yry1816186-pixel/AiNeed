@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ColorSeason } from "@prisma/client";
-import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import * as QRCode from "qrcode";
 import { v4 as uuidv4 } from "uuid";
 
@@ -66,8 +65,9 @@ export class PosterGeneratorService {
     const seasonConfig = getTemplateByColorSeason(colorSeason);
     const template = seasonConfig.template;
 
+    const { createCanvas } = await import("canvas");
     const canvas = createCanvas(template.width, template.height);
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as any;
 
     this.drawBackground(ctx, template);
     this.drawHeader(ctx, template, colorSeason);
@@ -428,7 +428,8 @@ export class PosterGeneratorService {
       const base64Data = qrDataUrl.replace(/^data:image\/png;base64,/, "");
       const qrBuffer = Buffer.from(base64Data, "base64");
 
-      const img = new Image();
+      const { Image } = await import("canvas");
+      const img = new Image() as any;
       img.src = qrBuffer;
 
       const qrX = (template.width - qrCode.size) / 2;

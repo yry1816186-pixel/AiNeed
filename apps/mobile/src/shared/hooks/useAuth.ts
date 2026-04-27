@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useAuthStore } from "../../features/auth/stores/auth.store";
+import { useAuthStore } from "../../features/auth/stores";
 import type { LoginCredentials, RegisterData } from "../../types/user";
 import type { AppError } from "../../services/api/error";
 

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { useTheme } from "../../shared/contexts/ThemeContext";
 
@@ -181,7 +182,7 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
               <Text style={[styles.closeText, { color: colors.textTertiary }]}>关闭</Text>
             </TouchableOpacity>
           </View>
-          <FlatList data={currentData} keyExtractor={(item) => item} renderItem={renderItem} />
+          <FlashList data={currentData} keyExtractor={(item) => item} renderItem={renderItem} />
         </View>
       </View>
     </Modal>

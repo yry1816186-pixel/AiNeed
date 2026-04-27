@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  FlatList,
   Pressable,
   StatusBar,
   ViewStyle,
   ImageSourcePropType,
   Animated,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -112,7 +112,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
   backgroundColor = DesignTokens.colors.neutral[900],
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlashList>(null);
 
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
@@ -242,7 +242,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
           </AnimatedView>
         )}
 
-        <FlatList
+        <FlashList
           ref={flatListRef}
           data={images}
           renderItem={renderImage}
@@ -263,7 +263,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
         {showThumbnails && images.length > 1 && (
           <AnimatedView style={[styles.thumbnailsContainer, controlsAnimatedStyle]}>
             <BlurView intensity={80} style={styles.thumbnailsBlur}>
-              <FlatList
+              <FlashList
                 data={images}
                 renderItem={({ item, index }) => (
                   <GalleryThumbnail

@@ -6,9 +6,9 @@ import {
   Dimensions,
   Image,
   Pressable,
-  FlatList,
   ActivityIndicator,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -239,7 +239,7 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <FlatList
+      <FlashList
         data={[leftColumn, rightColumn]}
         keyExtractor={(_, index) => `column-${index}`}
         renderItem={({ item, index }) => renderColumn(item, index)}

@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationContainer } from "@react-navigation/native";
+import { useShallow } from "zustand/react/shallow";
 import { ErrorBoundary } from "./src/shared/components/ErrorBoundary";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import {
@@ -92,12 +93,14 @@ export default function App() {
     isLoading,
     token: authToken,
     setLoading,
-  } = useAuthStore((state) => ({
-    isAuthenticated: state.isAuthenticated,
-    isLoading: state.isLoading,
-    token: state.token,
-    setLoading: state.setLoading,
-  }));
+  } = useAuthStore(
+    useShallow((state) => ({
+      isAuthenticated: state.isAuthenticated,
+      isLoading: state.isLoading,
+      token: state.accessToken,
+      setLoading: state.setLoading,
+    }))
+  );
 
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 

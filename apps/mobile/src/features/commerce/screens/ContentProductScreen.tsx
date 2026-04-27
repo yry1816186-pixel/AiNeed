@@ -4,7 +4,6 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -12,6 +11,7 @@ import {
   type TextStyle,
   type ViewStyle,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, purchased, onPurchas
  * ContentProductScreen -- lists content products with purchase/unlock states.
  *
  * D-06: Content product listing with preview/unlock mode.
- * Uses FlatList of product cards, checking purchase status per product.
+ * Uses FlashList of product cards, checking purchase status per product.
  */
 export const ContentProductScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
@@ -224,7 +224,7 @@ export const ContentProductScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       {renderHeader()}
-      <FlatList
+      <FlashList
         data={products}
         renderItem={renderProduct}
         keyExtractor={(item) => item.productType}

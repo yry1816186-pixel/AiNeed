@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   TextInput,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useConsultantStore } from "../stores/consultantStore";
 import { ConsultantCard } from "../components/ConsultantCard";
@@ -119,7 +119,7 @@ export const AdvisorListScreen: React.FC = () => {
       )}
 
       {/* Consultant list */}
-      <FlatList
+      <FlashList
         data={displayData as unknown as Record<string, unknown>[]}
         keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
         renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (

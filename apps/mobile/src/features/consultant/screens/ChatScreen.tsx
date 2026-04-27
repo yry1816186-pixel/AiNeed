@@ -14,8 +14,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  FlatList,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import {
   useRoute,
   useNavigation,
@@ -49,7 +49,7 @@ export const ChatScreen: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<any>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export const ChatScreen: React.FC = () => {
       </View>
 
       {/* Messages */}
-      <FlatList
+      <FlashList
         ref={flatListRef}
         data={messages}
         keyExtractor={(item: ChatMessage) => item.id || Math.random().toString()}

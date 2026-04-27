@@ -15,7 +15,7 @@ interface UseLazyLoadReturn {
   visibleIndices: Set<number>;
   /** Check if a specific index is considered visible (within threshold) */
   isVisible: (index: number) => boolean;
-  /** Stable ref for FlatList viewability config */
+  /** Stable ref for FlashList viewability config */
   viewabilityConfig: {
     minimumViewTime: number;
     viewAreaCoveragePercentThreshold: number;
@@ -23,7 +23,7 @@ interface UseLazyLoadReturn {
 }
 
 /**
- * Custom hook for intersection-based lazy loading with FlatList integration.
+ * Custom hook for intersection-based lazy loading with FlashList integration.
  *
  * Tracks which items are visible in the viewport and preloads items
  * slightly ahead of the visible area for smoother scrolling.
@@ -37,7 +37,7 @@ export function useLazyLoad(options: UseLazyLoadOptions = {}): UseLazyLoadReturn
   const preloadThresholdRef = useRef(preloadThreshold);
 
   /**
-   * Called by FlatList onViewableItemsChanged.
+   * Called by FlashList onViewableItemsChanged.
    * Updates the visible indices set including preloaded positions.
    */
   const onViewableItemsChanged = useCallback(

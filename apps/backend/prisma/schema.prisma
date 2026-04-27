@@ -1240,6 +1240,8 @@ enum ConsentType {
   ai_domestic_no_crossborder
   data_export
   account_deletion
+  terms_of_service
+  privacy_policy
 }
 
 model UserConsent {

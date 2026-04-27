@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Spacing } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme";
@@ -46,12 +47,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>选择颜色</Text>
-      <FlatList
+      <FlashList<string>
         data={PRESET_COLORS}
-        keyExtractor={(item) => item}
+        keyExtractor={(item: string) => item}
         numColumns={5}
         scrollEnabled={false}
-        renderItem={({ item: color }) => {
+        renderItem={({ item: color }: { item: string }) => {
           const isSelected = selectedColor === color;
           return (
             <TouchableOpacity

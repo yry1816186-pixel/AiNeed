@@ -10,8 +10,8 @@ import {
   ActivityIndicator,
   RefreshControl,
   Dimensions,
-  FlatList,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -505,7 +505,7 @@ interface SearchResultListProps {
 export const SearchResultList: React.FC<SearchResultListProps> = React.memo(
   function SearchResultList({ results, isRefreshing, onRefresh, onItemPress, emptyContent }) {
     return (
-      <FlatList
+      <FlashList
         data={results}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ResultCard item={item} onPress={onItemPress} />}

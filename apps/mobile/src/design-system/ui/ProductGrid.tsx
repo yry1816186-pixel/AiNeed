@@ -1,5 +1,6 @@
 import React, { useCallback, memo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
@@ -140,7 +141,7 @@ export const ProductGrid = memo(function ProductGrid({
   const keyExtractor = useCallback((item: Product) => item.id, []);
 
   return (
-    <FlatList
+    <FlashList
       data={products}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -193,7 +194,7 @@ export const HorizontalProductList = memo(function HorizontalProductList({
   );
 
   return (
-    <FlatList
+    <FlashList
       data={products}
       renderItem={renderItem}
       horizontal

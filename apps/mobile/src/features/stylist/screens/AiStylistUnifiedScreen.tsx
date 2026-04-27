@@ -9,11 +9,11 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  FlatList,
   Image,
   Pressable,
   Alert,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";

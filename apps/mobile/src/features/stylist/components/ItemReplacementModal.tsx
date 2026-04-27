@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  FlatList,
-  Pressable,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, StyleSheet, Modal, Pressable, Image, ActivityIndicator } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { DesignTokens } from "../../../design-system/theme";
 import type { AlternativeItem } from "../stores/aiStylistStore";
 import { flatColors as colors } from "../../../design-system/theme";
@@ -94,7 +86,7 @@ export const ItemReplacementModal: React.FC<ItemReplacementModalProps> = ({
               <Text style={styles.emptyText}>No alternative items available</Text>
             </View>
           ) : (
-            <FlatList
+            <FlashList
               data={alternatives}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}

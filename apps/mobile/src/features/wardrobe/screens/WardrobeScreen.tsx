@@ -7,12 +7,12 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  FlatList,
   ActivityIndicator,
   RefreshControl,
   Image,
   Alert,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -228,7 +228,7 @@ export const WardrobeScreen: React.FC = () => {
     [handleItemPress]
   );
 
-  // 固定高度的网格项，使用 getItemLayout 优化 FlatList 性能
+  // 固定高度的网格项，使用 getItemLayout 优化 FlashList 性能
   // 避免每次渲染时计算高度，提升滚动性能
   const getItemLayout = useCallback(
     (_data: unknown, index: number) => ({
@@ -310,7 +310,7 @@ export const WardrobeScreen: React.FC = () => {
     }
 
     return (
-      <FlatList
+      <FlashList
         data={filteredItems}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
