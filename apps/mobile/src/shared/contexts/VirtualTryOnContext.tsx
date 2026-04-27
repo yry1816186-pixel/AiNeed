@@ -123,7 +123,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
           const updatedHistory = [result, ...state.history];
           await saveToStorage(updatedHistory);
         } else {
-          dispatch({ type: "SET_ERROR", payload: "Virtual try-on failed" });
+          dispatch({ type: "SET_ERROR", payload: "虚拟试衣失败，请重试" });
         }
 
         dispatch({ type: "SET_PROCESSING", payload: false });
@@ -131,7 +131,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         dispatch({
           type: "SET_ERROR",
-          payload: error instanceof Error ? error.message : "Unknown error",
+          payload: error instanceof Error ? error.message : "未知错误，请重试",
         });
         dispatch({ type: "SET_PROCESSING", payload: false });
         return null;
@@ -160,7 +160,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
           const updatedHistory = [result, ...state.history];
           await saveToStorage(updatedHistory);
         } else {
-          dispatch({ type: "SET_ERROR", payload: "Virtual try-on failed" });
+          dispatch({ type: "SET_ERROR", payload: "虚拟试衣失败，请重试" });
         }
 
         dispatch({ type: "SET_PROCESSING", payload: false });
@@ -168,7 +168,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         dispatch({
           type: "SET_ERROR",
-          payload: error instanceof Error ? error.message : "Unknown error",
+          payload: error instanceof Error ? error.message : "未知错误，请重试",
         });
         dispatch({ type: "SET_PROCESSING", payload: false });
         return null;

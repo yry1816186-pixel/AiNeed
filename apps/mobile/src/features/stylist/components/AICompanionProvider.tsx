@@ -413,7 +413,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           });
 
           if (!createResponse.success || !createResponse.data) {
-            throw new Error(createResponse.error?.message || "Failed to create session");
+            throw new Error(createResponse.error?.message || "创建会话失败，请重试");
           }
 
           responseData = createResponse.data;
@@ -423,12 +423,12 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             setSessionId(currentSessionId);
             void saveSession(currentSessionId!, responseData.sessionExpiresAt);
           } else {
-            throw new Error("Failed to create session");
+            throw new Error("创建会话失败，请重试");
           }
         } else {
           const response = await aiStylistApi.sendMessage(currentSessionId, content);
           if (!response.success || !response.data) {
-            throw new Error(response.error?.message || "Failed to send message");
+            throw new Error(response.error?.message || "发送消息失败，请重试");
           }
           responseData = response.data;
         }

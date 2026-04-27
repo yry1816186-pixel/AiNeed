@@ -141,7 +141,7 @@ export const WardrobeScreen: React.FC = () => {
         });
 
         if (!response.success || !response.data) {
-          throw new Error(response.error?.message || "Failed to load items");
+          throw new Error(response.error?.message || "加载衣橱失败，请重试");
         }
 
         const newItems = response.data.items;
@@ -151,7 +151,7 @@ export const WardrobeScreen: React.FC = () => {
         setHasMore(pageNum < totalPages);
         setPage(pageNum);
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Failed to load items";
+        const message = err instanceof Error ? err.message : "加载衣橱失败，请重试";
         setError(message);
       }
     },
