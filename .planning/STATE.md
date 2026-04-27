@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 12 Plan 05 complete
-last_updated: "2026-04-27T05:43:12Z"
-last_activity: 2026-04-27 -- Phase 12 Plan 05 complete (SMOKE-TEST 76 checks + demo 3-run test plan + crash prevention report)
+stopped_at: Phase 12 Plan 06 complete
+last_updated: "2026-04-27T06:00:12Z"
+last_activity: 2026-04-27 -- Phase 12 Plan 06 complete (PPT 16-item calibration + Q-A 40 questions + Demo 2:30 buffer + software copyright status)
 progress:
   total_phases: 12
   completed_phases: 11
   total_plans: 57
-  completed_plans: 55
-  percent: 96
+  completed_plans: 56
+  percent: 98
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (re-initialized 2026-04-22 from XUNO_FINAL_PLAN.md)
 ## Current Position
 
 Phase: 12 (competition-sprint-bugfix-demo-polish) — PLANNED
-Status: Plan 05 complete (5/6)
-Last activity: 2026-04-27 -- Phase 12 Plan 05 complete (SMOKE-TEST 76 checks + demo 3-run test plan + crash prevention report)
+Status: Plan 06 complete (6/6) -- Phase 12 COMPLETE
+Last activity: 2026-04-27 -- Phase 12 Plan 06 complete (PPT 16-item calibration + Q-A 40 questions + Demo 2:30 buffer + software copyright status)
 
-Progress: [##################_] 96% (55/57 plans done)
+Progress: [####################] 98% (56/57 plans done)
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [##################_] 96% (55/57 plans done)
 - Phase 12 Plan 03 completed in 11min (3 tasks, 7 files, 10s timeout + retry + degraded templates + voice STT/TTS Chinese fallback + auto-greeting).
 - Phase 12 Plan 04 completed in 11min (3 tasks, 5 files, Docker 17+15 healthchecks, warmup 30s timeout + TTS precache + PASS/FAIL summary, demo-preflight.sh).
 - Phase 12 Plan 05 completed in 7min (3 tasks, 3 files, SMOKE-TEST 76 checks + demo 3-run test plan + crash prevention report).
+- Phase 12 Plan 06 completed in 13min (4 tasks, 9 files, PPT 16-item calibration + Q-A 40 questions + Demo 2:30 buffer + copyright status).
 - Phase 2 completed in 3 plans across 2 waves. Plan 01 (orchestrator+cold-start+quiz+AB) took 14min, Plan 02 (curated wardrobe+complementary) took 18min, Plan 03 (output std+degraded+seed) took 17min.
 
 ## Accumulated Context
@@ -136,6 +137,15 @@ Critical decisions affecting current work:
 - **Plan 04**: Share cards (Outfit/TryOn/Report) + QR encoder + useShareCapture + useSharePrivacy -- 6 tests, 10 files
 - **Plan 05**: CapsuleWardrobeProcessor (BullMQ + Python DialogEngine async AI generation) -- 11 tests, 30-piece plan
 
+### Phase 12 Complete
+
+- **Plan 01**: 全量 Bug 清零 — 22 个 any 类型消除, 6 个错误消息中文化, throw new Error 替换为安全降级 (13min, 3 commits)
+- **Plan 02**: 视觉体验打磨 — skeleton loading 统一, chat bubble 圆角, 推荐 card borderRadius, 空状态中文文案 (6min, 2 commits)
+- **Plan 03**: Demo 路径加固 — 10s 超时 + 重试 + 降级模板, 语音 STT/TTS 中文 fallback, 自动问候 (11min, 3 commits)
+- **Plan 04**: Docker 健康检查全覆盖 — 17+15 个 healthcheck, warmup 30s 超时 + TTS 预缓存, demo-preflight.sh (11min, 3 commits)
+- **Plan 05**: SMOKE-TEST + Demo 测试计划 — 76 项冒烟检查清单, 3 轮 demo 测试模板, 崩溃预防报告 (7min, 3 commits)
+- **Plan 06**: 比赛材料终审 — PPT 16 项校准 + FashionSigLIP 全量替换, Q-A 40 题, Demo 2:30 缓冲校准, 软著材料状态确认 (13min, 4 commits)
+
 ### Phase 11 In Progress
 
 - **Plan 01**: Docker 全链路演示环境 — demo-local.sh (一键启动 15 服务) + demo-warmup.sh (健康检查+缓存预热) + DEMO_MODE 端口绑定 + DEMO-CHECKLIST.md (17 项检查清单) (6min, 2 commits)
@@ -209,6 +219,6 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-27T05:43:12Z
-Stopped at: Phase 12 Plan 05 complete
-Resume file: .planning/phases/12-competition-sprint-bugfix-demo-polish/12-05-SUMMARY.md
+Last session: 2026-04-27T06:00:12Z
+Stopped at: Phase 12 Plan 06 complete -- Phase 12 COMPLETE
+Resume file: .planning/phases/12-competition-sprint-bugfix-demo-polish/12-06-SUMMARY.md

@@ -27,7 +27,7 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 **Track C: Competition Demo Sprint (Phase 11-12)**
 
 - [x] **Phase 11: Competition Demo Sprint + Production Validation** - Docker 全链路跑通, GLM fallback 双保险, tsc 零错误, 软著提交, Demo Script 校准, 备赛材料打磨 ✓ 2026-04-26
-- [ ] **Phase 12: 比赛冲刺 — 全量 Bug 修复 + Demo 零崩溃 + 体验提升** - any 清扫, ErrorBoundary 加固, 视觉打磨, Demo 路径零崩溃, Docker 全链路, 材料终审
+- [x] **Phase 12: 比赛冲刺 — 全量 Bug 修复 + Demo 零崩溃 + 体验提升** - any 清扫, ErrorBoundary 加固, 视觉打磨, Demo 路径零崩溃, Docker 全链路, 材料终审 ✓ 2026-04-27
 
 ## Phase Details
 
@@ -222,28 +222,28 @@ Plans:
 - [x] 12-02-PLAN.md — 视觉体验打磨 (Skeleton + 对话气泡 + 卡片 + 空状态) ✓ 2026-04-27
 - [x] 12-03-PLAN.md — Demo 路径加固 (对话链路 + Onboarding + 语音 fallback) ✓ 2026-04-27
 - [x] 12-04-PLAN.md — Docker 全链路验证 + 预热脚本 + Demo Checklist ✓ 2026-04-27
-- [ ] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志
-- [ ] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著)
+- [x] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志 ✓ 2026-04-27
+- [x] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著) ✓ 2026-04-27
 
 ## Progress
 
 **Execution Order:**
 Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term) -> 11 (competition sprint)
 
-| Phase                                           | Plans Complete | Status      | Completed  |
-| ----------------------------------------------- | -------------- | ----------- | ---------- |
-| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete    | 2026-04-24 |
-| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
-| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
-| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
-| 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
-| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
-| 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
-| 10. Production + Launch + Competition           | 5/5            | Complete    | 2026-04-26 |
-| 11. Competition Demo Sprint + Validation        | 6/6            | Complete    | 2026-04-26 |
-| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 4/6            | In Progress | —          |
+| Phase                                           | Plans Complete | Status   | Completed  |
+| ----------------------------------------------- | -------------- | -------- | ---------- |
+| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete | 2026-04-24 |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete | 2026-04-24 |
+| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete | 2026-04-24 |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete | 2026-04-25 |
+| 5. E2E Integration + Competition Demo           | 4/4            | Complete | 2026-04-25 |
+| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete | 2026-04-25 |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete | 2026-04-27 |
+| 8. Mini Program + Photo Search + Social         | 4/4            | Complete | 2026-04-25 |
+| 9. Monetization + Community + Sharing           | 5/5            | Complete | 2026-04-26 |
+| 10. Production + Launch + Competition           | 5/5            | Complete | 2026-04-26 |
+| 11. Competition Demo Sprint + Validation        | 6/6            | Complete | 2026-04-26 |
+| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 6/6            | Complete | 2026-04-27 |
 
 ---
 
