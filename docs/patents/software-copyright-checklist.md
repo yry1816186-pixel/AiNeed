@@ -27,11 +27,33 @@
 
 | 序号 | 材料名称             | 要求                              | 状态   |
 | ---- | -------------------- | --------------------------------- | ------ |
-| 1    | 软件著作权登记申请表 | 在线填写                          | 待准备 |
-| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行     | 待准备 |
-| 3    | 软件鉴别材料-文档    | 软件说明书（功能说明+操作说明）   | 待准备 |
-| 4    | 申请人身份证明       | 企业：营业执照副本复印件          | 待准备 |
+| 1    | 软件著作权登记申请表 | 在线填写                          | 可提交 |
+| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行     | 已提取 |
+| 3    | 软件鉴别材料-文档    | 软件说明书（功能说明+操作说明）   | 可提交 |
+| 4    | 申请人身份证明       | 个人：身份证复印件                | 待用户 |
 | 5    | AI 合规声明          | 2025 年新规：涉 AI 软著需额外提交 | 待准备 |
+
+### 软著 1 材料就绪状态 (Phase 12 终审确认)
+
+**源代码文档 (60 页)**:
+
+- `docs/LEGAL/source-code/front-30-pages.txt` — 1515 行 (30 页 x 50 行/页, 含文件头和行号)
+- `docs/LEGAL/source-code/back-30-pages.txt` — 1507 行 (30 页 x 50 行/页, 含文件头和行号)
+- 脱敏处理: extract-source-code.ps1 自动替换 API_KEY/SECRET/PASSWORD/TOKEN 为 `***REDACTED***`
+- 需手动操作: A4 打印, 等宽字体 Consolas 10pt, 页眉软件名称+版本号, 页脚页码
+
+**用户手册 (2103 行, ~40 页)**:
+
+- `docs/LEGAL/software-manual.md` — 7 章完整说明书 (概述/运行环境/安装/功能/API/数据库/安全)
+- SCREENSHOT 标记 6 处: 需从运行 App 截图后插入
+- FashionSigLIP 已替换 FashionCLIP, GLM-5 fallback 已记录
+- 需手动操作: A4 打印, 插入 App 截图, 添加页眉页脚
+
+**申请表**:
+
+- `docs/software-copyright/application.md` — 基本信息已填写 (开发完成日期 2026-04-25)
+- 待用户操作: 填写著作权人姓名/地址/电话, 在线提交 CNIPA 系统
+- AI 合规声明: 需单独准备说明 AI 在开发中的角色 (代码生成辅助, 架构和决策由人完成)
 
 ### 源代码选取方案
 
@@ -101,26 +123,17 @@
 | 序号 | 材料名称             | 要求                          | 状态   |
 | ---- | -------------------- | ----------------------------- | ------ |
 | 1    | 软件著作权登记申请表 | 在线填写                      | 待准备 |
-| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行 | 待准备 |
+| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行 | 待提取 |
 | 3    | 软件鉴别材料-文档    | 软件说明书                    | 待准备 |
-| 4    | 申请人身份证明       | 企业：营业执照副本复印件      | 待准备 |
+| 4    | 申请人身份证明       | 个人：身份证复印件            | 待用户 |
 | 5    | AI 合规声明          | 涉 AI 功能（试穿/分析）       | 待准备 |
 
-### 源代码选取方案
+### 软著 2 材料就绪状态 (Phase 12 终审确认)
 
-**前 30 页**：
-
-1. `apps/mobile/App.tsx` — 应用入口与导航
-2. `apps/mobile/src/screens/HomeScreen.tsx` — 首页
-3. `apps/mobile/src/screens/ExploreScreen.tsx` — 探索页
-4. `apps/mobile/src/screens/WardrobeScreen.tsx` — 衣橱页
-5. `apps/mobile/src/stores/` — Zustand stores
-
-**后 30 页**：
-
-1. `apps/mobile/src/services/` — API 服务层
-2. `apps/mobile/src/screens/ProfileScreen.tsx` — 个人页
-3. `apps/mobile/src/components/` — UI 组件
+- 源代码选取方案已规划 (5 个前端文件), 需运行 extract-source-code.ps1 提取
+- 移动端架构已改为 feature-based (16 features), 6-tab 已改为 4-tab (Today/Discover/Stylist/Me)
+- 需更新导航描述: 6-tab → 4-tab
+- 软件说明书需重新编写以匹配当前移动端架构
 
 ---
 
@@ -147,16 +160,26 @@
 - 虚拟试穿预处理与后处理
 - CIELAB 色彩科学工具库
 - GLM API 集成层
+- DialogEngine 对话状态机 (GREET→CONTEXT→SCENE/DIRECT/CHAT→GENERATE→ACTION→WRAP)
+- FashionRuleLoader 264+ 条时尚规则
+- StudioSignalDetector 5 种工作室信号
+- Edge-TTS 语音合成集成
 
 ### 需准备材料
 
 | 序号 | 材料名称             | 要求                          | 状态   |
 | ---- | -------------------- | ----------------------------- | ------ |
 | 1    | 软件著作权登记申请表 | 在线填写                      | 待准备 |
-| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行 | 待准备 |
+| 2    | 软件鉴别材料-源代码  | 前 30 页+后 30 页，每页 50 行 | 待提取 |
 | 3    | 软件鉴别材料-文档    | 软件说明书                    | 待准备 |
-| 4    | 申请人身份证明       | 企业：营业执照副本复印件      | 待准备 |
-| 5    | AI 合规声明          | 核心 AI 服务，必须提交        | 待准备 |
+
+### 软著 3 材料就绪状态 (Phase 12 终审确认)
+
+- AI 服务已大幅扩展: DialogEngine + FashionRuleLoader + StudioSignalDetector + Edge-TTS
+- 源代码选取方案需更新: 加入 dialog_engine.py + fashion_rule_loader.py + studio_signal_detector.py
+- 软件说明书需包含新增模块的功能说明
+  | 4 | 申请人身份证明 | 企业：营业执照副本复印件 | 待准备 |
+  | 5 | AI 合规声明 | 核心 AI 服务，必须提交 | 待准备 |
 
 ### 源代码选取方案
 
