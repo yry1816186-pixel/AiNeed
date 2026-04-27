@@ -16,9 +16,9 @@ WARN=0
 check() {
   local name="$1" status="$2" detail="${3:-}"
   case "$status" in
-    PASS) icon="OK"; ((PASS++)) ;;
-    FAIL) icon="FAIL"; ((FAIL++)) ;;
-    WARN) icon="WARN"; ((WARN++)) ;;
+    PASS) icon="OK"; PASS=$((PASS + 1)) ;;
+    FAIL) icon="FAIL"; FAIL=$((FAIL + 1)) ;;
+    WARN) icon="WARN"; WARN=$((WARN + 1)) ;;
   esac
   printf "  %-8s %-45s %s\n" "[${icon}]" "${name}" "${detail}"
 }
@@ -38,8 +38,8 @@ else
 fi
 
 # 1.2 Disk space
-DISK_AVAIL=$(docker system df --format '{{.Available}}' 2>/dev/null || echo "unknown")
-if [ "$DISK_AVAIL" != "unknown" ]; then
+DISK_AVAIL=$(docker system df 2>/dev/null | tail -1 | awk '{print $NF}' || echo "unknown")
+if [ "$DISK_AVAIL" != "unknown" ] && [ -n "$DISK_AVAIL" ]; then
   check "Docker 磁盘空间 (>10GB)" PASS "可用: ${DISK_AVAIL}"
 else
   check "Docker 磁盘空间" WARN "无法检查"
@@ -95,13 +95,17 @@ echo ""
 echo "--- 服务检查 ---"
 echo ""
 
-COMPOSE_FILE="docker-compose.production.yml"
+COMPOSE_FILE="docker-compose.dev.yml"
 if [ ! -f "$COMPOSE_FILE" ]; then
-  COMPOSE_FILE="docker-compose.yml"
+  COMPOSE_FILE="docker-compose.production.yml"
+  if [ ! -f "$COMPOSE_FILE" ]; then
+    COMPOSE_FILE="docker-compose.yml"
+  fi
 fi
 
 # 3.1 Check running services
-RUNNING_COUNT=$(docker compose -f "$COMPOSE_FILE" ps --status running -q 2>/dev/null | wc -l || echo "0")
+RUNNING_RAW=$(docker compose -f "$COMPOSE_FILE" ps --status running -q 2>/dev/null || true)
+RUNNING_COUNT=$(echo "$RUNNING_RAW" | grep -c . 2>/dev/null || echo "0")
 TOTAL_SERVICES=$(grep -c "^  [a-z-]*:$" "$COMPOSE_FILE" 2>/dev/null || echo "0")
 # Filter to actual services (exclude network/volume lines)
 ACTUAL_SERVICES=$(grep "^  [a-z-]*:$" "$COMPOSE_FILE" | grep -v -E "(data|network|volume)" | wc -l)
@@ -137,17 +141,8 @@ echo "--- 端口检查 ---"
 echo ""
 
 check_port() {
-  local name="$1" port="$2"
-  if command -v node > /dev/null 2>&1; then
-    HTTP_CODE=$(node -e "
-      const port = ${port};
-      fetch('http://localhost:' + port + '/')
-        .then(r => process.exit(r.ok ? 0 : 1))
-        .catch(() => process.exit(1))
-    " 2>/dev/null && echo "200" || echo "000")
-  else
-    HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "http://localhost:${port}/" --max-time 3 2>/dev/null || echo "000")
-  fi
+  local name="$1" port="$2" path="${3:-/}"
+  HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "http://localhost:${port}${path}" --max-time 3 2>/dev/null || echo "000")
 
   if [ "$HTTP_CODE" != "000" ]; then
     check "${name} (port ${port})" PASS "HTTP ${HTTP_CODE}"
@@ -156,8 +151,8 @@ check_port() {
   fi
 }
 
-check_port "Backend API" 3001
-check_port "AI Service" 8002
+check_port "Backend API" 3001 "/api/docs"
+check_port "AI Service" 8002 "/health"
 
 # ==========================================
 # 总结

@@ -27,9 +27,9 @@ record_result() {
   local name="$1" status="$2" detail="${3:-}"
   RESULTS+=("${status}|${name}|${detail}")
   case "$status" in
-    PASS) ((PASS_COUNT++)) ;;
-    FAIL) ((FAIL_COUNT++)) ;;
-    SKIP) ((SKIP_COUNT++)) ;;
+    PASS) PASS_COUNT=$((PASS_COUNT + 1)) ;;
+    FAIL) FAIL_COUNT=$((FAIL_COUNT + 1)) ;;
+    SKIP) SKIP_COUNT=$((SKIP_COUNT + 1)) ;;
   esac
 }
 
