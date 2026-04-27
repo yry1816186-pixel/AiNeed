@@ -1,0 +1,1518 @@
+================================================================================
+寻裳移动客户端软件 V1.0 - 源代码
+软件著作权登记申请材料 - 软件鉴别材料
+================================================================================
+
+
+// ========== FILE: apps/mobile/src/features/stylist/screens/AiStylistUnifiedScreen.tsx ==========
+// Total lines: 1877 (showing 1177-1877)
+
+1177              <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
+1178            </View>
+1179          </View>
+1180          <View style={styles.messagesContainer}>
+1181            <ChatBubbleSkeleton />
+1182            <View style={{ height: DesignTokens.spacing[3] }} />
+1183            <ChatBubbleSkeleton isUser />
+1184            <View style={{ height: DesignTokens.spacing[3] }} />
+1185            <ChatBubbleSkeleton />
+1186          </View>
+1187        </SafeAreaView>
+1188      );
+1189    }
+1190  
+1191    return (
+1192      <SafeAreaView style={styles.container}>
+1193        <View style={styles.header}>
+1194          <View style={styles.headerCenter}>
+1195            <View style={styles.headerAvatar}>
+1196              <Ionicons name="sparkles" size={14} color={colors.surface} />
+1197            </View>
+1198            <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
+1199            <View style={styles.onlineIndicator} />
+1200          </View>
+1201          <TouchableOpacity
+1202            style={styles.headerBtn}
+1203            onPress={() => {
+1204              navigation.navigate("MainTabs", {
+1205                screen: "Stylist",
+1206                params: { screen: "SessionCalendar" },
+1207              });
+1208            }}
+1209            accessibilityLabel="历史记录"
+1210            accessibilityRole="button"
+1211            activeOpacity={0.7}
+1212          >
+1213            <Ionicons name="calendar-outline" size={22} color={colors.textSecondary} />
+1214          </TouchableOpacity>
+1215        </View>
+1216  
+1217        <KeyboardAvoidingView
+1218          style={styles.flex}
+1219          behavior={Platform.OS === "ios" ? "padding" : undefined}
+1220        >
+1221          <ScrollView
+1222            ref={scrollViewRef}
+1223            style={styles.chatScroll}
+1224            contentContainerStyle={styles.messagesContainer}
+1225            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+1226          >
+1227            {error && (
+1228              <View style={styles.errorBanner}>
+1229                <Ionicons name="alert-circle-outline" size={16} color={colors.error} />
+1230                <Text style={styles.errorText}>{error}</Text>
+1231                <TouchableOpacity
+1232                  onPress={clearError}
+1233                  accessibilityLabel="关闭错误提示"
+1234                  accessibilityRole="button"
+1235                  activeOpacity={0.7}
+1236                >
+1237                  <Text style={styles.errorDismiss}>关闭</Text>
+1238                </TouchableOpacity>
+1239              </View>
+1240            )}
+1241  
+1242            {messages.length === 0 && (
+1243              <View style={styles.welcomeSection}>
+1244                <View style={styles.welcomeDecorativeRing}>
+1245                  <View style={styles.welcomeIconCircle}>
+1246                    <Ionicons name="sparkles" size={36} color={colors.primary} />
+1247                  </View>
+1248                  <View style={styles.welcomeDotTopLeft} />
+1249                  <View style={styles.welcomeDotBottomRight} />
+1250                </View>
+1251                <Text style={styles.welcomeTitle}>{t.stylist.greeting}</Text>
+1252                <Text style={styles.welcomeSubtitle}>{t.stylist.askOccasion}</Text>
+1253                <View style={styles.welcomeDivider}>
+1254                  <View style={styles.welcomeDividerLine} />
+1255                  <View style={styles.welcomeDividerDot} />
+1256                  <View style={styles.welcomeDividerLine} />
+1257                </View>
+1258                <Text style={styles.welcomeHint}>选择下方场景快速开始</Text>
+1259              </View>
+1260            )}
+1261  
+1262            {messages.map((msg, idx) => (
+1263              <AnimatedMessageBubble
+1264                key={msg.id}
+1265                msg={msg}
+1266                index={idx}
+1267                outfitPlan={
+1268                  msg.role === "assistant" && idx === messages.length - 1 ? currentOutfitPlan : null
+1269                }
+1270                onItemPress={handleItemPress}
+1271                onTryOn={handleTryOn}
+1272                onLike={handleLike}
+1273                onStudioPress={handleStudioPress}
+1274              />
+1275            ))}
+1276  
+1277            {isGenerating && (
+1278              <View style={styles.assistantRow}>
+1279                <View style={[styles.aiAvatar, { backgroundColor: accentColor }]}>
+1280                  <Ionicons name="sparkles" size={12} color={colors.surface} />
+1281                </View>
+1282                <View style={styles.typingBubble}>
+1283                  <CoralTypingDots />
+1284                  <Text style={styles.typingLabel}>正在为你搭配...</Text>
+1285                </View>
+1286              </View>
+1287            )}
+1288          </ScrollView>
+1289  
+1290          <View style={styles.sceneRowContainer}>
+1291            <ScrollView
+1292              horizontal
+1293              showsHorizontalScrollIndicator={false}
+1294              contentContainerStyle={styles.sceneScrollContent}
+1295            >
+1296              {orderedScenes.map((scene) => (
+1297                <AnimatedSceneChip
+1298                  key={scene.key}
+1299                  scene={scene}
+1300                  accentColor={accentColor}
+1301                  onPress={() => handleScenePress(scene)}
+1302                  disabled={isGenerating}
+1303                />
+1304              ))}
+1305            </ScrollView>
+1306          </View>
+1307  
+1308          {/* Quick Reply bar -- shows when backend provides options */}
+1309          {quickReplies.length > 0 ? (
+1310            <QuickReplyBar options={quickReplies} onSelect={handleQuickReplySelect} />
+1311          ) : (
+1312            <QuickReplyBar
+1313              options={["换一套", "不喜欢", "推荐其他风格"]}
+1314              onSelect={handleQuickReplySelect}
+1315            />
+1316          )}
+1317  
+1318          <View style={styles.inputBar}>
+1319            <View style={styles.inputWrapper}>
+1320              <TextInput
+1321                style={styles.input}
+1322                placeholder={t.stylist.askStyle}
+1323                placeholderTextColor={colors.textTertiary}
+1324                value={inputText}
+1325                onChangeText={setInputText}
+1326                onSubmitEditing={handleSend}
+1327                editable={!isGenerating}
+1328                multiline
+1329                maxLength={500}
+1330                accessibilityLabel="输入穿搭需求"
+1331              />
+1332            </View>
+1333            {voiceAvailable ? (
+1334              <VoiceButton
+1335                isListening={isVoiceListening}
+1336                onPress={isVoiceListening ? stopVoiceListening : startVoiceListening}
+1337              />
+1338            ) : (
+1339              __DEV__ && (
+1340                <View style={{ marginRight: DesignTokens.spacing["2.5"], alignItems: "center" }}>
+1341                  <Ionicons
+1342                    name="mic-off-outline"
+1343                    size={DesignTokens.typography.sizes.lg}
+1344                    color={colors.textTertiary}
+1345                  />
+1346                  <Text
+1347                    style={{
+1348                      fontSize: 9,
+1349                      color: colors.textTertiary,
+1350                      marginTop: 2,
+1351                    }}
+1352                  >
+1353                    当前设备不支持语音
+1354                  </Text>
+1355                </View>
+1356              )
+1357            )}
+1358            <SendButton
+1359              onPress={handleSend}
+1360              disabled={!inputText.trim() || isGenerating}
+1361              isGenerating={isGenerating}
+1362              hasText={!!inputText.trim()}
+1363            />
+1364          </View>
+1365        </KeyboardAvoidingView>
+1366  
+1367        <PresetQuestionsModal
+1368          visible={showPresetModal}
+1369          questions={presetQuestions}
+1370          onSelect={handlePresetSelect}
+1371          onClose={() => setShowPresetModal(false)}
+1372        />
+1373  
+1374        <FeedbackModal
+1375          visible={showFeedbackModal}
+1376          onSubmit={handleFeedback}
+1377          onClose={() => setShowFeedbackModal(false)}
+1378        />
+1379  
+1380        <ItemReplacementModal
+1381          visible={!!replacementTarget}
+1382          originalItemName={replacementTarget?.itemName ?? ""}
+1383          alternatives={alternatives}
+1384          isLoading={isAlternativesLoading}
+1385          onSelect={handleReplacementSelect}
+1386          onClose={() => setReplacementTarget(null)}
+1387        />
+1388  
+1389        {/* Try-on BottomSheet -- presents within chat screen (no page navigation) */}
+1390        <TryOnBottomSheet
+1391          ref={tryOnRef}
+1392          outfit={selectedOutfit}
+1393          onSave={async () => {
+1394            tryOnRef.current?.dismiss();
+1395          }}
+1396          onTryAnother={() => {
+1397            tryOnRef.current?.dismiss();
+1398            setInputText("再来一套");
+1399          }}
+1400        />
+1401  
+1402        {(__DEV__ || demoMode) && (
+1403          <>
+1404            <TouchableOpacity
+1405              style={styles.debugFab}
+1406              onPress={() => debugPanelRef.current?.present()}
+1407              activeOpacity={0.7}
+1408              accessibilityLabel="演示配置"
+1409              accessibilityRole="button"
+1410            >
+1411              <Ionicons name="settings" size={22} color={DesignTokens.colors.neutral.white} />
+1412            </TouchableOpacity>
+1413            <ProfileDebugPanel ref={debugPanelRef} />
+1414          </>
+1415        )}
+1416      </SafeAreaView>
+1417    );
+1418  };
+1419  
+1420  // ============ Styles ============
+1421  
+1422  const useStyles = createStyles((c) => ({
+1423    container: { flex: 1, backgroundColor: c.background },
+1424    flex: { flex: 1 },
+1425    centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
+1426    debugFab: {
+1427      position: "absolute",
+1428      bottom: 100,
+1429      left: 16,
+1430      width: 44,
+1431      height: 44,
+1432      borderRadius: 22,
+1433      backgroundColor: DesignTokens.colors.brand.terracotta,
+1434      alignItems: "center",
+1435      justifyContent: "center",
+1436      elevation: 4,
+1437      shadowColor: "#000",
+1438      shadowOffset: { width: 0, height: 2 },
+1439      shadowOpacity: 0.2,
+1440      shadowRadius: 4,
+1441    },
+1442  
+1443    header: {
+1444      flexDirection: "row",
+1445      alignItems: "center",
+1446      justifyContent: "space-between",
+1447      paddingHorizontal: Spacing.sm,
+1448      paddingVertical: Spacing.sm,
+1449      backgroundColor: c.surface,
+1450      borderBottomWidth: 1,
+1451      borderBottomColor: c.borderLight,
+1452      shadowColor: DesignTokens.colors.neutral.black,
+1453      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1454      shadowOpacity: 0.04,
+1455      shadowRadius: Spacing.sm,
+1456      elevation: 2,
+1457    },
+1458    headerCenter: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
+1459    headerAvatar: {
+1460      width: 28,
+1461      height: 28,
+1462      borderRadius: BorderRadius.md,
+1463      backgroundColor: c.primary,
+1464      alignItems: "center",
+1465      justifyContent: "center",
+1466      shadowColor: c.primary,
+1467      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1468      shadowOpacity: 0.3,
+1469      shadowRadius: DesignTokens.spacing["1.5"],
+1470      elevation: 3,
+1471    },
+1472    headerTitle: {
+1473      fontSize: DesignTokens.typography.sizes.md,
+1474      fontWeight: "700",
+1475      color: c.textPrimary,
+1476      letterSpacing: 0.2,
+1477    },
+1478    onlineIndicator: {
+1479      width: 7,
+1480      height: 7,
+1481      borderRadius: BorderRadius.xs,
+1482      backgroundColor: c.success,
+1483      shadowColor: c.success,
+1484      shadowOffset: { width: 0, height: 0 },
+1485      shadowOpacity: 0.5,
+1486      shadowRadius: Spacing.xs,
+1487      elevation: 2,
+1488    },
+1489    headerBtn: {
+1490      width: 40,
+1491      height: 40,
+1492      alignItems: "center",
+1493      justifyContent: "center",
+1494      borderRadius: BorderRadius.xl,
+1495    },
+1496  
+1497    chatScroll: { flex: 1, backgroundColor: c.background },
+1498    messagesContainer: { padding: Spacing.md, paddingBottom: Spacing.sm },
+1499  
+1500    welcomeSection: { alignItems: "center", paddingVertical: Spacing["5xl"] },
+1501    welcomeDecorativeRing: {
+1502      width: 100,
+1503      height: 100,
+1504      alignItems: "center",
+1505      justifyContent: "center",
+1506      marginBottom: DesignTokens.spacing[5],
+1507      position: "relative",
+1508    },
+1509    welcomeIconCircle: {
+1510      width: 72,
+1511      height: 72,
+1512      borderRadius: BorderRadius["3xl"],
+1513      backgroundColor: c.surface,
+1514      alignItems: "center",
+1515      justifyContent: "center",
+1516      borderWidth: 2,
+1517      borderColor: c.primary,
+1518      shadowColor: c.primary,
+1519      shadowOffset: { width: 0, height: Spacing.sm },
+1520      shadowOpacity: 0.15,
+1521      shadowRadius: DesignTokens.spacing[3],
+1522      elevation: 4,
+1523    },
+1524    welcomeDotTopLeft: {
+1525      position: "absolute",
+1526      top: Spacing.xs,
+1527      left: Spacing.sm,
+1528      width: 10,
+1529      height: 10,
+1530      borderRadius: BorderRadius.xs,
+1531      backgroundColor: c.warmSecondary,
+1532    },
+1533    welcomeDotBottomRight: {
+1534      position: "absolute",
+1535      bottom: Spacing.xs,
+1536      right: Spacing.sm,
+1537      width: Spacing.sm,
+1538      height: Spacing.sm,
+1539      borderRadius: BorderRadius.xs,
+1540      backgroundColor: c.warmAccent,
+1541    },
+1542    welcomeTitle: {
+1543      fontSize: DesignTokens.typography.sizes.xl,
+1544      fontWeight: "700",
+1545      color: c.textPrimary,
+1546      letterSpacing: 0.3,
+1547    },
+1548    welcomeSubtitle: {
+1549      fontSize: DesignTokens.typography.sizes.base,
+1550      color: c.textSecondary,
+1551      marginTop: Spacing.sm,
+1552      textAlign: "center",
+1553      lineHeight: DesignTokens.typography.sizes.xl,
+1554      paddingHorizontal: Spacing.xl,
+1555    },
+1556    welcomeDivider: {
+1557      flexDirection: "row",
+1558      alignItems: "center",
+1559      gap: Spacing.sm,
+1560      marginTop: Spacing.lg,
+1561      marginBottom: DesignTokens.spacing[3],
+1562    },
+1563    welcomeDividerLine: { width: Spacing.lg, height: 1, backgroundColor: c.warmAccent },
+1564    welcomeDividerDot: {
+1565      width: Spacing.xs,
+1566      height: Spacing.xs,
+1567      borderRadius: BorderRadius.xs,
+1568      backgroundColor: c.primary,
+1569    },
+1570    welcomeHint: {
+1571      fontSize: DesignTokens.typography.sizes.sm,
+1572      color: c.textTertiary,
+1573      fontWeight: "500",
+1574    },
+1575  
+1576    userBubbleRow: {
+1577      flexDirection: "row",
+1578      justifyContent: "flex-end",
+1579      marginBottom: DesignTokens.spacing[3],
+1580      alignItems: "flex-end",
+1581    },
+1582    userBubbleContent: {
+1583      maxWidth: "80%",
+1584      backgroundColor: c.primary,
+1585      borderTopLeftRadius: BorderRadius["2xl"],
+1586      borderTopRightRadius: BorderRadius["2xl"],
+1587      borderBottomLeftRadius: BorderRadius["2xl"],
+1588      borderBottomRightRadius: 4,
+1589      paddingHorizontal: 14,
+1590      paddingVertical: 14,
+1591      shadowColor: c.primary,
+1592      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1593      shadowOpacity: 0.2,
+1594      shadowRadius: Spacing.sm,
+1595      elevation: 3,
+1596    },
+1597    userBubbleText: {
+1598      fontSize: DesignTokens.typography.sizes.base,
+1599      lineHeight: 22,
+1600      color: c.surface,
+1601      fontWeight: "500",
+1602    },
+1603  
+1604    assistantBubbleRow: {
+1605      flexDirection: "row",
+1606      justifyContent: "flex-start",
+1607      marginBottom: DesignTokens.spacing[3],
+1608      alignItems: "flex-end",
+1609    },
+1610    aiAvatar: {
+1611      width: 32,
+1612      height: 32,
+1613      borderRadius: 16,
+1614      backgroundColor: c.primary,
+1615      alignItems: "center",
+1616      justifyContent: "center",
+1617      marginRight: Spacing.sm,
+1618      shadowColor: c.primary,
+1619      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1620      shadowOpacity: 0.2,
+1621      shadowRadius: Spacing.xs,
+1622      elevation: 2,
+1623    },
+1624    assistantBubbleContent: {
+1625      maxWidth: "80%",
+1626      backgroundColor: c.surface,
+1627      borderTopLeftRadius: BorderRadius["2xl"],
+1628      borderTopRightRadius: BorderRadius["2xl"],
+1629      borderBottomLeftRadius: 4,
+1630      borderBottomRightRadius: BorderRadius["2xl"],
+1631      paddingHorizontal: 14,
+1632      paddingVertical: 14,
+1633      borderWidth: 1,
+1634      borderColor: c.borderLight,
+1635      shadowColor: DesignTokens.colors.neutral.black,
+1636      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1637      shadowOpacity: 0.06,
+1638      shadowRadius: Spacing.sm,
+1639      elevation: 2,
+1640    },
+1641    assistantText: {
+1642      fontSize: DesignTokens.typography.sizes.base,
+1643      lineHeight: 22,
+1644      color: c.textPrimary,
+1645    },
+1646  
+1647    assistantRow: {
+1648      flexDirection: "row",
+1649      alignItems: "flex-end",
+1650      marginBottom: DesignTokens.spacing[3],
+1651    },
+1652    typingBubble: {
+1653      backgroundColor: c.surface,
+1654      borderTopLeftRadius: BorderRadius["2xl"],
+1655      borderTopRightRadius: BorderRadius["2xl"],
+1656      borderBottomLeftRadius: 4,
+1657      borderBottomRightRadius: BorderRadius["2xl"],
+1658      paddingHorizontal: 14,
+1659      paddingVertical: DesignTokens.spacing["3.5"],
+1660      flexDirection: "row",
+1661      alignItems: "center",
+1662      gap: Spacing.sm,
+1663      borderWidth: 1,
+1664      borderColor: c.borderLight,
+1665      shadowColor: DesignTokens.colors.neutral.black,
+1666      shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
+1667      shadowOpacity: 0.06,
+1668      shadowRadius: Spacing.sm,
+1669      elevation: 2,
+1670    },
+1671    typingLabel: {
+1672      fontSize: DesignTokens.typography.sizes.sm,
+1673      color: c.textTertiary,
+1674      fontWeight: "500",
+1675    },
+1676  
+1677    errorBanner: {
+1678      flexDirection: "row",
+1679      alignItems: "center",
+1680      marginBottom: DesignTokens.spacing[3],
+1681      padding: DesignTokens.spacing[3],
+1682      borderRadius: BorderRadius.lg,
+1683      backgroundColor: c.errorLight,
+1684      borderWidth: 1,
+1685      borderColor: c.errorLight,
+1686    },
+1687    errorText: {
+1688      fontSize: DesignTokens.typography.sizes.sm,
+1689      color: c.error,
+1690      flex: 1,
+1691      marginLeft: Spacing.sm,
+1692    },
+1693    errorDismiss: {
+1694      fontSize: DesignTokens.typography.sizes.sm,
+1695      color: c.error,
+1696      fontWeight: "600",
+1697      marginLeft: DesignTokens.spacing[3],
+1698    },
+1699  
+1700    sceneRowContainer: {
+1701      backgroundColor: c.surface,
+1702      borderTopWidth: 1,
+1703      borderTopColor: c.borderLight,
+1704      shadowColor: DesignTokens.colors.neutral.black,
+1705      shadowOffset: { width: 0, height: -DesignTokens.spacing["0.5"] },
+1706      shadowOpacity: 0.03,
+1707      shadowRadius: Spacing.sm,
+1708      elevation: 2,
+1709    },
+1710    sceneScrollContent: {
+1711      paddingHorizontal: DesignTokens.spacing[3],
+1712      paddingVertical: DesignTokens.spacing["2.5"],
+1713    },
+1714  
+1715    inputBar: {
+1716      flexDirection: "row",
+1717      alignItems: "flex-end",
+1718      paddingHorizontal: DesignTokens.spacing[3],
+1719      paddingVertical: DesignTokens.spacing["2.5"],
+1720      paddingBottom: DesignTokens.spacing[3],
+1721      backgroundColor: c.surface,
+1722      borderTopWidth: 1,
+1723      borderTopColor: c.borderLight,
+1724      shadowColor: DesignTokens.colors.neutral.black,
+1725      shadowOffset: { width: 0, height: -DesignTokens.spacing["0.5"] },
+1726      shadowOpacity: 0.04,
+1727      shadowRadius: Spacing.sm,
+1728      elevation: 3,
+1729    },
+1730    inputWrapper: {
+1731      flex: 1,
+1732      backgroundColor: c.background,
+1733      borderRadius: BorderRadius["2xl"],
+1734      paddingHorizontal: Spacing.md,
+1735      borderWidth: 1,
+1736      borderColor: c.borderLight,
+1737    },
+1738    input: {
+1739      flex: 1,
+1740      fontSize: DesignTokens.typography.sizes.base,
+1741      color: c.textPrimary,
+1742      maxHeight: Spacing["4xl"],
+1743      paddingVertical: DesignTokens.spacing["2.5"],
+1744      lineHeight: DesignTokens.typography.sizes.md,
+1745    },
+1746  
+1747    outfitCard: {
+1748      backgroundColor: c.backgroundSecondary,
+1749      borderRadius: DesignTokens.borderRadius["2xl"],
+1750      overflow: "hidden",
+1751      marginTop: DesignTokens.spacing[3],
+1752      borderWidth: 1,
+1753      borderColor: c.borderLight,
+1754      ...DesignTokens.shadows.sm,
+1755    },
+1756    outfitSummary: { padding: Spacing.md },
+1757    outfitBadge: {
+1758      flexDirection: "row",
+1759      alignItems: "center",
+1760      alignSelf: "flex-start",
+1761      paddingHorizontal: DesignTokens.spacing[3],
+1762      paddingVertical: DesignTokens.spacing["1.5"],
+1763      borderRadius: DesignTokens.borderRadius.lg,
+1764      marginBottom: DesignTokens.spacing[3],
+1765      backgroundColor: c.primary,
+1766    },
+1767    outfitBadgeText: {
+1768      fontSize: DesignTokens.typography.sizes.sm,
+1769      fontWeight: "600",
+1770      color: c.textInverse,
+1771      marginLeft: DesignTokens.spacing["1.5"],
+1772    },
+1773    outfitSummaryText: {
+1774      fontSize: DesignTokens.typography.sizes.base,
+1775      lineHeight: 22,
+1776      color: c.textPrimary,
+1777    },
+1778    outfitTabs: {
+1779      paddingHorizontal: Spacing.md,
+1780      paddingVertical: DesignTokens.spacing[3],
+1781      gap: Spacing.sm,
+1782    },
+1783    outfitTab: {
+1784      paddingHorizontal: Spacing.md,
+1785      paddingVertical: Spacing.sm,
+1786      borderRadius: DesignTokens.borderRadius.lg,
+1787      backgroundColor: c.backgroundSecondary,
+1788      borderWidth: 1,
+1789      borderColor: c.borderLight,
+1790    },
+1791    outfitTabActive: { backgroundColor: c.secondary + "20", borderColor: c.secondary },
+1792    outfitTabText: {
+1793      fontSize: DesignTokens.typography.sizes.sm,
+1794      fontWeight: "500",
+1795      color: c.textTertiary,
+1796    },
+1797    outfitTabTextActive: { color: c.secondary, fontWeight: "600" },
+1798    outfitItemsSection: { padding: Spacing.md, paddingTop: 0 },
+1799    outfitHeader: {
+1800      flexDirection: "row",
+1801      justifyContent: "space-between",
+1802      alignItems: "center",
+1803      marginBottom: DesignTokens.spacing[3],
+1804    },
+1805    outfitTitle: {
+1806      fontSize: DesignTokens.typography.sizes.lg,
+1807      fontWeight: "700",
+1808      color: c.textPrimary,
+1809    },
+1810    outfitTotalPrice: {
+1811      fontSize: DesignTokens.typography.sizes.base,
+1812      fontWeight: "600",
+1813      color: c.primary,
+1814    },
+1815    itemsScrollContent: { gap: Spacing.sm },
+1816    inlineItemCard: {
+1817      width: 100,
+1818      backgroundColor: c.surface,
+1819      borderRadius: DesignTokens.borderRadius.lg,
+1820      padding: DesignTokens.spacing[2],
+1821      borderWidth: 1,
+1822      borderColor: c.borderLight,
+1823      alignItems: "center",
+1824    },
+1825    inlineItemImage: {
+1826      width: 80,
+1827      height: 80,
+1828      borderRadius: DesignTokens.borderRadius.md,
+1829      marginBottom: Spacing.xs,
+1830    },
+1831    inlineItemPlaceholder: {
+1832      width: 80,
+1833      height: 80,
+1834      borderRadius: DesignTokens.borderRadius.md,
+1835      backgroundColor: c.backgroundSecondary,
+1836      alignItems: "center",
+1837      justifyContent: "center",
+1838      marginBottom: Spacing.xs,
+1839    },
+1840    inlineItemName: {
+1841      fontSize: DesignTokens.typography.sizes.xs,
+1842      fontWeight: "500",
+1843      color: c.textPrimary,
+1844      textAlign: "center",
+1845    },
+1846    inlineItemPrice: {
+1847      fontSize: DesignTokens.typography.sizes.xs,
+1848      fontWeight: "600",
+1849      color: c.primary,
+1850      marginTop: 2,
+1851    },
+1852    outfitActions: {
+1853      flexDirection: "row",
+1854      justifyContent: "space-around",
+1855      paddingVertical: DesignTokens.spacing[3],
+1856      borderTopWidth: 1,
+1857      borderTopColor: c.borderLight,
+1858    },
+1859    actionButton: {
+1860      flexDirection: "row",
+1861      alignItems: "center",
+1862      gap: DesignTokens.spacing["1.5"],
+1863      paddingHorizontal: Spacing.md,
+1864      paddingVertical: DesignTokens.spacing[2],
+1865      borderRadius: DesignTokens.borderRadius.lg,
+1866      backgroundColor: c.primary + "10",
+1867    },
+1868    actionButtonText: {
+1869      fontSize: DesignTokens.typography.sizes.sm,
+1870      fontWeight: "600",
+1871      color: c.primary,
+1872    },
+1873    likeButton: { backgroundColor: c.warmAccent + "10" },
+1874    likeButtonText: { color: c.warmAccent },
+1875  }));
+1876  
+1877  export default withErrorBoundary(AiStylistUnifiedScreen);
+
+// ========== FILE: apps/mobile/src/features/wardrobe/screens/WardrobeScreen.tsx ==========
+// Total lines: 726 (showing 1-999999)
+
+   1  /* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+   2  import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+   3  import {
+   4    View,
+   5    Text,
+   6    StyleSheet,
+   7    ScrollView,
+   8    TouchableOpacity,
+   9    TextInput,
+  10    ActivityIndicator,
+  11    RefreshControl,
+  12    Image,
+  13    Alert,
+  14  } from "react-native";
+  15  import { FlashList } from "@shopify/flash-list";
+  16  import { useNavigation } from "@react-navigation/native";
+  17  import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+  18  import { SafeAreaView } from "react-native-safe-area-context";
+  19  import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+  20  import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
+  21  import { useTranslation } from "../../../i18n";
+  22  import { useTheme } from "../../../shared/contexts/ThemeContext";
+  23  import { clothingApi } from "../../../services/api/clothing.api";
+  24  import { outfitApi } from "../../../services/api/outfit.api";
+  25  import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
+  26  import type { RootStackParamList } from "../../../types/navigation";
+  27  import { ImportSheet } from "../components/ImportSheet";
+  28  import { DesignTokens, Spacing, flatColors as staticColors } from "../../../design-system/theme";
+  29  
+  30  type Navigation = NativeStackNavigationProp<RootStackParamList>;
+  31  
+  32  const PAGE_SIZE = 20;
+  33  
+  34  const ALL_CATEGORIES = Object.entries(CATEGORY_LABELS) as [ClothingCategory, string][];
+  35  
+  36  interface WardrobeStats {
+  37    clothingTotal: number;
+  38    outfitTotal: number;
+  39    byCategory: Record<string, number>;
+  40  }
+  41  
+  42  /**
+  43   * 服装卡片组件 - 使用 React.memo 优化
+  44   * 避免父组件状态变化时不必要的重渲染
+  45   */
+  46  interface ClothingGridItemProps {
+  47    item: ClothingItem;
+  48    onPress: (item: ClothingItem) => void;
+  49  }
+  50  
+  51  const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: ClothingGridItemProps) {
+  52    const { colors } = useTheme();
+  53    const imageSource = item.thumbnailUri || item.imageUri;
+  54    const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
+  55  
+  56    return (
+  57      <TouchableOpacity
+  58        style={styles.gridItem}
+  59        onPress={() => onPress(item)}
+  60        activeOpacity={0.7}
+  61        accessibilityLabel={`${item.name || categoryLabel}, ${categoryLabel}`}
+  62        accessibilityRole="button"
+  63      >
+  64        <View style={styles.gridItemImageContainer}>
+  65          {imageSource ? (
+  66            <Image source={{ uri: imageSource }} style={styles.gridItemImage} resizeMode="cover" />
+  67          ) : (
+  68            <View style={styles.gridItemPlaceholder}>
+  69              <Ionicons name="shirt-outline" size={32} color={colors.textTertiary} />
+  70            </View>
+  71          )}
+  72          {item.isFavorite && (
+  73            <View style={styles.favoriteBadge}>
+  74              <Ionicons name="heart" size={12} color={colors.surface} />
+  75            </View>
+  76          )}
+  77        </View>
+  78        <Text style={styles.gridItemName} numberOfLines={1}>
+  79          {item.name || categoryLabel}
+  80        </Text>
+  81        <Text style={styles.gridItemCategory} numberOfLines={1}>
+  82          {categoryLabel}
+  83        </Text>
+  84      </TouchableOpacity>
+  85    );
+  86  });
+  87  
+  88  export const WardrobeScreen: React.FC = () => {
+  89    const navigation = useNavigation<Navigation>();
+  90    useScreenTracking("Wardrobe");
+  91    const t = useTranslation();
+  92  
+  93    const [stats, setStats] = useState<WardrobeStats>({
+  94      clothingTotal: 0,
+  95      outfitTotal: 0,
+  96      byCategory: {},
+  97    });
+  98    const [items, setItems] = useState<ClothingItem[]>([]);
+  99    const [loading, setLoading] = useState(true);
+ 100    const [refreshing, setRefreshing] = useState(false);
+ 101    const [loadingMore, setLoadingMore] = useState(false);
+ 102    const [page, setPage] = useState(1);
+ 103    const [hasMore, setHasMore] = useState(true);
+ 104    const [selectedCategory, setSelectedCategory] = useState<ClothingCategory | null>(null);
+ 105    const [searchQuery, setSearchQuery] = useState("");
+ 106    const [error, setError] = useState<string | null>(null);
+ 107    const [showImportSheet, setShowImportSheet] = useState(false);
+ 108  
+ 109    const fetchStats = useCallback(async () => {
+ 110      try {
+ 111        const [clothingRes, outfitRes] = await Promise.all([
+ 112          clothingApi.getStats(),
+ 113          outfitApi.getStats(),
+ 114        ]);
+ 115  
+ 116        const clothingTotal = clothingRes.data?.total ?? 0;
+ 117        const byCategory = clothingRes.data?.byCategory ?? {};
+ 118        const outfitTotal = outfitRes.data?.total ?? 0;
+ 119  
+ 120        setStats({ clothingTotal, outfitTotal, byCategory });
+ 121      } catch (err) {
+ 122        // Stats fetch failure should not block the UI
+ 123      }
+ 124    }, []);
+ 125  
+ 126    const fetchItems = useCallback(
+ 127      async (pageNum: number, isRefresh: boolean = false) => {
+ 128        try {
+ 129          if (isRefresh) {
+ 130            setError(null);
+ 131          }
+ 132  
+ 133          const response = await clothingApi.getAll({
+ 134            filter: {
+ 135              category: selectedCategory,
+ 136              searchQuery: searchQuery.trim() || undefined,
+ 137            },
+ 138            sort: { field: "createdAt", direction: "desc" },
+ 139            page: pageNum,
+ 140            limit: PAGE_SIZE,
+ 141          });
+ 142  
+ 143          if (!response.success || !response.data) {
+ 144            throw new Error(response.error?.message || "加载衣橱失败，请重试");
+ 145          }
+ 146  
+ 147          const newItems = response.data.items;
+ 148          const totalPages = response.data.totalPages;
+ 149  
+ 150          setItems((prev) => (isRefresh ? newItems : [...prev, ...newItems]));
+ 151          setHasMore(pageNum < totalPages);
+ 152          setPage(pageNum);
+ 153        } catch (err: unknown) {
+ 154          const message = err instanceof Error ? err.message : "加载衣橱失败，请重试";
+ 155          setError(message);
+ 156        }
+ 157      },
+ 158      [selectedCategory, searchQuery]
+ 159    );
+ 160  
+ 161    const initialLoad = useCallback(async () => {
+ 162      setLoading(true);
+ 163      setItems([]);
+ 164      setPage(1);
+ 165      setHasMore(true);
+ 166      try {
+ 167        await Promise.all([fetchStats(), fetchItems(1, true)]);
+ 168      } finally {
+ 169        setLoading(false);
+ 170      }
+ 171    }, [fetchStats, fetchItems]);
+ 172  
+ 173    useEffect(() => {
+ 174      void initialLoad();
+ 175    }, [initialLoad]);
+ 176  
+ 177    const handleRefresh = useCallback(async () => {
+ 178      setRefreshing(true);
+ 179      setItems([]);
+ 180      setPage(1);
+ 181      setHasMore(true);
+ 182      await Promise.all([fetchStats(), fetchItems(1, true)]);
+ 183      setRefreshing(false);
+ 184    }, [fetchStats, fetchItems]);
+ 185  
+ 186    const handleLoadMore = useCallback(async () => {
+ 187      if (loadingMore || !hasMore) {
+ 188        return;
+ 189      }
+ 190      setLoadingMore(true);
+ 191      await fetchItems(page + 1);
+ 192      setLoadingMore(false);
+ 193    }, [loadingMore, hasMore, page, fetchItems]);
+ 194  
+ 195    const handleCategorySelect = useCallback((category: ClothingCategory | null) => {
+ 196      setSelectedCategory(category);
+ 197    }, []);
+ 198  
+ 199    const handleSearch = useCallback((query: string) => {
+ 200      setSearchQuery(query);
+ 201    }, []);
+ 202  
+ 203    const handleItemPress = useCallback(
+ 204      (item: ClothingItem) => {
+ 205        navigation.navigate("Product", { clothingId: item.id });
+ 206      },
+ 207      [navigation]
+ 208    );
+ 209  
+ 210    const filteredItems = useMemo(() => {
+ 211      if (!searchQuery.trim()) {
+ 212        return items;
+ 213      }
+ 214      const q = searchQuery.toLowerCase().trim();
+ 215      return items.filter(
+ 216        (item) =>
+ 217          item.name?.toLowerCase().includes(q) ||
+ 218          item.brand?.toLowerCase().includes(q) ||
+ 219          item.color?.toLowerCase().includes(q) ||
+ 220          item.tags?.some((tag) => tag.toLowerCase().includes(q))
+ 221      );
+ 222    }, [items, searchQuery]);
+ 223  
+ 224    const renderItem = useCallback(
+ 225      ({ item }: { item: ClothingItem }) => (
+ 226        <ClothingGridItem item={item} onPress={handleItemPress} />
+ 227      ),
+ 228      [handleItemPress]
+ 229    );
+ 230  
+ 231    // 固定高度的网格项，使用 getItemLayout 优化 FlashList 性能
+ 232    // 避免每次渲染时计算高度，提升滚动性能
+ 233    const getItemLayout = useCallback(
+ 234      (_data: unknown, index: number) => ({
+ 235        length: GRID_ITEM_HEIGHT,
+ 236        offset: GRID_ITEM_HEIGHT * Math.floor(index / 2) + GRID_ROW_GAP * Math.floor(index / 2),
+ 237        index,
+ 238      }),
+ 239      []
+ 240    );
+ 241  
+ 242    const renderFooter = useCallback(() => {
+ 243      if (!loadingMore) {
+ 244        return null;
+ 245      }
+ 246      return (
+ 247        <View style={styles.loadingMoreContainer}>
+ 248          <ActivityIndicator size="small" color={staticColors.primary} />
+ 249        </View>
+ 250      );
+ 251    }, [loadingMore]);
+ 252  
+ 253    const renderEmpty = useCallback(() => {
+ 254      if (loading) {
+ 255        return null;
+ 256      }
+ 257  
+ 258      return (
+ 259        <View style={styles.emptyContainer}>
+ 260          <Ionicons name="shirt-outline" size={64} color={staticColors.textTertiary} />
+ 261          <Text style={styles.emptyText}>
+ 262            {searchQuery.trim() || selectedCategory ? t.search.noResults : t.wardrobe.title}
+ 263          </Text>
+ 264          <Text style={styles.emptySubtext}>
+ 265            {searchQuery.trim() || selectedCategory
+ 266              ? "试试其他筛选条件"
+ 267              : "点击右上角添加你的第一件服装"}
+ 268          </Text>
+ 269          {!searchQuery.trim() && !selectedCategory && (
+ 270            <TouchableOpacity
+ 271              style={styles.emptyAddButton}
+ 272              onPress={() => navigation.navigate("AddClothing", {})}
+ 273              accessibilityLabel="添加服装"
+ 274              accessibilityRole="button"
+ 275            >
+ 276              <Ionicons name="add" size={20} color={staticColors.surface} />
+ 277              <Text style={styles.emptyAddButtonText}>{t.wardrobe.addClothing}</Text>
+ 278            </TouchableOpacity>
+ 279          )}
+ 280        </View>
+ 281      );
+ 282    }, [loading, searchQuery, selectedCategory, navigation]);
+ 283  
+ 284    // 使用 useMemo 缓存渲染内容，避免不必要的重渲染
+ 285    const content = useMemo(() => {
+ 286      if (loading) {
+ 287        return (
+ 288          <View style={styles.loadingContainer}>
+ 289            <ActivityIndicator size="large" color={staticColors.primary} />
+ 290            <Text style={styles.loadingText}>加载中...</Text>
+ 291          </View>
+ 292        );
+ 293      }
+ 294  
+ 295      if (error && items.length === 0) {
+ 296        return (
+ 297          <View style={styles.errorContainer}>
+ 298            <Ionicons name="alert-circle-outline" size={48} color={staticColors.error} />
+ 299            <Text style={styles.errorText}>{error}</Text>
+ 300            <TouchableOpacity
+ 301              style={styles.retryButton}
+ 302              onPress={initialLoad}
+ 303              accessibilityLabel="重试加载"
+ 304              accessibilityRole="button"
+ 305            >
+ 306              <Text style={styles.retryButtonText}>重试</Text>
+ 307            </TouchableOpacity>
+ 308          </View>
+ 309        );
+ 310      }
+ 311  
+ 312      return (
+ 313        <FlashList
+ 314          data={filteredItems}
+ 315          keyExtractor={(item) => item.id}
+ 316          renderItem={renderItem}
+ 317          numColumns={2}
+ 318          columnWrapperStyle={styles.gridRow}
+ 319          contentContainerStyle={filteredItems.length === 0 ? styles.flatListEmpty : styles.flatList}
+ 320          refreshControl={
+ 321            <RefreshControl
+ 322              refreshing={refreshing}
+ 323              onRefresh={handleRefresh}
+ 324              colors={[staticColors.primary]}
+ 325              tintColor={staticColors.primary}
+ 326            />
+ 327          }
+ 328          onEndReached={handleLoadMore}
+ 329          onEndReachedThreshold={0.3}
+ 330          ListFooterComponent={renderFooter}
+ 331          ListEmptyComponent={renderEmpty}
+ 332          showsVerticalScrollIndicator={false}
+ 333          getItemLayout={getItemLayout}
+ 334          maxToRenderPerBatch={10}
+ 335          windowSize={5}
+ 336          initialNumToRender={10}
+ 337        />
+ 338      );
+ 339    }, [
+ 340      loading,
+ 341      error,
+ 342      items.length,
+ 343      filteredItems,
+ 344      refreshing,
+ 345      renderItem,
+ 346      renderFooter,
+ 347      renderEmpty,
+ 348      handleRefresh,
+ 349      handleLoadMore,
+ 350      initialLoad,
+ 351      getItemLayout,
+ 352    ]);
+ 353  
+ 354    return (
+ 355      <SafeAreaView style={styles.container}>
+ 356        <View style={styles.header}>
+ 357          <Text style={styles.headerTitle}>{t.wardrobe.title}</Text>
+ 358          <View style={styles.headerActions}>
+ 359            <TouchableOpacity
+ 360              style={styles.importButton}
+ 361              onPress={() => setShowImportSheet(true)}
+ 362              accessibilityLabel="导入衣橱"
+ 363              accessibilityRole="button"
+ 364            >
+ 365              <Ionicons name="download-outline" size={22} color={staticColors.primary} />
+ 366            </TouchableOpacity>
+ 367            <TouchableOpacity
+ 368              style={styles.addButton}
+ 369              onPress={() => navigation.navigate("AddClothing", {})}
+ 370              accessibilityLabel="添加服装"
+ 371              accessibilityRole="button"
+ 372            >
+ 373              <Ionicons name="add" size={24} color={staticColors.surface} />
+ 374            </TouchableOpacity>
+ 375          </View>
+ 376        </View>
+ 377  
+ 378        <View style={styles.statsRow}>
+ 379          <View style={styles.statCard}>
+ 380            <Text style={styles.statNumber}>{stats.clothingTotal}</Text>
+ 381            <Text style={styles.statLabel}>服装</Text>
+ 382          </View>
+ 383          <View style={styles.statCard}>
+ 384            <Text style={styles.statNumber}>{stats.outfitTotal}</Text>
+ 385            <Text style={styles.statLabel}>搭配</Text>
+ 386          </View>
+ 387        </View>
+ 388  
+ 389        <View style={styles.searchContainer}>
+ 390          <Ionicons
+ 391            name="search-outline"
+ 392            size={18}
+ 393            color={staticColors.textTertiary}
+ 394            style={styles.searchIcon}
+ 395          />
+ 396          <TextInput
+ 397            style={styles.searchInput}
+ 398            placeholder="搜索服装名称、品牌..."
+ 399            placeholderTextColor={staticColors.textTertiary}
+ 400            value={searchQuery}
+ 401            onChangeText={handleSearch}
+ 402            returnKeyType="search"
+ 403            clearButtonMode="while-editing"
+ 404            accessibilityLabel="搜索服装"
+ 405          />
+ 406        </View>
+ 407  
+ 408        <ScrollView
+ 409          horizontal
+ 410          showsHorizontalScrollIndicator={false}
+ 411          style={styles.categoryScroll}
+ 412          contentContainerStyle={styles.categoryScrollContent}
+ 413        >
+ 414          <TouchableOpacity
+ 415            style={[styles.categoryTab, selectedCategory === null && styles.categoryTabActive]}
+ 416            onPress={() => handleCategorySelect(null)}
+ 417            accessibilityLabel="全部"
+ 418            accessibilityRole="button"
+ 419            accessibilityState={{ selected: selectedCategory === null }}
+ 420          >
+ 421            <Text
+ 422              style={[
+ 423                styles.categoryTabText,
+ 424                selectedCategory === null && styles.categoryTabTextActive,
+ 425              ]}
+ 426            >
+ 427              全部
+ 428            </Text>
+ 429          </TouchableOpacity>
+ 430          {ALL_CATEGORIES.map(([category, label]) => (
+ 431            <TouchableOpacity
+ 432              key={category}
+ 433              style={[styles.categoryTab, selectedCategory === category && styles.categoryTabActive]}
+ 434              onPress={() => handleCategorySelect(category)}
+ 435              accessibilityLabel={label}
+ 436              accessibilityRole="button"
+ 437              accessibilityState={{ selected: selectedCategory === category }}
+ 438            >
+ 439              <Text
+ 440                style={[
+ 441                  styles.categoryTabText,
+ 442                  selectedCategory === category && styles.categoryTabTextActive,
+ 443                ]}
+ 444              >
+ 445                {label}
+ 446                {stats.byCategory[category] !== null &&
+ 447                  stats.byCategory[category] > 0 &&
+ 448                  ` (${stats.byCategory[category]})`}
+ 449              </Text>
+ 450            </TouchableOpacity>
+ 451          ))}
+ 452        </ScrollView>
+ 453  
+ 454        {content}
+ 455  
+ 456        <ImportSheet
+ 457          visible={showImportSheet}
+ 458          onClose={() => setShowImportSheet(false)}
+ 459          onImported={() => initialLoad()}
+ 460        />
+ 461      </SafeAreaView>
+ 462    );
+ 463  };
+ 464  
+ 465  const GRID_ITEM_HEIGHT = 220; // 图片高度 + 文字高度 + padding
+ 466  const GRID_ROW_GAP = 12;
+ 467  
+ 468  const styles = StyleSheet.create({
+ 469    container: {
+ 470      flex: 1,
+ 471      backgroundColor: staticColors.background,
+ 472    },
+ 473    header: {
+ 474      flexDirection: "row",
+ 475      alignItems: "center",
+ 476      justifyContent: "space-between",
+ 477      padding: DesignTokens.spacing[5],
+ 478      backgroundColor: staticColors.surface,
+ 479      borderBottomWidth: 1,
+ 480      borderBottomColor: staticColors.border,
+ 481    },
+ 482    headerTitle: {
+ 483      fontSize: DesignTokens.typography.sizes["2xl"],
+ 484      fontWeight: "700",
+ 485      color: staticColors.textPrimary,
+ 486    },
+ 487    headerActions: {
+ 488      flexDirection: "row",
+ 489      gap: Spacing.sm,
+ 490      alignItems: "center",
+ 491    },
+ 492    importButton: {
+ 493      width: DesignTokens.spacing[10],
+ 494      height: DesignTokens.spacing[10],
+ 495      borderRadius: 20,
+ 496      backgroundColor: staticColors.background,
+ 497      alignItems: "center",
+ 498      justifyContent: "center",
+ 499      borderWidth: 1,
+ 500      borderColor: staticColors.border,
+ 501    },
+ 502    addButton: {
+ 503      width: DesignTokens.spacing[10],
+ 504      height: DesignTokens.spacing[10],
+ 505      borderRadius: 20,
+ 506      backgroundColor: staticColors.primary,
+ 507      alignItems: "center",
+ 508      justifyContent: "center",
+ 509    },
+ 510    statsRow: {
+ 511      flexDirection: "row",
+ 512      gap: DesignTokens.spacing[3],
+ 513      padding: Spacing.md,
+ 514      paddingBottom: Spacing.sm,
+ 515    },
+ 516    statCard: {
+ 517      flex: 1,
+ 518      backgroundColor: staticColors.surface,
+ 519      borderRadius: 16,
+ 520      padding: Spacing.md,
+ 521      alignItems: "center",
+ 522      shadowColor: staticColors.neutral[900],
+ 523      shadowOffset: { width: 0, height: 1 },
+ 524      shadowOpacity: 0.05,
+ 525      shadowRadius: 3,
+ 526      elevation: 2,
+ 527    },
+ 528    statNumber: {
+ 529      fontSize: DesignTokens.typography.sizes["3xl"],
+ 530      fontWeight: "700",
+ 531      color: staticColors.primary,
+ 532    },
+ 533    statLabel: {
+ 534      fontSize: DesignTokens.typography.sizes.sm,
+ 535      color: staticColors.textSecondary,
+ 536      marginTop: DesignTokens.spacing["0.5"],
+ 537    },
+ 538    searchContainer: {
+ 539      flexDirection: "row",
+ 540      alignItems: "center",
+ 541      backgroundColor: staticColors.surface,
+ 542      marginHorizontal: Spacing.md,
+ 543      marginVertical: Spacing.sm,
+ 544      borderRadius: 12,
+ 545      paddingHorizontal: DesignTokens.spacing[3],
+ 546      borderWidth: 1,
+ 547      borderColor: staticColors.border,
+ 548    },
+ 549    searchIcon: {
+ 550      marginRight: Spacing.sm,
+ 551    },
+ 552    searchInput: {
+ 553      flex: 1,
+ 554      height: DesignTokens.spacing[10],
+ 555      fontSize: DesignTokens.typography.sizes.base,
+ 556      color: staticColors.textPrimary,
+ 557    },
+ 558    categoryScroll: {
+ 559      maxHeight: DesignTokens.spacing[11],
+ 560      marginVertical: Spacing.xs,
+ 561    },
+ 562    categoryScrollContent: {
+ 563      paddingHorizontal: Spacing.md,
+ 564      gap: Spacing.sm,
+ 565      alignItems: "center",
+ 566    },
+ 567    categoryTab: {
+ 568      paddingHorizontal: DesignTokens.spacing["3.5"],
+ 569      paddingVertical: Spacing.sm,
+ 570      borderRadius: 20,
+ 571      backgroundColor: staticColors.surface,
+ 572      borderWidth: 1,
+ 573      borderColor: staticColors.border,
+ 574    },
+ 575    categoryTabActive: {
+ 576      backgroundColor: staticColors.primary,
+ 577      borderColor: staticColors.primary,
+ 578    },
+ 579    categoryTabText: {
+ 580      fontSize: DesignTokens.typography.sizes.sm,
+ 581      fontWeight: "500",
+ 582      color: staticColors.textSecondary,
+ 583    },
+ 584    categoryTabTextActive: {
+ 585      color: staticColors.surface,
+ 586      fontWeight: "600",
+ 587    },
+ 588    flatList: {
+ 589      paddingHorizontal: DesignTokens.spacing[3],
+ 590      paddingTop: Spacing.sm,
+ 591      paddingBottom: DesignTokens.spacing[5],
+ 592    },
+ 593    flatListEmpty: {
+ 594      flexGrow: 1,
+ 595    },
+ 596    gridRow: {
+ 597      gap: DesignTokens.spacing[3],
+ 598      marginBottom: DesignTokens.spacing[3],
+ 599    },
+ 600    gridItem: {
+ 601      flex: 1,
+ 602      backgroundColor: staticColors.surface,
+ 603      borderRadius: 12,
+ 604      overflow: "hidden",
+ 605      shadowColor: staticColors.neutral[900],
+ 606      shadowOffset: { width: 0, height: 1 },
+ 607      shadowOpacity: 0.06,
+ 608      shadowRadius: 3,
+ 609      elevation: 2,
+ 610    },
+ 611    gridItemImageContainer: {
+ 612      position: "relative",
+ 613      width: "100%",
+ 614      aspectRatio: 1,
+ 615      backgroundColor: staticColors.placeholderBg,
+ 616    },
+ 617    gridItemImage: {
+ 618      width: "100%",
+ 619      height: "100%",
+ 620    },
+ 621    gridItemPlaceholder: {
+ 622      flex: 1,
+ 623      alignItems: "center",
+ 624      justifyContent: "center",
+ 625      backgroundColor: staticColors.placeholderBg,
+ 626    },
+ 627    favoriteBadge: {
+ 628      position: "absolute",
+ 629      top: DesignTokens.spacing["1.5"],
+ 630      right: DesignTokens.spacing["1.5"],
+ 631      width: DesignTokens.spacing[5],
+ 632      height: DesignTokens.spacing[5],
+ 633      borderRadius: 10,
+ 634      backgroundColor: staticColors.error,
+ 635      alignItems: "center",
+ 636      justifyContent: "center",
+ 637    },
+ 638    gridItemName: {
+ 639      fontSize: DesignTokens.typography.sizes.sm,
+ 640      fontWeight: "600",
+ 641      color: staticColors.textPrimary,
+ 642      paddingHorizontal: Spacing.sm,
+ 643      paddingTop: Spacing.sm,
+ 644      paddingBottom: DesignTokens.spacing["0.5"],
+ 645    },
+ 646    gridItemCategory: {
+ 647      fontSize: DesignTokens.typography.sizes.sm,
+ 648      color: staticColors.textSecondary,
+ 649      paddingHorizontal: Spacing.sm,
+ 650      paddingBottom: Spacing.sm,
+ 651    },
+ 652    loadingContainer: {
+ 653      flex: 1,
+ 654      alignItems: "center",
+ 655      justifyContent: "center",
+ 656      paddingVertical: Spacing["3xl"],
+ 657    },
+ 658    loadingText: {
+ 659      fontSize: DesignTokens.typography.sizes.base,
+ 660      color: staticColors.textSecondary,
+ 661      marginTop: DesignTokens.spacing[3],
+ 662    },
+ 663    loadingMoreContainer: {
+ 664      paddingVertical: Spacing.md,
+ 665      alignItems: "center",
+ 666    },
+ 667    emptyContainer: {
+ 668      flex: 1,
+ 669      alignItems: "center",
+ 670      justifyContent: "center",
+ 671      paddingVertical: Spacing["3xl"],
+ 672    },
+ 673    emptyText: {
+ 674      fontSize: DesignTokens.typography.sizes.lg,
+ 675      fontWeight: "600",
+ 676      color: staticColors.textPrimary,
+ 677      marginTop: Spacing.md,
+ 678    },
+ 679    emptySubtext: {
+ 680      fontSize: DesignTokens.typography.sizes.base,
+ 681      color: staticColors.textSecondary,
+ 682      marginTop: Spacing.sm,
+ 683    },
+ 684    emptyAddButton: {
+ 685      flexDirection: "row",
+ 686      alignItems: "center",
+ 687      backgroundColor: staticColors.primary,
+ 688      borderRadius: 12,
+ 689      paddingHorizontal: DesignTokens.spacing[5],
+ 690      paddingVertical: DesignTokens.spacing[3],
+ 691      marginTop: DesignTokens.spacing[5],
+ 692      gap: DesignTokens.spacing["1.5"],
+ 693    },
+ 694    emptyAddButtonText: {
+ 695      fontSize: DesignTokens.typography.sizes.base,
+ 696      fontWeight: "600",
+ 697      color: staticColors.surface,
+ 698    },
+ 699    errorContainer: {
+ 700      flex: 1,
+ 701      alignItems: "center",
+ 702      justifyContent: "center",
+ 703      paddingVertical: Spacing["3xl"],
+ 704      paddingHorizontal: Spacing.xl,
+ 705    },
+ 706    errorText: {
+ 707      fontSize: DesignTokens.typography.sizes.base,
+ 708      color: staticColors.textSecondary,
+ 709      marginTop: DesignTokens.spacing[3],
+ 710      textAlign: "center",
+ 711    },
+ 712    retryButton: {
+ 713      marginTop: Spacing.md,
+ 714      paddingHorizontal: Spacing.lg,
+ 715      paddingVertical: DesignTokens.spacing["2.5"],
+ 716      borderRadius: 8,
+ 717      backgroundColor: staticColors.primary,
+ 718    },
+ 719    retryButtonText: {
+ 720      fontSize: DesignTokens.typography.sizes.base,
+ 721      fontWeight: "600",
+ 722      color: staticColors.surface,
+ 723    },
+ 724  });
+ 725  
+ 726  export default WardrobeScreen;
+
+// ========== FILE: apps/mobile/src/features/profile/screens/ProfileScreen.tsx ==========
+// Total lines: 660 (showing 1-74)
+
+   1  ﻿import { logger } from "../../../shared/utils/logger";
+   2  import React, { useCallback, useEffect, useState } from "react";
+   3  import {
+   4    View,
+   5    Text,
+   6    StyleSheet,
+   7    ScrollView,
+   8    TouchableOpacity,
+   9    ActivityIndicator,
+  10    RefreshControl,
+  11    Image,
+  12    Alert,
+  13  } from "react-native";
+  14  import { useNavigation } from "@react-navigation/native";
+  15  import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+  16  import { SafeAreaView } from "react-native-safe-area-context";
+  17  import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+  18  import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+  19  import Animated, { FadeInUp } from "react-native-reanimated";
+  20  import { useAuthStore } from "../../auth/stores";
+  21  import { authApi, userApi } from "../../auth/services/auth.api";
+  22  import { ProfileCompletenessBar } from "../components/ProfileCompletenessBar";
+  23  import { useProfileStore } from "../stores/profileStore";
+  24  import type { UserStats, User } from "../../auth/types/user";
+  25  import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+  26  import { navigateStylist } from "../../../navigation/navigationService";
+  27  import { useTheme } from "../../../shared/contexts/ThemeContext";
+  28  
+  29  // 引入增强主题令牌
+  30  import { flatColors } from "../../../design-system/theme";
+  31  import { DesignTokens } from "../../../design-system/theme";
+  32  import { typography } from "../../../design-system/theme/tokens/typography";
+  33  import { spacing } from "../../../design-system/theme/tokens/spacing";
+  34  import { shadows } from "../../../design-system/theme/tokens/shadows";
+  35  
+  36  import { seasonLabels, type ColorSeason } from "../../../design-system/theme";
+  37  import { useScreenTracking } from "../../../shared/hooks/useAnalytics";
+  38  import { useTranslation, useI18n } from "../../../i18n";
+  39  import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+  40  import { BrandPattern, BrandDivider } from "../components/brand/BrandMotif";
+  41  import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
+  42  import { ErrorState } from "../../../shared/components/states";
+  43  
+  44  type ProfileNavigationProp = NativeStackNavigationProp<ProfileStackParamList> & {
+  45    navigate<RouteName extends string>(...args: unknown[]): void;
+  46  };
+  47  
+  48  export const ProfileScreenComponent: React.FC = () => {
+  49    const { colors } = useTheme();
+  50    const navigation = useNavigation<ProfileNavigationProp>();
+  51    useScreenTracking("Profile");
+  52    const t = useTranslation();
+  53    const { language, setLanguage, getLanguageName, supportedLanguages } = useI18n();
+  54    const { user, logout, isVip } = useAuthStore();
+  55    const { completeness, loadCompleteness, colorAnalysis } = useProfileStore();
+  56    const { colorSeason, seasonAccent, setSeasonAccent } = useTheme();
+  57    const [stats, setStats] = useState<UserStats | null>(null);
+  58    const [loading, setLoading] = useState(true);
+  59    const [refreshing, setRefreshing] = useState(false);
+  60    const [error, setError] = useState<string | null>(null);
+  61  
+  62    // 季节强调色，回退到品牌色
+  63    const accentColor = seasonAccent?.accent ?? colors.primary;
+  64  
+  65    const fetchStats = useCallback(async () => {
+  66      try {
+  67        setError(null);
+  68        const response = await userApi.getStats();
+  69        if (response.success && response.data) {
+  70          setStats(response.data);
+  71        }
+  72      } catch (err) {
+  73        setError("加载失败，请稍后重试");
+  74        logger.error("Failed to load profile stats:", err);

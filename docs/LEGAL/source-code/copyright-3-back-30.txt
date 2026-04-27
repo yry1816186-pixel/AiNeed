@@ -1,0 +1,1520 @@
+================================================================================
+寻裳 AI 色彩体型智能分析系统 V1.0 - 源代码
+软件著作权登记申请材料 - 软件鉴别材料
+================================================================================
+
+
+// ========== FILE: ml/services/analysis/body_analyzer.py ==========
+// Total lines: 1723 (showing 1223-1723)
+
+1223          # 4. 计算体型优化分数
+1224          body_opt_score = self._calculate_body_optimization_score(
+1225              clothing_item, body_type
+1226          )
+1227  
+1228          # 计算加权总分
+1229          overall_score = (
+1230              cut_score * weights.get("cut_match", 0.35) +
+1231              color_score * weights.get("color_match", 0.25) +
+1232              style_score * weights.get("style_match", 0.25) +
+1233              body_opt_score * weights.get("body_optimization", 0.15)
+1234          )
+1235  
+1236          return FitScore(
+1237              overall_score=round(overall_score, 3),
+1238              body_type_score=round(body_opt_score, 3),
+1239              style_match_score=round(style_score, 3),
+1240              color_match_score=round(color_score, 3),
+1241              cut_match_score=round(cut_score, 3),
+1242              details={
+1243                  "category": category,
+1244                  "body_type": body_type.value,
+1245                  "color_season": color_season.value,
+1246                  "weights_used": weights,
+1247                  "recommendation": self._get_fit_recommendation(overall_score),
+1248              }
+1249          )
+1250  
+1251      def _calculate_cut_match_score(self, clothing_item: Dict[str, Any],
+1252                                     body_type: BodyType,
+1253                                     fit_rules: Dict[str, Any]) -> float:
+1254          """计算剪裁匹配分数"""
+1255          item_cut = clothing_item.get("cut", "").lower()
+1256          item_attributes = clothing_item.get("attributes", {})
+1257          cut_keywords = item_attributes.get("cut_keywords", [])
+1258  
+1259          # 合并所有剪裁相关关键词
+1260          all_cut_info = [item_cut] + cut_keywords
+1261  
+1262          # 获取该体型适合和不适合的剪裁
+1263          suitable_cuts = fit_rules.get("suitable_for", {}).get(body_type, [])
+1264          avoid_cuts = fit_rules.get("avoid_for", {}).get(body_type, [])
+1265  
+1266          if not all_cut_info or all(c == "" for c in all_cut_info):
+1267              return 0.5  # 无剪裁信息时返回中性分数
+1268  
+1269          score = 0.5  # 基础分
+1270  
+1271          for cut_info in all_cut_info:
+1272              cut_lower = cut_info.lower()
+1273  
+1274              # 检查是否匹配适合的剪裁
+1275              for suitable in suitable_cuts:
+1276                  if suitable.lower() in cut_lower or cut_lower in suitable.lower():
+1277                      score += 0.15
+1278                      break
+1279  
+1280              # 检查是否匹配不适合的剪裁
+1281              for avoid in avoid_cuts:
+1282                  if avoid.lower() in cut_lower or cut_lower in avoid.lower():
+1283                      score -= 0.20
+1284                      break
+1285  
+1286          return max(0.0, min(1.0, score))
+1287  
+1288      def _calculate_color_match_score(self, clothing_item: Dict[str, Any],
+1289                                       color_season: ColorSeason) -> float:
+1290          """计算颜色匹配分数"""
+1291          item_colors = clothing_item.get("colors", [])
+1292          if not item_colors:
+1293              return 0.5  # 无颜色信息时返回中性分数
+1294  
+1295          season_info = COLOR_SEASON_MATCHES.get(color_season, COLOR_SEASON_MATCHES[ColorSeason.AUTUMN])
+1296          best_colors = season_info.get("best_colors", [])
+1297          avoid_colors = season_info.get("avoid_colors", [])
+1298  
+1299          score = 0.5
+1300  
+1301          for color in item_colors:
+1302              color_lower = color.lower()
+1303  
+1304              # 检查是否匹配最佳颜色
+1305              for best in best_colors:
+1306                  if best.lower() in color_lower or color_lower in best.lower():
+1307                      score += 0.15
+1308                      break
+1309  
+1310              # 检查是否匹配应避免的颜色
+1311              for avoid in avoid_colors:
+1312                  if avoid.lower() in color_lower or color_lower in avoid.lower():
+1313                      score -= 0.15
+1314                      break
+1315  
+1316          return max(0.0, min(1.0, score))
+1317  
+1318      def _calculate_style_match_score(self, clothing_item: Dict[str, Any],
+1319                                       body_type: BodyType,
+1320                                       fit_rules: Dict[str, Any]) -> float:
+1321          """计算风格匹配分数"""
+1322          item_styles = clothing_item.get("style", [])
+1323          if isinstance(item_styles, str):
+1324              item_styles = [item_styles]
+1325  
+1326          if not item_styles:
+1327              return 0.5
+1328  
+1329          # 获取体型适配信息
+1330          adaptation = BODY_TYPE_ADAPTATIONS.get(body_type, {})
+1331          suitable_styles = adaptation.get("suitable_styles", [])
+1332          avoid_styles = adaptation.get("avoid_styles", [])
+1333  
+1334          score = 0.5
+1335  
+1336          for style in item_styles:
+1337              style_lower = style.lower()
+1338  
+1339              for suitable in suitable_styles:
+1340                  if suitable.lower() in style_lower or style_lower in suitable.lower():
+1341                      score += 0.12
+1342                      break
+1343  
+1344              for avoid in avoid_styles:
+1345                  if avoid.lower() in style_lower or style_lower in avoid.lower():
+1346                      score -= 0.15
+1347                      break
+1348  
+1349          return max(0.0, min(1.0, score))
+1350  
+1351      def _calculate_body_optimization_score(self, clothing_item: Dict[str, Any],
+1352                                            body_type: BodyType) -> float:
+1353          """计算体型优化分数（基于整体设计是否有助于优化体型）"""
+1354          category = clothing_item.get("category", "top").lower()
+1355          attributes = clothing_item.get("attributes", {})
+1356  
+1357          adaptation = BODY_TYPE_ADAPTATIONS.get(body_type, {})
+1358          best_cuts = adaptation.get("best_cuts", [])
+1359          emphasis = adaptation.get("emphasis", "")
+1360  
+1361          score = 0.5
+1362  
+1363          # 检查是否有优化体型的特征
+1364          optimization_keywords = {
+1365              BodyType.RECTANGLE: ["收腰", "高腰", "层次", "腰线", "垫肩"],
+1366              BodyType.HOURGLASS: ["收腰", "合身", "修身", "曲线", "腰带"],
+1367              BodyType.TRIANGLE: ["垫肩", "亮色上衣", "深色下装", "A字", "阔腿"],
+1368              BodyType.INVERTED_TRIANGLE: ["V领", "深色上衣", "亮色下装", "阔腿", "A字"],
+1369              BodyType.OVAL: ["V领", "深色", "垂感", "长款", "直筒"],
+1370          }
+1371  
+1372          keywords = optimization_keywords.get(body_type, [])
+1373  
+1374          # 检查商品描述和属性
+1375          description = clothing_item.get("description", "").lower()
+1376          all_text = description
+1377  
+1378          for attr_value in attributes.values():
+1379              if isinstance(attr_value, str):
+1380                  all_text += " " + attr_value.lower()
+1381              elif isinstance(attr_value, list):
+1382                  all_text += " " + " ".join(str(v).lower() for v in attr_value)
+1383  
+1384          for keyword in keywords:
+1385              if keyword.lower() in all_text:
+1386                  score += 0.08
+1387  
+1388          return max(0.0, min(1.0, score))
+1389  
+1390      def _get_fit_recommendation(self, score: float) -> str:
+1391          """根据适配分数返回推荐描述"""
+1392          if score >= 0.8:
+1393              return "非常推荐 - 完美匹配您的体型"
+1394          elif score >= 0.65:
+1395              return "推荐 - 很适合您的体型"
+1396          elif score >= 0.5:
+1397              return "可以考虑 - 基本适合您的体型"
+1398          elif score >= 0.35:
+1399              return "谨慎选择 - 可能不是最佳选择"
+1400          else:
+1401              return "不推荐 - 不太适合您的体型"
+1402  
+1403      def batch_calculate_fit_scores(self, clothing_items: List[Dict[str, Any]],
+1404                                     body_profile: BodyProfile) -> List[Dict[str, Any]]:
+1405          """
+1406          批量计算多个服装单品的适配分数
+1407  
+1408          Args:
+1409              clothing_items: 服装单品列表
+1410              body_profile: 用户身体档案
+1411  
+1412          Returns:
+1413              List[Dict]: 包含每个单品适配分数的结果列表
+1414          """
+1415          results = []
+1416  
+1417          for item in clothing_items:
+1418              fit_score = self.calculate_fit_score(item, body_profile)
+1419              results.append({
+1420                  "item_id": item.get("id", ""),
+1421                  "item_name": item.get("name", ""),
+1422                  "category": item.get("category", ""),
+1423                  "fit_score": fit_score.overall_score,
+1424                  "recommendation": fit_score.details.get("recommendation", ""),
+1425                  "scores": {
+1426                      "cut_match": fit_score.cut_match_score,
+1427                      "color_match": fit_score.color_match_score,
+1428                      "style_match": fit_score.style_match_score,
+1429                      "body_optimization": fit_score.body_type_score,
+1430                  },
+1431                  "item_data": item,
+1432              })
+1433  
+1434          # 按适配分数排序
+1435          results.sort(key=lambda x: x["fit_score"], reverse=True)
+1436  
+1437          return results
+1438  
+1439      def get_outfit_combination_score(self, outfit_items: List[Dict[str, Any]],
+1440                                       body_profile: BodyProfile) -> Dict[str, Any]:
+1441          """
+1442          计算整套穿搭的适配分数
+1443  
+1444          Args:
+1445              outfit_items: 穿搭单品列表
+1446              body_profile: 用户身体档案
+1447  
+1448          Returns:
+1449              Dict: 整套穿搭的适配分析结果
+1450          """
+1451          if not outfit_items:
+1452              return {
+1453                  "overall_score": 0.0,
+1454                  "items_analysis": [],
+1455                  "recommendation": "无穿搭数据",
+1456              }
+1457  
+1458          items_analysis = []
+1459          total_score = 0.0
+1460          category_scores = {}
+1461  
+1462          for item in outfit_items:
+1463              fit_score = self.calculate_fit_score(item, body_profile)
+1464              category = item.get("category", "unknown")
+1465  
+1466              items_analysis.append({
+1467                  "item_id": item.get("id", ""),
+1468                  "item_name": item.get("name", ""),
+1469                  "category": category,
+1470                  "fit_score": fit_score.overall_score,
+1471                  "scores": {
+1472                      "cut_match": fit_score.cut_match_score,
+1473                      "color_match": fit_score.color_match_score,
+1474                      "style_match": fit_score.style_match_score,
+1475                      "body_optimization": fit_score.body_type_score,
+1476                  },
+1477              })
+1478  
+1479              category_scores[category] = fit_score.overall_score
+1480              total_score += fit_score.overall_score
+1481  
+1482          # 计算平均分数
+1483          avg_score = total_score / len(outfit_items)
+1484  
+1485          # 计算整体协调性（各单品分数的方差越小越好）
+1486          scores_list = [item["fit_score"] for item in items_analysis]
+1487          variance = sum((s - avg_score) ** 2 for s in scores_list) / len(scores_list)
+1488          harmony_bonus = max(0, 0.1 - variance) * 5  # 协调性加分
+1489  
+1490          final_score = min(1.0, avg_score + harmony_bonus)
+1491  
+1492          return {
+1493              "overall_score": round(final_score, 3),
+1494              "average_item_score": round(avg_score, 3),
+1495              "harmony_bonus": round(harmony_bonus, 3),
+1496              "items_analysis": items_analysis,
+1497              "category_scores": category_scores,
+1498              "recommendation": self._get_fit_recommendation(final_score),
+1499              "body_type_considered": body_profile.body_type.value,
+1500          }
+1501  
+1502  
+1503  class BodyAnalyzerService:
+1504      """
+1505      体型分析服务类
+1506      提供与推荐系统集成的接口
+1507      """
+1508  
+1509      def __init__(self):
+1510          """初始化服务"""
+1511          self.analyzer = BodyAnalyzer()
+1512  
+1513      def analyze_user_photo(self, image: Union[Image.Image, np.ndarray, str]) -> Dict[str, Any]:
+1514          """
+1515          分析用户照片
+1516  
+1517          Args:
+1518              image: 图像，可以是PIL Image、numpy数组或文件路径
+1519  
+1520          Returns:
+1521              Dict: 分析结果
+1522          """
+1523          try:
+1524              if isinstance(image, str):
+1525                  image = Image.open(image).convert("RGB")
+1526  
+1527              profile = self.analyzer.analyze_body_type(image)
+1528  
+1529              return {
+1530                  "success": True,
+1531                  "body_profile": profile.to_dict(),
+1532                  "clothing_adaptations": self.analyzer.get_clothing_adaptations(profile.body_type).__dict__,
+1533                  "body_type_info": self.analyzer.get_body_type_info(profile.body_type),
+1534              }
+1535          except Exception as e:
+1536              logger.error(f"Failed to analyze user photo: {e}")
+1537              return {
+1538                  "success": False,
+1539                  "error": str(e),
+1540                  "body_profile": self.analyzer._get_default_body_profile().to_dict(),
+1541              }
+1542  
+1543      def get_recommendations_for_body_type(self, body_type: str,
+1544                                            category: Optional[str] = None) -> Dict[str, Any]:
+1545          """
+1546          获取特定体型的服装推荐规则
+1547  
+1548          Args:
+1549              body_type: 体型类型字符串
+1550              category: 可选的服装类别
+1551  
+1552          Returns:
+1553              Dict: 推荐规则
+1554          """
+1555          try:
+1556              bt = BodyType(body_type.lower())
+1557          except ValueError:
+1558              bt = BodyType.RECTANGLE
+1559  
+1560          adaptations = self.analyzer.get_clothing_adaptations(bt)
+1561          body_info = self.analyzer.get_body_type_info(bt)
+1562  
+1563          result = {
+1564              "body_type": bt.value,
+1565              "body_type_info": body_info,
+1566              "adaptations": adaptations.__dict__,
+1567          }
+1568  
+1569          # 如果指定了类别，返回该类别的详细规则
+1570          if category and category.lower() in CLOTHING_ITEM_FIT_RULES:
+1571              category_rules = CLOTHING_ITEM_FIT_RULES[category.lower()]
+1572              result["category_rules"] = {
+1573                  "suitable_for_your_body": category_rules.get("suitable_for", {}).get(bt, []),
+1574                  "avoid_for_your_body": category_rules.get("avoid_for", {}).get(bt, []),
+1575                  "score_weights": category_rules.get("score_weights", {}),
+1576              }
+1577  
+1578          return result
+1579  
+1580      def rank_items_by_fit(self, items: List[Dict[str, Any]],
+1581                           body_profile: Union[BodyProfile, Dict[str, Any]]) -> List[Dict[str, Any]]:
+1582          """
+1583          根据体型适配度对商品进行排序
+1584  
+1585          Args:
+1586              items: 商品列表
+1587              body_profile: 身体档案（BodyProfile对象或字典）
+1588  
+1589          Returns:
+1590              List[Dict]: 排序后的商品列表，包含适配分数
+1591          """
+1592          if isinstance(body_profile, dict):
+1593              # 从字典重建BodyProfile
+1594              profile = self._dict_to_body_profile(body_profile)
+1595          else:
+1596              profile = body_profile
+1597  
+1598          return self.analyzer.batch_calculate_fit_scores(items, profile)
+1599  
+1600      def _dict_to_body_profile(self, data: Dict[str, Any]) -> BodyProfile:
+1601          """将字典转换为BodyProfile对象"""
+1602          try:
+1603              body_type = BodyType(data.get("body_type", "rectangle"))
+1604              proportions_data = data.get("proportions", {})
+1605              measurements_data = data.get("measurements", {})
+1606  
+1607              proportions = BodyProportions(
+1608                  shoulder_to_hip_ratio=proportions_data.get("shoulder_to_hip_ratio", 1.0),
+1609                  waist_to_hip_ratio=proportions_data.get("waist_to_hip_ratio", 0.8),
+1610                  waist_to_shoulder_ratio=proportions_data.get("waist_to_shoulder_ratio", 0.8),
+1611                  bust_to_waist_ratio=proportions_data.get("bust_to_waist_ratio", 1.0),
+1612                  bust_to_hip_ratio=proportions_data.get("bust_to_hip_ratio", 0.9),
+1613                  leg_to_torso_ratio=proportions_data.get("leg_to_torso_ratio", 1.0),
+1614                  arm_to_height_ratio=proportions_data.get("arm_to_height_ratio", 0.4),
+1615              )
+1616  
+1617              measurements = BodyMeasurements(
+1618                  shoulder_width=measurements_data.get("shoulder_width", 40.0),
+1619                  bust_width=measurements_data.get("bust_width", 35.0),
+1620                  waist_width=measurements_data.get("waist_width", 30.0),
+1621                  hip_width=measurements_data.get("hip_width", 38.0),
+1622                  torso_height=measurements_data.get("torso_height", 50.0),
+1623                  leg_height=measurements_data.get("leg_height", 80.0),
+1624                  arm_length=measurements_data.get("arm_length", 60.0),
+1625                  estimated_height=measurements_data.get("estimated_height", 170.0),
+1626              )
+1627  
+1628              skin_tone = SkinTone(data.get("skin_tone", "medium"))
+1629              color_season = ColorSeason(data.get("color_season", "autumn"))
+1630  
+1631              return BodyProfile(
+1632                  body_type=body_type,
+1633                  confidence=data.get("confidence", 0.5),
+1634                  keypoints={},
+1635                  proportions=proportions,
+1636                  measurements=measurements,
+1637                  skin_tone=skin_tone,
+1638                  color_season=color_season,
+1639              )
+1640          except Exception as e:
+1641              logger.error(f"Failed to convert dict to BodyProfile: {e}")
+1642              return self.analyzer._get_default_body_profile()
+1643  
+1644  
+1645  # 便捷导出函数
+1646  def create_body_analyzer() -> BodyAnalyzer:
+1647      """创建体型分析器实例"""
+1648      return BodyAnalyzer()
+1649  
+1650  
+1651  def create_body_analyzer_service() -> BodyAnalyzerService:
+1652      """创建体型分析服务实例"""
+1653      return BodyAnalyzerService()
+1654  
+1655  
+1656  # 模块级单例
+1657  _analyzer_instance: Optional[BodyAnalyzer] = None
+1658  _service_instance: Optional[BodyAnalyzerService] = None
+1659  
+1660  
+1661  def get_body_analyzer() -> BodyAnalyzer:
+1662      """获取体型分析器单例"""
+1663      global _analyzer_instance
+1664      if _analyzer_instance is None:
+1665          _analyzer_instance = BodyAnalyzer()
+1666      return _analyzer_instance
+1667  
+1668  
+1669  def get_body_analyzer_service() -> BodyAnalyzerService:
+1670      """获取体型分析服务单例"""
+1671      global _service_instance
+1672      if _service_instance is None:
+1673          _service_instance = BodyAnalyzerService()
+1674      return _service_instance
+1675  
+1676  
+1677  if __name__ == "__main__":
+1678      # 测试代码
+1679      print("Body Analyzer Module Test")
+1680      print("=" * 50)
+1681  
+1682      # 创建分析器
+1683      analyzer = create_body_analyzer()
+1684  
+1685      # 测试体型适配
+1686      for body_type in BodyType:
+1687          print(f"\n{body_type.value.upper()}:")
+1688          adaptations = analyzer.get_clothing_adaptations(body_type)
+1689          print(f"  Suitable: {adaptations.suitable_styles[:3]}")
+1690          print(f"  Avoid: {adaptations.avoid_styles[:3]}")
+1691          print(f"  Emphasis: {adaptations.emphasis}")
+1692  
+1693      # 测试适配分数计算
+1694      print("\n" + "=" * 50)
+1695      print("Fit Score Test:")
+1696  
+1697      test_item = {
+1698          "id": "test_001",
+1699          "name": "V领收腰连衣裙",
+1700          "category": "dress",
+1701          "style": ["优雅", "收腰"],
+1702          "colors": ["酒红"],
+1703          "cut": "收腰",
+1704          "attributes": {
+1705              "cut_keywords": ["V领", "收腰", "中长款"],
+1706          }
+1707      }
+1708  
+1709      profile = BodyProfile(
+1710          body_type=BodyType.HOURGLASS,
+1711          confidence=0.85,
+1712          keypoints={},
+1713          proportions=BodyProportions(),
+1714          measurements=BodyMeasurements(),
+1715          skin_tone=SkinTone.MEDIUM,
+1716          color_season=ColorSeason.AUTUMN,
+1717      )
+1718  
+1719      fit_score = analyzer.calculate_fit_score(test_item, profile)
+1720      print(f"Item: {test_item['name']}")
+1721      print(f"Body Type: {profile.body_type.value}")
+1722      print(f"Overall Fit Score: {fit_score.overall_score}")
+1723      print(f"Recommendation: {fit_score.details['recommendation']}")
+
+// ========== FILE: ml/services/stylist/intelligent_stylist_service.py ==========
+// Total lines: 1742 (showing 1242-1742)
+
+1242              parts.append(f"热门材质：{', '.join(trends['materials'])}")
+1243          
+1244          if trends.get('accessories'):
+1245              parts.append(f"配饰趋势：{', '.join(trends['accessories'])}")
+1246          
+1247          return "\n".join(parts)
+1248  
+1249      async def generate_outfit_recommendation(
+1250          self,
+1251          user_profile: UserProfile,
+1252          scene_context: SceneContext,
+1253          user_request: str = ""
+1254      ) -> Dict[str, Any]:
+1255          """
+1256          生成穿搭推荐（支持 RAG 增强）
+1257          
+1258          Args:
+1259              user_profile: 用户档案
+1260              scene_context: 场景上下文
+1261              user_request: 用户请求
+1262              
+1263          Returns:
+1264              穿搭推荐结果
+1265          """
+1266          # 尝试使用 RAG 增强上下文
+1267          rag_context = await self._get_rag_context(user_profile, scene_context, user_request)
+1268          
+1269          cache_key = self._compute_cache_key(
+1270              "outfit",
+1271              body_type=user_profile.body_type,
+1272              skin_tone=user_profile.skin_tone,
+1273              color_season=user_profile.color_season,
+1274              style_prefs=tuple(sorted(user_profile.style_preferences)),
+1275              occasion=scene_context.occasion,
+1276              season=scene_context.season or self.current_season,
+1277              request=user_request
+1278          )
+1279          
+1280          cached = self._response_cache.get(cache_key)
+1281          if cached is not None:
+1282              logger.info("Returning cached outfit recommendation")
+1283              return cached
+1284          
+1285          profile_str = self._format_user_profile(user_profile)
+1286          context_str = self._format_scene_context(scene_context)
+1287          trends_str = self._format_fashion_trends()
+1288          
+1289          # 如果有 RAG 上下文，添加到 prompt 中
+1290          rag_str = ""
+1291          if rag_context:
+1292              rag_str = f"\n## 专业知识库参考\n{rag_context}\n"
+1293          
+1294          user_prompt = self.TREND_PROMPT_TEMPLATE.format(
+1295              user_profile=profile_str,
+1296              scene_context=context_str,
+1297              current_season=self.current_season,
+1298              fashion_trends=trends_str,
+1299              user_request=user_request or "请根据我的情况提供最适合的穿搭建议"
+1300          )
+1301          
+1302          # 添加 RAG 上下文
+1303          if rag_str:
+1304              user_prompt = user_prompt.replace(
+1305                  "## 用户具体需求",
+1306                  f"{rag_str}\n## 用户具体需求"
+1307              )
+1308          
+1309          response = await self._call_glm_with_degradation(
+1310              system_prompt=self.SYSTEM_PROMPT,
+1311              user_prompt=user_prompt,
+1312              user_profile=user_profile,
+1313              scene_context=scene_context,
+1314              max_tokens=4000
+1315          )
+1316          
+1317          cleaned_response = response
+1318          if "```json" in cleaned_response:
+1319              cleaned_response = cleaned_response.split("```json")[-1]
+1320          if "```" in cleaned_response:
+1321              cleaned_response = cleaned_response.split("```")[0]
+1322          
+1323          try:
+1324              json_start = cleaned_response.find("{")
+1325              json_end = cleaned_response.rfind("}") + 1
+1326              if json_start != -1 and json_end > json_start:
+1327                  json_str = cleaned_response[json_start:json_end]
+1328                  result = json.loads(json_str)
+1329                  self._response_cache.set(cache_key, result)
+1330                  # P1-7: Store successful result for degradation fallback
+1331                  self._store_fallback_result(user_profile, scene_context, result)
+1332                  return result
+1333          except json.JSONDecodeError:
+1334              pass
+1335          
+1336          result = {
+1337              "raw_response": response,
+1338              "personal_analysis": {
+1339                  "summary": "基于AI分析的个人形象建议"
+1340              },
+1341              "outfit_plans": [],
+1342              "error": "Failed to parse JSON response"
+1343          }
+1344          self._response_cache.set(cache_key, result)
+1345          return result
+1346  
+1347      # ============================================================
+1348      # P1-7: Degradation Strategy Methods
+1349      # ============================================================
+1350  
+1351      def _store_fallback_result(
+1352          self,
+1353          user_profile: UserProfile,
+1354          scene_context: SceneContext,
+1355          result: Dict[str, Any],
+1356      ) -> None:
+1357          """P1-7: Store a successful recommendation result for degradation fallback.
+1358  
+1359          When GLM API is unavailable, we can return the most recent successful
+1360          recommendation for similar user profiles/occasions.
+1361          """
+1362          with self._degradation_lock:
+1363              # Create a fallback key from profile + occasion
+1364              fallback_key = f"{user_profile.body_type or 'unknown'}:{user_profile.color_season or 'unknown'}:{scene_context.occasion or 'daily'}"
+1365              self._last_successful_recommendations[fallback_key] = {
+1366                  "result": result,
+1367                  "stored_at": time.time(),
+1368                  "profile_summary": {
+1369                      "body_type": user_profile.body_type,
+1370                      "color_season": user_profile.color_season,
+1371                      "occasion": scene_context.occasion,
+1372                  },
+1373              }
+1374              # Evict oldest entries if cache is full
+1375              while len(self._last_successful_recommendations) > self._max_fallback_cache:
+1376                  self._last_successful_recommendations.popitem(last=False)
+1377  
+1378      def _get_fallback_result(
+1379          self,
+1380          user_profile: UserProfile,
+1381          scene_context: SceneContext,
+1382      ) -> Optional[Dict[str, Any]]:
+1383          """P1-7: Retrieve a cached fallback result when GLM API is unavailable.
+1384  
+1385          Returns the most recent successful recommendation for a similar
+1386          profile/occasion, or None if no suitable fallback exists.
+1387          """
+1388          with self._degradation_lock:
+1389              fallback_key = f"{user_profile.body_type or 'unknown'}:{user_profile.color_season or 'unknown'}:{scene_context.occasion or 'daily'}"
+1390  
+1391              # Exact match first
+1392              if fallback_key in self._last_successful_recommendations:
+1393                  cached = self._last_successful_recommendations[fallback_key]
+1394                  result = cached["result"].copy()
+1395                  result["_degraded"] = True
+1396                  result["_degradation_reason"] = "GLM API unavailable, returning cached recommendation"
+1397                  logger.info("Returning degraded fallback result for key: %s", fallback_key)
+1398                  return result
+1399  
+1400              # Partial match: same body_type + occasion
+1401              partial_key = f"{user_profile.body_type or 'unknown'}:*:{scene_context.occasion or 'daily'}"
+1402              for key, cached in reversed(self._last_successful_recommendations.items()):
+1403                  parts = key.split(":")
+1404                  if len(parts) == 3 and parts[0] == (user_profile.body_type or "unknown") and parts[2] == (scene_context.occasion or "daily"):
+1405                      result = cached["result"].copy()
+1406                      result["_degraded"] = True
+1407                      result["_degradation_reason"] = "GLM API unavailable, returning similar profile cached recommendation"
+1408                      logger.info("Returning partial-match fallback result for key: %s", key)
+1409                      return result
+1410  
+1411              # Any match for the occasion
+1412              for key, cached in reversed(self._last_successful_recommendations.items()):
+1413                  parts = key.split(":")
+1414                  if len(parts) == 3 and parts[2] == (scene_context.occasion or "daily"):
+1415                      result = cached["result"].copy()
+1416                      result["_degraded"] = True
+1417                      result["_degradation_reason"] = "GLM API unavailable, returning occasion-based cached recommendation"
+1418                      logger.info("Returning occasion-match fallback result for key: %s", key)
+1419                      return result
+1420  
+1421              return None
+1422  
+1423      async def _call_glm_with_degradation(
+1424          self,
+1425          system_prompt: str,
+1426          user_prompt: str,
+1427          user_profile: UserProfile,
+1428          scene_context: SceneContext,
+1429          max_tokens: int = 4000,
+1430      ) -> str:
+1431          """P1-7: Call GLM API with timeout and degradation fallback.
+1432  
+1433          - Sets a 30-second timeout for the API call
+1434          - On failure/timeout, returns a cached fallback result if available
+1435          - Raises the original exception if no fallback is available
+1436          """
+1437          try:
+1438              return await asyncio.wait_for(
+1439                  self.engine.generate(
+1440                      system_prompt=system_prompt,
+1441                      user_prompt=user_prompt,
+1442                      max_tokens=max_tokens,
+1443                  ),
+1444                  timeout=self._api_timeout_seconds,
+1445              )
+1446          except asyncio.TimeoutError:
+1447              logger.warning(
+1448                  "GLM API call timed out after %ds, attempting degradation fallback",
+1449                  self._api_timeout_seconds,
+1450              )
+1451              fallback = self._get_fallback_result(user_profile, scene_context)
+1452              if fallback is not None:
+1453                  return json.dumps(fallback, ensure_ascii=False)
+1454              raise Exception(
+1455                  f"GLM API timed out after {self._api_timeout_seconds}s and no fallback available"
+1456              )
+1457          except Exception as e:
+1458              logger.warning("GLM API call failed: %s, attempting degradation fallback", str(e))
+1459              fallback = self._get_fallback_result(user_profile, scene_context)
+1460              if fallback is not None:
+1461                  return json.dumps(fallback, ensure_ascii=False)
+1462              raise
+1463  
+1464      async def _get_rag_context(
+1465          self,
+1466          user_profile: UserProfile,
+1467          scene_context: SceneContext,
+1468          user_request: str = ""
+1469      ) -> Optional[str]:
+1470          """
+1471          从 RAG 系统获取专业知识上下文
+1472          
+1473          Args:
+1474              user_profile: 用户档案
+1475              scene_context: 场景上下文
+1476              user_request: 用户请求
+1477              
+1478          Returns:
+1479              RAG 检索到的上下文，如果不可用则返回 None
+1480          """
+1481          try:
+1482              rag = get_fashion_rag()
+1483              if rag is None:
+1484                  return None
+1485              
+1486              # 构建查询
+1487              context = rag.get_context_for_stylist(
+1488                  body_type=user_profile.body_type,
+1489                  color_season=user_profile.color_season,
+1490                  occasion=scene_context.occasion,
+1491                  preferred_styles=user_profile.style_preferences,
+1492                  query=user_request
+1493              )
+1494              
+1495              if context:
+1496                  logger.info(f"RAG context retrieved: {len(context)} chars")
+1497                  return context
+1498              
+1499          except Exception as e:
+1500              logger.warning(f"RAG context retrieval failed: {e}")
+1501          
+1502          return None
+1503  
+1504      async def analyze_body_type(self, description: str) -> Dict[str, Any]:
+1505          analyze_prompt = f"""作为专业形象顾问，请分析以下用户描述，判断其体型类型并提供专业建议：
+1506  
+1507  用户描述：
+1508  {description}
+1509  
+1510  请分析：
+1511  1. 最可能的体型类型（rectangle/triangle/inverted_triangle/hourglass/oval）
+1512  2. 体型特征分析
+1513  3. 穿搭优化建议
+1514  4. 推荐和不推荐的单品类型
+1515  
+1516  请以JSON格式输出：
+1517  {{
+1518    "body_type": "体型代码",
+1519    "confidence": 0.0-1.0的置信度,
+1520    "analysis": "详细分析",
+1521    "optimize_tips": ["建议1", "建议2"],
+1522    "recommended_items": ["推荐单品"],
+1523    "avoid_items": ["避免单品"]
+1524  }}"""
+1525          
+1526          response = await self.engine.generate(
+1527              system_prompt=self.SYSTEM_PROMPT,
+1528              user_prompt=analyze_prompt,
+1529              max_tokens=1500
+1530          )
+1531          
+1532          cleaned_response = response
+1533          if "```json" in cleaned_response:
+1534              cleaned_response = cleaned_response.split("```json")[-1]
+1535          if "```" in cleaned_response:
+1536              cleaned_response = cleaned_response.split("```")[0]
+1537          
+1538          try:
+1539              json_start = cleaned_response.find("{")
+1540              json_end = cleaned_response.rfind("}") + 1
+1541              return json.loads(cleaned_response[json_start:json_end])
+1542          except json.JSONDecodeError as e:
+1543              logger.warning(f"JSON解析失败: {e}, 返回默认响应")
+1544              return {"body_type": "unknown", "analysis": response}
+1545          except Exception as e:
+1546              logger.error(f"体型分析响应解析失败: {e}", exc_info=True)
+1547              return {"body_type": "unknown", "analysis": response}
+1548  
+1549      async def chat_interaction(
+1550          self,
+1551          user_message: str,
+1552          conversation_history: List[Dict[str, str]],
+1553          user_profile: Optional[UserProfile] = None,
+1554          session_id: Optional[str] = None,
+1555          use_state_machine: bool = True,
+1556      ) -> Dict:
+1557          """
+1558          多轮对话交互接口
+1559          
+1560          Args:
+1561              user_message: 用户消息
+1562              conversation_history: 对话历史
+1563              user_profile: 用户档案（可选）
+1564              session_id: 会话ID，用于状态机上下文持久化
+1565              use_state_machine: 是否使用状态机（默认True）
+1566              
+1567          Returns:
+1568              Dict with keys: reply, quick_replies, state, slots, outfits?
+1569          """
+1570          if use_state_machine and session_id:
+1571              return await self._chat_with_state_machine(
+1572                  user_message, conversation_history, user_profile, session_id
+1573              )
+1574          
+1575          context_parts = []
+1576          
+1577          if user_profile:
+1578              context_parts.append(f"【用户档案】\n{self._format_user_profile(user_profile)}")
+1579          
+1580          context_str = "\n".join(context_parts) if context_parts else "用户档案暂未完善"
+1581          
+1582          messages = [
+1583              {"role": "system", "content": f"{self.SYSTEM_PROMPT}\n\n【当前对话上下文】\n{context_str}"}
+1584          ]
+1585          
+1586          for msg in conversation_history[-20:]:
+1587              messages.append(msg)
+1588          
+1589          messages.append({"role": "user", "content": user_message})
+1590          
+1591          reply = await self._call_llm_with_resilience(messages, max_tokens=2000)
+1592          return {
+1593              "reply": reply,
+1594              "quick_replies": [],
+1595              "state": "LEGACY",
+1596              "slots": {},
+1597          }
+1598      
+1599      async def _chat_with_state_machine(
+1600          self,
+1601          user_message: str,
+1602          conversation_history: List[Dict[str, str]],
+1603          user_profile: Optional[UserProfile],
+1604          session_id: str,
+1605      ) -> Dict:
+1606          from ml.services.stylist.dialog_state import DialogSlot
+1607          
+1608          dialog_ctx = await self._get_or_create_dialog_context(session_id)
+1609          
+1610          if user_profile and dialog_ctx.turn_count == 0:
+1611              dialog_ctx.slots = DialogSlot(
+1612                  occasion=None,
+1613                  body_type=user_profile.body_type,
+1614                  style_preference=list(user_profile.style_preferences) if user_profile.style_preferences else [],
+1615                  budget=user_profile.budget_range,
+1616                  color_preference=list(user_profile.color_preferences) if user_profile.color_preferences else [],
+1617                  avoid_items=list(user_profile.style_avoidances) if user_profile.style_avoidances else [],
+1618                  temperature=None,
+1619              )
+1620          
+1621          result = await self.dialog_engine.process_message(user_message, dialog_ctx)
+1622          
+1623          await self._save_dialog_context(session_id, dialog_ctx)
+1624          
+1625          await self._conversation_memory.add_message(session_id, "user", user_message)
+1626          await self._conversation_memory.add_message(session_id, "assistant", result.get("reply", ""))
+1627          
+1628          return result
+1629      
+1630      @with_retry_and_circuit_breaker(max_retries=3, base_delay=1.0)
+1631      async def _call_llm_with_resilience(
+1632          self,
+1633          messages: List[Dict[str, str]],
+1634          max_tokens: int = 2000
+1635      ) -> str:
+1636          """
+1637          带熔断和重试机制的 LLM 调用
+1638  
+1639          Uses AIServiceRouter for GLM-4-Flash -> GLM-5 fallback (per D-08/D-09/D-10).
+1640          Fallback is transparent to the caller.
+1641  
+1642          Args:
+1643              messages: 对话消息列表
+1644              max_tokens: 最大输出 token 数
+1645  
+1646          Returns:
+1647              LLM 响应内容
+1648          """
+1649          # AIServiceRouter fallback path (per D-08)
+1650          if self.engine._router is not None:
+1651              try:
+1652                  router_result = await self.engine._router.call(
+1653                      messages=messages,
+1654                      max_tokens=max_tokens,
+1655                  )
+1656                  if router_result.fallback_triggered:
+1657                      logger.info(
+1658                          "AIServiceRouter used fallback model %s (latency: %.0fms)",
+1659                          router_result.model_used,
+1660                          router_result.latency_ms,
+1661                      )
+1662                  self.engine.circuit_breaker.record_success()
+1663                  return router_result.text
+1664              except RuntimeError:
+1665                  # Both models failed in router, fall through to direct call
+1666                  logger.warning("AIServiceRouter fallback exhausted, trying direct call")
+1667              except Exception as router_err:
+1668                  logger.warning("AIServiceRouter error: %s, falling back to direct call", router_err)
+1669  
+1670          # Direct call path (original logic, used when router is disabled or exhausted)
+1671          # 估算 token 数量
+1672          total_tokens = sum(self.engine._count_tokens(m.get("content", "")) for m in messages) + max_tokens
+1673  
+1674          # 使用 rate_limiter 控制请求频率
+1675          if not await rate_limiter.wait_and_acquire("glm", total_tokens, max_wait_ms=30000):
+1676              raise Exception("Rate limit exceeded - please try again later")
+1677  
+1678          # 检查熔断器状态
+1679          if not self.engine.circuit_breaker.can_execute():
+1680              raise Exception("Circuit breaker is OPEN - LLM service unavailable")
+1681  
+1682          headers = {
+1683              "Authorization": f"Bearer {self.engine.api_key}",
+1684              "Content-Type": "application/json"
+1685          }
+1686  
+1687          payload = {
+1688              "model": self.engine.model,
+1689              "messages": messages,
+1690              "max_tokens": max_tokens,
+1691              "temperature": 0.8,
+1692              "top_p": 0.9
+1693          }
+1694  
+1695          try:
+1696              async with aiohttp.ClientSession() as session:
+1697                  async with session.post(
+1698                      f"{self.engine.api_endpoint}/chat/completions",
+1699                      headers=headers,
+1700                      json=payload,
+1701                      timeout=aiohttp.ClientTimeout(total=120)
+1702                  ) as response:
+1703                      if response.status == 200:
+1704                          result = await response.json()
+1705                          content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+1706                          self.engine.circuit_breaker.record_success()
+1707                          return content
+1708                      elif response.status == 429:
+1709                          self.engine.circuit_breaker.record_failure()
+1710                          # A-P2-1: 429 为可重试错误
+1711                          err = RetryableError("Rate limit exceeded - please try again later")
+1712                          retry_after_header = response.headers.get("Retry-After")
+1713                          if retry_after_header:
+1714                              try:
+1715                                  err.retry_after = float(retry_after_header)
+1716                              except (ValueError, TypeError):
+1717                                  pass
+1718                          raise err
+1719                      elif response.status >= 500:
+1720                          self.engine.circuit_breaker.record_failure()
+1721                          # A-P2-1: 5xx 为可重试错误
+1722                          raise RetryableError(f"Server error: {response.status}")
+1723                      else:
+1724                          error_text = await response.text()
+1725                          self.engine.circuit_breaker.record_failure()
+1726                          # A-P2-1: 其他 4xx 为不可重试错误
+1727                          raise NonRetryableError(f"GLM API error: {response.status} - {error_text}")
+1728          except asyncio.TimeoutError:
+1729              self.engine.circuit_breaker.record_failure()
+1730              # A-P2-1: 超时为可重试错误
+1731              raise RetryableError("API request timed out after 120s")
+1732          except aiohttp.ClientError as e:
+1733              self.engine.circuit_breaker.record_failure()
+1734              # A-P2-1: 网络错误为可重试错误
+1735              raise RetryableError(f"Network error: {e}")
+1736  
+1737  
+1738  service_instance = IntelligentStylistService()
+1739  
+1740  
+1741  async def get_stylist_service() -> IntelligentStylistService:
+1742      return service_instance
+
+// ========== FILE: ml/services/common/algorithm_gateway.py ==========
+// Total lines: 746 (showing 246-746)
+
+ 246  class LoadBalancer:
+ 247      """负载均衡器"""
+ 248  
+ 249      def __init__(self, strategy: str = "round_robin"):
+ 250          self.strategy = strategy
+ 251          self._backends: Dict[str, Dict] = {}
+ 252          self._current_index = 0
+ 253          self._lock = threading.Lock()
+ 254  
+ 255      def register_backend(
+ 256          self,
+ 257          backend_id: str,
+ 258          endpoint: str,
+ 259          weight: int = 1,
+ 260          max_connections: int = 100
+ 261      ):
+ 262          with self._lock:
+ 263              self._backends[backend_id] = {
+ 264                  "endpoint": endpoint,
+ 265                  "weight": weight,
+ 266                  "max_connections": max_connections,
+ 267                  "current_connections": 0,
+ 268                  "total_requests": 0,
+ 269                  "failed_requests": 0,
+ 270                  "avg_latency_ms": 0,
+ 271                  "healthy": True,
+ 272                  "last_check": datetime.now()
+ 273              }
+ 274  
+ 275      def get_backend(self) -> Optional[str]:
+ 276          with self._lock:
+ 277              healthy_backends = {
+ 278                  k: v for k, v in self._backends.items()
+ 279                  if v["healthy"] and v["current_connections"] < v["max_connections"]
+ 280              }
+ 281  
+ 282              if not healthy_backends:
+ 283                  return None
+ 284  
+ 285              if self.strategy == "round_robin":
+ 286                  backend_ids = list(healthy_backends.keys())
+ 287                  selected = backend_ids[self._current_index % len(backend_ids)]
+ 288                  self._current_index += 1
+ 289                  return selected
+ 290  
+ 291              elif self.strategy == "weighted":
+ 292                  total_weight = sum(v["weight"] for v in healthy_backends.values())
+ 293                  r = np.random.random() * total_weight
+ 294                  cumulative = 0
+ 295                  for backend_id, info in healthy_backends.items():
+ 296                      cumulative += info["weight"]
+ 297                      if r <= cumulative:
+ 298                          return backend_id
+ 299                  return list(healthy_backends.keys())[0]
+ 300  
+ 301              elif self.strategy == "least_connections":
+ 302                  return min(
+ 303                      healthy_backends.keys(),
+ 304                      key=lambda k: healthy_backends[k]["current_connections"]
+ 305                  )
+ 306  
+ 307              else:
+ 308                  return list(healthy_backends.keys())[0]
+ 309  
+ 310      def record_request_start(self, backend_id: str):
+ 311          with self._lock:
+ 312              if backend_id in self._backends:
+ 313                  self._backends[backend_id]["current_connections"] += 1
+ 314                  self._backends[backend_id]["total_requests"] += 1
+ 315  
+ 316      def record_request_end(
+ 317          self,
+ 318          backend_id: str,
+ 319          success: bool,
+ 320          latency_ms: float
+ 321      ):
+ 322          with self._lock:
+ 323              if backend_id in self._backends:
+ 324                  self._backends[backend_id]["current_connections"] -= 1
+ 325                  if not success:
+ 326                      self._backends[backend_id]["failed_requests"] += 1
+ 327  
+ 328                  current_avg = self._backends[backend_id]["avg_latency_ms"]
+ 329                  total = self._backends[backend_id]["total_requests"]
+ 330                  self._backends[backend_id]["avg_latency_ms"] = (
+ 331                      current_avg * (total - 1) + latency_ms
+ 332                  ) / total
+ 333  
+ 334      def mark_unhealthy(self, backend_id: str):
+ 335          with self._lock:
+ 336              if backend_id in self._backends:
+ 337                  self._backends[backend_id]["healthy"] = False
+ 338  
+ 339      def get_backend_stats(self) -> Dict[str, Dict]:
+ 340          with self._lock:
+ 341              return {
+ 342                  k: {
+ 343                      "endpoint": v["endpoint"],
+ 344                      "healthy": v["healthy"],
+ 345                      "current_connections": v["current_connections"],
+ 346                      "total_requests": v["total_requests"],
+ 347                      "failed_requests": v["failed_requests"],
+ 348                      "avg_latency_ms": v["avg_latency_ms"]
+ 349                  }
+ 350                  for k, v in self._backends.items()
+ 351              }
+ 352  
+ 353  
+ 354  class AlgorithmRegistry:
+ 355      """算法注册表"""
+ 356  
+ 357      def __init__(self):
+ 358          self._algorithms: Dict[str, Dict] = {}
+ 359          self._versions: Dict[str, Dict[str, Dict]] = defaultdict(dict)
+ 360          self._default_versions: Dict[str, str] = {}
+ 361          self._lock = threading.Lock()
+ 362  
+ 363      def register_algorithm(
+ 364          self,
+ 365          algorithm_id: str,
+ 366          version: str,
+ 367          handler: Callable,
+ 368          description: str = "",
+ 369          input_schema: Dict = None,
+ 370          output_schema: Dict = None,
+ 371          is_default: bool = False
+ 372      ):
+ 373          with self._lock:
+ 374              self._versions[algorithm_id][version] = {
+ 375                  "handler": handler,
+ 376                  "description": description,
+ 377                  "input_schema": input_schema or {},
+ 378                  "output_schema": output_schema or {},
+ 379                  "registered_at": datetime.now(),
+ 380                  "request_count": 0,
+ 381                  "avg_latency_ms": 0
+ 382              }
+ 383  
+ 384              if is_default or algorithm_id not in self._default_versions:
+ 385                  self._default_versions[algorithm_id] = version
+ 386  
+ 387      def get_handler(
+ 388          self,
+ 389          algorithm_id: str,
+ 390          version: Optional[str] = None
+ 391      ) -> Optional[Callable]:
+ 392          with self._lock:
+ 393              version = version or self._default_versions.get(algorithm_id)
+ 394              if not version:
+ 395                  return None
+ 396  
+ 397              version_info = self._versions.get(algorithm_id, {}).get(version)
+ 398              return version_info["handler"] if version_info else None
+ 399  
+ 400      def get_version_info(
+ 401          self,
+ 402          algorithm_id: str,
+ 403          version: Optional[str] = None
+ 404      ) -> Optional[Dict]:
+ 405          with self._lock:
+ 406              version = version or self._default_versions.get(algorithm_id)
+ 407              return self._versions.get(algorithm_id, {}).get(version)
+ 408  
+ 409      def list_algorithms(self) -> List[Dict]:
+ 410          with self._lock:
+ 411              return [
+ 412                  {
+ 413                      "algorithm_id": alg_id,
+ 414                      "default_version": self._default_versions.get(alg_id),
+ 415                      "available_versions": list(versions.keys())
+ 416                  }
+ 417                  for alg_id, versions in self._versions.items()
+ 418              ]
+ 419  
+ 420      def record_usage(
+ 421          self,
+ 422          algorithm_id: str,
+ 423          version: str,
+ 424          latency_ms: float
+ 425      ):
+ 426          with self._lock:
+ 427              if algorithm_id in self._versions and version in self._versions[algorithm_id]:
+ 428                  info = self._versions[algorithm_id][version]
+ 429                  info["request_count"] += 1
+ 430                  current_avg = info["avg_latency_ms"]
+ 431                  info["avg_latency_ms"] = (
+ 432                      current_avg * (info["request_count"] - 1) + latency_ms
+ 433                  ) / info["request_count"]
+ 434  
+ 435  
+ 436  class APIGateway:
+ 437      """API网关主类
+ 438  
+ 439      P1-11: Enhanced with route validation and default fallback algorithm.
+ 440      """
+ 441  
+ 442      # P1-11: Default fallback algorithms for each type
+ 443      DEFAULT_FALLBACK_ALGORITHMS = {
+ 444          AlgorithmType.BODY_METRICS: "body_metrics_v1",
+ 445          AlgorithmType.BODY_DETECTION: "body_detection_v1",
+ 446          AlgorithmType.STYLE_RECOGNITION: "style_recognition_v1",
+ 447          AlgorithmType.CLOTHING_SEGMENTATION: "segmentation_v1",
+ 448          AlgorithmType.RECOMMENDATION: "recommendation_v1",
+ 449          AlgorithmType.TREND_PREDICTION: "trend_prediction_v1",
+ 450          AlgorithmType.AESTHETIC_SCORING: "aesthetic_scoring_v1",
+ 451          AlgorithmType.VIRTUAL_TRYON: "virtual_tryon_v1",
+ 452          AlgorithmType.VISUAL_SEARCH: "visual_search_v1",
+ 453      }
+ 454  
+ 455      def __init__(self, config: APIConfig = None):
+ 456          self.config = config or APIConfig()
+ 457          self.rate_limiter = RateLimiter(
+ 458              max_requests=self.config.rate_limit_requests,
+ 459              window_seconds=self.config.rate_limit_window_seconds
+ 460          )
+ 461          self.authenticator = RequestAuthenticator()
+ 462          self.load_balancer = LoadBalancer()
+ 463          self.algorithm_registry = AlgorithmRegistry()
+ 464  
+ 465          self._request_queue: asyncio.Queue = None
+ 466          self._active_requests: Dict[str, APIRequest] = {}
+ 467          self._response_cache: Dict[str, Tuple[Any, datetime]] = {}
+ 468          self._stats: Dict[str, Any] = defaultdict(int)
+ 469          self._lock = threading.Lock()
+ 470  
+ 471      def register_algorithm(
+ 472          self,
+ 473          algorithm_id: str,
+ 474          handler: Callable,
+ 475          version: str = "v1",
+ 476          is_default: bool = True
+ 477      ):
+ 478          self.algorithm_registry.register_algorithm(
+ 479              algorithm_id=algorithm_id,
+ 480              version=version,
+ 481              handler=handler,
+ 482              is_default=is_default
+ 483          )
+ 484  
+ 485      async def process_request(
+ 486          self,
+ 487          algorithm: str,
+ 488          payload: Dict[str, Any],
+ 489          REDACTEDstr] = None,
+ 490          version: Optional[str] = None,
+ 491          priority: RequestPriority = RequestPriority.NORMAL
+ 492      ) -> APIResponse:
+ 493          start_time = time.time()
+ 494          request_id = self._generate_request_id()
+ 495  
+ 496          # P1-11: Validate algorithm route
+ 497          validated_algorithm = self._validate_algorithm_route(algorithm)
+ 498          if validated_algorithm is None:
+ 499              return APIResponse(
+ 500                  request_id=request_id,
+ 501                  success=False,
+ 502                  result=None,
+ 503                  error=f"Invalid algorithm route: {algorithm}. Valid routes: {[e.value for e in AlgorithmType]}",
+ 504                  execution_time_ms=0,
+ 505                  cache_hit=False,
+ 506                  model_version=version or "unknown",
+ 507                  timestamp=datetime.now()
+ 508              )
+ 509  
+ 510          if self.config.enable_authentication and api_key:
+ 511              auth_success, user_id = self.authenticator.authenticate(api_key, algorithm)
+ 512              if not auth_success:
+ 513                  return APIResponse(
+ 514                      request_id=request_id,
+ 515                      success=False,
+ 516                      result=None,
+ 517                      error=f"Authentication failed: {user_id}",
+ 518                      execution_time_ms=0,
+ 519                      cache_hit=False,
+ 520                      model_version=version or "unknown",
+ 521                      timestamp=datetime.now()
+ 522                  )
+ 523          else:
+ 524              user_id = None
+ 525  
+ 526          if self.config.enable_rate_limiting:
+ 527              client_id = user_id or api_key or "anonymous"
+ 528              allowed, rate_info = self.rate_limiter.check_rate_limit(client_id)
+ 529              if not allowed:
+ 530                  return APIResponse(
+ 531                      request_id=request_id,
+ 532                      success=False,
+ 533                      result=None,
+ 534                      error=f"Rate limit exceeded. Reset at {rate_info.reset_time}",
+ 535                      execution_time_ms=0,
+ 536                      cache_hit=False,
+ 537                      model_version=version or "unknown",
+ 538                      timestamp=datetime.now()
+ 539                  )
+ 540  
+ 541          cache_key = self._generate_cache_key(algorithm, payload, version)
+ 542          if self.config.enable_caching and cache_key in self._response_cache:
+ 543              cached_result, cached_time = self._response_cache[cache_key]
+ 544              if datetime.now() - cached_time < timedelta(seconds=self.config.cache_ttl_seconds):
+ 545                  self._stats["cache_hits"] += 1
+ 546                  return APIResponse(
+ 547                      request_id=request_id,
+ 548                      success=True,
+ 549                      result=cached_result,
+ 550                      error=None,
+ 551                      execution_time_ms=(time.time() - start_time) * 1000,
+ 552                      cache_hit=True,
+ 553                      model_version=version or "cached",
+ 554                      timestamp=datetime.now()
+ 555                  )
+ 556  
+ 557          handler = self.algorithm_registry.get_handler(algorithm, version)
+ 558          # P1-11: If handler not found, try default fallback algorithm
+ 559          if handler is None:
+ 560              fallback_id = self.DEFAULT_FALLBACK_ALGORITHMS.get(validated_algorithm)
+ 561              if fallback_id and fallback_id != algorithm:
+ 562                  handler = self.algorithm_registry.get_handler(fallback_id)
+ 563                  if handler is not None:
+ 564                      logger.warning(
+ 565                          "Algorithm %s not found, using fallback: %s",
+ 566                          algorithm, fallback_id
+ 567                      )
+ 568                      algorithm = fallback_id
+ 569  
+ 570          if handler is None:
+ 571              return APIResponse(
+ 572                  request_id=request_id,
+ 573                  success=False,
+ 574                  result=None,
+ 575                  error=f"Algorithm not found: {algorithm} (no fallback available)",
+ 576                  execution_time_ms=0,
+ 577                  cache_hit=False,
+ 578                  model_version=version or "unknown",
+ 579                  timestamp=datetime.now()
+ 580              )
+ 581  
+ 582          try:
+ 583              if asyncio.iscoroutinefunction(handler):
+ 584                  result = await handler(payload)
+ 585              else:
+ 586                  result = handler(payload)
+ 587  
+ 588              execution_time_ms = (time.time() - start_time) * 1000
+ 589  
+ 590              self.algorithm_registry.record_usage(algorithm, version or "v1", execution_time_ms)
+ 591  
+ 592              if self.config.enable_caching:
+ 593                  self._response_cache[cache_key] = (result, datetime.now())
+ 594  
+ 595              self._stats["successful_requests"] += 1
+ 596  
+ 597              return APIResponse(
+ 598                  request_id=request_id,
+ 599                  success=True,
+ 600                  result=result,
+ 601                  error=None,
+ 602                  execution_time_ms=execution_time_ms,
+ 603                  cache_hit=False,
+ 604                  model_version=version or "v1",
+ 605                  timestamp=datetime.now()
+ 606              )
+ 607  
+ 608          except Exception as e:
+ 609              self._stats["failed_requests"] += 1
+ 610              return APIResponse(
+ 611                  request_id=request_id,
+ 612                  success=False,
+ 613                  result=None,
+ 614                  error=str(e),
+ 615                  execution_time_ms=(time.time() - start_time) * 1000,
+ 616                  cache_hit=False,
+ 617                  model_version=version or "unknown",
+ 618                  timestamp=datetime.now()
+ 619              )
+ 620  
+ 621      def _generate_request_id(self) -> str:
+ 622          return hashlib.md5(f"{time.time()}{np.random.random()}".encode()).hexdigest()[:16]
+ 623  
+ 624      def _validate_algorithm_route(self, algorithm: str) -> Optional[AlgorithmType]:
+ 625          """P1-11: Validate that the algorithm route is a known AlgorithmType.
+ 626  
+ 627          Returns the corresponding AlgorithmType enum if valid, None otherwise.
+ 628          """
+ 629          try:
+ 630              return AlgorithmType(algorithm)
+ 631          except ValueError:
+ 632              # Also check by name (case-insensitive)
+ 633              for algo_type in AlgorithmType:
+ 634                  if algo_type.value.lower() == algorithm.lower():
+ 635                      return algo_type
+ 636              return None
+ 637  
+ 638      def _generate_cache_key(
+ 639          self,
+ 640          algorithm: str,
+ 641          payload: Dict,
+ 642          version: Optional[str]
+ 643      ) -> str:
+ 644          payload_str = json.dumps(payload, sort_keys=True)
+ 645          payload_hash = hashlib.md5(payload_str.encode()).hexdigest()
+ 646          return f"{algorithm}:{version or 'default'}:{payload_hash}"
+ 647  
+ 648      def get_stats(self) -> Dict[str, Any]:
+ 649          return {
+ 650              "total_requests": self._stats["successful_requests"] + self._stats["failed_requests"],
+ 651              "successful_requests": self._stats["successful_requests"],
+ 652              "failed_requests": self._stats["failed_requests"],
+ 653              "cache_hits": self._stats["cache_hits"],
+ 654              "cache_hit_rate": (
+ 655                  self._stats["cache_hits"] / 
+ 656                  (self._stats["successful_requests"] + self._stats["failed_requests"])
+ 657                  if (self._stats["successful_requests"] + self._stats["failed_requests"]) > 0
+ 658                  else 0
+ 659              ),
+ 660              "algorithms": self.algorithm_registry.list_algorithms(),
+ 661              "backends": self.load_balancer.get_backend_stats()
+ 662          }
+ 663  
+ 664      def clear_cache(self):
+ 665          self._response_cache.clear()
+ 666  
+ 667  
+ 668  def create_api_gateway(
+ 669      rate_limit: int = 100,
+ 670      enable_auth: bool = True,
+ 671      enable_cache: bool = True
+ 672  ) -> APIGateway:
+ 673      config = APIConfig(
+ 674          rate_limit_requests=rate_limit,
+ 675          enable_authentication=enable_auth,
+ 676          enable_caching=enable_cache
+ 677      )
+ 678      return APIGateway(config)
+ 679  
+ 680  
+ 681  if __name__ == "__main__":
+ 682      import asyncio
+ 683  
+ 684      async def main():
+ 685          gateway = create_api_gateway(rate_limit=100, enable_auth=False, enable_cache=True)
+ 686  
+ 687          print("\n" + "="*60)
+ 688          print("算法网关服务已初始化")
+ 689          print("="*60)
+ 690  
+ 691          def body_metrics_handler(payload: Dict) -> Dict:
+ 692              height = payload.get("height", 170)
+ 693              weight = payload.get("weight", 65)
+ 694              bmi = weight / ((height / 100) ** 2)
+ 695              return {"bmi": round(bmi, 2), "status": "normal" if 18.5 <= bmi <= 24.9 else "abnormal"}
+ 696  
+ 697          async def recommendation_handler(payload: Dict) -> Dict:
+ 698              user_id = payload.get("user_id", "anonymous")
+ 699              await asyncio.sleep(0.1)
+ 700              return {
+ 701                  "user_id": user_id,
+ 702                  "recommendations": ["item1", "item2", "item3"],
+ 703                  "confidence": 0.85
+ 704              }
+ 705  
+ 706          gateway.register_algorithm("body_metrics", body_metrics_handler, "v1")
+ 707          gateway.register_algorithm("recommendation", recommendation_handler, "v1")
+ 708  
+ 709          print("\n已注册算法:")
+ 710          for alg in gateway.algorithm_registry.list_algorithms():
+ 711              print(f"  - {alg['algorithm_id']}: {alg['available_versions']}")
+ 712  
+ 713          print("\n测试API请求:")
+ 714          response = await gateway.process_request(
+ 715              algorithm="body_metrics",
+ 716              payload={"height": 175, "weight": 70}
+ 717          )
+ 718          print(f"响应: success={response.success}, result={response.result}")
+ 719          print(f"执行时间: {response.execution_time_ms:.2f}ms")
+ 720  
+ 721          print("\n测试缓存命中:")
+ 722          response2 = await gateway.process_request(
+ 723              algorithm="body_metrics",
+ 724              payload={"height": 175, "weight": 70}
+ 725          )
+ 726          print(f"缓存命中: {response2.cache_hit}")
+ 727  
+ 728          print("\n测试异步处理器:")
+ 729          response3 = await gateway.process_request(
+ 730              algorithm="recommendation",
+ 731              payload={"user_id": "user123"}
+ 732          )
+ 733          print(f"响应: {response3.result}")
+ 734  
+ 735          print("\n测试不存在的算法:")
+ 736          response4 = await gateway.process_request(
+ 737              algorithm="nonexistent",
+ 738              payload={}
+ 739          )
+ 740          print(f"错误: {response4.error}")
+ 741  
+ 742          print("\n网关统计:")
+ 743          stats = gateway.get_stats()
+ 744          print(json.dumps(stats, indent=2, default=str))
+ 745  
+ 746      asyncio.run(main())

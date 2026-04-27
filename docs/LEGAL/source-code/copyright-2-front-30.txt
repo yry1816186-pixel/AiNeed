@@ -1,0 +1,1475 @@
+================================================================================
+寻裳移动客户端软件 V1.0 - 源代码
+软件著作权登记申请材料 - 软件鉴别材料
+================================================================================
+
+
+// ========== FILE: apps/mobile/App.tsx ==========
+// Total lines: 299 (showing 1-999999)
+
+   1  /* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars, no-useless-escape */
+   2  import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+   3  import { Linking, LogBox, StatusBar, StyleSheet, View } from "react-native";
+   4  import { GestureHandlerRootView } from "react-native-gesture-handler";
+   5  import { SafeAreaProvider } from "react-native-safe-area-context";
+   6  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+   7  import { NavigationContainer } from "@react-navigation/native";
+   8  import { useShallow } from "zustand/react/shallow";
+   9  import { ErrorBoundary } from "./src/shared/components/ErrorBoundary";
+  10  import { RootNavigator } from "./src/navigation/RootNavigator";
+  11  import {
+  12    navigationRef,
+  13    setNavigationReady,
+  14    navigateDeepLink,
+  15    isNavigationReady as checkNavigationReady,
+  16  } from "./src/navigation/navigationService";
+  17  import {
+  18    ThemeProvider as UnifiedThemeProvider,
+  19    useTheme,
+  20  } from "./src/shared/contexts/ThemeContext";
+  21  import { ThemeProvider as PaperThemeProvider } from "./src/design-system/ui/PaperThemeProvider";
+  22  import { useAuthStore } from "./src/features/auth/stores";
+  23  import { OfflineBanner } from "./src/shared/components/common/OfflineBanner";
+  24  import { I18nProvider } from "./src/i18n";
+  25  import { FeatureFlagProvider } from "./src/shared/contexts/FeatureFlagContext";
+  26  import { SplashScreen as AnimatedSplashScreen } from "./src/shared/components/flows/FlowAnimations";
+  27  import { initSentry } from "./src/shared/services/sentry";
+  28  import apiClient from "./src/shared/services/apiClient";
+  29  import { authApi } from "./src/features/auth/services/auth.api";
+  30  import { analytics } from "./src/shared/services/analytics";
+  31  
+  32  LogBox.ignoreLogs([
+  33    "FileSystem.w+Async is a stub",
+  34    "expo-media-library.saveToLibraryAsync is a stub",
+  35    "expo-router.router: Navigation not ready",
+  36    "setNavigationRef is deprecated",
+  37    "EXPO_OS is not defined",
+  38  ]);
+  39  
+  40  initSentry();
+  41  
+  42  const queryClient = new QueryClient({
+  43    defaultOptions: {
+  44      queries: {
+  45        staleTime: 5 * 60 * 1000,
+  46        retry: 2,
+  47      },
+  48    },
+  49  });
+  50  
+  51  const DEV_TEST_ACCOUNT_CONFIG = {
+  52    enabled: __DEV__,
+  53    email: "test@example.com",
+  54    REDACTEDst123456!",
+  55  };
+  56  
+  57  function ThemedStatusBar() {
+  58    const { isDark, colors } = useTheme();
+  59    return (
+  60      <StatusBar
+  61        barStyle={isDark ? "light-content" : "dark-content"}
+  62        backgroundColor={colors.surface}
+  63      />
+  64    );
+  65  }
+  66  
+  67  function SplashScreen() {
+  68    const setLoading = useAuthStore((state) => state.setLoading);
+  69    return <AnimatedSplashScreen onFinish={() => setLoading(false)} />;
+  70  }
+  71  
+  72  function AppProviders({ children }: { children: React.ReactNode }) {
+  73    return (
+  74      <GestureHandlerRootView style={rootStyles.root}>
+  75        <UnifiedThemeProvider>
+  76          <PaperThemeProvider>
+  77            <I18nProvider>
+  78              <FeatureFlagProvider>
+  79                <SafeAreaProvider>
+  80                  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  81                </SafeAreaProvider>
+  82              </FeatureFlagProvider>
+  83            </I18nProvider>
+  84          </PaperThemeProvider>
+  85        </UnifiedThemeProvider>
+  86      </GestureHandlerRootView>
+  87    );
+  88  }
+  89  
+  90  export default function App() {
+  91    const {
+  92      isAuthenticated,
+  93      isLoading,
+  94      REDACTED,
+  95      setLoading,
+  96    } = useAuthStore(
+  97      useShallow((state) => ({
+  98        isAuthenticated: state.isAuthenticated,
+  99        isLoading: state.isLoading,
+ 100        REDACTEDstate.accessToken,
+ 101        setLoading: state.setLoading,
+ 102      }))
+ 103    );
+ 104  
+ 105    const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
+ 106  
+ 107    const pendingDeepLinkUrlRef = useRef<string | null>(null);
+ 108    const lastHandledDeepLinkUrlRef = useRef<string | null>(null);
+ 109    const hasAutoLoggedInRef = useRef(false);
+ 110  
+ 111    const queueDeepLink = useCallback((url?: string | null) => {
+ 112      if (!url) {
+ 113        return;
+ 114      }
+ 115      pendingDeepLinkUrlRef.current = url;
+ 116    }, []);
+ 117  
+ 118    const flushPendingDeepLink = useCallback(() => {
+ 119      if (!checkNavigationReady() || isLoading) {
+ 120        return;
+ 121      }
+ 122  
+ 123      const pendingUrl = pendingDeepLinkUrlRef.current;
+ 124      if (!pendingUrl || pendingUrl === lastHandledDeepLinkUrlRef.current) {
+ 125        return;
+ 126      }
+ 127  
+ 128      const handled = navigateDeepLink(pendingUrl, isAuthenticated);
+ 129      if (handled) {
+ 130        lastHandledDeepLinkUrlRef.current = pendingUrl;
+ 131        pendingDeepLinkUrlRef.current = null;
+ 132      }
+ 133    }, [isAuthenticated, isLoading]);
+ 134  
+ 135    useEffect(() => {
+ 136      if (
+ 137        DEV_TEST_ACCOUNT_CONFIG.enabled &&
+ 138        !isLoading &&
+ 139        !isAuthenticated &&
+ 140        !authToken &&
+ 141        !hasAutoLoggedInRef.current
+ 142      ) {
+ 143        hasAutoLoggedInRef.current = true;
+ 144        const autoLogin = async () => {
+ 145          try {
+ 146            console.log("[DEV] Attempting auto-login with test account...");
+ 147            const response = await authApi.login({
+ 148              email: DEV_TEST_ACCOUNT_CONFIG.email,
+ 149              REDACTEDST_ACCOUNT_CONFIG.password,
+ 150            });
+ 151  
+ 152            if (response.success && response.data) {
+ 153              useAuthStore.getState().setToken(response.data.token);
+ 154              useAuthStore.getState().setUser(response.data.user);
+ 155              console.log("[DEV] Auto-login successful");
+ 156            }
+ 157          } catch (error) {
+ 158            console.warn("[DEV] Auto-login failed:", error);
+ 159            hasAutoLoggedInRef.current = false;
+ 160          }
+ 161        };
+ 162  
+ 163        const timer = setTimeout(autoLogin, 500);
+ 164        return () => clearTimeout(timer);
+ 165      }
+ 166  
+ 167      return undefined;
+ 168    }, [authToken, isAuthenticated, isLoading]);
+ 169  
+ 170    useEffect(() => {
+ 171      apiClient.onAuthExpired(() => {
+ 172        useAuthStore.getState().logout();
+ 173      });
+ 174      analytics.init();
+ 175  
+ 176      return () => {
+ 177        analytics.destroy();
+ 178      };
+ 179    }, []);
+ 180  
+ 181    useEffect(() => {
+ 182      const unsub = useAuthStore.persist.onFinishHydration(() => {
+ 183        setLoading(false);
+ 184      });
+ 185  
+ 186      if (useAuthStore.persist.hasHydrated()) {
+ 187        setLoading(false);
+ 188      }
+ 189  
+ 190      const timeout = setTimeout(() => {
+ 191        setLoading(false);
+ 192      }, 3000);
+ 193  
+ 194      return () => {
+ 195        unsub();
+ 196        clearTimeout(timeout);
+ 197      };
+ 198    }, [setLoading]);
+ 199  
+ 200    useEffect(() => {
+ 201      if (isLoading) {
+ 202        return;
+ 203      }
+ 204      void apiClient.setToken(authToken ?? null);
+ 205    }, [authToken, isLoading]);
+ 206  
+ 207    useEffect(() => {
+ 208      let isMounted = true;
+ 209  
+ 210      void Linking.getInitialURL().then((url) => {
+ 211        if (isMounted) {
+ 212          queueDeepLink(url);
+ 213        }
+ 214      });
+ 215  
+ 216      const subscription = Linking.addEventListener("url", ({ url }) => {
+ 217        queueDeepLink(url);
+ 218      });
+ 219  
+ 220      return () => {
+ 221        isMounted = false;
+ 222        subscription.remove();
+ 223      };
+ 224    }, [queueDeepLink]);
+ 225  
+ 226    useEffect(() => {
+ 227      flushPendingDeepLink();
+ 228    }, [currentRouteName, flushPendingDeepLink, isAuthenticated]);
+ 229  
+ 230    const navigationReadyHandler = useMemo(
+ 231      () => ({
+ 232        onReady: () => {
+ 233          setNavigationReady(true);
+ 234          const routeName = navigationRef.getCurrentRoute()?.name;
+ 235          setCurrentRouteName(routeName);
+ 236          if (routeName) {
+ 237            analytics.trackScreen(routeName);
+ 238          }
+ 239        },
+ 240        onStateChange: () => {
+ 241          const routeName = navigationRef.getCurrentRoute()?.name;
+ 242          setCurrentRouteName(routeName);
+ 243          if (routeName) {
+ 244            analytics.trackScreen(routeName);
+ 245          }
+ 246        },
+ 247      }),
+ 248      []
+ 249    );
+ 250  
+ 251    if (isLoading) {
+ 252      return (
+ 253        <ErrorBoundary
+ 254          screenName="SplashScreen"
+ 255          context={{ phase: "loading" }}
+ 256          onError={(error, errorInfo, structuredError) => {
+ 257            console.error("[App:Loading] Error:", structuredError);
+ 258          }}
+ 259        >
+ 260          <AppProviders>
+ 261            <ThemedStatusBar />
+ 262            <SplashScreen />
+ 263          </AppProviders>
+ 264        </ErrorBoundary>
+ 265      );
+ 266    }
+ 267  
+ 268    return (
+ 269      <ErrorBoundary
+ 270        screenName="AppRoot"
+ 271        context={{ isAuthenticated }}
+ 272        maxRetries={3}
+ 273        onError={(error, errorInfo, structuredError) => {
+ 274          console.error("[App:Root] Error:", structuredError);
+ 275        }}
+ 276        onReset={() => {
+ 277          console.log("[App:Root] Error boundary reset");
+ 278        }}
+ 279      >
+ 280        <AppProviders>
+ 281          <NavigationContainer
+ 282            ref={navigationRef}
+ 283            onReady={navigationReadyHandler.onReady}
+ 284            onStateChange={navigationReadyHandler.onStateChange}
+ 285          >
+ 286            <ThemedStatusBar />
+ 287            <OfflineBanner />
+ 288            <RootNavigator isAuthenticated={isAuthenticated} />
+ 289          </NavigationContainer>
+ 290        </AppProviders>
+ 291      </ErrorBoundary>
+ 292    );
+ 293  }
+ 294  
+ 295  const rootStyles = StyleSheet.create({
+ 296    root: {
+ 297      flex: 1,
+ 298    },
+ 299  });
+
+// ========== FILE: apps/mobile/src/navigation/MainStackNavigator.tsx ==========
+// Total lines: 459 (showing 1-999999)
+
+   1  /* eslint-disable @typescript-eslint/no-unused-vars */
+   2  import React, { Suspense, lazy, useMemo } from "react";
+   3  import { ActivityIndicator, View, StyleSheet } from "react-native";
+   4  import { createNativeStackNavigator } from "@react-navigation/native-stack";
+   5  import type {
+   6    TodayStackParamList,
+   7    DiscoverStackParamList,
+   8    StylistStackParamList,
+   9    ProfileStackParamList,
+  10  } from "./types";
+  11  import { GuardedScreen } from "./RouteGuards";
+  12  
+  13  import { flatColors as colors } from "../design-system/theme";
+  14  
+  15  const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
+  16  const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));
+  17  const AIStylistScreen = lazy(() => import("../features/stylist/screens/StylistScreen"));
+  18  
+  19  const TryOnResultScreenLazy = lazy(() => import("../features/tryon/screens/TryOnResultScreen"));
+  20  
+  21  const PaymentScreenLazy = lazy(() => import("../features/commerce/screens/PaymentScreen"));
+  22  
+  23  const PostDetailScreenLazy = lazy(() => import("../features/community/screens/PostDetailScreen"));
+  24  const PostCreateScreenLazy = lazy(() => import("../features/community/screens/CreatePostScreen"));
+  25  const InfluencerProfileScreenLazy = lazy(
+  26    () => import("../features/community/screens/InfluencerProfileScreen")
+  27  );
+  28  const InspirationWardrobeScreenLazy = lazy(
+  29    () => import("../features/community/screens/InspirationWardrobeScreen")
+  30  );
+  31  
+  32  const CustomEditorScreenLazy = lazy(
+  33    () => import("../features/customization/screens/CustomizationEditorScreen")
+  34  );
+  35  const BrandScreenLazy = lazy(() => import("../features/wardrobe/screens/BrandScreen"));
+  36  
+  37  const styles = StyleSheet.create({
+  38    loader: {
+  39      flex: 1,
+  40      backgroundColor: colors.surface,
+  41      alignItems: "center",
+  42      justifyContent: "center",
+  43    },
+  44  });
+  45  
+  46  const screenLoader = (
+  47    <View style={styles.loader}>
+  48      <ActivityIndicator size="large" color={colors.primary} />
+  49    </View>
+  50  );
+  51  
+  52  const commonScreenOptions = { headerShown: false } as const;
+  53  
+  54  const TodayScreen = lazy(() =>
+  55    import("../features/today/screens/TodayScreen").then((m) => ({ default: m.TodayScreen }))
+  56  );
+  57  const DiscoverScreen = lazy(() =>
+  58    import("../features/discover/screens/DiscoverScreen").then((m) => ({ default: m.DiscoverScreen }))
+  59  );
+  60  const SearchScreen = lazy(() =>
+  61    import("../features/search/screens/SearchScreen").then((m) => ({ default: m.SearchScreen }))
+  62  );
+  63  const NotificationsScreen = lazy(
+  64    () => import("../features/notifications/screens/NotificationsScreen")
+  65  );
+  66  const RecommendationDetailScreen = lazy(
+  67    () => import("../features/home/screens/RecommendationDetailScreen")
+  68  );
+  69  const ProductScreen = lazy(() => import("../features/wardrobe/screens/ClothingDetailScreen"));
+  70  const OutfitDetailScreen = lazy(() => import("../features/stylist/screens/OutfitDetailScreen"));
+  71  
+  72  const SessionCalendarScreen = lazy(
+  73    () => import("../features/stylist/screens/SessionCalendarScreen")
+  74  );
+  75  
+  76  const VirtualTryOnScreen = lazy(() => import("../features/tryon/screens/VirtualTryOnScreen"));
+  77  const TryOnHistoryScreenLazy = lazy(() =>
+  78    import("../shared/components/screens/TryOnHistoryScreen").then((m) => ({
+  79      default: m.TryOnHistoryScreen,
+  80    }))
+  81  );
+  82  
+  83  const CommunityFeedScreen = lazy(() => import("../features/community/screens/CommunityScreen"));
+  84  const BloggerDashboardScreen = lazy(
+  85    () => import("../features/community/screens/BloggerDashboardScreen")
+  86  );
+  87  const BloggerProfileScreen = lazy(
+  88    () => import("../features/community/screens/BloggerProfileScreen")
+  89  );
+  90  const BloggerProductScreen = lazy(
+  91    () => import("../features/community/screens/BloggerProductScreen")
+  92  );
+  93  
+  94  const ProfileMainScreen = lazy(() => import("../features/profile/screens/ProfileScreen"));
+  95  const ProfileEditScreen = lazy(() =>
+  96    import("../features/profile/screens/ProfileEditScreen").then((m) => ({
+  97      default: m.ProfileEditScreen,
+  98    }))
+  99  );
+ 100  const BodyAnalysisScreen = lazy(() =>
+ 101    import("../features/profile/screens/BodyAnalysisScreen").then((m) => ({
+ 102      default: m.BodyAnalysisScreen,
+ 103    }))
+ 104  );
+ 105  const ColorAnalysisScreen = lazy(() =>
+ 106    import("../features/profile/screens/ColorAnalysisScreen").then((m) => ({
+ 107      default: m.ColorAnalysisScreen,
+ 108    }))
+ 109  );
+ 110  const SharePosterScreen = lazy(() =>
+ 111    import("../features/profile/screens/SharePosterScreen").then((m) => ({
+ 112      default: m.SharePosterScreen,
+ 113    }))
+ 114  );
+ 115  const StyleQuizScreen = lazy(() =>
+ 116    import("../features/style-quiz/screens/StyleQuizScreen").then((m) => ({
+ 117      default: m.StyleQuizScreen,
+ 118    }))
+ 119  );
+ 120  const WardrobeScreen = lazy(() => import("../features/wardrobe/screens/WardrobeScreen"));
+ 121  const FavoritesScreen = lazy(() =>
+ 122    import("../features/wardrobe/screens/FavoritesScreen").then((m) => ({
+ 123      default: m.FavoritesScreen,
+ 124    }))
+ 125  );
+ 126  const SettingsScreen = lazy(() => import("../features/profile/screens/SettingsScreen"));
+ 127  const NotificationSettingsScreen = lazy(
+ 128    () => import("../features/notifications/screens/NotificationSettingsScreen")
+ 129  );
+ 130  const SubscriptionScreen = lazy(() => import("../features/commerce/screens/SubscriptionScreen"));
+ 131  const CartScreen = lazy(() => import("../features/commerce/screens/CartScreen"));
+ 132  const CheckoutScreen = lazy(() => import("../features/commerce/screens/CheckoutScreen"));
+ 133  const OrdersScreen = lazy(() => import("../features/commerce/screens/OrdersScreen"));
+ 134  const OrderDetailScreen = lazy(() => import("../features/commerce/screens/OrderDetailScreen"));
+ 135  const AddClothingScreen = lazy(() => import("../features/wardrobe/screens/AddClothingScreen"));
+ 136  const CustomDesignScreen = lazy(
+ 137    () => import("../features/customization/screens/CustomizationScreen")
+ 138  );
+ 139  const LegalScreenLazy = lazy(() => import("../features/profile/screens/LegalScreen"));
+ 140  function LegalScreenWrapper() {
+ 141    return <LegalScreenLazy type="terms" />;
+ 142  }
+ 143  
+ 144  const AdvisorListScreen = lazy(() => import("../features/consultant/screens/AdvisorListScreen"));
+ 145  const AdvisorProfileScreen = lazy(
+ 146    () => import("../features/consultant/screens/AdvisorProfileScreen")
+ 147  );
+ 148  const BookingScreen = lazy(() => import("../features/consultant/screens/BookingScreen"));
+ 149  const ChatScreen = lazy(() => import("../features/consultant/screens/ChatScreen"));
+ 150  
+ 151  function withGuard(Component: React.LazyExoticComponent<React.ComponentType>, route: string) {
+ 152    return function GuardedComponent() {
+ 153      return (
+ 154        <GuardedScreen routeName={route}>
+ 155          <Component />
+ 156        </GuardedScreen>
+ 157      );
+ 158    };
+ 159  }
+ 160  
+ 161  function SuspenseWrapper({ children }: { children: React.ReactNode }) {
+ 162    return <Suspense fallback={screenLoader}>{children}</Suspense>;
+ 163  }
+ 164  
+ 165  // ============================================================
+ 166  // Today Stack
+ 167  // ============================================================
+ 168  const TodayStack = createNativeStackNavigator<TodayStackParamList>();
+ 169  
+ 170  export function TodayStackNavigator() {
+ 171    return (
+ 172      <SuspenseWrapper>
+ 173        <TodayStack.Navigator screenOptions={commonScreenOptions} initialRouteName="TodayMain">
+ 174          <TodayStack.Screen
+ 175            name="TodayMain"
+ 176            options={{ animation: "slide_from_right" }}
+ 177            component={TodayScreen}
+ 178          />
+ 179          <TodayStack.Screen
+ 180            name="Search"
+ 181            options={{ animation: "slide_from_right" }}
+ 182            component={SearchScreen}
+ 183          />
+ 184          <TodayStack.Screen
+ 185            name="Notifications"
+ 186            options={{ animation: "slide_from_right" }}
+ 187            component={withGuard(NotificationsScreen, "Notifications")}
+ 188          />
+ 189          <TodayStack.Screen
+ 190            name="RecommendationDetail"
+ 191            options={{ animation: "slide_from_right" }}
+ 192            component={RecommendationDetailScreen}
+ 193          />
+ 194          <TodayStack.Screen
+ 195            name="Product"
+ 196            options={{ animation: "slide_from_right" }}
+ 197            component={ProductScreen}
+ 198          />
+ 199          <TodayStack.Screen
+ 200            name="OutfitDetail"
+ 201            options={{ animation: "slide_from_right" }}
+ 202            component={OutfitDetailScreen}
+ 203          />
+ 204        </TodayStack.Navigator>
+ 205      </SuspenseWrapper>
+ 206    );
+ 207  }
+ 208  
+ 209  // ============================================================
+ 210  // Discover Stack
+ 211  // ============================================================
+ 212  const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
+ 213  
+ 214  export function DiscoverStackNavigator() {
+ 215    return (
+ 216      <SuspenseWrapper>
+ 217        <DiscoverStack.Navigator screenOptions={commonScreenOptions} initialRouteName="DiscoverMain">
+ 218          <DiscoverStack.Screen
+ 219            name="DiscoverMain"
+ 220            options={{ animation: "slide_from_right" }}
+ 221            component={DiscoverScreen}
+ 222          />
+ 223          <DiscoverStack.Screen
+ 224            name="CommunityFeed"
+ 225            options={{ animation: "slide_from_right" }}
+ 226            component={CommunityFeedScreen}
+ 227          />
+ 228          <DiscoverStack.Screen
+ 229            name="PostDetail"
+ 230            options={{ animation: "slide_from_right" }}
+ 231            component={PostDetailScreenLazy}
+ 232          />
+ 233          <DiscoverStack.Screen
+ 234            name="PostCreate"
+ 235            options={{ animation: "slide_from_bottom" }}
+ 236            component={withGuard(PostCreateScreenLazy, "PostCreate")}
+ 237          />
+ 238          <DiscoverStack.Screen
+ 239            name="InfluencerProfile"
+ 240            options={{ animation: "slide_from_right" }}
+ 241            component={withGuard(InfluencerProfileScreenLazy, "InfluencerProfile")}
+ 242          />
+ 243          <DiscoverStack.Screen
+ 244            name="InspirationWardrobe"
+ 245            options={{ animation: "slide_from_right" }}
+ 246            component={withGuard(InspirationWardrobeScreenLazy, "InspirationWardrobe")}
+ 247          />
+ 248          <DiscoverStack.Screen
+ 249            name="BloggerDashboard"
+ 250            options={{ animation: "slide_from_right" }}
+ 251            component={withGuard(BloggerDashboardScreen, "BloggerDashboard")}
+ 252          />
+ 253          <DiscoverStack.Screen
+ 254            name="BloggerProfile"
+ 255            options={{ animation: "slide_from_right" }}
+ 256            component={BloggerProfileScreen}
+ 257          />
+ 258          <DiscoverStack.Screen
+ 259            name="BloggerProduct"
+ 260            options={{ animation: "slide_from_right" }}
+ 261            component={BloggerProductScreen}
+ 262          />
+ 263          <DiscoverStack.Screen
+ 264            name="VirtualTryOn"
+ 265            options={{ animation: "slide_from_right" }}
+ 266            component={withGuard(VirtualTryOnScreen, "VirtualTryOn")}
+ 267          />
+ 268          <DiscoverStack.Screen
+ 269            name="TryOnResult"
+ 270            options={{ animation: "fade" }}
+ 271            component={withGuard(TryOnResultScreenLazy, "TryOnResult")}
+ 272          />
+ 273          <DiscoverStack.Screen
+ 274            name="TryOnHistory"
+ 275            options={{ animation: "slide_from_right" }}
+ 276            component={withGuard(TryOnHistoryScreenLazy, "TryOnHistory")}
+ 277          />
+ 278          <DiscoverStack.Screen
+ 279            name="Wardrobe"
+ 280            options={{ animation: "slide_from_right" }}
+ 281            component={withGuard(WardrobeScreen, "Wardrobe")}
+ 282          />
+ 283          <DiscoverStack.Screen
+ 284            name="Favorites"
+ 285            options={{ animation: "slide_from_right" }}
+ 286            component={withGuard(FavoritesScreen, "Favorites")}
+ 287          />
+ 288        </DiscoverStack.Navigator>
+ 289      </SuspenseWrapper>
+ 290    );
+ 291  }
+ 292  
+ 293  // ============================================================
+ 294  // Stylist Stack
+ 295  // ============================================================
+ 296  const StylistStack = createNativeStackNavigator<StylistStackParamList>();
+ 297  
+ 298  export function StylistStackNavigator() {
+ 299    return (
+ 300      <SuspenseWrapper>
+ 301        <StylistStack.Navigator screenOptions={commonScreenOptions} initialRouteName="AIStylist">
+ 302          <StylistStack.Screen
+ 303            name="AIStylist"
+ 304            options={{ animation: "fade" }}
+ 305            component={withGuard(AIStylistScreen, "AIStylist")}
+ 306          />
+ 307          <StylistStack.Screen
+ 308            name="OutfitPlan"
+ 309            options={{ animation: "fade" }}
+ 310            component={withGuard(OutfitPlanScreenLazy, "OutfitPlan")}
+ 311          />
+ 312          <StylistStack.Screen
+ 313            name="ChatHistory"
+ 314            options={{ animation: "slide_from_right" }}
+ 315            component={withGuard(ChatHistoryScreenLazy, "ChatHistory")}
+ 316          />
+ 317          <StylistStack.Screen
+ 318            name="AiStylistChat"
+ 319            options={{ animation: "fade" }}
+ 320            component={withGuard(AIStylistScreen, "AiStylistChat")}
+ 321          />
+ 322          <StylistStack.Screen
+ 323            name="SessionCalendar"
+ 324            options={{ animation: "slide_from_right" }}
+ 325            component={withGuard(SessionCalendarScreen, "SessionCalendar")}
+ 326          />
+ 327        </StylistStack.Navigator>
+ 328      </SuspenseWrapper>
+ 329    );
+ 330  }
+ 331  
+ 332  // ============================================================
+ 333  // Profile Stack (Me Tab)
+ 334  // ============================================================
+ 335  const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
+ 336  
+ 337  export function ProfileStackNavigator() {
+ 338    return (
+ 339      <SuspenseWrapper>
+ 340        <ProfileStack.Navigator screenOptions={commonScreenOptions} initialRouteName="ProfileMain">
+ 341          <ProfileStack.Screen
+ 342            name="ProfileMain"
+ 343            options={{ animation: "slide_from_right" }}
+ 344            component={ProfileMainScreen}
+ 345          />
+ 346          <ProfileStack.Screen
+ 347            name="ProfileEdit"
+ 348            options={{ animation: "slide_from_right" }}
+ 349            component={withGuard(ProfileEditScreen, "ProfileEdit")}
+ 350          />
+ 351          <ProfileStack.Screen
+ 352            name="StyleQuiz"
+ 353            options={{ animation: "slide_from_right" }}
+ 354            component={withGuard(StyleQuizScreen, "StyleQuiz")}
+ 355          />
+ 356          <ProfileStack.Screen
+ 357            name="BodyAnalysis"
+ 358            options={{ animation: "slide_from_bottom" }}
+ 359            component={withGuard(BodyAnalysisScreen, "BodyAnalysis")}
+ 360          />
+ 361          <ProfileStack.Screen
+ 362            name="ColorAnalysis"
+ 363            options={{ animation: "slide_from_bottom" }}
+ 364            component={withGuard(ColorAnalysisScreen, "ColorAnalysis")}
+ 365          />
+ 366          <ProfileStack.Screen
+ 367            name="SharePoster"
+ 368            options={{ animation: "slide_from_bottom" }}
+ 369            component={withGuard(SharePosterScreen, "SharePoster")}
+ 370          />
+ 371          <ProfileStack.Screen
+ 372            name="Settings"
+ 373            options={{ animation: "slide_from_right" }}
+ 374            component={withGuard(SettingsScreen, "Settings")}
+ 375          />
+ 376          <ProfileStack.Screen
+ 377            name="NotificationSettings"
+ 378            options={{ animation: "slide_from_right" }}
+ 379            component={withGuard(NotificationSettingsScreen, "NotificationSettings")}
+ 380          />
+ 381          <ProfileStack.Screen
+ 382            name="Subscription"
+ 383            options={{ animation: "slide_from_bottom" }}
+ 384            component={withGuard(SubscriptionScreen, "Subscription")}
+ 385          />
+ 386          <ProfileStack.Screen
+ 387            name="Cart"
+ 388            options={{ animation: "slide_from_right" }}
+ 389            component={withGuard(CartScreen, "Cart")}
+ 390          />
+ 391          <ProfileStack.Screen
+ 392            name="Checkout"
+ 393            options={{ animation: "slide_from_right" }}
+ 394            component={withGuard(CheckoutScreen, "Checkout")}
+ 395          />
+ 396          <ProfileStack.Screen
+ 397            name="Payment"
+ 398            options={{ animation: "slide_from_bottom" }}
+ 399            component={withGuard(PaymentScreenLazy, "Payment")}
+ 400          />
+ 401          <ProfileStack.Screen
+ 402            name="Orders"
+ 403            options={{ animation: "slide_from_right" }}
+ 404            component={withGuard(OrdersScreen, "Orders")}
+ 405          />
+ 406          <ProfileStack.Screen
+ 407            name="OrderDetail"
+ 408            options={{ animation: "slide_from_right" }}
+ 409            component={withGuard(OrderDetailScreen, "OrderDetail")}
+ 410          />
+ 411          <ProfileStack.Screen
+ 412            name="AddClothing"
+ 413            options={{ animation: "slide_from_bottom" }}
+ 414            component={withGuard(AddClothingScreen, "AddClothing")}
+ 415          />
+ 416          <ProfileStack.Screen
+ 417            name="CustomDesign"
+ 418            options={{ animation: "slide_from_right" }}
+ 419            component={withGuard(CustomDesignScreen, "CustomDesign")}
+ 420          />
+ 421          <ProfileStack.Screen
+ 422            name="CustomEditor"
+ 423            options={{ animation: "fade" }}
+ 424            component={withGuard(CustomEditorScreenLazy, "CustomEditor")}
+ 425          />
+ 426          <ProfileStack.Screen
+ 427            name="Brand"
+ 428            options={{ animation: "slide_from_right" }}
+ 429            component={withGuard(BrandScreenLazy, "Brand")}
+ 430          />
+ 431          <ProfileStack.Screen
+ 432            name="AdvisorList"
+ 433            options={{ animation: "slide_from_right" }}
+ 434            component={withGuard(AdvisorListScreen, "AdvisorList")}
+ 435          />
+ 436          <ProfileStack.Screen
+ 437            name="AdvisorProfile"
+ 438            options={{ animation: "slide_from_right" }}
+ 439            component={withGuard(AdvisorProfileScreen, "AdvisorProfile")}
+ 440          />
+ 441          <ProfileStack.Screen
+ 442            name="Booking"
+ 443            options={{ animation: "slide_from_bottom" }}
+ 444            component={withGuard(BookingScreen, "Booking")}
+ 445          />
+ 446          <ProfileStack.Screen
+ 447            name="Chat"
+ 448            options={{ animation: "slide_from_right" }}
+ 449            component={withGuard(ChatScreen, "Chat")}
+ 450          />
+ 451          <ProfileStack.Screen
+ 452            name="Legal"
+ 453            options={{ animation: "slide_from_bottom" }}
+ 454            component={LegalScreenWrapper}
+ 455          />
+ 456        </ProfileStack.Navigator>
+ 457      </SuspenseWrapper>
+ 458    );
+ 459  }
+
+// ========== FILE: apps/mobile/src/features/today/screens/TodayScreen.tsx ==========
+// Total lines: 189 (showing 1-999999)
+
+   1  import React, { useCallback, useMemo } from "react";
+   2  import { View } from "react-native";
+   3  import { FlashList } from "../../../polyfills/flash-list";
+   4  import { WeatherSceneCard } from "../components/WeatherSceneCard";
+   5  import { RecommendationCarousel } from "../components/RecommendationCarousel";
+   6  import { RecommendationFunnel } from "../components/RecommendationFunnel";
+   7  import { QuickChatBar } from "../components/QuickChatBar";
+   8  import { GlassHeader } from "../components/GlassHeader";
+   9  import { AiInsightBubble } from "../components/AiInsightBubble";
+  10  import { QuickReplyButtons } from "../components/QuickReplyButtons";
+  11  import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+  12  import { EmptyState, ErrorState } from "../../../shared/components/states";
+  13  import { ShimmerSkeleton } from "../../../shared/components/animations/ShimmerSkeleton";
+  14  import { navigateStylist } from "../../../navigation/navigationService";
+  15  import { useTodayRecommendations, useWeather } from "../../../shared/hooks/useQueryHooks";
+  16  import { useDemoStore } from "../../../shared/stores/demoStore";
+  17  
+  18  type TodaySection =
+  19    | { type: "weather" }
+  20    | { type: "carousel" }
+  21    | { type: "funnel" }
+  22    | { type: "insight" }
+  23    | { type: "quickReply" };
+  24  
+  25  export function TodayScreen() {
+  26    const { colors } = useTheme();
+  27    const styles = useStyles(colors);
+  28    const demoMode = useDemoStore((s) => s.demoMode);
+  29  
+  30    const {
+  31      data: recommendations,
+  32      isLoading: recLoading,
+  33      error: recError,
+  34      refetch: refetchRec,
+  35    } = useTodayRecommendations();
+  36    const { data: weather, isLoading: weatherLoading } = useWeather();
+  37  
+  38    const isLoading = recLoading || weatherLoading;
+  39  
+  40    const handleQuickReply = useCallback((option: string) => {
+  41      navigateStylist("AIStylist", { initialMessage: option });
+  42    }, []);
+  43  
+  44    const sections: TodaySection[] = useMemo(() => {
+  45      const items: TodaySection[] = [{ type: "weather" }, { type: "carousel" }];
+  46      if (recommendations?.breakdown && (__DEV__ || demoMode)) {
+  47        items.push({ type: "funnel" });
+  48      }
+  49      items.push({ type: "insight" }, { type: "quickReply" });
+  50      return items;
+  51    }, [recommendations?.breakdown, demoMode]);
+  52  
+  53    const keyExtractor = useCallback((item: TodaySection, index: number) => item.type + index, []);
+  54  
+  55    const renderItem = useCallback(
+  56      ({ item }: { item: TodaySection }) => {
+  57        if (!recommendations) {
+  58          return null;
+  59        }
+  60        switch (item.type) {
+  61          case "weather":
+  62            return (
+  63              <WeatherSceneCard
+  64                weather={
+  65                  weather
+  66                    ? {
+  67                        temp: weather.temperature,
+  68                        condition: weather.condition || weather.description,
+  69                        icon: weather.icon || "sun",
+  70                      }
+  71                    : undefined
+  72                }
+  73                scene={{
+  74                  title: recommendations.outfit?.name || "今日推荐",
+  75                  description:
+  76                    recommendations.outfit?.description || recommendations.explanation?.why || "",
+  77                }}
+  78              />
+  79            );
+  80          case "carousel":
+  81            return <RecommendationCarousel items={recommendations.items} />;
+  82          case "funnel":
+  83            return recommendations?.breakdown ? (
+  84              <RecommendationFunnel breakdown={recommendations.breakdown} />
+  85            ) : null;
+  86          case "insight":
+  87            return <AiInsightBubble message={recommendations.explanation?.why || ""} />;
+  88          case "quickReply":
+  89            return (
+  90              <QuickReplyButtons
+  91                options={[
+  92                  recommendations.explanation?.nextAction || "换一套",
+  93                  "推荐通勤穿搭",
+  94                  "约会风格",
+  95                ]}
+  96                onSelect={handleQuickReply}
+  97              />
+  98            );
+  99        }
+ 100      },
+ 101      [weather, recommendations, handleQuickReply]
+ 102    );
+ 103  
+ 104    if (isLoading) {
+ 105      return (
+ 106        <View style={styles.container}>
+ 107          <GlassHeader title="今天穿什么" subtitle="让伊伊为你推荐" />
+ 108          <View style={styles.loadingWrapper}>
+ 109            <ShimmerSkeleton width="100%" height={120} style={{ marginBottom: 16 }} />
+ 110            <ShimmerSkeleton width="100%" height={200} style={{ marginBottom: 16 }} />
+ 111            <ShimmerSkeleton width="100%" height={80} />
+ 112          </View>
+ 113          <QuickChatBar />
+ 114        </View>
+ 115      );
+ 116    }
+ 117  
+ 118    if (recError) {
+ 119      return (
+ 120        <View style={styles.container}>
+ 121          <GlassHeader title="今天穿什么" subtitle="让伊伊为你推荐" />
+ 122          <View style={styles.emptyWrapper}>
+ 123            <ErrorState
+ 124              title="加载失败"
+ 125              message="抱歉，发生了一些错误，请稍后重试"
+ 126              onRetry={() => {
+ 127                void refetchRec();
+ 128              }}
+ 129              actionLabel="重新加载推荐"
+ 130            />
+ 131          </View>
+ 132          <QuickChatBar />
+ 133        </View>
+ 134      );
+ 135    }
+ 136  
+ 137    if (!recommendations || !recommendations.items || recommendations.items.length === 0) {
+ 138      return (
+ 139        <View style={styles.container}>
+ 140          <GlassHeader title="今天穿什么" subtitle="让伊伊为你推荐" />
+ 141          <View style={styles.emptyWrapper}>
+ 142            <EmptyState
+ 143              illustration="empty-box"
+ 144              title="今天还没有推荐"
+ 145              description="伊伊正在根据天气和场景为你搭配"
+ 146              actionLabel="看看昨天推荐"
+ 147              onAction={() => navigateStylist("AIStylist")}
+ 148            />
+ 149          </View>
+ 150          <QuickChatBar />
+ 151        </View>
+ 152      );
+ 153    }
+ 154  
+ 155    return (
+ 156      <View style={styles.container}>
+ 157        <GlassHeader title="今天穿什么" subtitle="让伊伊为你推荐" />
+ 158        <FlashList
+ 159          data={sections}
+ 160          renderItem={renderItem}
+ 161          keyExtractor={keyExtractor}
+ 162          estimatedItemSize={200}
+ 163          contentContainerStyle={styles.scrollContent}
+ 164          showsVerticalScrollIndicator={false}
+ 165        />
+ 166        <QuickChatBar />
+ 167      </View>
+ 168    );
+ 169  }
+ 170  
+ 171  const useStyles = createStyles((colors) => ({
+ 172    container: {
+ 173      flex: 1,
+ 174      backgroundColor: colors.background,
+ 175    },
+ 176    scrollContent: {
+ 177      paddingBottom: 80,
+ 178    },
+ 179    emptyWrapper: {
+ 180      flex: 1,
+ 181      justifyContent: "center",
+ 182      alignItems: "center",
+ 183    },
+ 184    loadingWrapper: {
+ 185      flex: 1,
+ 186      paddingHorizontal: 16,
+ 187      paddingTop: 16,
+ 188    },
+ 189  }));
+
+// ========== FILE: apps/mobile/src/features/onboarding/screens/OnboardingWizard.tsx ==========
+// Total lines: 369 (showing 1-999999)
+
+   1  /* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+   2  import React, { useCallback, useMemo } from "react";
+   3  import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+   4  import { SafeAreaView } from "react-native-safe-area-context";
+   5  import { useNavigation } from "@react-navigation/native";
+   6  import type { NavigationProp } from "@react-navigation/native";
+   7  import Animated, {
+   8    useSharedValue,
+   9    useAnimatedStyle,
+  10    withSpring,
+  11    SlideInRight,
+  12    SlideOutLeft,
+  13  } from "react-native-reanimated";
+  14  import { Ionicons } from "../../../polyfills/expo-vector-icons";
+  15  import {
+  16    Colors,
+  17    Spacing,
+  18    BorderRadius,
+  19    Shadows,
+  20    DesignTokens,
+  21    flatColors as colors,
+  22  } from "../../../design-system/theme";
+  23  import { useTheme } from "../../../shared/contexts/ThemeContext";
+  24  import { useOnboardingStore } from "../stores/onboardingStore";
+  25  import type { OnboardingStep } from "../stores/onboardingStore";
+  26  import { onboardingService } from "../services/onboardingService";
+  27  import { SceneSelectionStep } from "./steps/SceneSelectionStep";
+  28  import { QuickProfileStep } from "./steps/QuickProfileStep";
+  29  import { StyleExpressionStep } from "./steps/StyleExpressionStep";
+  30  import { YiyiFirstOutfitStep } from "./steps/YiyiFirstOutfitStep";
+  31  import type { RootStackParamList } from "../../../types/navigation";
+  32  
+  33  type NavigationPropType = NavigationProp<RootStackParamList>;
+  34  
+  35  const STEP_ORDER: OnboardingStep[] = ["scene", "preference", "style", "result"];
+  36  
+  37  const STEP_TITLES: Record<OnboardingStep, string> = {
+  38    scene: "你的场景",
+  39    preference: "快速画像",
+  40    style: "你的风格",
+  41    result: "让伊伊搭第一套",
+  42  };
+  43  
+  44  const TOTAL_STEPS = 4;
+  45  
+  46  export const OnboardingWizard: React.FC = () => {
+  47    const { colors } = useTheme();
+  48    const navigation = useNavigation<NavigationPropType>();
+  49    const {
+  50      currentStep,
+  51      formData,
+  52      isLoading,
+  53      newOnboarding,
+  54      completeStep,
+  55      updateFormData,
+  56      goToNextStep,
+  57      goToPrevStep,
+  58      setLoading,
+  59    } = useOnboardingStore();
+  60  
+  61    const stepIndex = STEP_ORDER.indexOf(currentStep);
+  62  
+  63    const progressValue = useSharedValue(Math.min((stepIndex + 1) / TOTAL_STEPS, 1));
+  64  
+  65    const updateProgress = useCallback(
+  66      (step: number) => {
+  67        progressValue.value = withSpring(Math.min((step + 1) / TOTAL_STEPS, 1), {
+  68          damping: 15,
+  69          stiffness: 120,
+  70        });
+  71      },
+  72      [progressValue]
+  73    );
+  74  
+  75    const progressStyle = useAnimatedStyle(() => ({
+  76      width: `${progressValue.value * 100}%`,
+  77    }));
+  78  
+  79    const canProceed = useCallback((): boolean => {
+  80      if (currentStep === "scene") {
+  81        return newOnboarding.selectedScenes.length >= 1;
+  82      }
+  83      if (currentStep === "preference") {
+  84        return (
+  85          newOnboarding.garmentPreference.lowerBody !== undefined &&
+  86          newOnboarding.garmentPreference.upperFit !== undefined
+  87        );
+  88      }
+  89      if (currentStep === "style") {
+  90        return newOnboarding.selectedStyles.length >= 1;
+  91      }
+  92      return true; // result step
+  93    }, [currentStep, newOnboarding]);
+  94  
+  95    const handleNext = useCallback(() => {
+  96      if (!canProceed()) {
+  97        return;
+  98      }
+  99  
+ 100      completeStep(currentStep);
+ 101  
+ 102      if (currentStep === "result") {
+ 103        void handleComplete();
+ 104        return;
+ 105      }
+ 106  
+ 107      goToNextStep();
+ 108      updateProgress(stepIndex + 1);
+ 109    }, [canProceed, currentStep, completeStep, goToNextStep, stepIndex, updateProgress]);
+ 110  
+ 111    const handleBack = useCallback(() => {
+ 112      if (stepIndex > 0) {
+ 113        goToPrevStep();
+ 114        updateProgress(stepIndex - 1);
+ 115      }
+ 116    }, [stepIndex, goToPrevStep, updateProgress]);
+ 117  
+ 118    const handleComplete = useCallback(async () => {
+ 119      setLoading(true);
+ 120      try {
+ 121        await onboardingService.completeOnboarding(formData, newOnboarding);
+ 122        await onboardingService.markOnboardingComplete();
+ 123        navigation.reset({
+ 124          index: 0,
+ 125          routes: [{ name: "MainTabs" }],
+ 126        });
+ 127      } catch {
+ 128        // Network failed -- save locally and mark complete so user doesn't lose progress
+ 129        // The persisted store already has their data; backend sync will happen on next launch
+ 130        await onboardingService.markOnboardingComplete();
+ 131  
+ 132        // Show retry hint via a brief alert, then navigate forward
+ 133        Alert.alert("网络提示", "数据暂存成功，稍后将自动同步到服务器", [
+ 134          {
+ 135            text: "好的",
+ 136            onPress: () => {
+ 137              navigation.reset({
+ 138                index: 0,
+ 139                routes: [{ name: "MainTabs" }],
+ 140              });
+ 141            },
+ 142          },
+ 143        ]);
+ 144      } finally {
+ 145        setLoading(false);
+ 146      }
+ 147    }, [formData, newOnboarding, navigation, setLoading]);
+ 148  
+ 149    const isFirstStep = currentStep === "scene";
+ 150    const isLastStep = currentStep === "result";
+ 151  
+ 152    const renderStep = useMemo(() => {
+ 153      switch (currentStep) {
+ 154        case "scene":
+ 155          return (
+ 156            <Animated.View
+ 157              key={currentStep}
+ 158              entering={SlideInRight}
+ 159              exiting={SlideOutLeft}
+ 160              style={styles.stepContainer}
+ 161            >
+ 162              <SceneSelectionStep onNext={handleNext} />
+ 163            </Animated.View>
+ 164          );
+ 165        case "preference":
+ 166          return (
+ 167            <Animated.View
+ 168              key={currentStep}
+ 169              entering={SlideInRight}
+ 170              exiting={SlideOutLeft}
+ 171              style={styles.stepContainer}
+ 172            >
+ 173              <QuickProfileStep
+ 174                formData={formData}
+ 175                updateFormData={updateFormData}
+ 176                onNext={handleNext}
+ 177              />
+ 178            </Animated.View>
+ 179          );
+ 180        case "style":
+ 181          return (
+ 182            <Animated.View
+ 183              key={currentStep}
+ 184              entering={SlideInRight}
+ 185              exiting={SlideOutLeft}
+ 186              style={styles.stepContainer}
+ 187            >
+ 188              <StyleExpressionStep onNext={handleNext} />
+ 189            </Animated.View>
+ 190          );
+ 191        case "result":
+ 192          return (
+ 193            <Animated.View
+ 194              key={currentStep}
+ 195              entering={SlideInRight}
+ 196              exiting={SlideOutLeft}
+ 197              style={styles.stepContainer}
+ 198            >
+ 199              <YiyiFirstOutfitStep onComplete={handleComplete} />
+ 200            </Animated.View>
+ 201          );
+ 202        default:
+ 203          return null;
+ 204      }
+ 205    }, [currentStep, formData, handleNext, handleComplete, updateFormData, colors.primary]);
+ 206  
+ 207    return (
+ 208      <SafeAreaView style={styles.container}>
+ 209        <View style={styles.progressContainer}>
+ 210          <View style={styles.progressTrack}>
+ 211            <Animated.View style={[styles.progressFill, progressStyle]} />
+ 212          </View>
+ 213          <Text style={styles.stepCounter}>
+ 214            {Math.min(stepIndex + 1, TOTAL_STEPS)}/{TOTAL_STEPS}
+ 215          </Text>
+ 216        </View>
+ 217  
+ 218        <View style={styles.stepHeader}>
+ 219          <Text style={styles.stepTitleText}>{STEP_TITLES[currentStep]}</Text>
+ 220        </View>
+ 221  
+ 222        <View style={styles.content}>{renderStep}</View>
+ 223  
+ 224        <View style={styles.footer}>
+ 225          {isFirstStep ? (
+ 226            <TouchableOpacity
+ 227              style={styles.skipButton}
+ 228              onPress={() => {
+ 229                onboardingService.markOnboardingComplete().then(() => {
+ 230                  navigation.reset({ index: 0, routes: [{ name: "MainTabs" }] });
+ 231                });
+ 232              }}
+ 233              activeOpacity={0.7}
+ 234            >
+ 235              <Text style={styles.skipButtonText}>稍后设置</Text>
+ 236            </TouchableOpacity>
+ 237          ) : (
+ 238            <TouchableOpacity style={styles.backButton} onPress={handleBack} activeOpacity={0.7}>
+ 239              <Ionicons name="arrow-back" size={20} color={colors.textSecondary} />
+ 240              <Text style={styles.backButtonText}>上一步</Text>
+ 241            </TouchableOpacity>
+ 242          )}
+ 243  
+ 244          <View style={styles.footerSpacer} />
+ 245  
+ 246          {!isLastStep && (
+ 247            <TouchableOpacity
+ 248              style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
+ 249              onPress={handleNext}
+ 250              disabled={!canProceed() || isLoading}
+ 251              activeOpacity={0.7}
+ 252            >
+ 253              {isLoading ? (
+ 254                <ActivityIndicator size="small" color={colors.surface} />
+ 255              ) : (
+ 256                <>
+ 257                  <Text style={styles.nextButtonText}>下一步</Text>
+ 258                  <Ionicons name="arrow-forward" size={18} color={colors.surface} />
+ 259                </>
+ 260              )}
+ 261            </TouchableOpacity>
+ 262          )}
+ 263        </View>
+ 264      </SafeAreaView>
+ 265    );
+ 266  };
+ 267  
+ 268  const styles = StyleSheet.create({
+ 269    container: {
+ 270      flex: 1,
+ 271      backgroundColor: colors.surface,
+ 272    },
+ 273    progressContainer: {
+ 274      flexDirection: "row",
+ 275      alignItems: "center",
+ 276      paddingHorizontal: Spacing[5],
+ 277      paddingTop: Spacing[3],
+ 278      paddingBottom: Spacing[2],
+ 279    },
+ 280    progressTrack: {
+ 281      flex: 1,
+ 282      height: 3,
+ 283      backgroundColor: colors.neutral[200],
+ 284      borderRadius: BorderRadius.full,
+ 285      overflow: "hidden",
+ 286    },
+ 287    progressFill: {
+ 288      height: "100%",
+ 289      backgroundColor: colors.primary,
+ 290      borderRadius: BorderRadius.full,
+ 291    },
+ 292    stepCounter: {
+ 293      marginLeft: Spacing[3],
+ 294      fontSize: DesignTokens.typography.sizes.sm,
+ 295      color: colors.textTertiary,
+ 296      fontWeight: "500",
+ 297      minWidth: DesignTokens.spacing[9],
+ 298    },
+ 299    stepHeader: {
+ 300      paddingHorizontal: Spacing[5],
+ 301      paddingTop: Spacing[2],
+ 302      paddingBottom: Spacing[3],
+ 303    },
+ 304    stepTitleText: {
+ 305      fontSize: DesignTokens.typography.sizes.xl,
+ 306      fontWeight: "600",
+ 307      color: colors.textPrimary,
+ 308    },
+ 309    content: {
+ 310      flex: 1,
+ 311      overflow: "hidden",
+ 312    },
+ 313    stepContainer: {
+ 314      flex: 1,
+ 315    },
+ 316    footer: {
+ 317      flexDirection: "row",
+ 318      alignItems: "center",
+ 319      paddingHorizontal: Spacing[5],
+ 320      paddingVertical: Spacing[4],
+ 321      paddingBottom: Spacing[6],
+ 322    },
+ 323    backButton: {
+ 324      flexDirection: "row",
+ 325      alignItems: "center",
+ 326      gap: Spacing[1],
+ 327      paddingVertical: Spacing[3],
+ 328      paddingHorizontal: Spacing[2],
+ 329    },
+ 330    backButtonText: {
+ 331      fontSize: DesignTokens.typography.sizes.base,
+ 332      color: colors.textSecondary,
+ 333      fontWeight: "500",
+ 334    },
+ 335    footerSpacer: {
+ 336      flex: 1,
+ 337    },
+ 338    skipButton: {
+ 339      paddingVertical: Spacing[3],
+ 340      paddingHorizontal: Spacing[3],
+ 341      marginRight: Spacing[3],
+ 342    },
+ 343    skipButtonText: {
+ 344      fontSize: DesignTokens.typography.sizes.base,
+ 345      color: colors.textTertiary,
+ 346      fontWeight: "500",
+ 347    },
+ 348    nextButton: {
+ 349      flexDirection: "row",
+ 350      alignItems: "center",
+ 351      backgroundColor: colors.primary,
+ 352      borderRadius: BorderRadius.xl,
+ 353      paddingVertical: Spacing[4],
+ 354      paddingHorizontal: Spacing[6],
+ 355      gap: Spacing[2],
+ 356      ...Shadows.brand,
+ 357      minHeight: 52,
+ 358    },
+ 359    nextButtonDisabled: {
+ 360      opacity: 0.4,
+ 361    },
+ 362    nextButtonText: {
+ 363      fontSize: DesignTokens.typography.sizes.md,
+ 364      fontWeight: "600",
+ 365      color: colors.surface,
+ 366    },
+ 367  });
+ 368  
+ 369  export default OnboardingWizard;
+
+// ========== FILE: apps/mobile/src/features/auth/stores/authStore.ts ==========
+// Total lines: 539 (showing 1-134)
+
+   1  /* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+   2  import { logger } from "../../../shared/utils/logger";
+   3  import { create } from "zustand";
+   4  import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
+   5  import AsyncStorage from "@react-native-async-storage/async-storage";
+   6  import { secureStorage, SECURE_STORAGE_KEYS } from "../../../shared/utils/secureStorage";
+   7  import apiClient from "../../../services/api/client";
+   8  import { AppError, AppErrorCode, toAppError } from "../../../services/api/error";
+   9  import type {
+  10    User,
+  11    AuthTokens,
+  12    LoginCredentials,
+  13    RegisterData,
+  14    UserPreferences,
+  15    UserStats,
+  16  } from "../types";
+  17  import type { ApiResponse } from "../types";
+  18  
+  19  interface StyleProfile {
+  20    preferredStyles: string[];
+  21    preferredColors: string[];
+  22    avoidedColors: string[];
+  23    styleAvoidances: string[];
+  24    fitGoals: string[];
+  25    bodyType?: string;
+  26    skinTone?: string;
+  27    colorSeason?: string;
+  28    budget?: "low" | "medium" | "high" | "luxury";
+  29  }
+  30  
+  31  interface AuthState {
+  32    user: User | null;
+  33    accessREDACTEDstring | null;
+  34    refreshREDACTEDstring | null;
+  35    isAuthenticated: boolean;
+  36    isLoading: boolean;
+  37    isRefreshing: boolean;
+  38    error: AppError | null;
+  39    onboardingCompleted: boolean;
+  40    isVip: boolean;
+  41    userProfile: User | null;
+  42    preferences: UserPreferences | null;
+  43    styleProfile: StyleProfile | null;
+  44    stats: UserStats | null;
+  45    lastFetchedAt: number | null;
+  46  
+  47    login: (credentials: LoginCredentials) => Promise<void>;
+  48    loginWithPhone: (phone: string, code: string) => Promise<void>;
+  49    loginWithWechat: (code: string) => Promise<void>;
+  50    register: (data: RegisterData) => Promise<void>;
+  51    logout: () => Promise<void>;
+  52    refreshAuth: () => Promise<void>;
+  53    setUser: (user: User | null) => void;
+  54    setREDACTEDstring) => void;
+  55    clearError: () => void;
+  56    fetchProfile: () => Promise<void>;
+  57    fetchPreferences: () => Promise<void>;
+  58    fetchStats: () => Promise<void>;
+  59    updateProfile: (data: Partial<User>) => Promise<void>;
+  60    updatePreferences: (data: Partial<UserPreferences>) => Promise<void>;
+  61    updateStyleProfile: (data: Partial<StyleProfile>) => Promise<void>;
+  62    refreshAll: () => Promise<void>;
+  63    setLoading: (loading: boolean) => void;
+  64  }
+  65  
+  66  const secureStorageAdapter: StateStorage = {
+  67    getItem: async (name: string): Promise<string | null> => {
+  68      if (name === "auth-v2-storage") {
+  69        const REDACTEDsecureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
+  70        const refresh = await secureStorage.getItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
+  71        const userStr = await secureStorage.getItem(SECURE_STORAGE_KEYS.USER_DATA);
+  72        return JSON.stringify({
+  73          state: {
+  74            accessREDACTED,
+  75            refreshREDACTEDsh,
+  76            user: userStr ? JSON.parse(userStr) : null,
+  77            isAuthenticated: !!token,
+  78            onboardingCompleted: userStr
+  79              ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false
+  80              : false,
+  81            isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
+  82          },
+  83          version: 0,
+  84        });
+  85      }
+  86      return AsyncStorage.getItem(name);
+  87    },
+  88    setItem: async (name: string, value: string): Promise<void> => {
+  89      if (name === "auth-v2-storage") {
+  90        const { state } = JSON.parse(value);
+  91        if (state.accessToken) {
+  92          await secureStorage.setItem(SECURE_STORAGE_KEYS.AUTH_TOKEN, state.accessToken);
+  93        } else {
+  94          await secureStorage.deleteItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
+  95        }
+  96        if (state.refreshToken) {
+  97          await secureStorage.setItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN, state.refreshToken);
+  98        } else {
+  99          await secureStorage.deleteItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
+ 100        }
+ 101        if (state.user) {
+ 102          await secureStorage.setItem(SECURE_STORAGE_KEYS.USER_DATA, JSON.stringify(state.user));
+ 103        } else {
+ 104          await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
+ 105        }
+ 106        return;
+ 107      }
+ 108      return AsyncStorage.setItem(name, value);
+ 109    },
+ 110    removeItem: async (name: string): Promise<void> => {
+ 111      if (name === "auth-v2-storage") {
+ 112        await secureStorage.deleteItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
+ 113        await secureStorage.deleteItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
+ 114        await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
+ 115        return;
+ 116      }
+ 117      return AsyncStorage.removeItem(name);
+ 118    },
+ 119  };
+ 120  
+ 121  interface PersistedAuthState {
+ 122    user: User | null;
+ 123    accessREDACTEDstring | null;
+ 124    refreshREDACTEDstring | null;
+ 125    isAuthenticated: boolean;
+ 126    onboardingCompleted: boolean;
+ 127    isVip: boolean;
+ 128  }
+ 129  
+ 130  async function persistTokens(accessREDACTEDstring, refreshToken?: string): Promise<void> {
+ 131    await apiClient.setToken(accessToken);
+ 132    if (refreshToken) {
+ 133      await apiClient.setRefreshToken(refreshToken);
+ 134    }
