@@ -24,9 +24,10 @@ Two-track execution: a 48-hour sprint (Phases 1-5) to deliver a demo-ready decis
 - [x] **Phase 9: Monetization + Community + Sharing** - 3-tier membership, content products, share seed features, studio commission ✓ 2026-04-26
 - [x] **Phase 10: Production + Launch + Competition** - Nginx/TLS/monitoring, app store listing, offline capability, competition materials submitted ✓ 2026-04-26
 
-**Track C: Competition Demo Sprint (Phase 11)**
+**Track C: Competition Demo Sprint (Phase 11-12)**
 
 - [x] **Phase 11: Competition Demo Sprint + Production Validation** - Docker 全链路跑通, GLM fallback 双保险, tsc 零错误, 软著提交, Demo Script 校准, 备赛材料打磨 ✓ 2026-04-26
+- [ ] **Phase 12: 比赛冲刺 — 全量 Bug 修复 + Demo 零崩溃 + 体验提升** - any 清扫, ErrorBoundary 加固, 视觉打磨, Demo 路径零崩溃, Docker 全链路, 材料终审
 
 ## Phase Details
 
@@ -201,26 +202,51 @@ Plans:
 - [x] 11-05-PLAN.md — Demo Script 校准 + 预录 Backup 视频录屏指南 (D-05, D-18, D-20) ✓ 2026-04-26
 - [x] 11-06-PLAN.md — PPT 微调清单 + 软著提交 + Q&A 追问补充 (D-17, D-19, D-21) ✓ 2026-04-26
 
+### Phase 12: 比赛冲刺 — 全量 Bug 修复 + Demo 零崩溃 + 体验提升
+
+**Goal**: 48 小时内完成：模拟器全量功能测试通过零崩溃、所有已知 bug 清零、Demo 录屏一次过、比赛材料最终校准
+**Depends on**: Phase 11
+**Success Criteria** (what must be TRUE):
+
+1. 模拟器冷启动 → 完整 Demo 路径连续 3 次零崩溃
+2. tsc --noEmit 零错误 (仅 expo node_modules 警告)
+3. Docker 15 服务全部 healthy
+4. Demo Script 实际走通时间 ≤ 2:30
+5. 0 个 P0/P1 bug 遗留
+6. 所有比赛材料 final 状态
+   **Plans**: 6 plans
+
+Plans:
+
+- [x] 12-01-PLAN.md — TypeScript any 清扫 + ErrorBoundary 加固
+- [ ] 12-02-PLAN.md — 视觉体验打磨 (Skeleton + 对话气泡 + 卡片 + 空状态)
+- [ ] 12-03-PLAN.md — Demo 路径加固 (对话链路 + Onboarding + 语音 fallback)
+- [ ] 12-04-PLAN.md — Docker 全链路验证 + 预热脚本 + Demo Checklist
+- [ ] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志
+- [ ] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著)
+
 ## Progress
 
 **Execution Order:**
 Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term) -> 11 (competition sprint)
 
-| Phase                                           | Plans Complete | Status   | Completed  |
-| ----------------------------------------------- | -------------- | -------- | ---------- |
-| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete | 2026-04-24 |
-| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete | 2026-04-24 |
-| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete | 2026-04-24 |
-| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete | 2026-04-25 |
-| 5. E2E Integration + Competition Demo           | 4/4            | Complete | 2026-04-25 |
-| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 4/4            | Complete | 2026-04-25 |
-| 9. Monetization + Community + Sharing           | 5/5            | Complete | 2026-04-26 |
-| 10. Production + Launch + Competition           | 5/5            | Complete | 2026-04-26 |
-| 11. Competition Demo Sprint + Validation        | 6/6            | Complete | 2026-04-26 |
+| Phase                                           | Plans Complete | Status      | Completed  |
+| ----------------------------------------------- | -------------- | ----------- | ---------- |
+| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete    | 2026-04-24 |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
+| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
+| 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
+| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
+| 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
+| 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
+| 10. Production + Launch + Competition           | 5/5            | Complete    | 2026-04-26 |
+| 11. Competition Demo Sprint + Validation        | 6/6            | Complete    | 2026-04-26 |
+| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 1/6            | In Progress | —          |
 
 ---
 
 _Roadmap re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
 _Phase 11 added: 2026-04-26_
+_Phase 12 added: 2026-04-27_
