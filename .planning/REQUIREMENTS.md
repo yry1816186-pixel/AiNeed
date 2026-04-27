@@ -1,269 +1,158 @@
-# Requirements: 寻裳 XUNO — AI 穿搭搭子 伊伊
+# Requirements: 寻裳 XUNO v2.0 — 前端全面重构与商业化品质升级
 
-**Created:** 2026-04-22
-**Status:** Active (re-initialized from XUNO_FINAL_PLAN.md, 42 frozen decisions)
-**Authoritative Source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md
+**Defined:** 2026-04-27
+**Core Value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
 
----
+## v2.0 Requirements
 
-## v1 Requirements — 48-Hour Sprint (Demo-Ready)
+Requirements for commercial-quality frontend restructuring. Each maps to roadmap phases starting from Phase 13.
 
-### Foundation (基础)
+### AUDIT — 全流程深度审计
 
-- [ ] **FND-01**: 移动端 TypeScript 零编译错误（当前 137 个，集中在 ~20 个文件）
-- [ ] **FND-02**: 后端 ClothingItem 补充关键字段（material, season, gender, source, DataSource 枚举）
-- [ ] **FND-03**: RecommendationBatch + RecommendationImpression 归因表 Prisma 迁移
-- [ ] **FND-04**: 统一 UserBehaviorEvent（UserBehavior 视图化）
-- [ ] **FND-05**: Mock 商品数据 100+ 条（覆盖多场景 × 多品类 × 多价位矩阵）
+- [ ] **AUDIT-01**: User can view a complete screenshot inventory of every screen in the current app (auto-captured via Playwright/browser automation), documenting baseline visual state
+- [ ] **AUDIT-02**: Developer has a gap analysis document comparing current UI against 3 benchmark apps (小红书, 得物, NET-A-PORTER) with specific UI/UX pattern differences per page
+- [ ] **AUDIT-03**: Developer has an audit report of component library consistency (spacing scale, border radius, font sizes, color usage, animation patterns) identifying all inconsistencies
+- [ ] **AUDIT-04**: Developer has performance baseline measurements (first screen load time, TTI, list scroll FPS on mid-range Android, image load timing) documented with specific numbers
+- [ ] **AUDIT-05**: Developer has WCAG 2.1 AA accessibility audit results for all interactive elements, listing every missing accessibilityLabel, touch target, and contrast violation
 
-### Gender Demotion (性别降级)
+### BRAND — 品牌视觉资产定义
 
-- [ ] **GND-01**: auth.dto.ts gender 字段改为 @IsOptional
-- [ ] **GND-02**: onboardingStore 移除 gender 必填，新增 primaryScenarios, ageBand, styleExpression 必填
-- [ ] **GND-03**: BodyMetricsService 默认值改为基于 waist/hip ratio 连续变量，不依赖 Gender.female 回退
-- [ ] **GND-04**: ColdStartService 重构：用 bodyType + styleExpression + primaryScenarios 替代 male/female 分桶
-- [ ] **GND-05**: ProfileCompletenessService 权重重算（gender→0%, 场景 20%+体型 25%+风格 20%+衣橱 20%+照片 15%）
+- [ ] **BRAND-01**: User sees a designed logo (warm camel palette, fashion-forward, recognizable at 32px) with horizontal, square, and monochrome variants
+- [ ] **BRAND-02**: User sees a designed app icon (iOS + Android adaptive icon) that is distinctive on home screen and conveys AI fashion identity
+- [ ] **BRAND-03**: User sees a splash/launch screen animation (Lottie, ≤1.5s duration, brand color reveal + logo) that plays on every cold start
+- [ ] **BRAND-04**: Developer has a complete brand guideline document defining: color palette with usage rules, typography scale (header/body/caption), spacing system (4px grid), icon style (Phosphor customizations), and illustration style
+- [ ] **BRAND-05**: User sees consistent visual patterns (decorative motifs, background textures, card treatments) applied across the app as a cohesive visual language
+- [ ] **BRAND-06**: Developer has an icon set covering all app functions (tabs, actions, categories, states) with consistent visual weight and stroke style matching brand identity
 
-### Recommendation Pipeline (推荐管道)
+### DSTK — 设计系统 Token 体系
 
-- [ ] **REC-01**: Orchestrator 改为推荐唯一入口（控制器不再绕过 Orchestrator 直接调用策略）
-- [ ] **REC-02**: StyleQuizResult 回流到推荐评分权重
-- [ ] **REC-03**: ColdStartService 优先读取 Onboarding 数据（primaryScenarios + styleImageSeeds）
-- [ ] **REC-04**: 推荐输出必须包含 RecommendationOutput 结构（items + outfit + explanation{why, alternative, nextAction, confidence}）
-- [ ] **REC-05**: 降级策略：AI 推荐不可用时，天气+季节+场景模板生成规则化方案
-- [ ] **REC-06**: A/B Experiment ID 埋点（每个推荐带 experiment_id，为后续迭代奠基）
+- [ ] **DSTK-01**: Developer has a three-layer Design Token system (primitive → semantic → component) covering Color, Typography, Spacing, Radius, Shadow, and Motion categories
+- [ ] **DSTK-02**: All new and existing components use Design Token references exclusively — zero hardcoded color/spacing/font-size values anywhere in the codebase
+- [ ] **DSTK-03**: Existing DesignTokens are EXTENDED (not replaced) — all existing token references continue to work while new semantic/component tokens layer on top
+- [ ] **DSTK-04**: Broken ThemeManager.ts (using Web APIs) is replaced with Zustand theme store + MMKV persistence + React Native Appearance API
+- [ ] **DSTK-05**: User can toggle between light and dark mode, with dark mode using an independently designed palette (not brightness inversion) — warm dark grays with adjusted camel accent ensuring WCAG AA 4.5:1 contrast
+- [ ] **DSTK-06**: Theme preference persists across app restarts and syncs with system appearance setting
 
-### Navigation (导航重构)
+### COMP — 原子组件库
 
-- [ ] **NAV-01**: 4 Tab 导航实现（今日/探索/造型师/我的），替代现有 5 Tab
-- [ ] **NAV-02**: Wardrobe 从 Profile Stack 提取到 Discover Stack（策展空间）
-- [ ] **NAV-03**: TryOnStack 合并到 StylistStack（试衣不再独立页面）
-- [ ] **NAV-04**: Community 内容分散到 Today(灵感区) + Me(深层入口)
-- [ ] **NAV-05**: 导航状态迁移（NAV_VERSION）防止旧用户崩溃
+- [ ] **COMP-01**: User interacts with a Button component supporting: primary/secondary/ghost/text variants, loading state, icon slot, disabled state, consistent touch target (≥44px), accessibilityLabel
+- [ ] **COMP-02**: User interacts with an Input component supporting: text/search/number types, label, placeholder, error state, icon slot, clear button, focus animation
+- [ ] **COMP-03**: User sees Card components with: elevation variants (flat/subtle/raised), image cover mode, header/body/footer slots, press animation (scale 0.98), consistent border radius from tokens
+- [ ] **COMP-04**: User sees Avatar components with: size variants (xs/s/m/l/xl), border variants (none/brand/status), online indicator dot, fallback initials
+- [ ] **COMP-05**: User sees Badge components with: color variants, size variants, dot mode, count overflow (99+)
+- [ ] **COMP-06**: User sees Skeleton loading components with: shimmer animation using Reanimated (no extra deps), text/circle/rect/row variants, dark mode support
+- [ ] **COMP-07**: User interacts with BottomSheet component with: multiple snap points, drag handle, backdrop, smooth open/close animation via Reanimated
+- [ ] **COMP-08**: User sees Toast notification component with: success/error/warning/info variants, auto-dismiss, queue management, slide-in animation
 
-### Today Screen (今日页面)
+### TODAY — 首页重构
 
-- [ ] **TOD-01**: 场景卡组件（天气 + 场景 + 伊伊 AI 摘要 "明天面试，已准备好 3 套"）
-- [ ] **TOD-02**: 今日穿搭区（伊伊推荐 + 用户保存，同时展示，标注来源标签）
-- [ ] **TOD-03**: 降级方案实现（规则引擎驱动：天气+季节+场景模板）
-- [ ] **TOD-04**: 候选适配区（待决策商品的适配判断入口）
-- [ ] **TOD-05**: "我的搭配集"按场景分组展示（通勤/约会/新建）
+- [ ] **TODAY-01**: User sees an immersive Today page with visual hierarchy matching 小红书's discover feed quality — hero scene card, recommendation cards with visual impact, and clear information hierarchy
+- [ ] **TODAY-02**: User sees scene/weather card with animated weather icons, temperature display, occasion context, and AI-generated daily summary — feels like a premium weather+style briefing
+- [ ] **TODAY-03**: User sees Yiyi recommendation cards with large outfit images, outfit name, occasion tags, confidence indicator, and try-on action — each card has visual weight comparable to 小红书 note cards
+- [ ] **TODAY-04**: User can scroll through recommendations via a horizontal carousel with snap pagination, peek preview of next card, and haptic feedback on snap
+- [ ] **TODAY-05**: User sees voice button prominently positioned with press-to-speak visual feedback (pulse animation, waveform display), meeting the "one-step voice" core interaction
 
-### Discover Screen (探索页面)
+### CHAT — AI 对话页重构
 
-- [ ] **DIS-01**: 冷启动用户展示推荐单品流 + 搜索
-- [ ] **DIS-02**: 策展空间（已保存/想买/已购三 Tab，替代传统衣橱管理）
-- [ ] **DIS-03**: 自然语言搜索栏 + 分类浏览
-- [ ] **DIS-04**: "拍照添加"入口保留但不作为主路径
+- [ ] **CHAT-01**: User sees chat bubbles with premium visual quality matching ChatGPT/豆包 — distinct Yiyi vs user bubble styles, smooth rounded corners, proper text wrapping, timestamp display
+- [ ] **CHAT-02**: User sees AI responses with typewriter streaming effect (text appears character by character), maintaining scroll position and allowing user to scroll up during generation
+- [ ] **CHAT-03**: User sees embedded outfit/product cards within chat flow — cards show item image, name, price, and action buttons (try-on, save, view) without leaving conversation
+- [ ] **CHAT-04**: User sees quick reply chips below AI messages — horizontally scrollable, styled as rounded pills, providing 3-5 contextual response suggestions
+- [ ] **CHAT-05**: User interacts with voice button in chat input bar — press-hold to record, visual waveform during recording, auto-send on release, TTS auto-play for AI voice responses
+- [ ] **CHAT-06**: User sees conversation loading states — skeleton bubbles matching message shape, typing indicator (3-dot bounce animation), and graceful error state for failed messages
 
-### Yiyi Agent (伊伊对话系统)
+### DISC — 发现页重构
 
-- [ ] **YIYI-01**: 对话状态机实现（GREET→CONTEXT→[SCENE|DIRECT|CHAT]→GENERATE→[ACTION|REFINE]→WRAP_UP）
-- [ ] **YIYI-02**: 面试穿搭场景完整 Agent 对话（公司类型 → 岗位 → 预算 → 方案 → 试穿 → 保存）
-- [ ] **YIYI-03**: 伊伊人格 Prompt（温柔有主见的朋友，不说"亲~"，不说"根据算法分析"）
-- [x] **YIYI-04**: 对话中试衣 BottomSheet 触发（不中断对话流） ✓ Phase 4 Plan 04
-- [ ] **YIYI-05**: 快速回复按钮（每条伊伊消息下 2-3 个选项，减少打字）
-- [x] **YIYI-06**: 异常处理（用户放弃 → 温柔收尾 / 都不喜欢 → 引导描述偏好 / LLM 超时 → 规则降级） ✓ Phase 4 Plan 01/04
-- [ ] **YIYI-07**: 偏好记忆基础（记住用户明确的否定偏好，如"不喜欢高领"）
+- [ ] **DISC-01**: User sees a masonry/waterfall grid layout (2-column, staggered heights) matching Pinterest/得物 quality — FashionSigLIP-powered visual inspiration feed
+- [ ] **DISC-02**: User can scroll the masonry grid smoothly at 60fps with FlashList MasonryFlashList — items recycle efficiently, images lazy-load with blurhash placeholders
+- [ ] **DISC-03**: User can filter content by category tabs (场景/风格/季节/品牌) with smooth tab transition animation and filter persistence
+- [ ] **DISC-04**: User sees each grid card with: image (aspect-ratio preserved), title overlay, like count, bookmark button, and subtle shadow — card design matches 得物 product card quality
+- [ ] **DISC-05**: User can pull-to-refresh with a custom branded animation (not default spinner) — animated Yiyi logo or fashion-related illustration during refresh
 
-### Voice (语音交互)
+### WARD — 衣橱页重构
 
-- [ ] **VOI-01**: 首页语音按钮（大圆形，底部居中，按住录音+波形动画+松开发送）
-- [ ] **VOI-02**: Android 原生 SpeechRecognizer 集成（决策 #24）
-- [ ] **VOI-03**: Edge-TTS 基础集成（伊伊语音回复，决策 #33）
+- [ ] **WARD-01**: User sees wardrobe organized by category tabs (全部/上装/下装/外套/鞋履/配饰) with item count badges and smooth tab switching
+- [ ] **WARD-02**: User can long-press to enter selection mode, then drag-reorder items within category — drag animation follows finger with opacity change and shadow lift
+- [ ] **WARD-03**: User sees outfit combinations displayed as flat-lay compositions (items arranged visually, not as list) — matching Whering/Stylebook quality
+- [ ] **WARD-04**: User sees each garment card with: image, name, category tag, season tags, and wear count — card design is clean and scannable
+- [ ] **WARD-05**: User can add items via camera (with background removal preview) or gallery upload, with AI auto-tagging progress indicator
 
-### Studio Recommendation (工作室推荐)
+### PROF — 个人页重构
 
-- [ ] **WKS-01**: 工作室目录数据结构（名称+城市+擅长场景+价格区间+联系方式）
-- [x] **WKS-02**: 伊伊对话中智能推荐触发（信号检测：预算 luxury/连续 3 次拒绝/特殊场合/说"独一无二"） ✓ Phase 4 Plan 04
-- [ ] **WKS-03**: 工作室卡片展示（对话中内联，不打断流程）
-- [x] **WKS-04**: Sprint 手工录入 5-10 家工作室（决策 #25） ✓ Phase 4 Plan 01/04
+- [ ] **PROF-01**: User sees their Style DNA visualized as a radar chart with 6 dimensions (色彩偏好/风格表达/场景适配/价位区间/品牌偏好/搭配复杂度) — chart has smooth animation on load
+- [ ] **PROF-02**: User sees their style color palette extracted from wardrobe/favorites — displayed as a color wheel or gradient strip with dominant color labels
+- [ ] **PROF-03**: User sees outfit calendar in 7-day view with outfit thumbnails on past dates, weather icons, and occasion labels — calendar cells are tappable to view details
+- [ ] **PROF-04**: User sees style evolution timeline showing how their preferences changed over time — visual representation of style journey with milestone markers
+- [ ] **PROF-05**: User sees profile stats (total outfits, items worn most, style match score) with clean metric cards and subtle count-up animation
 
-### Onboarding (引导流程)
+### ONBD — Onboarding 重构
 
-- [x] **ONB-01**: Step 1 -- 场景选择（8 卡片多选 1-3 个） -- Phase 4 Plan 03
-- [x] **ONB-02**: Step 2 -- 快速画像（年龄段+身高体重+常穿尺码+garmentPreference） -- Phase 4 Plan 03
-- [x] **ONB-03**: Step 3 -- 风格表达（5 选 1）+ 穿搭图选择（6 选 2，向量种子提取） -- Phase 4 Plan 03
-- [ ] **ONB-04**: Step 4 — 让伊伊搭第一套（3 套方案+用户选择 → 立即偏好信号+首次衣橱保存）
-- [x] **ONB-05**: Onboarding 数据立即流入 ColdStartService -- Phase 4 Plan 03
+- [ ] **ONBD-01**: User experiences smooth animated transitions between onboarding steps — slide + fade animation, progress indicator updates with spring animation
+- [ ] **ONBD-02**: User sees scene selection cards with attractive visual design — each card shows scenario illustration, icon, and title; cards have selected state with brand-color border animation
+- [ ] **ONBD-03**: User sees style expression step with visual style samples (not text-only) — each style shown with representative outfit image and description
+- [ ] **ONBD-04**: User experiences "let Yiyi dress you" reveal moment with anticipation-building animation — outfit cards appear one by one with stagger animation, brand glow effect
+- [ ] **ONBD-05**: User can skip onboarding steps without blocking — skip button visible on every step, data gracefully handles partial input
 
-### Fashion Rules (时尚规则修复)
+### TECH — 技术升级
 
-- [ ] **RUL-01**: above_30 温区 8 个场合 tips 按场景差异化重写
-- [ ] **RUL-02**: 0_10 温区面试 layer_details 修复（单层 → 分层）
-- [ ] **RUL-03**: full_outfit_engine.py 从 JSON 规则文件动态加载替代硬编码
+- [ ] **TECH-01**: Developer replaces FlatList with FlashList v2 in all list views — verified 60fps scroll on mid-range Android (Snapdragon 680 or equivalent)
+- [ ] **TECH-02**: User sees images loaded via expo-image with: blurhash placeholder, progressive loading (low-res → full-res), memory and disk caching, CDN URL parameter support for size optimization
+- [ ] **TECH-03**: User can use core features offline — cached recommendations (50 items), wardrobe data, and calendar visible without network, with offline banner when disconnected
+- [ ] **TECH-04**: User sees page transition animations via Reanimated 3 shared element transitions — card to detail hero animation is smooth (no flash or layout jump)
+- [ ] **TECH-05**: Developer has Reanimated 3 animation preset system — standardized easing curves, durations, spring configs in a central presets file, no ad-hoc animation values
 
-### Visual System (视觉体系)
+### ANIM — 微交互与动效
 
-- [ ] **VIS-01**: 配色体系实施（主色#C4956A 暖驼 + 辅色#2D3436 深炭灰 + 强调#E17055 暖橘 + 背景#FAFAF8 暖白）
-- [ ] **VIS-02**: 伊伊形象组件（暖驼色圆形 + 简笔画衣架图标，不做拟人头像）
-- [ ] **VIS-03**: 圆角统一（卡片 16px / 按钮 12px / 输入框 24px）+ 间距基线 8px
-- [ ] **VIS-04**: FashionSigLIP 向量可视化组件（推荐结果旁展示相似度热力图，技术深度展示）
+- [ ] **ANIM-01**: User sees like/favorite animation — heart icon scales up with overshoot spring, particle burst effect, color fill animation (completed within 400ms)
+- [ ] **ANIM-02**: User sees custom pull-to-refresh animation — branded loading indicator (not default spinner), smooth transition to refresh state, completion animation
+- [ ] **ANIM-03**: User sees shared element page transitions — item image smoothly morphs from card to detail page header, no flash or layout shift
+- [ ] **ANIM-04**: User sees skeleton shimmer effect on all loading states — wave animation using Reanimated, matches component shape (text lines, image rectangles, avatar circles)
+- [ ] **ANIM-05**: User sees AI recommendation progressive reveal — outfit items appear one by one with stagger delay, background subtle glow pulse, confidence bar animates in
+- [ ] **ANIM-06**: Total Lottie animation count ≤ 5, total animation asset size ≤ 1MB — splash screen + 4 micro-interactions, all optimized for performance
 
-### Calendar (穿搭日历)
+## v3 Requirements (Deferred)
 
-- [ ] **CAL-01**: 7 天穿搭日历简化版（周视图 + 天气 + 场景标签 + 搭配缩略图）
-- [ ] **CAL-02**: 点击日期查看/修改搭配方案
+### Future Visual Enhancements
 
-### Curated Wardrobe (策展型衣橱)
+- **3D garment preview**: Interactive 3D model rotation for wardrobe items — requires 3D asset pipeline
+- **AR mirror try-on**: Real-time camera-based virtual try-on — requires AR framework
+- **Haptic feedback system**: Contextual haptic patterns for all interactions — requires native module
+- **Parallax scrolling**: Depth-based parallax on Today page hero section — requires scroll gesture analysis
 
-- [ ] **CUR-01**: 衣橱数据模型重构（savedOutfits + wishlistedItems + purchasedItems 替代 ownedItems）
-- [ ] **CUR-02**: 偏好互补推荐逻辑（从"物品互补"变为"偏好互补"，推荐未探索的风格方向）
+### Future Performance
 
-### Ethics (伦理)
-
-- [ ] **ETH-01**: 体型敏感度措辞规范（描述服装不描述身体，试穿失败归因于衣服）
-- [ ] **ETH-02**: 体型报告使用正面措辞（强调"适合什么"而非"避免什么"）
-
----
-
-## v2 Requirements — Post-Sprint (4-8 Weeks)
-
-### Model Upgrade (模型升级)
-
-- [ ] **MOD-01**: Marqo-FashionSigLIP 替换 FashionCLIP（决策 #7）
-- [ ] **MOD-02**: 中国数据 Fine-tune（淘宝客 5000 商品图 + DeepFashion 中文子集 + LoRA rank=16）
-- [ ] **MOD-03**: 偏好学习模型 v1（5M params，输入：用户 Profile+场景+候选商品，输出：偏好得分）
-- [ ] **MOD-04**: 穿搭协调度模型（10M params，双塔+交叉注意力，替代规则引擎 L5）
-
-### Data Flywheel (数据飞轮)
-
-- [ ] **FLY-01**: 用户行为收集管道（选择/跳过/收藏/购买，带上下文）
-- [ ] **FLY-02**: SASRetrain 自动化（月度重训练）
-- [ ] **FLY-03**: FashionSigLIP Fine-tune 迭代循环（月度）
-- [ ] **FLY-04**: 穿搭日记 + 风格进化可视化（周报：满意度+风格分布+趋势+进化曲线）
-
-### Photo Search (拍照识图找同款)
-
-- [x] **PHO-01**: 拍照 → FashionSigLIP 编码 → Qdrant 向量检索 → 展示 5 个相似款 ✓ Phase 08 Plan 01
-- [x] **PHO-02**: 找到同款后自然引导 "AI 帮你搭更好的" → 注册转化 ✓ Phase 08 Plan 04
-
-### Calendar Full (穿搭日历完整版)
-
-- [ ] **CAL-03**: AI 自动基于天气+日历+衣橱生成一周搭配计划
-- [ ] **CAL-04**: 标注特殊事件（面试/约会/聚会），点击修改方案
-- [ ] **CAL-05**: 用户修改方案的操作作为偏好信号回流
-
-### Mini Program (微信小程序)
-
-- [x] **MINI-01**: 微信小程序 v1（核心功能：伊伊对话+试穿+分享） — 后端认证+Taro 项目+3 页面+分享 ✓ Phase 08 Plan 01+03
-- [x] **MINI-02**: 小程序分享到朋友圈/群（裂变零摩擦） — Taro useShareAppMessage + useShareTimeline ✓ Phase 08 Plan 03
-
-### Social Features (社交功能)
-
-- [x] **SOC-01**: 风格 DNA 社交匹配（基于向量的"和你风格最像的人"推荐） ✓ 08-02
-- [ ] **SOC-02**: 分享裂变（react-native-view-shot + QR，穿搭方案分享图+二维码）
-
-### Recommendation Advanced (推荐进阶)
-
-- [ ] **RAD-01**: SASRec 训练管道（RTX 4060 本地）
-- [ ] **RAD-02**: 六层漏斗完整实现（L1 合规 →L2 场景 →L3 尺码 →L4 预算 →L5 风格 →L6 衣橱互补）
-- [ ] **RAD-03**: FashionSigLIP 偏见审计（5 Profile 同场景不同风格 → 80%+同性别编码=偏见）
-- [ ] **RAD-04**: 混合 Explanation 生成（规则引擎证据 + LLM 润色）
-
-### Data Pipeline (数据管道)
-
-- [ ] **DAT-01**: 淘宝客 API 对接（商品搜索/详情/转链）
-- [ ] **DAT-02**: 京东联盟 API 对接（优先接入，审核快）
-- [ ] **DAT-03**: 全量同步(每日) + 增量(每 2 小时) + 热门刷新(每 30 分钟)
-- [ ] **DAT-04**: FashionSigLIP 批量嵌入管道
-- [ ] **DAT-05**: 颜色标准化服务
-
-### Compliance (合规前置)
-
-- [ ] **CMP-01**: PIPL 敏感信息单独同意机制（三围/照片/体脂率）
-- [ ] **CMP-02**: GB/T 45574-2025 逐项同意架构
-- [ ] **CMP-03**: 国产 AI API 无跨境确认
-- [ ] **CMP-04**: 软著 + "寻裳""伊伊"商标注册（决策 #41）
-- [ ] **CMP-05**: 算法备案准备
-
-### Security (安全修复)
-
-- [ ] **SEC-01**: Nginx 反向代理 + Let's Encrypt TLS
-- [ ] **SEC-02**: 端口绑定 127.0.0.1 + 防火墙
-- [ ] **SEC-03**: API 密钥 Docker Secrets / Vault
-- [ ] **SEC-04**: 移动端 EXPO_PUBLIC_API 改服务端代理
-
-### Monetization (商业化)
-
-- [ ] **MON-01**: 免费层限额（每日 5 次 AI 对话 + 3 次试穿 + 20 件衣橱）
-- [ ] **MON-02**: 内容产物付费（色彩报告 9.9 元 + 体型报告 + 胶囊衣橱方案 19 元，一次性购买）
-- [ ] **MON-03**: 高级会员（连续穿搭计划 + 深度衣橱诊断 + AI 主动推送，9.9 元/月）
-- [ ] **MON-04**: 分享种子功能（穿搭方案图+试衣图+报告图，含 QR 码）
-
-### Production (生产部署)
-
-- [ ] **PRD-01**: Nginx + TLS + 监控告警部署
-- [ ] **PRD-02**: 端侧推理迁移（MediaPipe + CIELAB + 规则引擎）
-- [ ] **PRD-03**: 离线能力（缓存 50 条推荐 + 衣橱 + 日历可离线使用）
-- [ ] **PRD-04**: 性能压测 + 安全审计 — k6 load test scripts + OWASP audit script created (Phase 10 Plan 04)
-- [ ] **PRD-05**: Android 应用商店上架（华为/小米/OPPO/vivo）
-
-### Competition Materials (比赛材料)
-
-- [ ] **CMP-06**: PPT + 商业计划书（15 页叙事结构）
-- [ ] **CMP-07**: Demo 演示视频（1-3 分钟，面试穿搭场景完整 Agent 对话 + 技术可视化）
-- [ ] **CMP-08**: 种子用户数据（10-20 人使用数据）
-- [ ] **CMP-09**: 导师推荐信
-
----
+- **Bundle splitting**: Dynamic imports for heavy screens to reduce initial load
+- **WebSocket streaming**: Replace SSE with WebSocket for real-time chat streaming
+- **On-device ML inference**: MediaPipe + CIELAB for offline style matching
 
 ## Out of Scope
 
-| Item                                 | Reason                     | When         |
-| ------------------------------------ | -------------------------- | ------------ |
-| Feature Flag 体系                    | 一次性重构，不需要并存机制 | 永远不需要   |
-| Deep Link 路由迁移                   | Demo 不需要推送通知        | 上线前       |
-| 未成年人合规法务                     | 非代码问题                 | 上线前       |
-| 电商 API 真实对接                    | Sprint 用 Mock             | 上线前       |
-| SASRec ONNX 导出                     | 服务端推理够用             | 用户量 >1000 |
-| 协同过滤 / 知识图谱                  | 伪实现直接砍               | 永远不做     |
-| 社区 Tab                             | 降为灵感层                 | 日活 5 万+   |
-| 上传图片私人定制                     | 砍掉（决策 #13）           | 永远不做     |
-| 微服务拆分                           | 不提前拆                   | 永远不做     |
-| @react-navigation/native-bottom-tabs | 与 screens 4.4.0 冲突      | 永远不用     |
-| FashionCLIP ONNX int8 量化           | 向量漂移严重               | 永远不用     |
-| HarmonyOS 应用                       | 不在范围                   | 市场需求驱动 |
-| Flutter 迁移                         | 保持 RN 已投入             | 永远不做     |
-| PDF 报告生成                         | 后续功能                   | 会员上线时   |
-| 银发用户规则                         | 市场有限                   | 用户反馈驱动 |
-
----
+| Feature                         | Reason                                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Expo Router migration           | react-native-screens 4.4.0 blocks migration — deferred to SDK upgrade cycle                     |
+| Moti animation library          | Use Reanimated 3 directly to avoid dual animation system — Moti is thin wrapper over Reanimated |
+| react-native-fast-image         | Abandonware since 2022 — expo-image is the replacement                                          |
+| Storybook integration           | Nice-to-have for visual regression — can add post-v2.0                                          |
+| React Native version upgrade    | Locked at 0.76.8 per project constraints — upgrade is separate milestone                        |
+| Backend API changes             | 385 endpoints frozen — frontend restructuring only                                              |
+| New navigation structure        | 4-tab navigation stays — only visual/interaction quality upgrade                                |
+| Micro-transaction/credit system | Anti-pattern for decision-first app — 3-tier membership model already built                     |
 
 ## Traceability
 
-| Requirement       | Phase       | Status   | Notes                                                                                                                |
-| ----------------- | ----------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| FND-01 ~ FND-05   | Phase 1     | Complete | Phase 1 VERIFICATION missing; FND-01 (TS errors) partially done (audit 2026-04-25: backend 0 errors, mobile unknown) |
-| GND-01 ~ GND-05   | Phase 1     | Complete | Gender demotion executed in Phase 1 Plan 03                                                                          |
-| REC-01 ~ REC-06   | Phase 2     | Complete | Phase 2 VERIFICATION: 7/7 must-haves SATISFIED                                                                       |
-| CUR-01 ~ CUR-02   | Phase 2     | Complete | Phase 2 VERIFICATION: SATISFIED                                                                                      |
-| NAV-01 ~ NAV-05   | Phase 3     | Complete | Phase 3 VERIFICATION missing; navigation refactored                                                                  |
-| TOD-01 ~ TOD-05   | Phase 3     | Partial  | UI components exist but TodayScreen data is hardcoded (audit 2026-04-25)                                             |
-| DIS-01 ~ DIS-04   | Phase 3     | Complete | DiscoverScreen exists; DIS-01 empty state missing                                                                    |
-| CAL-01 ~ CAL-02   | Phase 3     | Complete | Calendar exists; CAL-01 empty state in English                                                                       |
-| YIYI-01 ~ YIYI-07 | Phase 4     | Complete | Phase 4 VERIFICATION: 9/9 must-haves SATISFIED; YIYI-07 preference memory implemented                                |
-| VOI-01 ~ VOI-03   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED                                                                                      |
-| WKS-01 ~ WKS-04   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; WKS-01/03 partially (no real studios)                                               |
-| ONB-01 ~ ONB-05   | Phase 4     | Complete | Phase 4 VERIFICATION: SATISFIED; ONB-04 implemented in Plan 06                                                       |
-| RUL-01 ~ RUL-03   | Phase 4     | Complete | FashionRuleLoader + 7 JSON rule files + 264+ rules                                                                   |
-| ETH-01 ~ ETH-02   | Phase 4     | Complete | BODY_POSITIVE_PROMPT in dialog_engine.py; audit found body-positive.filter.ts MISSING                                |
-| VIS-01 ~ VIS-04   | Phase 1,3,5 | Partial  | VIS-01: 84 hardcoded colors remain; VIS-04: deferred to Phase 5                                                      |
-| MOD-01 ~ MOD-04   | Phase 6     | Pending  |                                                                                                                      |
-| FLY-01 ~ FLY-04   | Phase 7     | Pending  |                                                                                                                      |
-| PHO-01 ~ PHO-02   | Phase 8     | All ✓    | Image embedding + vector search (08-01) + RegistrationCTA conversion (08-04)                                         |
-| CAL-03 ~ CAL-05   | Phase 7     | Pending  |                                                                                                                      |
-| MINI-01 ~ MINI-02 | Phase 8     | All ✓    | Backend auth + jscode2session (08-01) + Taro project + share hooks (08-03)                                           |
-| SOC-01 ~ SOC-02   | Phase 8     | SOC-01 ✓ | StyleDNAService + Qdrant user_style_dna + NestJS proxy (08-02)                                                       |
-| RAD-01 ~ RAD-04   | Phase 6-7   | Pending  |                                                                                                                      |
-| DAT-01 ~ DAT-05   | Phase 6     | Pending  |                                                                                                                      |
-| CMP-01 ~ CMP-05   | Phase 6     | Pending  |                                                                                                                      |
-| SEC-01 ~ SEC-04   | Phase 6     | Pending  |                                                                                                                      |
-| MON-01 ~ MON-04   | Phase 9     | Pending  |                                                                                                                      |
-| PRD-01 ~ PRD-05   | Phase 10    | Pending  |                                                                                                                      |
-| CMP-06 ~ CMP-09   | Phase 5+    | Pending  |                                                                                                                      |
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement                         | Phase | Status |
+| ----------------------------------- | ----- | ------ |
+| (Populated during roadmap creation) |       |        |
+
+**Coverage:**
+
+- v2.0 requirements: 52 total
+- Mapped to phases: 0
+- Unmapped: 52 ⚠️
 
 ---
 
-_Requirements re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
-_Traceability updated: 2026-04-25 (audit-driven update)_
+_Requirements defined: 2026-04-27_
+_Last updated: 2026-04-27 after v2.0 milestone requirements definition_
