@@ -252,6 +252,19 @@
 | 41  | IP：软著+商标+模型闭源+规则开源                    | 知识产权保护                                   | — Pending |
 | 42  | 赛后：融资/独立/B2B 三条路线                       | 风险对冲                                       | — Pending |
 
+## Current Milestone: v2.0 前端全面重构与商业化品质升级
+
+**Goal:** v1.0 已完成 12 Phase（56/56 plans），后端 385 API 全就绪，现以前端为重心全面重构，完全对标顶尖商业 App 设计水准（小红书/得物/NET-A-PORTER）。
+
+**Target features:**
+
+- 全流程深度审计（逐页截图 + 标杆对比 + 组件一致性 + 性能 + 可访问性）
+- 品牌视觉资产定义（Logo 设计、应用图标、启动页动画、视觉图案、字体排版体系、插画风格）
+- 设计系统重建（完整 Design Token + 原子组件库 + Lottie/Rive 动效 + 暗色模式）
+- 核心页面重构（Today/Stylist/Discover/Wardrobe/Profile/Onboarding 六大页面）
+- 技术升级（FlashList/图片缓存/离线体验/Reanimated 3 动画体系）
+- 微交互与动效（点赞/下拉刷新/共享元素过渡/骨架屏 shimmer/AI 渐进展示）
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
@@ -273,4 +286,4 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-_Last updated: 2026-04-22 after re-initialization from XUNO_FINAL_PLAN.md (42 frozen decisions)_
+_Last updated: 2026-04-27 after v2.0 milestone initiation (frontend restructuring + commercial quality upgrade)_
