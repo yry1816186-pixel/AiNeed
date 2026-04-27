@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useMemo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
@@ -125,11 +125,22 @@ export const OnboardingWizard: React.FC = () => {
         routes: [{ name: "MainTabs" }],
       });
     } catch {
+      // Network failed -- save locally and mark complete so user doesn't lose progress
+      // The persisted store already has their data; backend sync will happen on next launch
       await onboardingService.markOnboardingComplete();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MainTabs" }],
-      });
+
+      // Show retry hint via a brief alert, then navigate forward
+      Alert.alert("网络提示", "数据暂存成功，稍后将自动同步到服务器", [
+        {
+          text: "好的",
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainTabs" }],
+            });
+          },
+        },
+      ]);
     } finally {
       setLoading(false);
     }

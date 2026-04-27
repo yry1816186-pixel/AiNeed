@@ -20,6 +20,46 @@ import type { RecommendationItem } from "../../stores/onboardingStore";
 import { onboardingService } from "../../services/onboardingService";
 import { YiyiAvatar } from "../../../../design-system/ui/YiyiAvatar";
 
+/** Degraded outfit templates shown when API fails */
+const DEGRADED_TEMPLATES: RecommendationItem[] = [
+  {
+    id: "degraded-1",
+    name: "简约通勤",
+    imageUrl: "",
+    matchScore: 85,
+    reason: "经典百搭，适合大多数日常场景",
+    items: [
+      { name: "白色衬衫", category: "tops", imageUrl: "" },
+      { name: "深色直筒裤", category: "bottoms", imageUrl: "" },
+      { name: "小白鞋", category: "shoes", imageUrl: "" },
+    ],
+  },
+  {
+    id: "degraded-2",
+    name: "休闲周末",
+    imageUrl: "",
+    matchScore: 80,
+    reason: "舒适自在，周末出行的安心选择",
+    items: [
+      { name: "条纹T恤", category: "tops", imageUrl: "" },
+      { name: "卡其休闲裤", category: "bottoms", imageUrl: "" },
+      { name: "帆布鞋", category: "shoes", imageUrl: "" },
+    ],
+  },
+  {
+    id: "degraded-3",
+    name: "温柔约会",
+    imageUrl: "",
+    matchScore: 78,
+    reason: "柔美配色，给人亲切温暖的感觉",
+    items: [
+      { name: "针织上衣", category: "tops", imageUrl: "" },
+      { name: "A字半裙", category: "bottoms", imageUrl: "" },
+      { name: "乐福鞋", category: "shoes", imageUrl: "" },
+    ],
+  },
+];
+
 interface YiyiFirstOutfitStepProps {
   onComplete: () => void;
 }
@@ -170,10 +210,18 @@ export const YiyiFirstOutfitStep: React.FC<YiyiFirstOutfitStepProps> = ({ onComp
         garmentPreference: newOnboarding.garmentPreference,
         bodyType: formData.bodyType ?? undefined,
       });
-      setOutfits(result);
-      setRecommendations(result);
+      if (result.length > 0) {
+        setOutfits(result);
+        setRecommendations(result);
+      } else {
+        // API returned empty -- use degraded templates
+        setOutfits(DEGRADED_TEMPLATES);
+        setRecommendations(DEGRADED_TEMPLATES);
+      }
     } catch {
-      setOutfits([]);
+      // API failed -- show degraded template outfits instead of blank
+      setOutfits(DEGRADED_TEMPLATES);
+      setRecommendations(DEGRADED_TEMPLATES);
     } finally {
       setLoading(false);
     }
