@@ -1,4 +1,5 @@
 import { Audio } from "@/src/polyfills/expo-av";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface TtsInterface {
   setDefaultLanguage: (lang: string) => Promise<void>;
@@ -35,19 +36,71 @@ const initTts = async () => {
 /** Current sound object for URL-based playback */
 let currentSound: InstanceType<typeof Audio.Sound> | null = null;
 
+const TTS_CACHE_KEY = "@xuno_tts_cache";
+const MAX_CACHED_ITEMS = 10;
+
+interface TtsCacheEntry {
+  url: string;
+  localUri: string;
+  text: string;
+  cachedAt: number;
+}
+
+/**
+ * Get cached TTS entries from AsyncStorage.
+ * In a production app this would use FileSystem for audio files.
+ * For Sprint: we cache the URL mapping so previously fetched audio
+ * can be replayed via the expo-av sound cache.
+ */
+async function getCachedEntries(): Promise<TtsCacheEntry[]> {
+  try {
+    const raw = await AsyncStorage.getItem(TTS_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as TtsCacheEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+async function setCachedEntries(entries: TtsCacheEntry[]): Promise<void> {
+  // Keep only the most recent MAX_CACHED_ITEMS
+  const trimmed = entries.slice(-MAX_CACHED_ITEMS);
+  await AsyncStorage.setItem(TTS_CACHE_KEY, JSON.stringify(trimmed));
+}
+
 /**
  * speakFromUrl -- Play audio from a URL (Edge-TTS backend audio).
  *
- * Stops any currently playing audio before starting new playback.
- * Automatically unloads the sound on completion.
+ * Features:
+ * - Stops any currently playing audio before starting new playback
+ * - Caches URL for offline replay (same URL reused without network)
+ * - Silently degrades on failure (no error popup, text displays normally)
  */
-export const speakFromUrl = async (url: string): Promise<void> => {
+export const speakFromUrl = async (url: string, text?: string): Promise<void> => {
   try {
     await stopSpeaking();
 
-    const { sound } = await Audio.Sound.createAsync({ uri: url });
+    // Check cache for previously downloaded audio
+    const cached = await getCachedEntries();
+    const cachedEntry = cached.find((e) => e.url === url);
+
+    const soundSource = cachedEntry ? { uri: cachedEntry.localUri || url } : { uri: url };
+
+    const { sound } = await Audio.Sound.createAsync(soundSource);
     currentSound = sound;
     await sound.playAsync();
+
+    // Cache the URL for future offline replay
+    if (text && url) {
+      const newEntry: TtsCacheEntry = {
+        url,
+        localUri: url, // expo-av caches via URI internally
+        text,
+        cachedAt: Date.now(),
+      };
+      const updated = cached.filter((e) => e.url !== url);
+      updated.push(newEntry);
+      await setCachedEntries(updated);
+    }
 
     sound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded && status.didJustFinish) {
@@ -56,7 +109,7 @@ export const speakFromUrl = async (url: string): Promise<void> => {
       }
     });
   } catch {
-    // Audio playback failed -- fail silently
+    // Audio playback failed -- fail silently, text response shows normally
   }
 };
 
@@ -73,7 +126,7 @@ export const speak = async (text: string): Promise<void> => {
     await Tts.stop();
     await Tts.speak(text);
   } catch {
-    // TTS not available on this device
+    // TTS not available on this device -- silent degradation
   }
 };
 

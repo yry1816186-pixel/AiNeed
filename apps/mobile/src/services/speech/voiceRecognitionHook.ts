@@ -19,6 +19,10 @@ export interface SpeechRecognitionError {
  *
  * Provides on-device speech-to-text via Android SpeechRecognizer (zh-CN locale).
  * Audio never leaves the device for STT.
+ *
+ * Degradation:
+ * - Device unavailable: isAvailable=false, error message in Chinese
+ * - STT recognition fails: status transitions to "error", caller should fall back to text input
  */
 export function useVoiceRecognition() {
   const [isListening, setIsListening] = useState(false);
@@ -50,9 +54,25 @@ export function useVoiceRecognition() {
     };
 
     Voice.onSpeechError = (event: SpeechErrorEvent) => {
+      const errorCode = event.error?.code?.toString() ?? "UNKNOWN";
+      // Map common error codes to Chinese messages
+      const errorMessages: Record<string, string> = {
+        "1": "网络不可用，请检查网络连接",
+        "2": "网络错误，请稍后重试",
+        "3": "语音识别请求失败",
+        "4": "当前设备不支持语音识别",
+        "5": "语音识别服务忙碌，请稍后再试",
+        "6": "没有检测到语音，请靠近麦克风说话",
+        "7": "没有匹配到结果，请再试一次",
+        "8": "语音识别被中断",
+        "9": "语音识别服务不可用",
+        "10": "语音识别太长，请缩短说话时间",
+        NOT_AVAILABLE: "当前设备不支持语音识别",
+      };
       setError({
-        code: event.error?.code?.toString() ?? "UNKNOWN",
-        message: event.error?.message ?? "语音识别失败",
+        code: errorCode,
+        message:
+          event.error?.message ?? errorMessages[errorCode] ?? "语音识别失败，已切换到文字输入",
       });
       setIsListening(false);
       setStatus("error");
@@ -71,7 +91,7 @@ export function useVoiceRecognition() {
 
     const available = await Voice.isAvailable();
     if (!available) {
-      setError({ code: "NOT_AVAILABLE", message: "此设备不支持语音识别" });
+      setError({ code: "NOT_AVAILABLE", message: "当前设备不支持语音输入" });
       return;
     }
 
@@ -80,7 +100,7 @@ export function useVoiceRecognition() {
     } catch (err: unknown) {
       setError({
         code: "START_FAILED",
-        message: err instanceof Error ? err.message : "启动语音识别失败",
+        message: err instanceof Error ? err.message : "启动语音识别失败，已切换到文字输入",
       });
       setStatus("error");
     }

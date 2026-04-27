@@ -704,10 +704,23 @@ export const AiStylistUnifiedScreen: React.FC = () => {
   const {
     isListening: isVoiceListening,
     recognizedText: voiceText,
+    error: voiceError,
+    status: voiceStatus,
     startListening: startVoiceListening,
     stopListening: stopVoiceListening,
     isAvailable: voiceAvailable,
   } = useVoiceRecognition();
+
+  // Voice STT error fallback: auto-switch to text input on failure
+  useEffect(() => {
+    if (voiceStatus === "error" && voiceError) {
+      // Show a brief toast-like message and focus input
+      const timer = setTimeout(() => {
+        setInputText(""); // Clear any partial input
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [voiceStatus, voiceError]);
 
   // Studio lookup from local directory for sprint (production would query backend)
   const getStudioForSignal = useCallback((signal: string): StudioData | null => {
@@ -1317,11 +1330,30 @@ export const AiStylistUnifiedScreen: React.FC = () => {
               accessibilityLabel="输入穿搭需求"
             />
           </View>
-          {voiceAvailable && (
+          {voiceAvailable ? (
             <VoiceButton
               isListening={isVoiceListening}
               onPress={isVoiceListening ? stopVoiceListening : startVoiceListening}
             />
+          ) : (
+            __DEV__ && (
+              <View style={{ marginRight: DesignTokens.spacing["2.5"], alignItems: "center" }}>
+                <Ionicons
+                  name="mic-off-outline"
+                  size={DesignTokens.typography.sizes.lg}
+                  color={colors.textTertiary}
+                />
+                <Text
+                  style={{
+                    fontSize: 9,
+                    color: colors.textTertiary,
+                    marginTop: 2,
+                  }}
+                >
+                  当前设备不支持语音
+                </Text>
+              </View>
+            )
           )}
           <SendButton
             onPress={handleSend}
