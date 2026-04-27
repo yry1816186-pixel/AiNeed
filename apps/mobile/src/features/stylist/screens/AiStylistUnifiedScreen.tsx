@@ -851,7 +851,24 @@ export const AiStylistUnifiedScreen: React.FC = () => {
         setShowPresetModal(true);
       }
     });
-  }, [authLoading, isAuthenticated, hasInitialized, isNewUser, fetchPresetQuestions]);
+
+    // Auto-greeting: ensure chat is never empty when user first arrives
+    // A brief delay allows the screen to mount before injecting the greeting
+    const greetingTimer = setTimeout(() => {
+      const currentMessages = useAiStylistChatStore.getState().messages;
+      if (currentMessages.length === 0) {
+        addMessage({
+          id: "greeting-auto",
+          role: "assistant",
+          content:
+            "嗨！我是伊伊，你的穿搭搭子。告诉我你想穿什么场景，或者直接点下方场景标签开始吧！",
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }, 600);
+
+    return () => clearTimeout(greetingTimer);
+  }, [authLoading, isAuthenticated, hasInitialized, isNewUser, fetchPresetQuestions, addMessage]);
 
   /** Process dialog response: handle quickReplies, try-on action, studio signal */
   const processDialogResponse = useCallback(

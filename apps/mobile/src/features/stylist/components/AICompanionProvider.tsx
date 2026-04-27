@@ -77,6 +77,36 @@ export interface AICompanionProviderProps {
 
 const POLL_INTERVAL = 3000;
 const MAX_POLL_ATTEMPTS = 60;
+const AI_TIMEOUT_MS = 10_000; // 10s timeout for AI responses
+const AI_TIMEOUT_MESSAGE = "伊伊正在想...再等一下哦";
+const AI_UNAVAILABLE_MESSAGE = "伊伊暂时无法回复，请稍后再试";
+const AI_RETRY_FAILED_MESSAGE = "网络似乎不太稳定，请稍后再试试";
+
+/** Wrap a promise with a timeout, returning a tuple [result, timedOut] */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<[T | null, boolean]> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve([null, true]), ms);
+    promise
+      .then((result) => {
+        clearTimeout(timer);
+        resolve([result, false]);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        throw error;
+      });
+  });
+}
+
+/** Auto-greeting messages when chat history is empty */
+const GREETING_MESSAGES: ExtendedChatMessage[] = [
+  {
+    id: "greeting-1",
+    role: "assistant",
+    content: "嗨！我是伊伊，你的穿搭搭子。今天想聊什么穿搭话题？",
+    timestamp: new Date(),
+  },
+];
 
 export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
   children,
@@ -213,10 +243,15 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             setSessionState(response.data.sessionState);
             setSlots(response.data.sessionState.slots);
           }
+          return; // Existing session found, no need for greeting
         }
       }
+      // No existing session -- auto-greeting so chat is never blank
+      setMessages(GREETING_MESSAGES);
     } catch (error) {
       logger.warn("Failed to load session:", error);
+      // On error also show greeting
+      setMessages(GREETING_MESSAGES);
     }
   };
 
@@ -398,76 +433,120 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
       setMessages((prev) => [...prev, loadingMessage]);
 
-      try {
-        let currentSessionId = sessionId;
-        let responseData: AiStylistSessionResponse | undefined;
+      /** Core send logic wrapped with timeout + single retry */
+      const attemptSend = async (
+        attempt: number
+      ): Promise<{ success: boolean; timedOut: boolean }> => {
+        try {
+          let currentSessionId = sessionId;
+          let responseData: AiStylistSessionResponse | undefined;
 
-        if (!currentSessionId) {
-          const createResponse = await aiStylistApi.createSession({
-            entry: content,
-            goal: "global_ai_companion",
-            context: {
-              source: "ai_companion_ball",
-              channel: "overlay_chat",
-            },
-          });
+          if (!currentSessionId) {
+            const createPromise = aiStylistApi.createSession({
+              entry: content,
+              goal: "global_ai_companion",
+              context: {
+                source: "ai_companion_ball",
+                channel: "overlay_chat",
+              },
+            });
 
-          if (!createResponse.success || !createResponse.data) {
-            throw new Error(createResponse.error?.message || "创建会话失败，请重试");
-          }
+            const [createResponse, createTimedOut] = await withTimeout(
+              createPromise,
+              AI_TIMEOUT_MS
+            );
 
-          responseData = createResponse.data;
+            if (createTimedOut) {
+              return { success: false, timedOut: true };
+            }
 
-          if (responseData.sessionId) {
-            currentSessionId = responseData.sessionId;
-            setSessionId(currentSessionId);
-            void saveSession(currentSessionId!, responseData.sessionExpiresAt);
+            if (!createResponse!.success || !createResponse!.data) {
+              throw new Error(createResponse!.error?.message || "创建会话失败，请重试");
+            }
+
+            responseData = createResponse!.data;
+
+            if (responseData.sessionId) {
+              currentSessionId = responseData.sessionId;
+              setSessionId(currentSessionId);
+              void saveSession(currentSessionId!, responseData.sessionExpiresAt);
+            } else {
+              throw new Error("创建会话失败，请重试");
+            }
           } else {
-            throw new Error("创建会话失败，请重试");
+            const sendPromise = aiStylistApi.sendMessage(currentSessionId, content);
+            const [response, sendTimedOut] = await withTimeout(sendPromise, AI_TIMEOUT_MS);
+
+            if (sendTimedOut) {
+              return { success: false, timedOut: true };
+            }
+
+            if (!response!.success || !response!.data) {
+              throw new Error(response!.error?.message || "发送消息失败，请重试");
+            }
+            responseData = response!.data;
           }
-        } else {
-          const response = await aiStylistApi.sendMessage(currentSessionId, content);
-          if (!response.success || !response.data) {
-            throw new Error(response.error?.message || "发送消息失败，请重试");
+
+          processResponse(responseData);
+          const response = { data: responseData! };
+
+          const assistantMessage: ExtendedChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              response.data?.assistantMessage || response.data?.message || "好的，我来帮你分析。",
+            timestamp: new Date(),
+            actionType: response.data?.nextAction?.type,
+            actionData: response.data?.nextAction,
+            progress: response.data?.progress,
+          };
+
+          if (response.data?.result) {
+            assistantMessage.outfitResult = response.data.result;
           }
-          responseData = response.data;
+
+          setMessages((prev) => prev.filter((m) => !m.isLoading).concat(assistantMessage));
+          setState("responding");
+
+          setTimeout(() => {
+            setState("idle");
+          }, 1000);
+
+          return { success: true, timedOut: false };
+        } catch (error) {
+          logger.error("AI companion sendMessage failed:", error);
+          return { success: false, timedOut: false };
         }
+      };
 
-        processResponse(responseData);
-        const response = { data: responseData! };
+      // First attempt
+      let result = await attemptSend(1);
 
-        const assistantMessage: ExtendedChatMessage = {
-          id: `assistant-${Date.now()}`,
+      // If timed out, show "thinking" indicator and retry once
+      if (result.timedOut) {
+        const thinkingMessage: ExtendedChatMessage = {
+          id: `thinking-${Date.now()}`,
           role: "assistant",
-          content:
-            response.data?.assistantMessage || response.data?.message || "好的，我来帮你分析。",
+          content: AI_TIMEOUT_MESSAGE,
           timestamp: new Date(),
-          actionType: response.data?.nextAction?.type,
-          actionData: response.data?.nextAction,
-          progress: response.data?.progress,
         };
+        setMessages((prev) => prev.filter((m) => !m.isLoading).concat(thinkingMessage));
 
-        if (response.data?.result) {
-          assistantMessage.outfitResult = response.data.result;
-        }
+        result = await attemptSend(2);
+      }
 
-        setMessages((prev) => prev.filter((m) => !m.isLoading).concat(assistantMessage));
-        setState("responding");
-
-        setTimeout(() => {
-          setState("idle");
-        }, 1000);
-      } catch (error) {
-        logger.error("AI companion sendMessage failed:", error);
-
-        const errorMessage: ExtendedChatMessage = {
+      // Handle final failure
+      if (!result.success) {
+        const finalMessage: ExtendedChatMessage = {
           id: `error-${Date.now()}`,
           role: "assistant",
-          content: "抱歉，我遇到了一些问题，请稍后再试。",
+          content: result.timedOut ? AI_RETRY_FAILED_MESSAGE : AI_UNAVAILABLE_MESSAGE,
           timestamp: new Date(),
         };
 
-        setMessages((prev) => prev.filter((m) => !m.isLoading).concat(errorMessage));
+        setMessages((prev) =>
+          prev.filter((m) => !m.isLoading && m.id !== `thinking-${Date.now()}`).concat(finalMessage)
+        );
         setState("idle");
       }
     },

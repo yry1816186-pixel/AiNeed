@@ -116,6 +116,24 @@ interface AiStylistState {
   endDialogSession: () => Promise<void>;
 }
 
+const AI_TIMEOUT_MS = 10_000;
+
+/** Wrap a promise with a timeout. Returns [result, timedOut] */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<[T | null, boolean]> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve([null, true]), ms);
+    promise
+      .then((result) => {
+        clearTimeout(timer);
+        resolve([result, false]);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        throw error;
+      });
+  });
+}
+
 const initialState = {
   currentSessionId: null,
   currentOutfitPlan: null,
@@ -137,16 +155,23 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
   createSession: async (entry?: string, goal?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await aiStylistApi.createSession({ entry, goal });
-      if (response.success && response.data) {
-        const sessionId = response.data.sessionId;
+      const [response, timedOut] = await withTimeout(
+        aiStylistApi.createSession({ entry, goal }),
+        AI_TIMEOUT_MS
+      );
+      if (timedOut) {
+        set({ error: "连接超时，请检查网络后重试", isLoading: false });
+        return null;
+      }
+      if (response!.success && response!.data) {
+        const sessionId = response!.data.sessionId;
         set({ currentSessionId: sessionId, isLoading: false });
         return sessionId ?? null;
       }
-      set({ error: response.error?.message || "Failed to create session", isLoading: false });
+      set({ error: response!.error?.message || "创建会话失败，请重试", isLoading: false });
       return null;
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to create session";
+      const message = e instanceof Error ? e.message : "创建会话失败，请重试";
       set({ error: message, isLoading: false });
       return null;
     }
@@ -159,20 +184,39 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
     }
     set({ isGenerating: true, error: null });
     try {
-      const response = await aiStylistApi.sendMessage(
-        currentSessionId,
-        message,
-        latitude,
-        longitude
+      const [response, timedOut] = await withTimeout(
+        aiStylistApi.sendMessage(currentSessionId, message, latitude, longitude),
+        AI_TIMEOUT_MS
       );
-      if (response.success && response.data) {
-        set({ isGenerating: false });
-        return response.data;
+      if (timedOut) {
+        // Single retry on timeout
+        set({ error: "伊伊正在想...再等一下" });
+        const [retryResponse, retryTimedOut] = await withTimeout(
+          aiStylistApi.sendMessage(currentSessionId, message, latitude, longitude),
+          AI_TIMEOUT_MS
+        );
+        if (retryTimedOut) {
+          set({ error: "网络似乎不太稳定，请稍后再试试", isGenerating: false });
+          return null;
+        }
+        if (retryResponse!.success && retryResponse!.data) {
+          set({ isGenerating: false, error: null });
+          return retryResponse!.data;
+        }
+        set({
+          error: retryResponse!.error?.message || "发送消息失败，请重试",
+          isGenerating: false,
+        });
+        return null;
       }
-      set({ error: response.error?.message || "Failed to send message", isGenerating: false });
+      if (response!.success && response!.data) {
+        set({ isGenerating: false });
+        return response!.data;
+      }
+      set({ error: response!.error?.message || "发送消息失败，请重试", isGenerating: false });
       return null;
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to send message";
+      const message = e instanceof Error ? e.message : "伊伊暂时无法回复，请稍后再试";
       set({ error: message, isGenerating: false });
       return null;
     }
@@ -185,10 +229,10 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       if (response.success && response.data) {
         set({ currentOutfitPlan: response.data as OutfitPlanDetail, isLoading: false });
       } else {
-        set({ error: response.error?.message || "Failed to fetch outfit plan", isLoading: false });
+        set({ error: response.error?.message || "获取穿搭方案失败，请重试", isLoading: false });
       }
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to fetch outfit plan";
+      const message = e instanceof Error ? e.message : "获取穿搭方案失败，请重试";
       set({ error: message, isLoading: false });
     }
   },
