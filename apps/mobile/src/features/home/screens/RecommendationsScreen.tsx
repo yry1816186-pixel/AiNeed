@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     marginBottom: 12,
-    borderRadius: 12,
+    borderRadius: DesignTokens.borderRadius.lg,
     backgroundColor: colors.surface,
     overflow: "hidden",
     elevation: 2,

@@ -143,7 +143,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   listContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: DesignTokens.spacing[3],
     paddingTop: 8,
     paddingBottom: 20,
   },

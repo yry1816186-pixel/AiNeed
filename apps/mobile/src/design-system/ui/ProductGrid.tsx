@@ -214,7 +214,7 @@ const useStyles = createStyles((colors) => ({
   card: {
     width: CARD_WIDTH,
     backgroundColor: colors.neutral.white,
-    borderRadius: BorderRadius.xl,
+    borderRadius: DesignTokens.borderRadius.lg,
     overflow: "hidden",
     marginBottom: Spacing[3],
     ...Shadows.md,

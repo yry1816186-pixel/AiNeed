@@ -106,7 +106,7 @@ const useStyles = createStyles((colors) => ({
   card: {
     width: CARD_WIDTH,
     backgroundColor: colors.surface,
-    borderRadius: DesignTokens.borderRadius.md,
+    borderRadius: DesignTokens.borderRadius.lg,
     overflow: "hidden",
     marginBottom: CARD_GAP,
   },
