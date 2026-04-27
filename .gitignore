@@ -180,6 +180,10 @@ fix-n*.js
 /optimize-memory-v2.bat
 /node-memory-watchdog.bat
 
+# --- Electron build caches (locally generated, no need to track) ---
+apps/mobile/src/features/community/screens/0/v24.14.0-x64-*
+apps/mobile/src/features/community/screens/0/v*-x64-*
+
 # --- Non-project Files ---
 read_pdf.py
 

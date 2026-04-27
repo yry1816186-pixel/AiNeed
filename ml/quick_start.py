@@ -6,7 +6,6 @@ import os
 import sys
 import json
 import asyncio
-import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -25,7 +24,7 @@ def check_dependencies():
     print_header("检查依赖")
     
     required_packages = [
-        "torch", "transformers", "numpy", "pillow", "tqdm"
+        "transformers", "numpy", "pillow", "tqdm"
     ]
     
     missing = []
@@ -36,6 +35,13 @@ def check_dependencies():
         except ImportError:
             print(f"  ✗ {pkg} (缺失)")
             missing.append(pkg)
+    
+    # torch is optional — wrap in try/except
+    try:
+        import torch
+        print(f"  ✓ torch (optional)")
+    except ImportError:
+        print(f"  ○ torch (optional, 未安装)")
     
     if missing:
         print(f"\n请安装缺失的依赖:")

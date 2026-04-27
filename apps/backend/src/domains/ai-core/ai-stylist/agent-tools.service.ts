@@ -522,6 +522,8 @@ export class AgentToolsService {
   }
 
   // GLM-5 Integration
+  // TODO(CONSENT): P1 — Add consent check (body_metrics, ai_features) before GLM API call.
+  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   async callGLM5WithTools(
     messages: Array<{ role: string; content: string }>,
     tools?: GLM5FunctionTool[]

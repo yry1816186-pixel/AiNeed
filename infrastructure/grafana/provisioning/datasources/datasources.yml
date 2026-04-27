@@ -25,6 +25,8 @@ datasources:
     jsonData:
       # Prometheus 查询超时
       timeInterval: '15s'
+      # 查询超时保护 (防止慢查询拖垮 Grafana)
+      queryTimeout: '30s'
       # 自定义查询参数
       customQueryParameters: ''
       # 启用 POST 方法查询（支持大范围查询）
@@ -44,6 +46,8 @@ datasources:
     jsonData:
       # 最大日志查询行数
       maxLines: 1000
+      # 查询超时保护
+      queryTimeout: '30s'
       # 默认数据源（用于日志关联查询）
       derivedFields:
         # 将 traceID 从日志中提取，关联到 Jaeger（预留）

@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from "@nestjs/common";
 import { PrismaClient, Prisma } from "@prisma/client";
 
+import { SkipInProduction } from "../security/skip-in-production.decorator";
+
 /**
  * Prisma Service
  * 包装 PrismaClient 以便在 NestJS 中使用依赖注入
@@ -33,12 +35,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly RECONNECT_DELAY_MS = 1000;
 
   constructor() {
+    const isProduction = process.env.NODE_ENV === "production";
     super({
-      log: [
-        { emit: "event", level: "query" },
-        { emit: "stdout", level: "error" },
-        { emit: "stdout", level: "warn" },
-      ],
+      log: isProduction
+        ? [
+            { emit: "stdout", level: "error" },
+            { emit: "stdout", level: "warn" },
+          ]
+        : [
+            { emit: "event", level: "query" },
+            { emit: "stdout", level: "error" },
+            { emit: "stdout", level: "warn" },
+          ],
       // 数据库连接池配置通过 DATABASE_URL 环境变量传递
       // 推荐的 DATABASE_URL 格式:
       // postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=30&connect_timeout=10

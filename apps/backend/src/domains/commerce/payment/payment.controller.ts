@@ -92,7 +92,7 @@ export class PaymentController {
     return this.paymentService.queryPayment(user.id, orderId);
   }
 
-  // FIX-CODE-017: 支付轮询添加频率限制 (修复时间: 2026-03-19)
+  // TODO: 支付轮询添加频率限制 (已修复 2026-03-19)，确认无问题后删除
   @Get("poll/:orderId")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -107,7 +107,7 @@ export class PaymentController {
     return this.paymentService.pollPaymentStatus(user.id, orderId);
   }
 
-  // FIX-CODE-007: 支付宝回调添加签名验证前置检查 (修复时间: 2026-03-19)
+  // TODO: 支付宝回调添加签名验证前置检查 (已修复 2026-03-19)，确认无问题后删除
   /**
    * 支付宝回调
    */

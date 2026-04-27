@@ -685,6 +685,8 @@ ${matchingFactors
     }
   }
 
+  // TODO(CONSENT): P1 — Add consent check (ai_features) before GLM API call.
+  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async callGLM(prompt: string): Promise<string | null> {
     const apiKey = this.configService.get("GLM_API_KEY");
     if (!apiKey) {

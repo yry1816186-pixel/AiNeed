@@ -44,7 +44,7 @@ import {
 } from "./types/common.types";
 
 const PAYMENT_IDEMPOTENCY_PREFIX = "payment:idempotency:";
-const IDEMPOTENCY_TTL_SECONDS = 300;
+const IDEMPOTENCY_TTL_SECONDS = Number(process.env.PAYMENT_IDEMPOTENCY_TTL_SECONDS) || 1800; // 30 minutes default
 
 @Injectable()
 export class PaymentService {
@@ -635,7 +635,6 @@ export class PaymentService {
     }
   }
 
-  // FIX-CODE-007: 支付宝签名验证方法 (修复时间: 2026-03-19)
   async verifyAlipaySignature(body: PaymentRawCallbackData): Promise<boolean> {
     try {
       const provider = this.getProvider("alipay");

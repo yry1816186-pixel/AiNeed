@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import logging
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 from typing import List, Optional
 
@@ -35,6 +38,20 @@ class Settings(BaseSettings):
     MAX_CONCURRENT_TASKS: int = 3
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
+
+    @model_validator(mode="after")
+    def _validate_ml_api_key(self) -> "Settings":
+        if not self.ML_API_KEY:
+            if self.ENVIRONMENT == "production":
+                raise ValueError(
+                    "ML_API_KEY must be set via environment variable in production"
+                )
+            logging.getLogger(__name__).warning(
+                "ML_API_KEY not set — using default development key. "
+                "Set ML_API_KEY for production deployments."
+            )
+            self.ML_API_KEY = "xuno-dev-key-change-me-in-production"
+        return self
 
     @property
     def cors_origins_list(self) -> List[str]:

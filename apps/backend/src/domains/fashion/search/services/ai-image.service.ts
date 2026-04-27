@@ -132,6 +132,8 @@ export class AIImageService {
     }
   }
 
+  // TODO(CONSENT): P1 — Add consent check (photos) before OpenAI image analysis API call.
+  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async analyzeWithOpenAI(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     try {
       const apiKey = this.configService.get("OPENAI_API_KEY");

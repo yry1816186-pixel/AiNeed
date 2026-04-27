@@ -14,11 +14,77 @@ router = APIRouter(tags=["Health"])
 
 @router.get("/health")
 async def health_check() -> Dict[str, Any]:
-    return {
+    """Basic health check with connectivity checks for Redis, Qdrant, and GLM API."""
+    result: Dict[str, Any] = {
         "status": "healthy",
         "service": "xuno-ml-api",
         "timestamp": datetime.now().isoformat(),
     }
+
+    # Report failed route loads (from main.py)
+    try:
+        from ml.api.main import failed_routes
+    except ImportError:
+        failed_routes = []
+    if failed_routes:
+        result["status"] = "degraded"
+        result["failed_routes"] = failed_routes
+
+    # Quick connectivity checks (non-blocking, timeout 2s each)
+    import os as _os
+    checks: Dict[str, Any] = {}
+
+    # Redis check
+    redis_url = _os.getenv("REDIS_URL", "")
+    if redis_url:
+        try:
+            import redis.asyncio as aioredis
+            r = aioredis.from_url(redis_url)
+            checks["redis"] = await r.ping()
+            await r.close()
+        except Exception:
+            checks["redis"] = False
+    else:
+        checks["redis"] = None
+
+    # Qdrant check
+    qdrant_url = _os.getenv("QDRANT_URL", "")
+    if qdrant_url:
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                resp = await client.get(f"{qdrant_url.rstrip('/')}/health")
+                checks["qdrant"] = resp.status_code == 200
+        except Exception:
+            checks["qdrant"] = False
+    else:
+        checks["qdrant"] = None
+
+    # GLM API check
+    glm_key = _os.getenv("GLM_API_KEY") or _os.getenv("ZHIPU_API_KEY")
+    if glm_key:
+        try:
+            import httpx
+            glm_endpoint = _os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4")
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                resp = await client.get(
+                    f"{glm_endpoint.rstrip('/')}/models",
+                    headers={"Authorization": f"Bearer {glm_key}"},
+                )
+                checks["glm_api"] = resp.status_code == 200
+        except Exception:
+            checks["glm_api"] = False
+    else:
+        checks["glm_api"] = None
+
+    # Determine overall status from checks
+    failed_checks = [k for k, v in checks.items() if v is False]
+    if failed_checks:
+        result["status"] = "degraded"
+        result["failed_checks"] = failed_checks
+
+    result["checks"] = checks
+    return result
 
 
 @router.get("/health/detailed")

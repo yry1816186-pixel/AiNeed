@@ -126,7 +126,7 @@ export class CartService {
       throw new BadRequestException(`商品没有 ${size} 尺码`);
     }
 
-    // FIX-BL-009: 使用upsert解决并发问题 (修复时间: 2026-03-19)
+    // TODO: 使用upsert解决并发问题 (已修复 2026-03-19)，确认无问题后删除
     const cartItem = await this.prisma.cartItem.upsert({
       where: {
         userId_itemId_color_size: {

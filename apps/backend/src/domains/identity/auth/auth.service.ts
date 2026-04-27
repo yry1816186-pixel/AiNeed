@@ -1,8 +1,7 @@
-import { randomUUID, createHash, timingSafeEqual } from "crypto";
+import { randomUUID, createHash } from "crypto";
 
 import {
   Injectable,
-  Inject,
   UnauthorizedException,
   ConflictException,
   Logger,
@@ -25,7 +24,7 @@ import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/priva
 
 import { AuthHelpersService } from "./auth.helpers";
 import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
-import { SmsService, ISmsService } from "./services/sms.service";
+import { SmsService } from "./services/sms.service";
 import { TokenBlacklistService } from "./services/token-blacklist.service";
 import { WechatService } from "./services/wechat.service";
 
@@ -51,7 +50,6 @@ export class AuthService {
     private configService: ConfigService,
     private redisService: RedisService,
     private authHelpersService: AuthHelpersService,
-    @Inject("ISmsService") private smsService: ISmsService,
     private readonly smsVerificationService: SmsService,
     private wechatService: WechatService,
     private tokenBlacklistService: TokenBlacklistService,
@@ -375,7 +373,7 @@ export class AuthService {
     return value;
   }
 
-  // FIX-BL-003: 密码找回功能实现 (修复时间: 2026-03-19)
+  // Security: silent-fail pattern — never reveal whether an email is registered
   async sendPasswordResetEmail(email: string): Promise<void> {
     this.logger.log("密码重置请求", { email });
 
@@ -436,47 +434,27 @@ export class AuthService {
   }
 
   async sendSmsCode(phone: string): Promise<void> {
-    const throttleKey = `sms:throttle:${phone}`;
-    const isThrottled = await this.redisService.exists(throttleKey);
-    if (isThrottled) {
-      throw new BadRequestException("发送过于频繁，请60秒后再试");
-    }
-
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    const codeKey = `sms:code:${phone}`;
-
-    await this.redisService.setWithTtl(codeKey, code, 300000);
-    await this.redisService.setWithTtl(throttleKey, "1", 60000);
-
-    await this.smsService.sendCode(phone, code);
-
+    // Delegate to unified SmsService.sendVerificationCode() for consistency
+    await this.smsVerificationService.sendVerificationCode(phone);
     this.logger.log("短信验证码已发送", { phone });
   }
 
   async verifySmsCode(phone: string, code: string): Promise<boolean> {
+    // Attempt tracking for brute-force protection
     const attemptsKey = `sms:attempts:${phone}`;
     const attempts = parseInt((await this.redisService.get(attemptsKey)) || "0", 10);
     if (attempts >= 5) {
       throw new BadRequestException("验证码尝试次数过多，请重新获取");
     }
 
-    const codeKey = `sms:code:${phone}`;
-    const storedCode = await this.redisService.get(codeKey);
-
-    if (!storedCode) {
-      return false;
-    }
-
-    const a = Buffer.from(storedCode, "utf-8");
-    const b = Buffer.from(code, "utf-8");
-    const isMatch = a.length === b.length && timingSafeEqual(a, b);
+    // Delegate to unified SmsService.verifyCode() with timing-safe comparison
+    const isMatch = await this.smsVerificationService.verifyCode(phone, code);
 
     if (!isMatch) {
       await this.redisService.setWithTtl(attemptsKey, String(attempts + 1), 300000);
       return false;
     }
 
-    await this.redisService.del(codeKey);
     await this.redisService.del(attemptsKey);
     return true;
   }

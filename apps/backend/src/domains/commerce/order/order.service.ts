@@ -66,7 +66,7 @@ export interface OrderItemResponse {
   price: number;
 }
 
-// FIX-CODE-005: 定义类型安全的Order类型 (修复时间: 2026-03-19)
+// TODO: 定义类型安全的Order类型 (已修复 2026-03-19)，确认无问题后删除
 
 interface OrderWithRelations extends Order {
   items: OrderItem[];
@@ -142,7 +142,7 @@ export class OrderService {
         throw new BadRequestException(`商品 ${clothingItem.name} 已下架`);
       }
 
-      // FIX-BL-010: 库存校验 (修复时间: 2026-03-19)
+      // TODO: 库存校验 (已修复 2026-03-19)，确认无问题后删除
       if (clothingItem.stock < item.quantity) {
         throw new BadRequestException(
           `商品 ${clothingItem.name} 库存不足，当前库存: ${clothingItem.stock}，需要: ${item.quantity}`
@@ -175,7 +175,7 @@ export class OrderService {
     const orderNo = this.generateOrderNo();
 
     const order = await this.prisma.$transaction(async (tx) => {
-      // FIX-BL-010: 扣减库存 (修复时间: 2026-03-19)
+      // TODO: 扣减库存 (已修复 2026-03-19)，确认无问题后删除
       for (const item of itemsWithDetails) {
         const updated = await tx.clothingItem.updateMany({
           where: {
@@ -357,7 +357,7 @@ export class OrderService {
       throw new BadRequestException("订单状态不允许取消");
     }
 
-    // FIX-CODE-013: 已支付订单需要发起退款 (修复时间: 2026-03-19)
+    // TODO: 已支付订单需要发起退款 (已修复 2026-03-19)，确认无问题后删除
     if (order.status === "paid") {
       try {
         await this.paymentService.refund(userId, {
@@ -372,7 +372,7 @@ export class OrderService {
       }
     }
 
-    // FIX-BL-011: 取消订单后恢复库存 (修复时间: 2026-03-19)
+    // TODO: 取消订单后恢复库存 (已修复 2026-03-19)，确认无问题后删除
     const orderWithItems = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: { items: true },
@@ -488,7 +488,7 @@ export class OrderService {
     return `SM${year}${month}${day}${random}`;
   }
 
-  // FIX-CODE-005: 使用类型安全的参数 (修复时间: 2026-03-19)
+  // TODO: 使用类型安全的参数 (已修复 2026-03-19)，确认无问题后删除
   private mapToOrderResponse(order: OrderWithRelations): OrderResponse {
     return {
       id: order.id,

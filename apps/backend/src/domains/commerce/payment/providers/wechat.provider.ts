@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as https from "https";
 import * as path from "path";
 
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { PaymentRawCallbackData } from "../types/common.types";
@@ -68,6 +68,14 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
    * 创建支付订单（使用 V3 API）
    */
   async createPayment(options: CreatePaymentOptions): Promise<PaymentResult> {
+    // 配置完整性检查：appId, mchId, apiV3Key 是微信支付的必要参数
+    if (!this.appId || !this.mchId || !this.apiV3Key) {
+      throw new ServiceUnavailableException(
+        "Wechat Pay is not available: appId, mchId, or apiV3Key is not configured. " +
+          "Please set WECHAT_APP_ID, WECHAT_MCH_ID, and WECHAT_API_V3_KEY environment variables."
+      );
+    }
+
     try {
       const { orderId, amount, subject, body, method, expireMinutes = 30 } = options;
 

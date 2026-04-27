@@ -5,6 +5,11 @@ import { SanitizableValue } from "../types/common.types";
 @Injectable()
 export class XssSanitizationPipe implements PipeTransform {
   transform(value: SanitizableValue, metadata: ArgumentMetadata): SanitizableValue {
+    // Skip file upload parameters (multipart/form-data) to avoid corrupting binary data
+    if (metadata.type === "custom") {
+      return value;
+    }
+
     if (value === null || value === undefined) {
       return value;
     }

@@ -86,10 +86,8 @@ export class SmsService {
     // Delegate actual SMS sending to the provider (Aliyun or Mock)
     await this.smsProvider.sendCode(phone, code);
 
-    // Log in dev mode only - never log codes in production
-    if (process.env.NODE_ENV !== "production") {
-      this.logger.debug(`[DEV] Verification code for ${phone}: ${code}`);
-    }
+    // Security: never log full verification codes, even in dev
+    this.logger.debug(`SMS code sent to ${phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2")}`);
   }
 
   async verifyCode(phone: string, code: string): Promise<boolean> {

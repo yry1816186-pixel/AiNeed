@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
 
 const BLACKLIST_KEY_PREFIX = "token:blacklist:";
@@ -8,8 +8,9 @@ const USER_TOKENS_KEY_PREFIX = "user:tokens:";
 @Injectable()
 export class TokenBlacklistService {
   private readonly logger = new Logger(TokenBlacklistService.name);
+  private redisAvailable = true;
 
-  constructor(private redisService: RedisService) {}
+  constructor(private redisService: RedisService, private prisma: PrismaService) {}
 
   async blacklistToken(jti: string, expiresInSeconds: number): Promise<void> {
     if (!jti) {
@@ -17,16 +18,47 @@ export class TokenBlacklistService {
       return;
     }
     const key = `${BLACKLIST_KEY_PREFIX}${jti}`;
-    await this.redisService.setex(key, expiresInSeconds, "1");
-    this.logger.debug(`Token blacklisted: ${jti.substring(0, 8)}... TTL: ${expiresInSeconds}s`);
+
+    try {
+      await this.redisService.setex(key, expiresInSeconds, "1");
+      this.redisAvailable = true;
+      this.logger.debug(`Token blacklisted: ${jti.substring(0, 8)}... TTL: ${expiresInSeconds}s`);
+    } catch (error) {
+      this.redisAvailable = false;
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.warn(
+        `Redis unavailable for blacklisting token ${jti.substring(
+          0,
+          8
+        )}... Falling back to DB: ${msg}`
+      );
+      await this.blacklistTokenInDb(jti, expiresInSeconds);
+    }
   }
 
   async isBlacklisted(jti: string): Promise<boolean> {
     if (!jti) {
       return false;
     }
-    const key = `${BLACKLIST_KEY_PREFIX}${jti}`;
-    return this.redisService.exists(key);
+
+    // Try Redis first
+    if (this.redisAvailable) {
+      try {
+        const key = `${BLACKLIST_KEY_PREFIX}${jti}`;
+        const exists = await this.redisService.exists(key);
+        if (exists) {
+          return true;
+        }
+        // Token not in Redis; also check DB in case it was stored during a Redis outage
+      } catch (error) {
+        this.redisAvailable = false;
+        const msg = error instanceof Error ? error.message : String(error);
+        this.logger.warn(`Redis unavailable for checking blacklist, falling back to DB: ${msg}`);
+      }
+    }
+
+    // Fallback: check database
+    return this.isBlacklistedInDb(jti);
   }
 
   async blacklistAllUserTokens(userId: string): Promise<void> {
@@ -68,5 +100,49 @@ export class TokenBlacklistService {
       await this.redisService.expire(userTokensKey, expiresInSeconds);
     }
     // currentTtl > 0 表示 key 已有 TTL，保留不重置
+  }
+
+  // ==================== DB fallback methods ====================
+
+  /**
+   * Store blacklisted token in database as fallback when Redis is unavailable.
+   */
+  private async blacklistTokenInDb(jti: string, expiresInSeconds: number): Promise<void> {
+    try {
+      const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
+      await this.prisma.$executeRawUnsafe(
+        `INSERT INTO token_blacklist (jti, expires_at, created_at)
+         VALUES ($1, $2, NOW())
+         ON CONFLICT (jti) DO NOTHING`,
+        jti,
+        expiresAt
+      );
+    } catch (dbError) {
+      const msg = dbError instanceof Error ? dbError.message : String(dbError);
+      this.logger.error(
+        `Failed to blacklist token in DB: ${msg}.` +
+          ` Run migration: npx prisma migrate dev --name add_token_blacklist`
+      );
+    }
+  }
+
+  /**
+   * Check if a JTI is blacklisted via database fallback.
+   */
+  private async isBlacklistedInDb(jti: string): Promise<boolean> {
+    try {
+      const result = await this.prisma.$queryRawUnsafe<Array<{ exists: boolean }>>(
+        `SELECT EXISTS(
+          SELECT 1 FROM token_blacklist
+          WHERE jti = $1 AND expires_at > NOW()
+        ) as "exists"`,
+        jti
+      );
+      return result[0]?.exists ?? false;
+    } catch (dbError) {
+      const msg = dbError instanceof Error ? dbError.message : String(dbError);
+      this.logger.warn(`DB blacklist check failed for jti: ${msg}`);
+      return false;
+    }
   }
 }

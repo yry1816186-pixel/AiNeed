@@ -111,6 +111,8 @@ export class GlmVisionAnalysisService {
     return this.parseColorResult(response);
   }
 
+  // TODO(CONSENT): P1 — Add consent check (photos, body_metrics) before GLM vision API call.
+  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async callVisionApi(imageBase64: string, prompt: string): Promise<string> {
     const model = this.configService.get<string>("GLM_VISION_MODEL") || "glm-4v-plus";
 

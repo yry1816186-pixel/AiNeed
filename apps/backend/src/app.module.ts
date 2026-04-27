@@ -13,6 +13,7 @@ import { EmailModule } from "./common/email/email.module";
 import { EncryptionModule } from "./common/encryption/encryption.module";
 import { GatewayModule } from "./common/gateway/gateway.module";
 import { CsrfModule } from "./common/guards/csrf/csrf.module";
+import { CsrfGuard } from "./common/guards/csrf/csrf.guard";
 import {
   JsonApiInterceptor,
   CacheInterceptor,
@@ -174,6 +175,10 @@ import { WSModule } from "./modules/ws/ws.module";
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CsrfGuard,
     },
   ],
 })

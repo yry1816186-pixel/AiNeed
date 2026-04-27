@@ -100,12 +100,12 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute for login
+  @Throttle({ default: { limit: 5, ttl: 300000 } }) // 5 attempts per 5 minutes per IP
   @Public()
   @Post("login")
   @ApiOperation({
     summary: "用户登录",
-    description: "使用邮箱和密码登录，返回访问令牌和用户信息。",
+    description: "使用邮箱和密码登录，返回访问令牌和用户信息。同一 IP 5 分钟内最多 5 次登录尝试。",
   })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
@@ -239,7 +239,6 @@ export class AuthController {
     return req.user;
   }
 
-  // FIX-BL-003: 密码找回功能 (修复时间: 2026-03-19)
   @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 requests per minute
   @Public()
   @Post("forgot-password")

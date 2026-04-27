@@ -79,6 +79,8 @@ export class GlmTryOnProvider implements TryOnProvider {
     return this.circuitBreaker.fire(request);
   }
 
+  // TODO(CONSENT): P1 — Add consent check (photos, body_metrics) before GLM try-on API call.
+  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async executeGlmInference(request: TryOnRequest): Promise<TryOnResponse> {
     const startTime = Date.now();
 

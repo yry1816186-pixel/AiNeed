@@ -25,6 +25,11 @@ from ml.api.middleware.error_handler import (
 from ml.api.routes.health import router as health_router
 from ml.api.routes.tasks import router as tasks_router
 
+logger = logging.getLogger(__name__)
+
+# Global tracking for route loading failures (reported in /health)
+failed_routes: list[str] = []
+
 
 # A-P2-15: 请求体大小限制中间件
 class RequestBodySizeLimitMiddleware:
@@ -183,49 +188,55 @@ try:
     from ml.services.tryon.visual_outfit_api import router as visual_router
 
     app.include_router(visual_router)
-    logging.getLogger(__name__).info("Visual outfit API routes loaded")
+    logger.info("Visual outfit API routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load visual outfit API: %s", e)
+    failed_routes.append("visual_outfit")
+    logger.warning("Failed to load visual outfit API: %s", e)
 
 try:
     from ml.api.routes.fashion_recommend import router as fashion_recommend_router
 
     app.include_router(fashion_recommend_router)
-    logging.getLogger(__name__).info("Fashion recommendation routes loaded")
+    logger.info("Fashion recommendation routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load fashion recommendation routes: %s", e)
+    failed_routes.append("fashion_recommend")
+    logger.warning("Failed to load fashion recommendation routes: %s", e)
 
 try:
     from ml.api.routes.virtual_tryon import router as virtual_tryon_router
 
     app.include_router(virtual_tryon_router)
-    logging.getLogger(__name__).info("Virtual try-on API routes loaded")
+    logger.info("Virtual try-on API routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load virtual try-on API: %s", e)
+    failed_routes.append("virtual_tryon")
+    logger.warning("Failed to load virtual try-on API: %s", e)
 
 try:
     from ml.api.routes.vector import router as vector_router
 
     app.include_router(vector_router)
-    logging.getLogger(__name__).info("Vector search API routes loaded")
+    logger.info("Vector search API routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load vector search API: %s", e)
+    failed_routes.append("vector_search")
+    logger.warning("Failed to load vector search API: %s", e)
 
 try:
     from ml.api.routes.image_search import router as image_search_router
 
     app.include_router(image_search_router)
-    logging.getLogger(__name__).info("Image search API routes loaded")
+    logger.info("Image search API routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load image search API: %s", e)
+    failed_routes.append("image_search")
+    logger.warning("Failed to load image search API: %s", e)
 
 try:
     from ml.api.routes.style_dna import router as style_dna_router
 
     app.include_router(style_dna_router)
-    logging.getLogger(__name__).info("Style DNA API routes loaded")
+    logger.info("Style DNA API routes loaded")
 except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load style DNA API: %s", e)
+    failed_routes.append("style_dna")
+    logger.warning("Failed to load style DNA API: %s", e)
 
 
 if __name__ == "__main__":

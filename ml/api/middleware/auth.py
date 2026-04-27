@@ -25,19 +25,17 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         if not settings.ML_API_KEY:
-            if settings.is_production:
-                logger.critical("ML_API_KEY is not set in production — rejecting all requests")
-                return JSONResponse(
-                    status_code=503,
-                    content={
-                        "success": False,
-                        "error": {
-                            "code": "SERVICE_MISCONFIGURED",
-                            "message": "API key not configured",
-                        },
+            logger.critical("ML_API_KEY is not set — rejecting all requests")
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "success": False,
+                    "error": {
+                        "code": "SERVICE_MISCONFIGURED",
+                        "message": "API key not configured",
                     },
-                )
-            return await call_next(request)
+                },
+            )
 
         api_key = request.headers.get("X-ML-API-Key", "")
 

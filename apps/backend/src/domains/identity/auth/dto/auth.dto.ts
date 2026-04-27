@@ -196,7 +196,6 @@ export class UpdateProfileDto {
   birthDate?: string;
 }
 
-// FIX-BL-003: 密码找回DTO (修复时间: 2026-03-19)
 export class ForgotPasswordDto {
   @ApiProperty({
     example: "user@example.com",

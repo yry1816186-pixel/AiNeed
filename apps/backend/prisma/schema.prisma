@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =============================================================================
+// @encrypted 字段说明（必须通过服务层 EncryptionService 处理）
+//
+// Schema 中所有带 @encrypted 注释的字段（如 phone、PII 地址字段、
+// 银行卡信息等），仅在数据库层存储加密值。服务层必须在读写前调用
+// EncryptionService 进行加解密处理，否则明文会直接落库。
+//
+// 支持的加密场景：PII、地址信息、银行卡信息、联系方式。
+// =============================================================================
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique

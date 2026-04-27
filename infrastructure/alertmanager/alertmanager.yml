@@ -5,6 +5,7 @@
 #   1. 接收 Prometheus 发送的告警
 #   2. 按团队/严重级别进行分组、抑制、静默
 #   3. 通过邮件、钉钉、Webhook、PagerDuty 等渠道通知
+#   4. 防告警风暴: group_wait 合并窗口 + group_interval 冷却 + repeat_interval 重复抑制
 # ============================================================
 
 # ----------------------------------------------------------
@@ -113,6 +114,38 @@ route:
       group_wait: 5m        # 业务告警等待 5 分钟合并
       group_interval: 30m   # 30 分钟合并一次
       repeat_interval: 12h  # 12 小时后才重复通知
+      mute_time_intervals:
+        - off-hours
+
+# ----------------------------------------------------------
+# 静默时间窗口 — 全局维护时段自动静默
+# ----------------------------------------------------------
+# 在定义的时间窗口内，匹配的告警路由不会发送通知
+mute_time_intervals:
+  - name: 'maintenance-window'
+    # 示例: 每周日 02:00-04:00 UTC (对应北京时间 10:00-12:00)
+    # 生产环境替换为真实维护窗口
+    time_intervals:
+      - days_of_month:
+          - 1-31
+        times:
+          - start_time: '02:00'
+            end_time: '04:00'
+        weekdays:
+          - 'sunday'
+
+  - name: 'off-hours'
+    # 非工作时间静默低优先级告警
+    time_intervals:
+      - times:
+          - start_time: '18:00'
+            end_time: '09:00'
+        weekdays:
+          - 'monday'
+          - 'tuesday'
+          - 'wednesday'
+          - 'thursday'
+          - 'friday'
 
 # ----------------------------------------------------------
 # 抑制规则 - 高优先级告警抑制低优先级告警

@@ -1,4 +1,14 @@
-# DEPRECATED: Use pyproject.toml instead. This file is kept for Docker compatibility during migration.
+# =============================================================================
+# DEPRECATED - This file is NO LONGER USED for dependency management.
+# All dependencies are now defined in pyproject.toml.
+# This file is kept only for reference during migration.
+# =============================================================================
+#
+# DO NOT use this file for pip install.
+# Use: pip install -e . (installs from pyproject.toml)
+#
+# =============================================================================
+
 # Core dependencies
 numpy>=1.24.0,<3.0.0
 Pillow>=9.5.0,<12.0.0
