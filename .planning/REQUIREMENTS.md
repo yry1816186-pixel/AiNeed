@@ -17,7 +17,7 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 
 ### BRAND — 品牌视觉资产定义
 
-- [ ] **BRAND-01**: User sees a designed logo (warm camel palette, fashion-forward, recognizable at 32px) with horizontal, square, and monochrome variants
+- [ ] **BRAND-01**: User sees a designed logo (terracotta red #C44536 palette, fashion-forward, recognizable at 32px) with horizontal, square, and monochrome variants
 - [ ] **BRAND-02**: User sees a designed app icon (iOS + Android adaptive icon) that is distinctive on home screen and conveys AI fashion identity
 - [ ] **BRAND-03**: User sees a splash/launch screen animation (Lottie, ≤1.5s duration, brand color reveal + logo) that plays on every cold start
 - [ ] **BRAND-04**: Developer has a complete brand guideline document defining: color palette with usage rules, typography scale (header/body/caption), spacing system (4px grid), icon style (Phosphor customizations), and illustration style
