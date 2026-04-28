@@ -675,3 +675,8 @@ export const theme = {
 };
 
 export default theme;
+
+export { useThemeStore, startAppearanceListener, stopAppearanceListener } from "./themeStore";
+export { resolveColors, lightColors, darkColors } from "./color-resolver";
+export { mmkvStorage } from "./mmkv-storage";
+export type { ThemeMode, ResolvedMode, ThemeColors } from "./types";

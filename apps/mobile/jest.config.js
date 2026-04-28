@@ -21,6 +21,8 @@ module.exports = {
     "^expo-image-manipulator$": "<rootDir>/src/__mocks__/expo-image-manipulator.js",
     "^@/src/polyfills/(.*)$": "<rootDir>/src/polyfills/$1",
     "^@/(.*)$": "<rootDir>/$1",
+    "^react-native-mmkv$": "<rootDir>/src/__mocks__/react-native-mmkv.js",
+    "^react-native$": "<rootDir>/src/__mocks__/react-native.js",
   },
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
