@@ -1,0 +1,41 @@
+semantics:
+  motion:
+    transition:
+      fast:
+        duration: "{primitives.motion.duration.fast}"
+        easing: "{primitives.motion.easing.easeOut}"
+      medium:
+        duration: "{primitives.motion.duration.normal}"
+        easing: "{primitives.motion.easing.easeOut}"
+      slow:
+        duration: "{primitives.motion.duration.slow}"
+        easing: "{primitives.motion.easing.easeInOut}"
+    entrance:
+      fadeIn:
+        duration: "{primitives.motion.duration.normal}"
+        easing: "{primitives.motion.easing.easeOut}"
+      slideUp:
+        duration: "{primitives.motion.duration.normal}"
+        easing: "{primitives.motion.easing.quintOut}"
+      scaleIn:
+        duration: "{primitives.motion.duration.fast}"
+        spring: "{primitives.motion.spring.snappy}"
+    exit:
+      fadeOut:
+        duration: "{primitives.motion.duration.fast}"
+        easing: "{primitives.motion.easing.easeIn}"
+      slideDown:
+        duration: "{primitives.motion.duration.normal}"
+        easing: "{primitives.motion.easing.easeIn}"
+      scaleOut:
+        duration: "{primitives.motion.duration.fast}"
+        easing: "{primitives.motion.easing.easeIn}"
+    spring:
+      interactive:
+        spring: "{primitives.motion.spring.snappy}"
+      navigation:
+        spring: "{primitives.motion.spring.gentle}"
+      celebration:
+        spring: "{primitives.motion.spring.bouncy}"
+      alert:
+        spring: "{primitives.motion.spring.stiff}"

@@ -1,0 +1,69 @@
+semantics:
+  typography:
+    heading:
+      h1:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.36}"
+        fontWeight: "{primitives.typography.weights.bold}"
+        lineHeight: "{primitives.typography.lineHeights.tight}"
+        letterSpacing: "{primitives.typography.letterSpacing.tight}"
+      h2:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.28}"
+        fontWeight: "{primitives.typography.weights.bold}"
+        lineHeight: "{primitives.typography.lineHeights.tight}"
+        letterSpacing: "{primitives.typography.letterSpacing.tight}"
+      h3:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.24}"
+        fontWeight: "{primitives.typography.weights.semibold}"
+        lineHeight: "{primitives.typography.lineHeights.snug}"
+      h4:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.20}"
+        fontWeight: "{primitives.typography.weights.semibold}"
+        lineHeight: "{primitives.typography.lineHeights.normal}"
+      h5:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.18}"
+        fontWeight: "{primitives.typography.weights.semibold}"
+        lineHeight: "{primitives.typography.lineHeights.normal}"
+      h6:
+        fontFamily: "{primitives.typography.fontFamily.heading}"
+        fontSize: "{primitives.typography.sizes.16}"
+        fontWeight: "{primitives.typography.weights.semibold}"
+        lineHeight: "{primitives.typography.lineHeights.normal}"
+    body:
+      large:
+        fontFamily: "{primitives.typography.fontFamily.body}"
+        fontSize: "{primitives.typography.sizes.18}"
+        fontWeight: "{primitives.typography.weights.regular}"
+        lineHeight: "{primitives.typography.lineHeights.relaxed}"
+      default:
+        fontFamily: "{primitives.typography.fontFamily.body}"
+        fontSize: "{primitives.typography.sizes.16}"
+        fontWeight: "{primitives.typography.weights.regular}"
+        lineHeight: "{primitives.typography.lineHeights.relaxed}"
+      small:
+        fontFamily: "{primitives.typography.fontFamily.body}"
+        fontSize: "{primitives.typography.sizes.14}"
+        fontWeight: "{primitives.typography.weights.regular}"
+        lineHeight: "{primitives.typography.lineHeights.relaxed}"
+    caption:
+      fontFamily: "{primitives.typography.fontFamily.body}"
+      fontSize: "{primitives.typography.sizes.12}"
+      fontWeight: "{primitives.typography.weights.medium}"
+      lineHeight: "{primitives.typography.lineHeights.normal}"
+      letterSpacing: "{primitives.typography.letterSpacing.wide}"
+    overline:
+      fontFamily: "{primitives.typography.fontFamily.body}"
+      fontSize: "{primitives.typography.sizes.10}"
+      fontWeight: "{primitives.typography.weights.bold}"
+      lineHeight: "{primitives.typography.lineHeights.normal}"
+      letterSpacing: "{primitives.typography.letterSpacing.widest}"
+    label:
+      fontFamily: "{primitives.typography.fontFamily.body}"
+      fontSize: "{primitives.typography.sizes.14}"
+      fontWeight: "{primitives.typography.weights.medium}"
+      lineHeight: "{primitives.typography.lineHeights.normal}"
+      letterSpacing: "{primitives.typography.letterSpacing.wide}"

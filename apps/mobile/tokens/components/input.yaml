@@ -1,0 +1,20 @@
+components:
+  input:
+    default:
+      background: "{semantics.colors.background.input}"
+      border: "{semantics.colors.border.default}"
+      radius: "{semantics.radius.input.default}"
+      paddingHorizontal: "{semantics.spacing.input.paddingHorizontal}"
+      paddingVertical: "{semantics.spacing.input.paddingVertical}"
+      text: "{semantics.colors.text.primary}"
+      placeholder: "{semantics.colors.text.tertiary}"
+      fontFamily: "{primitives.typography.fontFamily.body}"
+      fontSize: "{primitives.typography.sizes.16}"
+      fontWeight: "{primitives.typography.weights.regular}"
+    focused:
+      border: "{semantics.colors.interactive.primary}"
+    error:
+      border: "{semantics.colors.status.error}"
+    disabled:
+      background: "{semantics.colors.surface.tertiary}"
+      text: "{semantics.colors.text.tertiary}"

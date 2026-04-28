@@ -1,0 +1,29 @@
+semantics:
+  spacing:
+    button:
+      paddingHorizontal: "{primitives.spacing.4}"
+      paddingVertical: "{primitives.spacing.3}"
+      gap: "{primitives.spacing.2}"
+    card:
+      padding: "{primitives.spacing.4}"
+      gap: "{primitives.spacing.3}"
+    input:
+      paddingHorizontal: "{primitives.spacing.4}"
+      paddingVertical: "{primitives.spacing.3}"
+    list:
+      gap: "{primitives.spacing.3}"
+      sectionGap: "{primitives.spacing.6}"
+    screen:
+      paddingHorizontal: "{primitives.spacing.5}"
+      paddingTop: "{primitives.spacing.4}"
+      paddingBottom: "{primitives.spacing.6}"
+    avatar:
+      size:
+        sm: "{primitives.spacing.8}"
+        md: "{primitives.spacing.10}"
+        lg: "{primitives.spacing.12}"
+    icon:
+      size:
+        sm: "{primitives.spacing.4}"
+        md: "{primitives.spacing.5}"
+        lg: "{primitives.spacing.6}"

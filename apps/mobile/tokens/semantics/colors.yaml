@@ -1,0 +1,104 @@
+semantics:
+  colors:
+    surface:
+      primary:
+        light: "{primitives.colors.neutral.white}"
+        dark: "{primitives.colors.neutral.900}"
+      secondary:
+        light: "{primitives.colors.neutral.50}"
+        dark: "#161412"
+      tertiary:
+        light: "{primitives.colors.neutral.100}"
+        dark: "#201E1C"
+      elevated:
+        light: "{primitives.colors.neutral.white}"
+        dark: "#1F1B18"
+      overlay:
+        light: "rgba(0, 0, 0, 0.4)"
+        dark: "rgba(0, 0, 0, 0.72)"
+    text:
+      primary:
+        light: "{primitives.colors.neutral.900}"
+        dark: "#F5F2ED"
+      secondary:
+        light: "{primitives.colors.neutral.600}"
+        dark: "#B8B0A8"
+      tertiary:
+        light: "{primitives.colors.neutral.500}"
+        dark: "#9B958E"
+      inverse:
+        light: "{primitives.colors.neutral.white}"
+        dark: "#191613"
+      brand:
+        light: "#9A5B3E"
+        dark: "#D68B6C"
+      link:
+        light: "{primitives.colors.brand.slate.500}"
+        dark: "{primitives.colors.brand.slate.400}"
+    interactive:
+      primary:
+        light: "{primitives.colors.brand.terracotta.500}"
+        dark: "{primitives.colors.brand.coral.400}"
+      secondary:
+        light: "{primitives.colors.brand.sage.500}"
+        dark: "{primitives.colors.brand.sage.400}"
+      hover:
+        light: "{primitives.colors.brand.terracotta.400}"
+        dark: "{primitives.colors.brand.coral.300}"
+      pressed:
+        light: "{primitives.colors.brand.terracotta.600}"
+        dark: "{primitives.colors.brand.coral.500}"
+      disabled:
+        light: "{primitives.colors.neutral.300}"
+        dark: "{primitives.colors.neutral.700}"
+    status:
+      success:
+        light: "{primitives.colors.status.success}"
+        dark: "#6B9A82"
+      successLight:
+        light: "{primitives.colors.status.successLight}"
+        dark: "#1A2D22"
+      warning:
+        light: "{primitives.colors.status.warning}"
+        dark: "#E8B451"
+      warningLight:
+        light: "{primitives.colors.status.warningLight}"
+        dark: "#2D2418"
+      error:
+        light: "{primitives.colors.status.error}"
+        dark: "#D45546"
+      errorLight:
+        light: "{primitives.colors.status.errorLight}"
+        dark: "#2D1818"
+      info:
+        light: "{primitives.colors.status.info}"
+        dark: "#96A6B5"
+      infoLight:
+        light: "{primitives.colors.status.infoLight}"
+        dark: "#1A1D22"
+    border:
+      light:
+        light: "rgba(0, 0, 0, 0.06)"
+        dark: "rgba(255, 255, 255, 0.06)"
+      default:
+        light: "rgba(0, 0, 0, 0.1)"
+        dark: "rgba(255, 255, 255, 0.1)"
+      strong:
+        light: "rgba(0, 0, 0, 0.2)"
+        dark: "rgba(255, 255, 255, 0.18)"
+      brand:
+        light: "{primitives.colors.brand.terracotta.500}"
+        dark: "#D68B6C"
+    background:
+      modal:
+        light: "{primitives.colors.neutral.white}"
+        dark: "#161412"
+      card:
+        light: "{primitives.colors.neutral.white}"
+        dark: "#1F1B18"
+      sheet:
+        light: "{primitives.colors.neutral.white}"
+        dark: "#161412"
+      input:
+        light: "{primitives.colors.neutral.50}"
+        dark: "#201E1C"

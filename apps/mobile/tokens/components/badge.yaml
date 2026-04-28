@@ -1,0 +1,24 @@
+components:
+  badge:
+    default:
+      background: "{semantics.colors.interactive.primary}"
+      text: "{semantics.colors.text.inverse}"
+      radius: "{semantics.radius.badge.default}"
+      paddingHorizontal: "{primitives.spacing.2}"
+      paddingVertical: "{primitives.spacing.0.5}"
+      fontSize: "{primitives.typography.sizes.10}"
+      fontWeight: "{primitives.typography.weights.semibold}"
+    outline:
+      background: "transparent"
+      text: "{semantics.colors.interactive.primary}"
+      border: "{semantics.colors.interactive.primary}"
+      radius: "{semantics.radius.badge.default}"
+    success:
+      background: "{semantics.colors.status.successLight}"
+      text: "{semantics.colors.status.success}"
+    warning:
+      background: "{semantics.colors.status.warningLight}"
+      text: "{semantics.colors.status.warning}"
+    error:
+      background: "{semantics.colors.status.errorLight}"
+      text: "{semantics.colors.status.error}"

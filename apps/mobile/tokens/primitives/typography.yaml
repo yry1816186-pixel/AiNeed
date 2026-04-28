@@ -1,0 +1,55 @@
+primitives:
+  typography:
+    fontFamily:
+      heading:
+        ios: "Georgia"
+        android: "serif"
+        web: "Georgia, 'Noto Serif SC', serif"
+      body:
+        ios: "System"
+        android: "sans-serif"
+        web: "'Plus Jakarta Sans', 'Noto Sans SC', sans-serif"
+      mono:
+        ios: "Menlo"
+        android: "monospace"
+        web: "'Space Mono', monospace"
+    sizes:
+      8: 8
+      10: 10
+      11: 11
+      12: 12
+      14: 14
+      16: 16
+      18: 18
+      20: 20
+      24: 24
+      28: 28
+      30: 30
+      36: 36
+      48: 48
+      60: 60
+      72: 72
+      96: 96
+    weights:
+      thin: 100
+      light: 300
+      regular: 400
+      medium: 500
+      semibold: 600
+      bold: 700
+      extrabold: 800
+      black: 900
+    lineHeights:
+      none: 1
+      tight: 1.2
+      snug: 1.375
+      normal: 1.5
+      relaxed: 1.625
+      loose: 2
+    letterSpacing:
+      tighter: -2
+      tight: -1
+      normal: 0
+      wide: 0.5
+      wider: 1
+      widest: 2

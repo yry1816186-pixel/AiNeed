@@ -1,0 +1,21 @@
+semantics:
+  radius:
+    button:
+      default: "{primitives.radius.lg}"
+      pill: "{primitives.radius.full}"
+    card:
+      default: "{primitives.radius.xl}"
+      flat: "{primitives.radius.sm}"
+    input:
+      default: "{primitives.radius.md}"
+    avatar:
+      default: "{primitives.radius.full}"
+    badge:
+      default: "{primitives.radius.sm}"
+      pill: "{primitives.radius.full}"
+    sheet:
+      default: "{primitives.radius.xl}"
+    modal:
+      default: "{primitives.radius.2xl}"
+    toast:
+      default: "{primitives.radius.lg}"

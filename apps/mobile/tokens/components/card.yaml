@@ -1,0 +1,15 @@
+components:
+  card:
+    default:
+      background: "{semantics.colors.background.card}"
+      border: "{semantics.colors.border.light}"
+      radius: "{semantics.radius.card.default}"
+      padding: "{semantics.spacing.card.padding}"
+      gap: "{semantics.spacing.card.gap}"
+      shadow: "{semantics.shadows.card}"
+    elevated:
+      background: "{semantics.colors.surface.elevated}"
+      border: "transparent"
+      radius: "{semantics.radius.card.default}"
+      padding: "{semantics.spacing.card.padding}"
+      shadow: "{semantics.shadows.dropdown}"

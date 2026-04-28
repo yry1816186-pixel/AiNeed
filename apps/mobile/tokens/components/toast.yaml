@@ -1,0 +1,22 @@
+components:
+  toast:
+    success:
+      background: "{semantics.colors.status.successLight}"
+      text: "{semantics.colors.status.success}"
+      icon: "{semantics.colors.status.success}"
+      radius: "{semantics.radius.toast.default}"
+    error:
+      background: "{semantics.colors.status.errorLight}"
+      text: "{semantics.colors.status.error}"
+      icon: "{semantics.colors.status.error}"
+      radius: "{semantics.radius.toast.default}"
+    warning:
+      background: "{semantics.colors.status.warningLight}"
+      text: "{semantics.colors.status.warning}"
+      icon: "{semantics.colors.status.warning}"
+      radius: "{semantics.radius.toast.default}"
+    info:
+      background: "{semantics.colors.status.infoLight}"
+      text: "{semantics.colors.status.info}"
+      icon: "{semantics.colors.status.info}"
+      radius: "{semantics.radius.toast.default}"

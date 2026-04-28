@@ -1,0 +1,30 @@
+components:
+  button:
+    primary:
+      background: "{semantics.colors.interactive.primary}"
+      text: "{semantics.colors.text.inverse}"
+      border: "transparent"
+      radius: "{semantics.radius.button.default}"
+      paddingHorizontal: "{semantics.spacing.button.paddingHorizontal}"
+      paddingVertical: "{semantics.spacing.button.paddingVertical}"
+      fontFamily: "{primitives.typography.fontFamily.body}"
+      fontSize: "{primitives.typography.sizes.16}"
+      fontWeight: "{primitives.typography.weights.semibold}"
+    secondary:
+      background: "transparent"
+      text: "{semantics.colors.interactive.primary}"
+      border: "{semantics.colors.interactive.primary}"
+      radius: "{semantics.radius.button.default}"
+      paddingHorizontal: "{semantics.spacing.button.paddingHorizontal}"
+      paddingVertical: "{semantics.spacing.button.paddingVertical}"
+    ghost:
+      background: "transparent"
+      text: "{semantics.colors.interactive.primary}"
+      border: "transparent"
+      radius: "{semantics.radius.button.default}"
+      paddingHorizontal: "{semantics.spacing.button.paddingHorizontal}"
+      paddingVertical: "{semantics.spacing.button.paddingVertical}"
+    disabled:
+      background: "{semantics.colors.interactive.disabled}"
+      text: "{semantics.colors.text.tertiary}"
+      border: "transparent"

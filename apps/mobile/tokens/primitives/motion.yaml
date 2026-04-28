@@ -1,0 +1,51 @@
+primitives:
+  motion:
+    duration:
+      instant: 50
+      fast: 150
+      normal: 300
+      slow: 500
+      lingering: 800
+    easing:
+      easeOut:
+        - 0
+        - 0
+        - 0.2
+        - 1
+      quintOut:
+        - 0.22
+        - 1
+        - 0.36
+        - 1
+      circOut:
+        - 0
+        - 0.55
+        - 0.45
+        - 1
+      easeInOut:
+        - 0.4
+        - 0
+        - 0.2
+        - 1
+      easeIn:
+        - 0.4
+        - 0
+        - 1
+        - 1
+    spring:
+      gentle:
+        damping: 25
+        stiffness: 120
+        mass: 1
+      bouncy:
+        damping: 12
+        stiffness: 180
+        mass: 1
+      snappy:
+        damping: 20
+        stiffness: 300
+        mass: 1
+      stiff:
+        damping: 30
+        stiffness: 400
+        mass: 1

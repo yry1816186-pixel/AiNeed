@@ -1,0 +1,14 @@
+components:
+  avatar:
+    sm:
+      size: "{semantics.spacing.avatar.size.sm}"
+      radius: "{semantics.radius.avatar.default}"
+    md:
+      size: "{semantics.spacing.avatar.size.md}"
+      radius: "{semantics.radius.avatar.default}"
+    lg:
+      size: "{semantics.spacing.avatar.size.lg}"
+      radius: "{semantics.radius.avatar.default}"
+    placeholder:
+      background: "{semantics.colors.surface.tertiary}"
+      text: "{semantics.colors.text.secondary}"

@@ -1,0 +1,7 @@
+components:
+  bottomSheet:
+    background: "{semantics.colors.background.sheet}"
+    radius: "{semantics.radius.sheet.default}"
+    handleColor: "{semantics.colors.border.default}"
+    shadow: "{semantics.shadows.modal}"
+    contentPadding: "{semantics.spacing.screen.paddingHorizontal}"

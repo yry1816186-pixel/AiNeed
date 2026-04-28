@@ -1,0 +1,26 @@
+{
+  "source": ["tokens/**/*.yaml"],
+  "platforms": {
+    "ts": {
+      "transformGroup": "tsRN",
+      "buildPath": "src/design-system/theme/tokens/generated/",
+      "files": [
+        {
+          "destination": "primitive-tokens.ts",
+          "format": "typescript/primitives",
+          "filter": "isPrimitive"
+        },
+        {
+          "destination": "semantic-tokens.ts",
+          "format": "typescript/semantics",
+          "filter": "isSemantic"
+        },
+        {
+          "destination": "component-tokens.ts",
+          "format": "typescript/components",
+          "filter": "isComponent"
+        }
+      ]
+    }
+  }
+}

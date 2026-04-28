@@ -1,0 +1,17 @@
+semantics:
+  shadows:
+    card:
+      light: "{primitives.shadows.sm}"
+      dark: "{primitives.shadows.sm}"
+    modal:
+      light: "{primitives.shadows.lg}"
+      dark: "{primitives.shadows.lg}"
+    dropdown:
+      light: "{primitives.shadows.md}"
+      dark: "{primitives.shadows.md}"
+    tooltip:
+      light: "{primitives.shadows.md}"
+      dark: "{primitives.shadows.md}"
+    notification:
+      light: "{primitives.shadows.xl}"
+      dark: "{primitives.shadows.xl}"
