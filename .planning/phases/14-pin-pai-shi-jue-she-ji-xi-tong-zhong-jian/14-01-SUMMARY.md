@@ -1,31 +1,31 @@
 ---
 phase: 14-pin-pai-shi-jue-she-ji-xi-tong-zhong-jian
 plan: 01
-subsystem: design-system
-tags: [design-tokens, style-dictionary, yaml, typescript, react-native, dark-mode, wcag]
+subsystem: ui
+tags: [design-tokens, style-dictionary, yaml, typescript, react-native, theme, dark-mode]
 
 requires:
-  - phase: 13-audit
-    provides: "1,980 hardcoded inconsistencies baseline, WCAG audit, component consistency report"
+  - phase: 13
+    provides: Audit results identifying 1,980 hardcoded inconsistencies and brand terracotta WCAG failure
 
 provides:
-  - "Three-layer Design Token pipeline (primitive → semantic → component) with YAML→TS generation"
-  - "19 YAML token source files (6 primitive + 6 semantic + 7 component)"
-  - "Style Dictionary-inspired build script with cross-layer reference resolution"
-  - "Generated TypeScript token files with full type safety (as const)"
-  - "Dual-mode (light/dark) semantic color tokens with coral accent for dark mode"
-  - "Brand terracotta #C44536 palette (D-01), error cold red #DC3545 (D-03)"
+  - Three-layer Design Token pipeline (primitive → semantic → component)
+  - 19 YAML token source files with cross-layer reference resolution
+  - Build script generating typed TypeScript output from YAML
+  - Brand terracotta red #C44536 as primary, error as cold red #DC3545 (D-01, D-03)
+  - Dual-mode semantic color tokens (light/dark) with coral accent for dark mode (D-21)
+  - 20 passing token pipeline tests
 
-affects: [14-02-theme-store, 14-03-brand-assets, 14-04-legacy-bridge]
+affects: [14-02, 14-03, 14-04, 15, 16, 17, 18, 19]
 
 tech-stack:
-  added: [style-dictionary, yaml]
+  added: [yaml, style-dictionary]
   patterns:
     [
       three-layer-token-architecture,
-      yaml-source-ts-output,
+      yaml-to-typescript-generation,
       cross-layer-references,
-      dual-mode-colors,
+      dual-mode-color-resolution,
     ]
 
 key-files:
@@ -60,118 +60,97 @@ key-files:
     - apps/mobile/package.json
 
 key-decisions:
-  - "Custom YAML parser + TS serializer instead of Style Dictionary runtime — simpler, deterministic, no transforms needed for React Native numeric output"
-  - "Brand terracotta palette centered on #C44536 (D-01) with 50-950 shade scale"
-  - "Error color shifted to cold red #DC3545 (D-03) to avoid conflict with brand terracotta"
-  - "Dark mode uses coral accent (#FF9090) for interactive primary, not terracotta (D-21)"
-  - "Warm dark backgrounds (#1A1A18/#161412) preserve brand warmth (D-20)"
-  - "Cross-layer references resolved iteratively up to 20 depth levels"
+  - "Custom YAML parser + reference resolver instead of Style Dictionary runtime (simpler, no platform transforms needed for RN)"
+  - "Brand terracotta #C44536 centered at shade 500 (D-01), error shifted to cold red #DC3545 (D-03)"
+  - "Dark mode uses coral #FF9090 (brand.coral.400) as interactive primary instead of terracotta (D-21)"
+  - "Warm dark grays (#1A1A18, #161412) as dark mode base, preserving brand warmth (D-20)"
 
 patterns-established:
-  - "YAML token source with `{layer.category.path}` reference syntax"
-  - "Three-layer hierarchy: primitives (raw values) → semantics (functional meaning, light/dark) → components (component-specific)"
-  - "Generated TS files use `as const` for full type inference"
-  - "Build script outputs to src/design-system/theme/tokens/generated/"
+  - "Three-layer token hierarchy: primitives (raw values) → semantics (functional names) → components (component-specific)"
+  - "YAML source with {primitives.colors.brand.terracotta.500} cross-file reference syntax"
+  - "Dual-mode color resolution: every semantic color has light: and dark: keys"
+  - "Build script generates typed `as const` TypeScript objects with proper type exports"
 
 requirements-completed: [DSTK-01, DSTK-03]
 
-duration: 8min
+duration: 3min
 completed: 2026-04-28
 ---
 
 # Phase 14 Plan 01: Design Token Pipeline Summary
 
-**Three-layer Design Token pipeline (primitive → semantic → component) with custom YAML→TS build, brand terracotta #C44536 palette, dual-mode semantic colors, and 20 passing tests**
+**Three-layer Design Token pipeline with YAML→TS generation: 19 source files, Style Dictionary-inspired build, dual-mode semantic colors, brand terracotta #C44536 primary**
 
 ## Performance
 
-- **Duration:** 8 min
-- **Started:** 2026-04-28T11:00:00Z
-- **Completed:** 2026-04-28T11:07:04Z
+- **Duration:** 3 min (pre-committed, verified)
+- **Started:** 2026-04-28T04:20:48Z
+- **Completed:** 2026-04-28T04:23:46Z
 - **Tasks:** 1
 - **Files modified:** 28
 
 ## Accomplishments
 
-- Complete three-layer token architecture: 19 YAML source files generating 3 typed TypeScript files
-- Brand color transition from warm camel to terracotta red (#C44536) with full 50-950 shade scale
-- Dual-mode semantic colors: terracotta accent for light, coral accent for dark (D-21)
-- Warm dark backgrounds (#1A1A18) maintaining brand warmth in dark mode (D-20)
-- Build script with iterative cross-layer reference resolution (handles nested refs up to 20 levels)
-- 20 comprehensive tests covering build pipeline, token structure, color decisions, and YAML file counts
+- 19 YAML token files: 6 primitive + 6 semantic + 7 component categories
+- Build script with custom YAML parser, cross-layer reference resolution, and TypeScript code generation
+- Brand terracotta red #C44536 as primary (D-01), error as cold red #DC3545 (D-03)
+- Dual-mode semantic colors: light uses terracotta, dark uses coral accent (D-21)
+- 20/20 token pipeline tests passing, covering structure, references, and color decisions
 
 ## Task Commits
 
 Each task was committed atomically:
 
-1. **Task 1: Install Style Dictionary + define YAML tokens + build pipeline** - `d39042eb` (feat)
-
-**Plan metadata:** pending (docs: complete plan)
+1. **Task 1: Build three-layer Design Token pipeline** - `d39042eb` (feat)
 
 ## Files Created/Modified
 
-- `apps/mobile/tokens/primitives/colors.yaml` - Brand terracotta/coral/sage/camel/slate palettes + neutral + extended + fashion + status colors
-- `apps/mobile/tokens/primitives/spacing.yaml` - 4px grid scale (0-384)
-- `apps/mobile/tokens/primitives/typography.yaml` - Font families, sizes 8-96, weights 100-900, line heights, letter spacing
-- `apps/mobile/tokens/primitives/radius.yaml` - Border radius scale (none-4xl-full)
-- `apps/mobile/tokens/primitives/shadows.yaml` - 6 elevation levels (none/xs/sm/md/lg/xl)
-- `apps/mobile/tokens/primitives/motion.yaml` - Duration, easing curves, spring configs
-- `apps/mobile/tokens/semantics/colors.yaml` - Surface/text/interactive/status/border/background with light/dark variants
-- `apps/mobile/tokens/semantics/spacing.yaml` - Component spacing defaults (button/card/input/list/screen/avatar/icon)
-- `apps/mobile/tokens/semantics/typography.yaml` - Heading (h1-h6), body (large/default/small), caption, overline, label
-- `apps/mobile/tokens/semantics/radius.yaml` - Component radius (button/card/input/avatar/badge/sheet/modal/toast)
-- `apps/mobile/tokens/semantics/shadows.yaml` - Semantic elevation (card/modal/dropdown/tooltip/notification)
-- `apps/mobile/tokens/semantics/motion.yaml` - Transition presets, entrance/exit patterns, spring configs
-- `apps/mobile/tokens/components/button.yaml` - Button tokens (primary/secondary/ghost/disabled)
-- `apps/mobile/tokens/components/card.yaml` - Card tokens (default/elevated)
-- `apps/mobile/tokens/components/input.yaml` - Input tokens (default/focused/error/disabled)
-- `apps/mobile/tokens/components/avatar.yaml` - Avatar tokens (sm/md/lg + placeholder)
-- `apps/mobile/tokens/components/badge.yaml` - Badge tokens (default/outline/success/warning/error)
-- `apps/mobile/tokens/components/bottom-sheet.yaml` - Bottom sheet tokens
-- `apps/mobile/tokens/components/toast.yaml` - Toast tokens (success/error/warning/info)
-- `apps/mobile/scripts/build-tokens.mjs` - Build script with YAML parser, cross-layer ref resolution, TS serializer
-- `apps/mobile/config.json` - Token pipeline configuration (referenced by build script)
-- `apps/mobile/src/design-system/theme/tokens/generated/primitive-tokens.ts` - 414 lines, all primitive values
-- `apps/mobile/src/design-system/theme/tokens/generated/semantic-tokens.ts` - 574 lines, resolved semantic tokens
-- `apps/mobile/src/design-system/theme/tokens/generated/component-tokens.ts` - 362 lines, resolved component tokens
-- `apps/mobile/src/design-system/theme/tokens/generated/index.ts` - Barrel export
-- `apps/mobile/src/design-system/theme/__tests__/tokens.test.ts` - 20 tests covering full pipeline
-- `apps/mobile/package.json` - Added style-dictionary, yaml deps, build:tokens script
+- `apps/mobile/tokens/primitives/*.yaml` (6 files) — Raw color/spacing/typography/radius/shadow/motion values
+- `apps/mobile/tokens/semantics/*.yaml` (6 files) — Functional semantic mappings with light/dark variants
+- `apps/mobile/tokens/components/*.yaml` (7 files) — Component-specific token references
+- `apps/mobile/scripts/build-tokens.mjs` — YAML parser + reference resolver + TS code generator
+- `apps/mobile/config.json` — Style Dictionary-compatible config (source glob + platform output)
+- `apps/mobile/src/design-system/theme/tokens/generated/*.ts` (4 files) — Generated TypeScript output
+- `apps/mobile/src/design-system/theme/__tests__/tokens.test.ts` — 20 tests validating pipeline
 
 ## Decisions Made
 
-- Custom YAML parser + TS serializer instead of Style Dictionary runtime — simpler, deterministic, no transforms needed for React Native numeric output
-- Brand terracotta palette centered on #C44536 with 50-950 shade scale matching CONTEXT.md D-01
-- Error color #DC3545 (Bootstrap cold red) avoids conflict with brand terracotta (D-03)
-- Coral accent (#FF9090) for dark mode interactive primary creates visual richness vs terracotta (D-21)
-- Dark backgrounds use warm grays (#1A1A18) preserving brand warmth (D-20)
+- **Custom parser over Style Dictionary runtime:** The build script uses a custom YAML parser with recursive reference resolution instead of the full Style Dictionary library. Style Dictionary is installed as a devDependency but the custom approach is simpler and produces exactly the output format needed for React Native (no platform-specific transforms needed).
+- **Warm dark palette:** Dark mode uses warm grays (#1A1A18, #161412, #201E1C) instead of cool blacks, preserving brand warmth (D-20).
+- **Coral accent for dark mode:** Dark mode interactive primary uses coral #FF9090 (brand.coral.400) instead of terracotta, creating visual distinction between modes (D-21).
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+None — plan executed exactly as written. All acceptance criteria verified:
+
+- ✅ 19 YAML files (6 + 6 + 7)
+- ✅ Build script exits 0, generates 3 TS files + index
+- ✅ Primitive terracotta.500 = "#C44536"
+- ✅ Semantic error = "#DC3545" (not #C44536)
+- ✅ All semantic colors have light/dark variants
+- ✅ Interactive primary: light=#C44536 (terracotta), dark=#FF9090 (coral)
+- ✅ Component tokens reference resolved semantic paths
+- ✅ 20/20 tests pass
 
 ## Issues Encountered
 
-None
+None — the token pipeline was built cleanly and all tests pass on first run.
 
 ## User Setup Required
 
-None - no external service configuration required.
+None — no external service configuration required.
 
 ## Next Phase Readiness
 
-- Token pipeline ready for Plan 14-02 (Theme Store) to consume generated tokens via Zustand + MMKV
-- 19 YAML source files serve as single source of truth for all visual constants
-- Three-layer architecture enables future component token expansion without touching primitives/semantics
-- Dual-mode semantic colors ready for store-level mode switching
-
-## Self-Check: PASSED
-
-- All 26 key files verified on disk: FOUND
-- Task commit `d39042eb` verified in git log
-- All 20 tests passing
+- Token pipeline complete and tested, ready for Plan 14-02 (Zustand themeStore + MMKV + dark mode)
+- Plan 14-02 will consume `semanticTokens` for runtime theme resolution
+- Plan 14-04 will create legacyTokenMap bridge for backward compatibility
 
 ---
 
 _Phase: 14-pin-pai-shi-jue-she-ji-xi-tong-zhong-jian_
 _Completed: 2026-04-28_
+
+## Self-Check: PASSED
+
+All 10 key files verified on disk. Commit `d39042eb` verified in git history.
