@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Dimensions, Platform, StatusBar } from "react-native";
-import { DesignTokens, darkTokens } from "./tokens/design-tokens";
+import { DesignTokens, darkTokens } from "./tokens/legacy-map";
 import {
   WarmPrimaryColors,
   BrandColors,
@@ -12,8 +12,8 @@ import {
   FashionColors,
 } from "./tokens/colors";
 import type { FlatColors, WarmPrimaryPalette, ColorShadePalette } from "./FlatColors";
-export { DesignTokens, darkTokens } from "./tokens/design-tokens";
-export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
+export { DesignTokens, darkTokens } from "./tokens/legacy-map";
+export type { DesignTokensType, DarkTokensType } from "./tokens/legacy-map";
 
 export {
   WarmPrimaryColors,
@@ -676,6 +676,18 @@ export const theme = {
 
 export default theme;
 
+export {
+  DesignTokens,
+  darkTokens,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  Typography,
+  Animation,
+  Layout,
+  ZIndex,
+} from "./tokens/legacy-map";
+export type { DesignTokensType, DarkTokensType } from "./tokens/legacy-map";
 export { useThemeStore, startAppearanceListener, stopAppearanceListener } from "./themeStore";
 export { resolveColors, lightColors, darkColors } from "./color-resolver";
 export { mmkvStorage } from "./mmkv-storage";

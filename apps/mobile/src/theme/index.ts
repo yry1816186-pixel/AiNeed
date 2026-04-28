@@ -1,7 +1,3 @@
-/**
- * @deprecated This file is a legacy compatibility layer.
- * Import directly from `@/design-system/theme` for new code.
- */
 export {
   DesignTokens,
   darkTokens,

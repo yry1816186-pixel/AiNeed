@@ -1,55 +1,52 @@
-/**
- * 寻裳 Design System - 统一设计令牌
- *
- * 设计理念：
- * - 高端时尚品牌感
- * - 温暖大地色系
- * - 简洁优雅的视觉语言
- * - 无 AI 生成痕迹
- */
+import { primitiveTokens } from "./generated/primitive-tokens";
+import { semanticTokens } from "./generated/semantic-tokens";
+
+const brand = primitiveTokens.colors.brand;
+const neutral = primitiveTokens.colors.neutral;
+const status = semanticTokens.colors.status;
 
 export const DesignTokens = {
   colors: {
     brand: {
-      terracotta: "#C67B5C",
-      terracottaLight: "#D4917A",
-      terracottaDark: "#A86548",
-      sage: "#8B9A7D",
-      sageLight: "#A3B096",
-      sageDark: "#6E7A62",
-      camel: "#B5A08C",
-      camelLight: "#C9B8A6",
-      camelDark: "#9A8872",
-      slate: "#7B8FA2",
-      slateLight: "#96A6B5",
-      slateDark: "#5F6F7F",
+      terracotta: brand.terracotta[500],
+      terracottaLight: brand.terracotta[300],
+      terracottaDark: brand.terracotta[700],
+      sage: brand.sage[500],
+      sageLight: brand.sage[300],
+      sageDark: brand.sage[700],
+      camel: brand.camel[500],
+      camelLight: brand.camel[300],
+      camelDark: brand.camel[700],
+      slate: brand.slate[500],
+      slateLight: brand.slate[300],
+      slateDark: brand.slate[700],
     },
     neutral: {
-      white: "#FFFFFF",
-      50: "#FAFAF8",
-      100: "#F5F5F3",
-      200: "#EBEBE8",
-      300: "#D4D4D0",
-      400: "#8A8A85",
-      500: "#73736D",
-      600: "#52524D",
-      700: "#3D3D39",
-      800: "#282825",
-      900: "#1A1A18",
-      black: "#0D0D0C",
+      white: neutral.white,
+      50: neutral[50],
+      100: neutral[100],
+      200: neutral[200],
+      300: neutral[300],
+      400: neutral[400],
+      500: neutral[500],
+      600: neutral[600],
+      700: neutral[700],
+      800: neutral[800],
+      900: neutral[900],
+      black: neutral.black,
     },
     semantic: {
-      success: "#5B8A72",
-      successLight: "#E8F3EE",
+      success: status.success.light,
+      successLight: status.success.lightBg,
       successDark: "#1B7A3D",
-      warning: "#D9A441",
-      warningLight: "#FDF5E6",
+      warning: status.warning.light,
+      warningLight: status.warning.lightBg,
       warningDark: "#8B6914",
-      error: "#C44536",
-      errorLight: "#FDECEA",
+      error: status.error.light,
+      errorLight: status.error.lightBg,
       errorDark: "#A12525",
-      info: "#7B8FA2",
-      infoLight: "#EEF1F4",
+      info: status.info.light,
+      infoLight: status.info.lightBg,
       like: "#FF4757",
       bookmark: "#F1C40F",
       chartGood: "#4CAF50",
@@ -106,25 +103,25 @@ export const DesignTokens = {
       forestGreen: "#2D5016",
     },
     backgrounds: {
-      primary: "#FFFFFF",
-      secondary: "#FAFAF8",
-      tertiary: "#F5F5F3",
-      elevated: "#FFFFFF",
+      primary: neutral.white,
+      secondary: neutral[50],
+      tertiary: neutral[100],
+      elevated: neutral.white,
       overlay: "rgba(0, 0, 0, 0.4)",
       cartLight: "#FFF5F0",
     },
     text: {
-      primary: "#1A1A18",
-      secondary: "#52524D",
-      tertiary: "#73736D",
-      inverse: "#FFFFFF",
-      brand: "#9A5B3E",
+      primary: neutral[900],
+      secondary: neutral[600],
+      tertiary: neutral[500],
+      inverse: neutral.white,
+      brand: "#8A4E32",
     },
     borders: {
       light: "rgba(0, 0, 0, 0.06)",
       default: "rgba(0, 0, 0, 0.1)",
       strong: "rgba(0, 0, 0, 0.2)",
-      brand: "#C67B5C",
+      brand: brand.terracotta[500],
     },
     colorSeasons: {
       spring: {
@@ -142,8 +139,6 @@ export const DesignTokens = {
         colors: ["#D2691E", "#B8860B", "#8B4513", "#CD853F"],
         bg: "#FFF8F0",
       },
-      // #1A1A2E is a seasonal accent for winter palette only, NOT a brand primary color.
-      // Terracotta (#C67B5C) is the sole brand primary.
       winter: {
         label: "冬季型",
         colors: ["#1A1A2E", "#E94560", "#FFFFFF", "#C0C0C0"],
@@ -171,13 +166,13 @@ export const DesignTokens = {
   },
 
   gradients: {
-    brand: ["#C67B5C", "#B5A08C"],
-    brandSoft: ["rgba(198, 123, 92, 0.1)", "rgba(181, 160, 140, 0.1)"],
-    sage: ["#8B9A7D", "#7B8FA2"],
-    hero: ["#FAFAF8", "#FFFFFF"],
-    card: ["#FFFFFF", "#FAFAF8"],
-    warm: ["#C67B5C", "#D9A441"],
-    cool: ["#8B9A7D", "#7B8FA2"],
+    brand: [brand.terracotta[500], brand.camel[500]],
+    brandSoft: ["rgba(196, 69, 54, 0.1)", "rgba(181, 160, 140, 0.1)"],
+    sage: [brand.sage[500], brand.slate[500]],
+    hero: [neutral[50], neutral.white],
+    card: [neutral.white, neutral[50]],
+    warm: [brand.terracotta[500], "#D9A441"],
+    cool: [brand.sage[500], brand.slate[500]],
     warmAccent: ["#C67C4E", "#E8A87C"],
     coolAccent: ["#4A90D9", "#7ED4AD"],
     heroAccent: ["#C67C4E", "#4A90D9"],
@@ -323,7 +318,7 @@ export const DesignTokens = {
       elevation: 12,
     },
     brand: {
-      shadowColor: "#C67B5C",
+      shadowColor: brand.terracotta[500],
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.2,
       shadowRadius: 12,
@@ -359,20 +354,20 @@ export const DesignTokens = {
   motif: {
     patterns: {
       weave: {
-        strokeColor: "#C67B5C",
+        strokeColor: brand.terracotta[500],
         strokeWidth: 1,
         opacity: 0.06,
         spacing: 24,
       },
       terracottaWave: {
-        strokeColor: "#C67B5C",
+        strokeColor: brand.terracotta[500],
         strokeWidth: 1.5,
         opacity: 0.08,
         amplitude: 8,
         wavelength: 40,
       },
       sageLeaf: {
-        fillColor: "#8B9A7D",
+        fillColor: brand.sage[500],
         opacity: 0.05,
         size: 20,
         spacing: 32,
@@ -382,55 +377,55 @@ export const DesignTokens = {
       cornerRadius: 16,
       strokeWidth: 1.5,
       opacity: 0.12,
-      color: "#C67B5C",
+      color: brand.terracotta[500],
     },
   },
-};
+} as const;
 
 export type DesignTokensType = typeof DesignTokens;
 
 export const darkTokens = {
   colors: {
     brand: {
-      terracotta: "#D68B6C",
-      terracottaLight: "#E4A08A",
-      terracottaDark: "#B87558",
-      sage: "#9DAA90",
-      sageLight: "#B5C0A9",
-      sageDark: "#7A8768",
-      camel: "#C9B8A6",
-      camelLight: "#D9CCBE",
-      camelDark: "#A89882",
-      slate: "#96A6B5",
-      slateLight: "#ABB9C6",
-      slateDark: "#7A8A99",
+      terracotta: brand.terracotta[300],
+      terracottaLight: brand.terracotta[200],
+      terracottaDark: brand.terracotta[500],
+      sage: brand.sage[300],
+      sageLight: brand.sage[200],
+      sageDark: brand.sage[600],
+      camel: brand.camel[300],
+      camelLight: brand.camel[200],
+      camelDark: brand.camel[600],
+      slate: brand.slate[300],
+      slateLight: brand.slate[200],
+      slateDark: brand.slate[600],
     },
     neutral: {
-      white: "#0D0D0C",
-      50: "#1A1A18",
-      100: "#282825",
-      200: "#3D3D39",
-      300: "#52524D",
-      400: "#8A8A85",
-      500: "#9B9B96",
-      600: "#D4D4D0",
-      700: "#EBEBE8",
-      800: "#F5F5F3",
-      900: "#FAFAF8",
-      black: "#FFFFFF",
+      white: neutral.black,
+      50: neutral[900],
+      100: neutral[800],
+      200: neutral[700],
+      300: neutral[600],
+      400: neutral[400],
+      500: neutral[300],
+      600: neutral[200],
+      700: neutral[100],
+      800: neutral[50],
+      900: neutral[50],
+      black: neutral.white,
     },
     semantic: {
-      success: "#6B9A82",
-      successLight: "#1A2D22",
+      success: status.success.dark,
+      successLight: status.success.darkBg,
       successDark: "#2D8A4E",
-      warning: "#E8B451",
-      warningLight: "#2D2418",
+      warning: status.warning.dark,
+      warningLight: status.warning.darkBg,
       warningDark: "#D9A441",
-      error: "#D45546",
-      errorLight: "#2D1818",
+      error: status.error.dark,
+      errorLight: status.error.darkBg,
       errorDark: "#D45546",
-      info: "#96A6B5",
-      infoLight: "#1A1D22",
+      info: status.info.dark,
+      infoLight: status.info.darkBg,
       like: "#FF6B7A",
       bookmark: "#F5D44A",
       chartGood: "#6BCB77",
@@ -460,32 +455,7 @@ export const darkTokens = {
       oceanDeepLight: "#89B5D6",
       oceanDeepMain: "#5A88B3",
     },
-    fashion: {
-      camel: "#C19A6B",
-      olive: "#808000",
-      rust: "#B7410E",
-      mustard: "#FFDB58",
-      pumpkin: "#FF7518",
-      burgundy: "#722F37",
-      royalBlue: "#4169E1",
-      emerald: "#50C878",
-      deepPurple: "#301934",
-      lightPink: "#FFB6C1",
-      darkBrown: "#654321",
-      armyGreen: "#4B5320",
-      deepMagenta: "#4A0028",
-      iceBlue: "#99FFFF",
-      cornflower: "#6495ED",
-      neon: "#CCFF00",
-      navy: "#000080",
-      orange: "#FF6B00",
-      vividGreen: "#00C853",
-      deepViolet: "#7B1FA2",
-      mediumGray: "#808080",
-      darkGray: "#4A4A4A",
-      terracottaMid: "#C6775C",
-      forestGreen: "#2D5016",
-    },
+    fashion: DesignTokens.colors.fashion,
     backgrounds: {
       primary: "#161412",
       secondary: "#1C1916",
@@ -512,16 +482,16 @@ export const darkTokens = {
     funnel: DesignTokens.colors.funnel,
   },
   gradients: {
-    brand: ["#D68B6C", "#C9B8A6"],
+    brand: [brand.terracotta[300], brand.camel[300]],
     brandSoft: ["rgba(214, 139, 108, 0.15)", "rgba(201, 184, 166, 0.15)"],
-    sage: ["#9DAA90", "#96A6B5"],
-    hero: ["#1A1A18", "#161412"],
-    card: ["#1F1B18", "#1A1A18"],
-    warm: ["#D68B6C", "#E8B451"],
-    cool: ["#9DAA90", "#96A6B5"],
-    warmAccent: ["#D68B6C", "#D4917A"],
+    sage: [brand.sage[300], brand.slate[300]],
+    hero: [neutral[900], "#161412"],
+    card: ["#1F1B18", neutral[900]],
+    warm: [brand.terracotta[300], "#E8B451"],
+    cool: [brand.sage[300], brand.slate[300]],
+    warmAccent: [brand.terracotta[300], "#D4917A"],
     coolAccent: ["#5A88B3", "#4A9E84"],
-    heroAccent: ["#D68B6C", "#5A88B3"],
+    heroAccent: [brand.terracotta[300], "#5A88B3"],
     coralRose: ["#996464", "#B37A7A"],
     oceanMint: ["#5A88B3", "#4A9E84"],
     oceanDeep: ["#5A88B3", "#89B5D6"],
@@ -567,7 +537,7 @@ export const darkTokens = {
       elevation: 12,
     },
     brand: {
-      shadowColor: "#D68B6C",
+      shadowColor: brand.terracotta[300],
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.25,
       shadowRadius: 12,
@@ -579,20 +549,20 @@ export const darkTokens = {
   motif: {
     patterns: {
       weave: {
-        strokeColor: "#D68B6C",
+        strokeColor: brand.terracotta[300],
         strokeWidth: 1,
         opacity: 0.08,
         spacing: 24,
       },
       terracottaWave: {
-        strokeColor: "#D68B6C",
+        strokeColor: brand.terracotta[300],
         strokeWidth: 1.5,
         opacity: 0.1,
         amplitude: 8,
         wavelength: 40,
       },
       sageLeaf: {
-        fillColor: "#9DAA90",
+        fillColor: brand.sage[300],
         opacity: 0.07,
         size: 20,
         spacing: 32,
@@ -602,9 +572,27 @@ export const darkTokens = {
       cornerRadius: 16,
       strokeWidth: 1.5,
       opacity: 0.15,
-      color: "#D68B6C",
+      color: brand.terracotta[300],
     },
   },
-};
+} as const;
 
 export type DarkTokensType = typeof darkTokens;
+
+export const Spacing = DesignTokens.spacing;
+export const BorderRadius = DesignTokens.borderRadius;
+export const Shadows = DesignTokens.shadows;
+export const Typography = DesignTokens.typography;
+export const Animation = DesignTokens.animation;
+export const Layout = { maxWidth: 768 };
+export const ZIndex = {
+  base: 0,
+  dropdown: 1000,
+  sticky: 1100,
+  fixed: 1200,
+  overlay: 1300,
+  modal: 1400,
+  popover: 1500,
+  toast: 1600,
+  tooltip: 1700,
+};
