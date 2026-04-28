@@ -1,0 +1,12 @@
+{
+  "android": {
+    "adaptiveIcon": {
+      "backgroundColor": "#C44536",
+      "foregroundImage": "./assets/brand/logo-square.svg"
+    }
+  },
+  "ios": {
+    "icon": "./assets/brand/app-icon-ios.png"
+  },
+  "description": "XUNO adaptive icon configuration. Background: terracotta #C44536. Foreground: white XUNO mark on transparent. Safe zone: 72dp diameter center circle."
+}
