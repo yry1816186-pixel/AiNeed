@@ -225,7 +225,11 @@ Plans:
 - [x] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志 ✓ 2026-04-27
 - [x] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著) ✓ 2026-04-27
 
-**Track D: v2.0 Frontend Restructuring (Phases 13-19)**
+**Track D: Backend Full-Stack Verification (Phase 20)**
+
+- [ ] **Phase 20: 后端全栈一键启动验证** - docker-compose 一键启动所有服务，health check 全绿，seed demo 数据就绪，本地启动文档完整
+
+**Track E: v2.0 Frontend Restructuring (Phases 13-19)**
 
 - [x] **Phase 13: 全流程深度审计** - Playwright 逐页截图, 标杆差距分析, 组件一致性审计, 性能基线, WCAG 2.1 AA 审计 ✓ 2026-04-28
 - [x] **Phase 14: 品牌视觉 + 设计系统重建** - Logo/App Icon/Splash, 三层 Design Token, 替换 ThemeManager, 暗色模式独立设计 (completed 2026-04-28)
@@ -364,6 +368,23 @@ Plans: (none yet)
 
 Plans: (none yet)
 
+### Phase 20: 后端全栈一键启动验证
+
+**Goal**: 确保 docker-compose up 后，PostgreSQL + Redis + MinIO + Qdrant + FastAPI AI 服务 + NestJS 后端全部健康启动，health check 全绿，seed demo 数据就绪
+**Depends on**: Phase 12 (competition sprint complete)
+**Success Criteria** (what must be TRUE):
+
+1. docker-compose up 一条命令启动所有服务（docker-compose.dev.yml 基础设施 + 本地 backend + FastAPI）
+2. 所有 health endpoint 返回 healthy：FastAPI /health → 200，NestJS /api/v1/health → 200
+3. Prisma migrate 可执行，schema 与数据库一致
+4. Seed 数据包含至少 1 个 demo 用户（标记 is_demo: true，用户名/邮箱含 "demo" 前缀）+ 10 件衣橱衣物 + 7 天推荐
+5. Demo 数据在 API 响应中不伪装为真实数据（provider 字段标注 real/sandbox/fallback）
+6. 生产环境运行 seed 被拒绝（NODE_ENV 保护已有）
+7. 完整本地启动步骤文档（README 或 docs/local-setup.md），明确标注 demo/sandbox 模式服务
+8. 反欺诈约束满足：不得暗示未实现功能已可用、骨架/placeholder 标注"开发中"、API 响应含 provider 字段
+
+Plans: (none yet)
+
 ## Progress
 
 **Execution Order:**
@@ -390,6 +411,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 17. AI 对话 + 发现页重构                        | 0/?            | Pending  |            |
 | 18. 衣橱 + 个人页重构                           | 0/?            | Pending  |            |
 | 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending  |            |
+| 20. 后端全栈一键启动验证                        | 0/?            | Pending  |            |
 
 ---
 
@@ -397,3 +419,4 @@ _Roadmap re-initialized: 2026-04-22 from XUNO_FINAL_PLAN.md_
 _Phase 11 added: 2026-04-26_
 _Phase 12 added: 2026-04-27_
 _v2.0 phases 13-19 added: 2026-04-27_
+_Phase 20 added: 2026-04-28_
