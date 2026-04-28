@@ -29,9 +29,9 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 - [x] **DSTK-01**: Developer has a three-layer Design Token system (primitive → semantic → component) covering Color, Typography, Spacing, Radius, Shadow, and Motion categories
 - [ ] **DSTK-02**: All new and existing components use Design Token references exclusively — zero hardcoded color/spacing/font-size values anywhere in the codebase
 - [x] **DSTK-03**: Existing DesignTokens are EXTENDED (not replaced) — all existing token references continue to work while new semantic/component tokens layer on top
-- [ ] **DSTK-04**: Broken ThemeManager.ts (using Web APIs) is replaced with Zustand theme store + MMKV persistence + React Native Appearance API
-- [ ] **DSTK-05**: User can toggle between light and dark mode, with dark mode using an independently designed palette (not brightness inversion) — warm dark grays with adjusted camel accent ensuring WCAG AA 4.5:1 contrast
-- [ ] **DSTK-06**: Theme preference persists across app restarts and syncs with system appearance setting
+- [x] **DSTK-04**: Broken ThemeManager.ts (using Web APIs) is replaced with Zustand theme store + MMKV persistence + React Native Appearance API
+- [x] **DSTK-05**: User can toggle between light and dark mode, with dark mode using an independently designed palette (not brightness inversion) — warm dark grays with adjusted camel accent ensuring WCAG AA 4.5:1 contrast
+- [x] **DSTK-06**: Theme preference persists across app restarts and syncs with system appearance setting
 
 ### COMP — 原子组件库
 
@@ -156,9 +156,9 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 | DSTK-01     | Phase 14 | Complete |
 | DSTK-02     | Phase 14 | Pending  |
 | DSTK-03     | Phase 14 | Complete |
-| DSTK-04     | Phase 14 | Pending  |
-| DSTK-05     | Phase 14 | Pending  |
-| DSTK-06     | Phase 14 | Pending  |
+| DSTK-04     | Phase 14 | Complete |
+| DSTK-05     | Phase 14 | Complete |
+| DSTK-06     | Phase 14 | Complete |
 | COMP-01     | Phase 15 | Pending  |
 | COMP-02     | Phase 15 | Pending  |
 | COMP-03     | Phase 15 | Pending  |
