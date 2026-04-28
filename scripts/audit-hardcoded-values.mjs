@@ -1,268 +1,188 @@
-import { readdir, readFile } from "fs/promises";
-import { join, relative } from "path";
+import { readdir, readFile } from "node:fs/promises";
+import { join, extname, relative } from "node:path";
 
-const SRC_DIR = "apps/mobile/src";
+const SRC_DIR = join(import.meta.dirname, "..", "apps", "mobile", "src");
 const BASELINE = {
   "hardcoded-color": 364,
   "hardcoded-spacing": 354,
   "hardcoded-border-radius": 355,
   "hardcoded-font-size": 20,
   "nonstandard-animation": 253,
-  total: 1980,
 };
 
-const HEX_COLOR_RE = /#[0-9A-Fa-f]{6}\b/g;
-const RGBA_RE = /rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)/g;
-const HARDCODED_SPACING_RE = /(?:width|height|padding|margin|gap|top|bottom|left|right)\s*:\s*(\d{2,})\b(?!\s*%|\s*px|\.|,|\s*\])/g;
-const BORDER_RADIUS_RE = /borderRadius\s*:\s*(\d{1,3})\b/g;
-const FONT_SIZE_RE = /fontSize\s*:\s*(\d{1,3})\b/g;
-const ANIMATION_DURATION_RE = /duration\s*:\s*(\d{2,4})\b/g;
+const CATEGORIES = {
+  "hardcoded-color": {
+    patterns: [
+      /#([0-9A-Fa-f]{3,8})(?![0-9A-Fa-f])/g,
+      /rgba\s*\(/g,
+    ],
+    excludePatterns: [
+      /node_modules/,
+      /\.test\./,
+      /\.spec\./,
+      /__tests__/,
+      /generated\//,
+      /legacy-map\.ts$/,
+    ],
+  },
+  "hardcoded-spacing": {
+    patterns: [
+      /(?:width|height|padding|margin|gap|top|bottom|left|right)\s*:\s*(\d+)(?![.\d])/g,
+    ],
+    excludePatterns: [
+      /node_modules/,
+      /\.test\./,
+      /\.spec\./,
+      /__tests__/,
+      /generated\//,
+      /legacy-map\.ts$/,
+    ],
+  },
+  "hardcoded-border-radius": {
+    patterns: [
+      /borderRadius\s*:\s*(\d+)(?![.\d])/g,
+      /border-radius\s*:\s*(\d+)(?![.\d])/g,
+    ],
+    excludePatterns: [
+      /node_modules/,
+      /\.test\./,
+      /\.spec\./,
+      /__tests__/,
+      /generated\//,
+      /legacy-map\.ts$/,
+    ],
+  },
+  "hardcoded-font-size": {
+    patterns: [
+      /fontSize\s*:\s*(\d+)(?![.\d])/g,
+    ],
+    excludePatterns: [
+      /node_modules/,
+      /\.test\./,
+      /\.spec\./,
+      /__tests__/,
+      /generated\//,
+      /legacy-map\.ts$/,
+    ],
+  },
+  "nonstandard-animation": {
+    patterns: [
+      /duration\s*:\s*(\d+)(?![.\d])/g,
+      /transition.*duration\s*:\s*(\d+)/g,
+    ],
+    excludePatterns: [
+      /node_modules/,
+      /\.test\./,
+      /\.spec\./,
+      /__tests__/,
+      /generated\//,
+      /legacy-map\.ts$/,
+    ],
+  },
+};
 
-const TOKEN_COLORS = new Set([
-  "#C44536", "#DC3545", "#FAFAF8", "#FFFFFF", "#1A1A18",
-  "#52524D", "#73736D", "#8B9A7D", "#B5A08C", "#7B8FA2",
-  "#8A4E32", "#686862", "#567080", "#FF9090",
-]);
-
-const TOKEN_BORDER_RADIUS = new Set([0, 2, 4, 6, 12, 16, 24, 32, 9999]);
-
-const IGNORE_DIRS = new Set([
-  "node_modules", ".expo", "dist", "build", "__tests__",
-  "generated", "__mocks__", "coverage",
-]);
-
-const IGNORE_EXTENSIONS = new Set([
-  ".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx",
-]);
-
-function shouldIgnoreDir(dirName) {
-  return IGNORE_DIRS.has(dirName);
-}
-
-function shouldIgnoreFile(fileName) {
-  for (const ext of IGNORE_EXTENSIONS) {
-    if (fileName.endsWith(ext)) return true;
-  }
-  return false;
-}
-
-async function getAllFiles(dir) {
-  const files = [];
+async function* walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (!shouldIgnoreDir(entry.name)) {
-        files.push(...await getAllFiles(join(dir, entry.name)));
-      }
-    } else if (/\.(ts|tsx)$/.test(entry.name) && !shouldIgnoreFile(entry.name)) {
-      files.push(join(dir, entry.name));
+      if (entry.name === "node_modules" || entry.name === ".git") continue;
+      yield* walk(fullPath);
+    } else if (/\.(ts|tsx)$/.test(entry.name)) {
+      yield fullPath;
     }
   }
-  return files;
 }
 
-function countPattern(content, regex) {
-  const matches = content.match(regex);
-  return matches ? matches.length : 0;
+function isExcluded(filePath, excludePatterns) {
+  return excludePatterns.some((p) => p.test(filePath));
 }
 
-function findPatternLines(content, regex, relPath) {
-  const lines = content.split("\n");
-  const results = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    const matches = line.match(regex);
-    if (matches) {
-      results.push(`  ${relPath}:${i + 1}`);
-    }
+async function audit() {
+  const results = {};
+  const totalByCategory = {};
+
+  for (const category of Object.keys(CATEGORIES)) {
+    totalByCategory[category] = 0;
+    results[category] = [];
   }
-  return results;
-}
 
-function countHardcodedColors(content, relPath) {
-  let count = 0;
-  const lines = content.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    const hexMatches = line.match(HEX_COLOR_RE);
-    if (hexMatches) {
-      for (const m of hexMatches) {
-        if (!TOKEN_COLORS.has(m)) {
-          count++;
-        }
-      }
-    }
-    const rgbaMatches = line.match(RGBA_RE);
-    if (rgbaMatches) {
-      count += rgbaMatches.length;
-    }
-  }
-  return count;
-}
-
-function countHardcodedSpacing(content) {
-  const lines = content.split("\n");
-  let count = 0;
-  for (const line of lines) {
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    const matches = [...line.matchAll(HARDCODED_SPACING_RE)];
-    for (const m of matches) {
-      const val = parseInt(m[1], 10);
-      if (val >= 8 && ![4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 56, 64, 80, 96, 128].includes(val)) {
-        count++;
-      }
-    }
-  }
-  return count;
-}
-
-function countHardcodedBorderRadius(content) {
-  const lines = content.split("\n");
-  let count = 0;
-  for (const line of lines) {
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    const matches = [...line.matchAll(BORDER_RADIUS_RE)];
-    for (const m of matches) {
-      const val = parseInt(m[1], 10);
-      if (!TOKEN_BORDER_RADIUS.has(val)) {
-        count++;
-      }
-    }
-  }
-  return count;
-}
-
-function countHardcodedFontSize(content) {
-  const lines = content.split("\n");
-  let count = 0;
-  const tokenFontSizes = new Set([10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 48, 60]);
-  for (const line of lines) {
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    const matches = [...line.matchAll(FONT_SIZE_RE)];
-    for (const m of matches) {
-      const val = parseInt(m[1], 10);
-      if (!tokenFontSizes.has(val)) {
-        count++;
-      }
-    }
-  }
-  return count;
-}
-
-function countNonstandardAnimation(content) {
-  const lines = content.split("\n");
-  let count = 0;
-  const standardDurations = new Set([100, 200, 300, 500, 800]);
-  for (const line of lines) {
-    if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().startsWith("/*")) {
-      continue;
-    }
-    if (line.includes("Animated.") || line.includes("withTiming") || line.includes("withSpring") || line.includes("withDecay")) {
-      const matches = [...line.matchAll(ANIMATION_DURATION_RE)];
-      for (const m of matches) {
-        const val = parseInt(m[1], 10);
-        if (!standardDurations.has(val)) {
-          count++;
-        }
-      }
-    }
-  }
-  return count;
-}
-
-async function main() {
-  console.log("=== Hardcoded Value Audit ===");
-  console.log(`Scanning: ${SRC_DIR}\n`);
-
-  const files = await getAllFiles(SRC_DIR);
-  console.log(`Files scanned: ${files.length}\n`);
-
-  const categories = {
-    "hardcoded-color": { count: 0, refs: [] },
-    "hardcoded-spacing": { count: 0, refs: [] },
-    "hardcoded-border-radius": { count: 0, refs: [] },
-    "hardcoded-font-size": { count: 0, refs: [] },
-    "nonstandard-animation": { count: 0, refs: [] },
-  };
-
-  for (const filePath of files) {
-    const relPath = relative(".", filePath);
+  for await (const filePath of walk(SRC_DIR)) {
+    const relPath = relative(SRC_DIR, filePath).replace(/\\/g, "/");
     const content = await readFile(filePath, "utf-8");
+    const lines = content.split("\n");
 
-    const hc = countHardcodedColors(content, relPath);
-    if (hc > 0) {
-      categories["hardcoded-color"].count += hc;
-      const refs = findPatternLines(content, HEX_COLOR_RE, relPath).slice(0, 5);
-      categories["hardcoded-color"].refs.push(...refs);
-    }
+    for (const [category, config] of Object.entries(CATEGORIES)) {
+      if (isExcluded(relPath, config.excludePatterns)) continue;
 
-    const hs = countHardcodedSpacing(content);
-    if (hs > 0) {
-      categories["hardcoded-spacing"].count += hs;
-    }
-
-    const hbr = countHardcodedBorderRadius(content);
-    if (hbr > 0) {
-      categories["hardcoded-border-radius"].count += hbr;
-    }
-
-    const hfs = countHardcodedFontSize(content);
-    if (hfs > 0) {
-      categories["hardcoded-font-size"].count += hfs;
-    }
-
-    const na = countNonstandardAnimation(content);
-    if (na > 0) {
-      categories["nonstandard-animation"].count += na;
+      for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+        const line = lines[lineIdx];
+        for (const pattern of config.patterns) {
+          pattern.lastIndex = 0;
+          const matches = line.matchAll(pattern);
+          for (const match of matches) {
+            const value = match[1] || match[0];
+            if (category === "hardcoded-color" && value.startsWith("#")) {
+              const len = value.length - 1;
+              if (len !== 3 && len !== 6 && len !== 8) continue;
+            }
+            if (category === "hardcoded-spacing") {
+              const num = parseInt(value, 10);
+              if (num === 0 || num === 1) continue;
+            }
+            totalByCategory[category]++;
+            results[category].push(`${relPath}:${lineIdx + 1} | ${match[0].trim()}`);
+          }
+        }
+      }
     }
   }
 
-  let totalCount = 0;
-  console.log("=== Results by Category ===\n");
+  console.log("=".repeat(60));
+  console.log("Hardcoded Values Audit Report");
+  console.log("=".repeat(60));
+  console.log(`Source: ${relative(import.meta.dirname, SRC_DIR)}`);
+  console.log("");
 
-  for (const [category, data] of Object.entries(categories)) {
-    const baseline = BASELINE[category];
-    const diff = data.count - baseline;
-    const trend = diff < 0 ? `↓${Math.abs(diff)}` : diff > 0 ? `↑${diff}` : "=";
-    console.log(`${category}: ${data.count} (baseline: ${baseline}, ${trend})`);
-    totalCount += data.count;
+  let totalCurrent = 0;
+  let totalBaseline = 0;
+
+  for (const [category, count] of Object.entries(totalByCategory)) {
+    const baseline = BASELINE[category] || 0;
+    totalCurrent += count;
+    totalBaseline += baseline;
+    const delta = count - baseline;
+    const arrow = delta < 0 ? "↓" : delta > 0 ? "↑" : "=";
+    console.log(`  ${category}: ${count} (baseline: ${baseline}, ${arrow}${Math.abs(delta)})`);
   }
 
-  console.log(`\n---\nTotal: ${totalCount} (baseline: ${BASELINE.total})`);
-  const totalDiff = totalCount - BASELINE.total;
-  if (totalDiff < 0) {
-    console.log(`Progress: ${Math.abs(totalDiff)} fewer hardcoded values since Phase 13 audit ✓`);
-  } else if (totalDiff === 0) {
-    console.log("Progress: No change from Phase 13 audit baseline");
-  } else {
-    console.log(`Regressed: ${totalDiff} more hardcoded values since Phase 13 audit ✗`);
+  console.log("");
+  console.log(`  TOTAL: ${totalCurrent} (baseline: ${totalBaseline})`);
+
+  const improved = totalCurrent < totalBaseline;
+  console.log("");
+  console.log(improved ? "✅ Progress: fewer hardcoded values than baseline" : "⚠️  No progress: count >= baseline");
+
+  console.log("");
+  console.log("Top files by category:");
+  for (const [category, items] of Object.entries(results)) {
+    if (items.length === 0) continue;
+    console.log(`\n  ${category} (${items.length}):`);
+    const fileCounts = {};
+    for (const item of items) {
+      const file = item.split(":")[0];
+      fileCounts[file] = (fileCounts[file] || 0) + 1;
+    }
+    const sorted = Object.entries(fileCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    for (const [file, count] of sorted) {
+      console.log(`    ${file}: ${count}`);
+    }
   }
 
-  console.log("\n=== Top hardcoded color references (sample) ===");
-  const colorRefs = categories["hardcoded-color"].refs.slice(0, 20);
-  for (const ref of colorRefs) {
-    console.log(ref);
-  }
-  if (categories["hardcoded-color"].refs.length > 20) {
-    console.log(`  ... and ${categories["hardcoded-color"].refs.length - 20} more`);
-  }
-
-  process.exit(totalCount >= BASELINE.total ? 1 : 0);
+  process.exit(improved ? 0 : 1);
 }
 
-main().catch((err) => {
+audit().catch((err) => {
   console.error("Audit failed:", err);
   process.exit(2);
 });
