@@ -17,12 +17,12 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 
 ### BRAND — 品牌视觉资产定义
 
-- [ ] **BRAND-01**: User sees a designed logo (terracotta red #C44536 palette, fashion-forward, recognizable at 32px) with horizontal, square, and monochrome variants
-- [ ] **BRAND-02**: User sees a designed app icon (iOS + Android adaptive icon) that is distinctive on home screen and conveys AI fashion identity
-- [ ] **BRAND-03**: User sees a splash/launch screen animation (Lottie, ≤1.5s duration, brand color reveal + logo) that plays on every cold start
-- [ ] **BRAND-04**: Developer has a complete brand guideline document defining: color palette with usage rules, typography scale (header/body/caption), spacing system (4px grid), icon style (Phosphor customizations), and illustration style
-- [ ] **BRAND-05**: User sees consistent visual patterns (decorative motifs, background textures, card treatments) applied across the app as a cohesive visual language
-- [ ] **BRAND-06**: Developer has an icon set covering all app functions (tabs, actions, categories, states) with consistent visual weight and stroke style matching brand identity
+- [x] **BRAND-01**: User sees a designed logo (terracotta red #C44536 palette, fashion-forward, recognizable at 32px) with horizontal, square, and monochrome variants
+- [x] **BRAND-02**: User sees a designed app icon (iOS + Android adaptive icon) that is distinctive on home screen and conveys AI fashion identity
+- [x] **BRAND-03**: User sees a splash/launch screen animation (Lottie, ≤1.5s duration, brand color reveal + logo) that plays on every cold start
+- [x] **BRAND-04**: Developer has a complete brand guideline document defining: color palette with usage rules, typography scale (header/body/caption), spacing system (4px grid), icon style (Phosphor customizations), and illustration style
+- [x] **BRAND-05**: User sees consistent visual patterns (decorative motifs, background textures, card treatments) applied across the app as a cohesive visual language
+- [x] **BRAND-06**: Developer has an icon set covering all app functions (tabs, actions, categories, states) with consistent visual weight and stroke style matching brand identity
 
 ### DSTK — 设计系统 Token 体系
 
@@ -147,12 +147,12 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 | AUDIT-03    | Phase 13 | Pending  |
 | AUDIT-04    | Phase 13 | Pending  |
 | AUDIT-05    | Phase 13 | Pending  |
-| BRAND-01    | Phase 14 | Pending  |
-| BRAND-02    | Phase 14 | Pending  |
-| BRAND-03    | Phase 14 | Pending  |
-| BRAND-04    | Phase 14 | Pending  |
-| BRAND-05    | Phase 14 | Pending  |
-| BRAND-06    | Phase 14 | Pending  |
+| BRAND-01    | Phase 14 | Complete |
+| BRAND-02    | Phase 14 | Complete |
+| BRAND-03    | Phase 14 | Complete |
+| BRAND-04    | Phase 14 | Complete |
+| BRAND-05    | Phase 14 | Complete |
+| BRAND-06    | Phase 14 | Complete |
 | DSTK-01     | Phase 14 | Complete |
 | DSTK-02     | Phase 14 | Pending  |
 | DSTK-03     | Phase 14 | Complete |
