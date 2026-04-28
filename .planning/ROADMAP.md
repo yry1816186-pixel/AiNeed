@@ -228,7 +228,7 @@ Plans:
 **Track D: v2.0 Frontend Restructuring (Phases 13-19)**
 
 - [x] **Phase 13: 全流程深度审计** - Playwright 逐页截图, 标杆差距分析, 组件一致性审计, 性能基线, WCAG 2.1 AA 审计 ✓ 2026-04-28
-- [ ] **Phase 14: 品牌视觉 + 设计系统重建** - Logo/App Icon/Splash, 三层 Design Token, 替换 ThemeManager, 暗色模式独立设计
+- [x] **Phase 14: 品牌视觉 + 设计系统重建** - Logo/App Icon/Splash, 三层 Design Token, 替换 ThemeManager, 暗色模式独立设计 (completed 2026-04-28)
 - [ ] **Phase 15: 原子组件库 + 动效基础** - 8 原子组件, SmartImage, animationPresets, 启动画面 Lottie
 - [ ] **Phase 16: 首页 + Onboarding 重构** - 沉浸式 Today 页, 场景卡, 推荐轮播, 语音按钮, Onboarding 动画
 - [ ] **Phase 17: AI 对话 + 发现页重构** - 流式对话气泡, 打字机效果, 内嵌搭配卡, 瀑布流发现页
@@ -272,14 +272,14 @@ Plans:
 5. 暗色模式独立色板设计完成，WCAG AA 4.5:1 对比度验证通过
 6. 现有 DesignTokens 全部保留，通过 legacyTokenMap 桥接，零破坏性变更
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 
 - [x] 14-01-PLAN.md — 三层 Token 构建 (Style Dictionary YAML→TS) (DSTK-01, DSTK-03)
 - [x] 14-02-PLAN.md — Zustand themeStore + MMKV + 暗色模式 (DSTK-04, DSTK-05, DSTK-06)
 - [x] 14-03-PLAN.md — Logo/App Icon/Splash 品牌资产 + 品牌指南 (BRAND-01~06)
-- [ ] 14-04-PLAN.md — legacyTokenMap 桥接 + 废弃文件清理 + 审计脚本 (DSTK-02, DSTK-03)
+- [x] 14-04-PLAN.md — legacyTokenMap 桥接 + 废弃文件清理 + 审计脚本 (DSTK-02, DSTK-03)
 
 ### Phase 15: 原子组件库 + 动效基础
 
@@ -369,27 +369,27 @@ Plans: (none yet)
 **Execution Order:**
 Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 -> 10 (long-term) -> 11-12 (competition) -> 13 (audit) -> 14 (design system) -> 15 (components) -> 16/17/18 (pages, partially parallelizable) -> 19 (polish)
 
-| Phase                                           | Plans Complete | Status      | Completed  |
-| ----------------------------------------------- | -------------- | ----------- | ---------- |
-| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete    | 2026-04-24 |
-| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete    | 2026-04-24 |
-| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete    | 2026-04-24 |
-| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete    | 2026-04-25 |
-| 5. E2E Integration + Competition Demo           | 4/4            | Complete    | 2026-04-25 |
-| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete    | 2026-04-25 |
-| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete    | 2026-04-27 |
-| 8. Mini Program + Photo Search + Social         | 4/4            | Complete    | 2026-04-25 |
-| 9. Monetization + Community + Sharing           | 5/5            | Complete    | 2026-04-26 |
-| 10. Production + Launch + Competition           | 5/5            | Complete    | 2026-04-26 |
-| 11. Competition Demo Sprint + Validation        | 6/6            | Complete    | 2026-04-26 |
-| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 6/6            | Complete    | 2026-04-27 |
-| 13. 全流程深度审计                              | 3/3            | Complete    | 2026-04-28 |
-| 14. 品牌视觉 + 设计系统重建                     | 3/4            | In Progress |            |
-| 15. 原子组件库 + 动效基础                       | 0/?            | Pending     |            |
-| 16. 首页 + Onboarding 重构                      | 0/?            | Pending     |            |
-| 17. AI 对话 + 发现页重构                        | 0/?            | Pending     |            |
-| 18. 衣橱 + 个人页重构                           | 0/?            | Pending     |            |
-| 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending     |            |
+| Phase                                           | Plans Complete | Status   | Completed  |
+| ----------------------------------------------- | -------------- | -------- | ---------- |
+| 1. Foundation + TS Cleanup + Visual Base        | 3/3            | Complete | 2026-04-24 |
+| 2. Pipeline + Cold Start + Curated Wardrobe     | 3/3            | Complete | 2026-04-24 |
+| 3. Navigation + Core Screens + Calendar         | 3/3            | Complete | 2026-04-24 |
+| 4. Yiyi Agent + Voice + Onboarding + Studio     | 7/7            | Complete | 2026-04-25 |
+| 5. E2E Integration + Competition Demo           | 4/4            | Complete | 2026-04-25 |
+| 6. Model Upgrade + Compliance + Security        | 6/6            | Complete | 2026-04-25 |
+| 7. Data Flywheel + Calendar Full + Advanced Rec | 4/4            | Complete | 2026-04-27 |
+| 8. Mini Program + Photo Search + Social         | 4/4            | Complete | 2026-04-25 |
+| 9. Monetization + Community + Sharing           | 5/5            | Complete | 2026-04-26 |
+| 10. Production + Launch + Competition           | 5/5            | Complete | 2026-04-26 |
+| 11. Competition Demo Sprint + Validation        | 6/6            | Complete | 2026-04-26 |
+| 12. 比赛冲刺 — Bug Fix + Demo + 体验提升        | 6/6            | Complete | 2026-04-27 |
+| 13. 全流程深度审计                              | 3/3            | Complete | 2026-04-28 |
+| 14. 品牌视觉 + 设计系统重建                     | 4/4            | Complete | 2026-04-28 |
+| 15. 原子组件库 + 动效基础                       | 0/?            | Pending  |            |
+| 16. 首页 + Onboarding 重构                      | 0/?            | Pending  |            |
+| 17. AI 对话 + 发现页重构                        | 0/?            | Pending  |            |
+| 18. 衣橱 + 个人页重构                           | 0/?            | Pending  |            |
+| 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending  |            |
 
 ---
 

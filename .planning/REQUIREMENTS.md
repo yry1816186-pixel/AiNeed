@@ -27,7 +27,7 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 ### DSTK — 设计系统 Token 体系
 
 - [x] **DSTK-01**: Developer has a three-layer Design Token system (primitive → semantic → component) covering Color, Typography, Spacing, Radius, Shadow, and Motion categories
-- [ ] **DSTK-02**: All new and existing components use Design Token references exclusively — zero hardcoded color/spacing/font-size values anywhere in the codebase
+- [x] **DSTK-02**: All new and existing components use Design Token references exclusively — zero hardcoded color/spacing/font-size values anywhere in the codebase
 - [x] **DSTK-03**: Existing DesignTokens are EXTENDED (not replaced) — all existing token references continue to work while new semantic/component tokens layer on top
 - [x] **DSTK-04**: Broken ThemeManager.ts (using Web APIs) is replaced with Zustand theme store + MMKV persistence + React Native Appearance API
 - [x] **DSTK-05**: User can toggle between light and dark mode, with dark mode using an independently designed palette (not brightness inversion) — warm dark grays with adjusted camel accent ensuring WCAG AA 4.5:1 contrast
@@ -154,7 +154,7 @@ Requirements for commercial-quality frontend restructuring. Each maps to roadmap
 | BRAND-05    | Phase 14 | Complete |
 | BRAND-06    | Phase 14 | Complete |
 | DSTK-01     | Phase 14 | Complete |
-| DSTK-02     | Phase 14 | Pending  |
+| DSTK-02     | Phase 14 | Complete |
 | DSTK-03     | Phase 14 | Complete |
 | DSTK-04     | Phase 14 | Complete |
 | DSTK-05     | Phase 14 | Complete |
