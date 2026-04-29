@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T20:23Z
+**Updated:** 2026-04-29T20:34Z
 
 ## Project Reference
 
@@ -22,11 +22,11 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 
 ## Current Focus
 
-Phase 6: Production + Legal — Plans 01 and 03 complete. Security hardening verified, rate limiting on all AI endpoints, env separation complete.
+Phase 6: Production + Legal — Plans 01, 02, 03, 04, 08 complete. Security hardening, rate limiting, legal docs, API documentation done.
 
 ## Next Action
 
-Continue Phase 6 execution with remaining plans (06-02, 06-04 through 06-09).
+Continue Phase 6 execution with remaining plans (06-05 through 06-07, 06-09).
 
 ## Decisions
 
@@ -53,6 +53,8 @@ Continue Phase 6 execution with remaining plans (06-02, 06-04 through 06-09).
 | Bias audit threshold <0.2 for 10 profiles                | Tightened from <0.3 to ensure >0.8 diversity across diverse profiles   | 2026-04-29 |
 | Dual rate limiting: @Throttle burst + AiQuotaGuard daily | Per-minute burst protection + daily quota on all AI endpoints          | 2026-04-29 |
 | pnpm audit deferred to network-accessible env            | npmjs.org timeout from China; overrides provide compensating controls  | 2026-04-29 |
+| Curated YAML spec alongside auto-generated JSON          | Human-readable YAML with rate limit docs + machine-generated JSON      | 2026-04-29 |
+| Swagger UI already correctly env-gated                   | Verified NODE_ENV gate in main.ts — no code change needed              | 2026-04-29 |
 
 ## Performance
 
@@ -64,7 +66,8 @@ Continue Phase 6 execution with remaining plans (06-02, 06-04 through 06-09).
 - **06-04:** 5min, 2 tasks, 2 files | Commit: cfdaa2a0
 - **06-01:** 12min, 3 tasks, 10 files | Commits: 3490d4ee, f946795d, db23999c, 84f7e29a
 - **06-03:** 21min, 2 tasks, 6 files | Commits: f7fd3767, 35bfd40f
+- **06-08:** 4min, 2 tasks, 2 files | Commits: 561e56d4, 28f5ea23
 
 ---
 
-_State updated: 2026-04-29 after Phase 6 Plan 03 execution_
+_State updated: 2026-04-29 after Phase 6 Plan 08 execution_
