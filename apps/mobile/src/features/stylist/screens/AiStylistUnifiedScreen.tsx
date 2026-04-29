@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
@@ -694,6 +694,7 @@ export const AiStylistUnifiedScreen: React.FC = () => {
   const tryOnRef = useRef<BottomSheetModal>(null);
   const debugPanelRef = useRef<BottomSheetModal>(null);
   const demoMode = useDemoStore((s) => s.demoMode);
+  const activeProfile = useDemoStore((s) => s.activeProfile);
   const [selectedOutfit, setSelectedOutfit] = useState<OutfitData | null>(null);
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [studioData, setStudioData] = useState<StudioData | null>(null);
@@ -1409,6 +1410,15 @@ export const AiStylistUnifiedScreen: React.FC = () => {
             accessibilityRole="button"
           >
             <Ionicons name="settings" size={22} color={DesignTokens.colors.neutral.white} />
+            {demoMode && activeProfile && activeProfile !== "default" && (
+              <View style={styles.debugFabBadge}>
+                <Text style={styles.debugFabBadgeText} numberOfLines={1}>
+                  {activeProfile.startsWith("seed_v2_")
+                    ? activeProfile.replace("seed_v2_", "P")
+                    : activeProfile.slice(0, 2)}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
           <ProfileDebugPanel ref={debugPanelRef} />
         </>
@@ -1430,14 +1440,33 @@ const useStyles = createStyles((c) => ({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: DesignTokens.colors.brand.jade,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+  },
+  debugFabBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: DesignTokens.colors.xuno.warmOrange,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+    borderWidth: 1.5,
+    borderColor: DesignTokens.colors.neutral.white,
+  },
+  debugFabBadgeText: {
+    fontSize: 9,
+    fontWeight: "700",
+    color: DesignTokens.colors.neutral.white,
   },
 
   header: {

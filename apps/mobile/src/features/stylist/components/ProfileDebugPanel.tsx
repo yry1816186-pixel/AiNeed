@@ -1,11 +1,18 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
+﻿import React, { useCallback, useMemo, useRef, useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { useDemoStore, PRESET_PROFILES, type DemoProfile } from "../../../shared/stores/demoStore";
+import {
+  useDemoStore,
+  PRESET_PROFILES,
+  SEED_PROFILES,
+  ALL_SEED_PROFILE_IDS,
+  type DemoProfile,
+  type SeedProfile,
+} from "../../../shared/stores/demoStore";
 import { useQueryClient } from "@tanstack/react-query";
 
 const BODY_TYPES = ["hourglass", "rectangle", "pear", "apple", "inverted-triangle"];
@@ -29,10 +36,14 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
   const [bodyType, setBodyType] = useState("hourglass");
   const [styleExpression, setStyleExpression] = useState("minimalist");
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>(["commute", "date"]);
+  const [switchingProfile, setSwitchingProfile] = useState<string | null>(null);
+  const [showSeedList, setShowSeedList] = useState(false);
+
+  const switchStartTime = useRef<number>(0);
 
   if (!__DEV__ && !demoMode) return null;
 
-  const snapPoints = useMemo(() => ["60%"], []);
+  const snapPoints = useMemo(() => ["75%"], []);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -47,6 +58,19 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
     []
   );
 
+  const getActiveProfileDisplayName = useCallback(() => {
+    if (activeProfile === "default") return "默认";
+    if (activeProfile === "custom") return "自定义";
+    const seed = SEED_PROFILES[activeProfile];
+    if (seed) return seed.nickname;
+    const preset = PRESET_PROFILES[activeProfile];
+    if (preset) {
+      if (activeProfile === "professional") return "职场精英";
+      if (activeProfile === "creative") return "创意达人";
+    }
+    return activeProfile;
+  }, [activeProfile]);
+
   const toggleScenario = (scenario: string) => {
     setSelectedScenarios((prev) =>
       prev.includes(scenario) ? prev.filter((s) => s !== scenario) : [...prev, scenario]
@@ -56,17 +80,46 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
   const handleApply = () => {
     setCustomProfile({ bodyType, styleExpression, primaryScenarios: selectedScenarios });
     queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+    queryClient.removeQueries({ queryKey: ["recommendations"] });
   };
 
   const handlePreset = (name: string) => {
     const profile = PRESET_PROFILES[name];
     if (profile) {
-      setActiveProfile(name);
+      setSwitchingProfile(name);
+      switchStartTime.current = Date.now();
+      queryClient.removeQueries({ queryKey: ["recommendations"] });
+      setTimeout(() => {
+        setActiveProfile(name);
+        setBodyType(profile.bodyType);
+        setStyleExpression(profile.styleExpression);
+        setSelectedScenarios(profile.primaryScenarios);
+        queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+        setSwitchingProfile(null);
+        const elapsed = Date.now() - switchStartTime.current;
+        console.log(`[ProfileDebug] Switch to ${name} completed in ${elapsed}ms`);
+      }, 600);
+    }
+  };
+
+  const handleSeedProfile = (profileId: string) => {
+    const profile = SEED_PROFILES[profileId];
+    if (!profile) return;
+    setSwitchingProfile(profileId);
+    switchStartTime.current = Date.now();
+    queryClient.removeQueries({ queryKey: ["recommendations"] });
+    setTimeout(() => {
+      setActiveProfile(profileId);
       setBodyType(profile.bodyType);
       setStyleExpression(profile.styleExpression);
       setSelectedScenarios(profile.primaryScenarios);
       queryClient.invalidateQueries({ queryKey: ["recommendations"] });
-    }
+      setSwitchingProfile(null);
+      const elapsed = Date.now() - switchStartTime.current;
+      console.log(
+        `[ProfileDebug] Switch to ${profile.nickname} (${profileId}) completed in ${elapsed}ms`
+      );
+    }, 600);
   };
 
   const handleReset = () => {
@@ -81,11 +134,19 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
           setBodyType(defaultProfile.bodyType);
           setStyleExpression(defaultProfile.styleExpression);
           setSelectedScenarios(defaultProfile.primaryScenarios);
+          queryClient.removeQueries({ queryKey: ["recommendations"] });
           queryClient.invalidateQueries({ queryKey: ["recommendations"] });
         },
       },
     ]);
   };
+
+  const seedProfileList = useMemo(() => {
+    return ALL_SEED_PROFILE_IDS.map((id) => ({
+      id,
+      profile: SEED_PROFILES[id],
+    }));
+  }, []);
 
   return (
     <BottomSheetModal
@@ -98,12 +159,71 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
       <BottomSheetView style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>演示配置</Text>
+          <TouchableOpacity
+            onPress={() => (ref as React.RefObject<BottomSheetModal>)?.current?.dismiss()}
+            style={styles.closeButton}
+            accessibilityLabel="关闭"
+          >
+            <Ionicons name="close" size={22} color={DesignTokens.colors.neutral[500]} />
+          </TouchableOpacity>
         </View>
+
+        {switchingProfile && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="small" color={DesignTokens.colors.brand.jade} />
+            <Text style={styles.loadingText}>正在切换到 {getActiveProfileDisplayName()}...</Text>
+          </View>
+        )}
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
+          <View style={styles.activeProfileBanner}>
+            <Ionicons name="person-circle" size={20} color={DesignTokens.colors.brand.jade} />
+            <Text style={styles.activeProfileText}>当前: {getActiveProfileDisplayName()}</Text>
+          </View>
+
+          <Text style={styles.sectionTitle}>Seed Profiles ({ALL_SEED_PROFILE_IDS.length})</Text>
+          <View style={styles.seedList}>
+            {seedProfileList.map(({ id, profile }) => (
+              <TouchableOpacity
+                key={id}
+                style={[styles.seedItem, activeProfile === id && styles.seedItemActive]}
+                onPress={() => handleSeedProfile(id)}
+                disabled={switchingProfile !== null}
+                activeOpacity={0.7}
+              >
+                <View style={styles.seedItemLeft}>
+                  <Text style={[styles.seedName, activeProfile === id && styles.seedNameActive]}>
+                    {profile.nickname}
+                  </Text>
+                  <Text style={styles.seedMeta}>
+                    {profile.bodyType} · {profile.styleExpression} · {profile.gender}
+                  </Text>
+                </View>
+                {switchingProfile === id ? (
+                  <ActivityIndicator size="small" color={DesignTokens.colors.brand.jade} />
+                ) : (
+                  <TouchableOpacity
+                    style={[styles.applyBtn, activeProfile === id && styles.applyBtnActive]}
+                    onPress={() => handleSeedProfile(id)}
+                    disabled={switchingProfile !== null}
+                  >
+                    <Text
+                      style={[
+                        styles.applyBtnText,
+                        activeProfile === id && styles.applyBtnTextActive,
+                      ]}
+                    >
+                      {activeProfile === id ? "已激活" : "应用"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+
           <Text style={styles.sectionTitle}>体型</Text>
           <View style={styles.chipRow}>
             {BODY_TYPES.map((bt) => (
@@ -151,7 +271,7 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
             ))}
           </View>
 
-          <Text style={styles.sectionTitle}>预设 Profile</Text>
+          <Text style={styles.sectionTitle}>快速预设</Text>
           <View style={styles.chipRow}>
             <TouchableOpacity
               style={[styles.presetButton, activeProfile === "default" && styles.presetActive]}
@@ -174,7 +294,7 @@ export const ProfileDebugPanel = React.forwardRef<BottomSheetModal>(function Pro
           </View>
 
           <TouchableOpacity style={styles.applyButton} onPress={handleApply} activeOpacity={0.8}>
-            <Text style={styles.applyButtonText}>应用配置</Text>
+            <Text style={styles.applyButtonText}>应用自定义配置</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.resetButton} onPress={handleReset} activeOpacity={0.8}>
@@ -198,12 +318,49 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
+  },
+  closeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  activeProfileBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: "rgba(74, 222, 128, 0.1)",
+    marginBottom: 16,
+    gap: 8,
+  },
+  activeProfileText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "600",
+    color: DesignTokens.colors.brand.jade,
+  },
+  loadingOverlay: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    gap: 8,
+    backgroundColor: "rgba(74, 222, 128, 0.08)",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: DesignTokens.colors.neutral[600],
   },
   scrollContent: {
     paddingBottom: 32,
@@ -214,6 +371,58 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[700],
     marginTop: 12,
     marginBottom: 8,
+  },
+  seedList: {
+    gap: 6,
+  },
+  seedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: DesignTokens.colors.neutral[0],
+    borderWidth: 1,
+    borderColor: DesignTokens.colors.neutral[100],
+  },
+  seedItemActive: {
+    borderColor: DesignTokens.colors.brand.jade,
+    backgroundColor: "rgba(74, 222, 128, 0.06)",
+  },
+  seedItemLeft: {
+    flex: 1,
+  },
+  seedName: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+    color: DesignTokens.colors.neutral[800],
+  },
+  seedNameActive: {
+    color: DesignTokens.colors.brand.jade,
+    fontWeight: "600",
+  },
+  seedMeta: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: DesignTokens.colors.neutral[500],
+    marginTop: 2,
+  },
+  applyBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 14,
+    backgroundColor: DesignTokens.colors.neutral[100],
+  },
+  applyBtnActive: {
+    backgroundColor: DesignTokens.colors.brand.jade,
+  },
+  applyBtnText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "500",
+    color: DesignTokens.colors.neutral[600],
+  },
+  applyBtnTextActive: {
+    color: DesignTokens.colors.neutral.white,
   },
   chipRow: {
     flexDirection: "row",
@@ -227,7 +436,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   chipActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: DesignTokens.colors.brand.jade,
   },
   chipText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -244,7 +453,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   presetActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: DesignTokens.colors.brand.jade,
   },
   presetText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -252,7 +461,7 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[700],
   },
   applyButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: DesignTokens.colors.brand.jade,
     borderRadius: 24,
     paddingVertical: 14,
     alignItems: "center",
