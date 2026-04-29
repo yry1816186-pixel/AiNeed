@@ -38,6 +38,8 @@ model User {
   deletedAt     DateTime?
   deletedReason String?
 
+  is_demo       Boolean   @default(false)
+
   followerCount  Int @default(0)
   followingCount Int @default(0)
   isVerified     Boolean @default(false)
@@ -477,6 +479,7 @@ model ClothingItem {
 
   isActive    Boolean  @default(true)
   isFeatured  Boolean  @default(false)
+  is_demo     Boolean  @default(false)
   isDeleted   Boolean  @default(false)
   deletedAt   DateTime?
 

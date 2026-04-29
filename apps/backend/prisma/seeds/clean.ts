@@ -1,32 +1,32 @@
 // @ts-nocheck
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const SEED_USER_EMAILS = [
-  'test@example.com',
-  'demo@xuno.app',
-  'judge@competition.ai',
-  'admin@xuno.app',
-  'user5@test.com',
-  'user6@test.com',
-  'user7@test.com',
-  'user8@test.com',
-  'user9@test.com',
-  'user10@test.com',
+  "demo_test@example.com",
+  "demo_user@xuno.local",
+  "demo_judge@competition.ai",
+  "demo_admin@xuno.local",
+  "demo_user5@test.com",
+  "demo_user6@test.com",
+  "demo_user7@test.com",
+  "demo_user8@test.com",
+  "demo_user9@test.com",
+  "demo_user10@test.com",
 ];
 
 export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
-  console.log('🧹 开始清理 seed 数据...');
+  console.log("🧹 开始清理 seed 数据...");
 
   // 先获取 seed 用户的 ID 列表
   const seedUsers = await prisma.user.findMany({
     where: { email: { in: SEED_USER_EMAILS } },
     select: { id: true, email: true },
   });
-  const seedUserIds = seedUsers.map(u => u.id);
+  const seedUserIds = seedUsers.map((u) => u.id);
   console.log(`   找到 ${seedUsers.length} 个 seed 用户`);
 
   if (seedUserIds.length === 0) {
-    console.log('   没有找到 seed 用户，跳过清理');
+    console.log("   没有找到 seed 用户，跳过清理");
     return;
   }
 
@@ -35,7 +35,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { userId: { in: seedUserIds } },
     select: { id: true },
   });
-  const chatRoomIds = chatRooms.map(r => r.id);
+  const chatRoomIds = chatRooms.map((r) => r.id);
   if (chatRoomIds.length > 0) {
     const deleted = await prisma.chatMessage.deleteMany({
       where: { roomId: { in: chatRoomIds } },
@@ -74,7 +74,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
   console.log(`   ✅ 删除 StyleQuizResult: ${d6.count} 条`);
 
   // 7. QuizQuestion (通过 StyleQuiz cascade 删除)
-  const seedQuiz = await prisma.styleQuiz.findUnique({ where: { id: 'style-quiz-default' } });
+  const seedQuiz = await prisma.styleQuiz.findUnique({ where: { id: "style-quiz-default" } });
   if (seedQuiz) {
     const d7 = await prisma.quizQuestion.deleteMany({
       where: { quizId: seedQuiz.id },
@@ -84,7 +84,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
 
   // 8. StyleQuiz (seed 创建的固定 ID)
   const d8 = await prisma.styleQuiz.deleteMany({
-    where: { id: 'style-quiz-default' },
+    where: { id: "style-quiz-default" },
   });
   console.log(`   ✅ 删除 StyleQuiz: ${d8.count} 条`);
 
@@ -93,7 +93,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { authorId: { in: seedUserIds } },
     select: { id: true },
   });
-  const seedPostIds = seedPosts.map(p => p.id);
+  const seedPostIds = seedPosts.map((p) => p.id);
   if (seedPostIds.length > 0) {
     const d9 = await prisma.communityPostItem.deleteMany({
       where: { postId: { in: seedPostIds } },
@@ -199,7 +199,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { userId: { in: seedUserIds } },
     select: { id: true },
   });
-  const seedOrderIds = seedOrders.map(o => o.id);
+  const seedOrderIds = seedOrders.map((o) => o.id);
   if (seedOrderIds.length > 0) {
     const d23 = await prisma.orderItem.deleteMany({
       where: { orderId: { in: seedOrderIds } },
@@ -223,7 +223,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { userId: { in: seedUserIds } },
     select: { id: true },
   });
-  const seedRequestIds = seedRequests.map(r => r.id);
+  const seedRequestIds = seedRequests.map((r) => r.id);
   if (seedRequestIds.length > 0) {
     const d26 = await prisma.customizationQuote.deleteMany({
       where: { requestId: { in: seedRequestIds } },
@@ -239,29 +239,69 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
 
   // 28. ClothingItem (seed 创建的商品，通过 sku 前缀 AN- 判断)
   const d28 = await prisma.clothingItem.deleteMany({
-    where: { sku: { startsWith: 'AN-' } },
+    where: { sku: { startsWith: "AN-" } },
   });
   console.log(`   ✅ 删除 ClothingItem: ${d28.count} 条`);
 
   // 29. BrandMerchant (通过 Brand slug 关联清理)
   const seedBrandSlugs = [
-    'xuno-studio',
-    'zara', 'uniqlo', 'hm', 'gap', 'pull-and-bear', 'bershka', 'mango',
-    'urban-revivo', 'mjstyle',
-    'cos', 'massimo-dutti', 'sandro', 'maje', 'theory', 'apc',
-    'nike', 'adidas', 'puma', 'under-armour', 'lululemon', 'fila', 'anta', 'li-ning',
-    'bosideng', 'peacebird', 'gxg', 'semir', 'ochirly', 'mo-co', 'jnby', 'ein',
-    'champion', 'carhartt', 'levis', 'calvin-klein', 'tommy-hilfiger',
-    'dr-martens', 'converse', 'vans', 'new-balance', 'asics',
-    'furla', 'longchamp', 'coach', 'michael-kors',
-    'acne-studios', 'mm6', 'kenzo',
-    'speedo', 'roxy',
+    "xuno-studio",
+    "zara",
+    "uniqlo",
+    "hm",
+    "gap",
+    "pull-and-bear",
+    "bershka",
+    "mango",
+    "urban-revivo",
+    "mjstyle",
+    "cos",
+    "massimo-dutti",
+    "sandro",
+    "maje",
+    "theory",
+    "apc",
+    "nike",
+    "adidas",
+    "puma",
+    "under-armour",
+    "lululemon",
+    "fila",
+    "anta",
+    "li-ning",
+    "bosideng",
+    "peacebird",
+    "gxg",
+    "semir",
+    "ochirly",
+    "mo-co",
+    "jnby",
+    "ein",
+    "champion",
+    "carhartt",
+    "levis",
+    "calvin-klein",
+    "tommy-hilfiger",
+    "dr-martens",
+    "converse",
+    "vans",
+    "new-balance",
+    "asics",
+    "furla",
+    "longchamp",
+    "coach",
+    "michael-kors",
+    "acne-studios",
+    "mm6",
+    "kenzo",
+    "speedo",
+    "roxy",
   ];
   const seedBrands = await prisma.brand.findMany({
     where: { slug: { in: seedBrandSlugs } },
     select: { id: true },
   });
-  const seedBrandIds = seedBrands.map(b => b.id);
+  const seedBrandIds = seedBrands.map((b) => b.id);
   if (seedBrandIds.length > 0) {
     const d29 = await prisma.brandMerchant.deleteMany({
       where: { brandId: { in: seedBrandIds } },
@@ -405,10 +445,12 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
   console.log(`   ✅ 删除 KnowledgeGraphEntity: ${d32z.count} 条`);
 
   // ProductSalesStats: 通过 ClothingItem 关联清理 (seed 创建的商品 sku 以 AN- 开头)
-  const seedItemIds = (await prisma.clothingItem.findMany({
-    where: { sku: { startsWith: 'AN-' } },
-    select: { id: true },
-  })).map(i => i.id);
+  const seedItemIds = (
+    await prisma.clothingItem.findMany({
+      where: { sku: { startsWith: "AN-" } },
+      select: { id: true },
+    })
+  ).map((i) => i.id);
   if (seedItemIds.length > 0) {
     const d32aa = await prisma.productSalesStats.deleteMany({
       where: { itemId: { in: seedItemIds } },
@@ -421,7 +463,7 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { userId: { in: seedUserIds } },
     select: { id: true },
   });
-  const seedPaymentRecordIds = seedPaymentRecords.map(r => r.id);
+  const seedPaymentRecordIds = seedPaymentRecords.map((r) => r.id);
   if (seedPaymentRecordIds.length > 0) {
     const d32bb = await prisma.refundRecord.deleteMany({
       where: { paymentRecordId: { in: seedPaymentRecordIds } },
@@ -477,5 +519,5 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
   });
   console.log(`   ✅ 删除 UserDecision: ${d35.count} 条`);
 
-  console.log('\n✅ Seed 数据清理完成！');
+  console.log("\n✅ Seed 数据清理完成！");
 }

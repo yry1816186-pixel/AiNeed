@@ -4,7 +4,7 @@ import { randomInt, randomElement } from "./utils";
 
 const BEHAVIOR_EVENTS_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     events: [
       {
         eventType: BehaviorEventType.page_view,
@@ -102,7 +102,7 @@ const BEHAVIOR_EVENTS_DATA = [
     ],
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     events: [
       {
         eventType: BehaviorEventType.page_view,
@@ -174,7 +174,7 @@ const BEHAVIOR_EVENTS_DATA = [
     ],
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     events: [
       {
         eventType: BehaviorEventType.page_view,
@@ -262,7 +262,7 @@ const BEHAVIOR_EVENTS_DATA = [
     ],
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     events: [
       {
         eventType: BehaviorEventType.page_view,
@@ -325,7 +325,7 @@ const BEHAVIOR_EVENTS_DATA = [
     ],
   },
   {
-    email: "user8@test.com",
+    email: "demo_user8@test.com",
     events: [
       {
         eventType: BehaviorEventType.page_view,
@@ -409,7 +409,7 @@ const BEHAVIOR_EVENTS_DATA = [
 
 const QUIZ_RESULTS_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     occasionPreferences: { work: 0.7, date: 0.6, casual: 0.5, party: 0.3, sports: 0.2 },
     colorPreferences: { warm: 0.8, neutral: 0.7, cool: 0.3, bright: 0.2 },
     styleKeywords: ["优雅通勤", "法式浪漫", "轻奢简约"],
@@ -418,7 +418,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     occasionPreferences: { casual: 0.8, date: 0.7, party: 0.5, work: 0.3, sports: 0.2 },
     colorPreferences: { pastel: 0.9, warm: 0.6, neutral: 0.5, bright: 0.3 },
     styleKeywords: ["韩系甜美", "少女感", "清新自然"],
@@ -427,7 +427,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     occasionPreferences: { work: 0.9, formal: 0.8, business_casual: 0.7, casual: 0.3, sports: 0.2 },
     colorPreferences: { neutral: 0.9, cool: 0.7, dark: 0.6, warm: 0.2 },
     styleKeywords: ["商务正装", "意式绅士", "都市精英"],
@@ -436,7 +436,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "admin@xuno.app",
+    email: "demo_admin@xuno.local",
     occasionPreferences: { work: 0.8, social: 0.6, casual: 0.4, date: 0.3 },
     colorPreferences: { neutral: 0.9, cool: 0.8, muted: 0.7, warm: 0.2 },
     styleKeywords: ["极简主义", "职场干练", "知性优雅"],
@@ -445,7 +445,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     occasionPreferences: { casual: 0.8, date: 0.7, school: 0.6, party: 0.4 },
     colorPreferences: { pastel: 0.8, warm: 0.7, bright: 0.5, neutral: 0.4 },
     styleKeywords: ["韩系穿搭", "日系文艺", "甜美风"],
@@ -454,7 +454,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user6@test.com",
+    email: "demo_user6@test.com",
     occasionPreferences: { sports: 0.9, casual: 0.7, work: 0.3 },
     colorPreferences: { neutral: 0.7, dark: 0.6, bright: 0.4, warm: 0.3 },
     styleKeywords: ["运动休闲", "美式街头", "户外机能"],
@@ -463,7 +463,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     occasionPreferences: { social: 0.8, date: 0.7, party: 0.6, work: 0.4 },
     colorPreferences: { dark: 0.8, neutral: 0.7, cool: 0.5, warm: 0.3 },
     styleKeywords: ["法式优雅", "轻奢名媛", "经典复古"],
@@ -472,7 +472,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user8@test.com",
+    email: "demo_user8@test.com",
     occasionPreferences: { casual: 0.9, party: 0.6, sports: 0.4 },
     colorPreferences: { dark: 0.8, neutral: 0.7, bright: 0.5, cool: 0.4 },
     styleKeywords: ["街头潮流", "日系CityBoy", "高街时尚"],
@@ -481,7 +481,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user9@test.com",
+    email: "demo_user9@test.com",
     occasionPreferences: { casual: 0.7, work: 0.6, social: 0.3 },
     colorPreferences: { neutral: 0.95, muted: 0.8, cool: 0.5, warm: 0.2 },
     styleKeywords: ["极简主义", "北欧风", "性冷淡风"],
@@ -490,7 +490,7 @@ const QUIZ_RESULTS_DATA = [
     isLatest: true,
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     occasionPreferences: { work: 0.9, formal: 0.8, business_casual: 0.7, casual: 0.3 },
     colorPreferences: { neutral: 0.85, dark: 0.7, warm: 0.4, cool: 0.3 },
     styleKeywords: ["商务正装", "商务休闲", "英伦经典"],
@@ -502,154 +502,154 @@ const QUIZ_RESULTS_DATA = [
 
 const IMPRESSION_EVENTS = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     recommendationId: "daily-001",
     impressionType: "view",
     dwellTimeMs: 5000,
     daysAgo: 3,
   },
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     recommendationId: "daily-001",
     impressionType: "click",
     dwellTimeMs: 15000,
     daysAgo: 3,
   },
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     recommendationId: "occasion-001",
     impressionType: "view",
     dwellTimeMs: 3000,
     daysAgo: 2,
   },
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     recommendationId: "seasonal-001",
     impressionType: "dismiss",
     dwellTimeMs: 1000,
     daysAgo: 1,
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     recommendationId: "daily-002",
     impressionType: "view",
     dwellTimeMs: 8000,
     daysAgo: 2,
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     recommendationId: "daily-002",
     impressionType: "click",
     dwellTimeMs: 20000,
     daysAgo: 2,
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     recommendationId: "occasion-002",
     impressionType: "view",
     dwellTimeMs: 4000,
     daysAgo: 1,
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     recommendationId: "business-001",
     impressionType: "view",
     dwellTimeMs: 12000,
     daysAgo: 5,
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     recommendationId: "business-001",
     impressionType: "click",
     dwellTimeMs: 30000,
     daysAgo: 5,
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     recommendationId: "business-001",
     impressionType: "try_on",
     dwellTimeMs: 60000,
     daysAgo: 4,
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     recommendationId: "daily-003",
     impressionType: "view",
     dwellTimeMs: 6000,
     daysAgo: 3,
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     recommendationId: "daily-003",
     impressionType: "click",
     dwellTimeMs: 18000,
     daysAgo: 3,
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     recommendationId: "occasion-003",
     impressionType: "view",
     dwellTimeMs: 2000,
     daysAgo: 2,
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     recommendationId: "daily-004",
     impressionType: "view",
     dwellTimeMs: 10000,
     daysAgo: 4,
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     recommendationId: "daily-004",
     impressionType: "click",
     dwellTimeMs: 25000,
     daysAgo: 4,
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     recommendationId: "occasion-004",
     impressionType: "view",
     dwellTimeMs: 7000,
     daysAgo: 3,
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     recommendationId: "occasion-004",
     impressionType: "click",
     dwellTimeMs: 15000,
     daysAgo: 3,
   },
   {
-    email: "user8@test.com",
+    email: "demo_user8@test.com",
     recommendationId: "daily-005",
     impressionType: "view",
     dwellTimeMs: 9000,
     daysAgo: 2,
   },
   {
-    email: "user8@test.com",
+    email: "demo_user8@test.com",
     recommendationId: "daily-005",
     impressionType: "click",
     dwellTimeMs: 22000,
     daysAgo: 2,
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     recommendationId: "business-002",
     impressionType: "view",
     dwellTimeMs: 11000,
     daysAgo: 3,
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     recommendationId: "business-002",
     impressionType: "click",
     dwellTimeMs: 28000,
     daysAgo: 3,
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     recommendationId: "seasonal-002",
     impressionType: "dismiss",
     dwellTimeMs: 800,

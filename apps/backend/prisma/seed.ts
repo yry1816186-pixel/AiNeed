@@ -11,10 +11,15 @@ import { seedRecommendationTestData } from "./seeds/recommendation-test.seed";
 import { seedRecommendations } from "./seeds/recommendations.seed";
 import { seedEcommerce } from "./seeds/ecommerce.seed";
 import { seedFeatureFlags } from "./seeds/feature-flags.seed";
+import { seedDemoRecommendations } from "./seeds/demo-recommendations.seed";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Seed script cannot run in production environment");
+  }
+
   console.log("🚀 开始填充寻裳开发数据...");
   console.log("=".repeat(60));
 
@@ -72,6 +77,14 @@ async function main() {
     console.log(`   ⚠️ 电商数据跳过: ${e.message}`);
   }
 
+  console.log("\n📅 Step 11/11: 创建 7 天 Demo 推荐数据...");
+  try {
+    const { demoRecommendations } = await seedDemoRecommendations(prisma, userMap, itemMap);
+    console.log(`   ✅ ${demoRecommendations.length} 条 7 天推荐`);
+  } catch (e) {
+    console.log(`   ⚠️ Demo 推荐跳过: ${e.message}`);
+  }
+
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
   console.log("\n" + "=".repeat(60));
@@ -90,19 +103,19 @@ async function main() {
   console.log(`   🎯 推荐曝光: ${recTestData.impressionCount}`);
   console.log(`   ⏱️ 耗时: ${elapsed}s`);
 
-  console.log("\n🔑 测试账号:");
+  console.log("\n🔑 测试账号 (demo 数据 — 仅供开发测试):");
   console.log("-".repeat(50));
   const testAccounts = [
-    { email: "test@example.com", password: "Test123456!", nickname: "测试用户" },
-    { email: "demo@xuno.app", password: "Demo123456!", nickname: "Demo演示账号" },
-    { email: "judge@competition.ai", password: "Judge123456!", nickname: "评委体验账号" },
-    { email: "admin@xuno.app", password: "Admin123456!", nickname: "管理员" },
-    { email: "user5@test.com", password: "Test123456!", nickname: "时尚达人小美" },
-    { email: "user6@test.com", password: "Test123456!", nickname: "运动型男阿杰" },
-    { email: "user7@test.com", password: "Test123456!", nickname: "优雅女士Linda" },
-    { email: "user8@test.com", password: "Test123456!", nickname: "街头潮人小K" },
-    { email: "user9@test.com", password: "Test123456!", nickname: "极简主义者" },
-    { email: "user10@test.com", password: "Test123456!", nickname: "商务精英David" },
+    { email: "demo_test@example.com", password: "Test123456!", nickname: "demo_style_lover" },
+    { email: "demo_user@xuno.local", password: "Demo123456!", nickname: "demo_demo演示账号" },
+    { email: "demo_judge@competition.ai", password: "Judge123456!", nickname: "demo_评委体验账号" },
+    { email: "demo_admin@xuno.local", password: "Admin123456!", nickname: "demo_管理员" },
+    { email: "demo_user5@test.com", password: "Test123456!", nickname: "demo_时尚达人小美" },
+    { email: "demo_user6@test.com", password: "Test123456!", nickname: "demo_运动型男阿杰" },
+    { email: "demo_user7@test.com", password: "Test123456!", nickname: "demo_优雅女士Linda" },
+    { email: "demo_user8@test.com", password: "Test123456!", nickname: "demo_街头潮人小K" },
+    { email: "demo_user9@test.com", password: "Test123456!", nickname: "demo_极简主义者" },
+    { email: "demo_user10@test.com", password: "Test123456!", nickname: "demo_商务精英David" },
   ];
   for (const acc of testAccounts) {
     console.log(`   📧 ${acc.email} / ${acc.password} (${acc.nickname})`);

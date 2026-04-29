@@ -2444,6 +2444,7 @@ export async function seedClothing(
         season: data.season ?? null,
         gender: data.gender ?? null,
         source: data.source ?? "MANUAL",
+        is_demo: true,
       },
     });
 

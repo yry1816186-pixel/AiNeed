@@ -3,7 +3,7 @@ import { PrismaClient, RecommendationType } from "@prisma/client";
 
 const RECOMMENDATIONS_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -48,7 +48,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -77,7 +77,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     recommendations: [
       {
         type: RecommendationType.business,
@@ -106,7 +106,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "admin@xuno.app",
+    email: "demo_admin@xuno.local",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -127,7 +127,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user5@test.com",
+    email: "demo_user5@test.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -148,7 +148,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user6@test.com",
+    email: "demo_user6@test.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -169,7 +169,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -198,7 +198,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user8@test.com",
+    email: "demo_user8@test.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -219,7 +219,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user9@test.com",
+    email: "demo_user9@test.com",
     recommendations: [
       {
         type: RecommendationType.daily,
@@ -240,7 +240,7 @@ const RECOMMENDATIONS_DATA = [
     ],
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     recommendations: [
       {
         type: RecommendationType.business,

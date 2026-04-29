@@ -133,7 +133,7 @@ const COUPONS_DATA = [
 
 const ADDRESSES_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     addresses: [
       {
         name: "张测试",
@@ -156,7 +156,7 @@ const ADDRESSES_DATA = [
     ],
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     addresses: [
       {
         name: "李演示",
@@ -170,7 +170,7 @@ const ADDRESSES_DATA = [
     ],
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     addresses: [
       {
         name: "王评委",
@@ -184,7 +184,7 @@ const ADDRESSES_DATA = [
     ],
   },
   {
-    email: "admin@xuno.app",
+    email: "demo_admin@xuno.local",
     addresses: [
       {
         name: "赵管理",
@@ -198,7 +198,7 @@ const ADDRESSES_DATA = [
     ],
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     addresses: [
       {
         name: "David王",
@@ -290,7 +290,7 @@ const FEATURE_FLAGS_DATA = [
 
 const SUBSCRIPTIONS_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     planName: "quarterly",
     status: SubscriptionStatus.active,
     startedAt: new Date("2026-04-01T00:00:00Z"),
@@ -300,7 +300,7 @@ const SUBSCRIPTIONS_DATA = [
     usageThisMonth: { tryOnCount: 12, stylistSessions: 5 },
   },
   {
-    email: "judge@competition.ai",
+    email: "demo_judge@competition.ai",
     planName: "yearly",
     status: SubscriptionStatus.active,
     startedAt: new Date("2026-04-15T00:00:00Z"),
@@ -310,7 +310,7 @@ const SUBSCRIPTIONS_DATA = [
     usageThisMonth: { tryOnCount: 45, stylistSessions: 18 },
   },
   {
-    email: "demo@xuno.app",
+    email: "demo_user@xuno.local",
     planName: "monthly",
     status: SubscriptionStatus.active,
     startedAt: new Date("2026-03-20T00:00:00Z"),
@@ -320,7 +320,7 @@ const SUBSCRIPTIONS_DATA = [
     usageThisMonth: { tryOnCount: 8, stylistSessions: 2 },
   },
   {
-    email: "user10@test.com",
+    email: "demo_user10@test.com",
     planName: "quarterly",
     status: SubscriptionStatus.active,
     startedAt: new Date("2026-04-10T00:00:00Z"),
@@ -330,7 +330,7 @@ const SUBSCRIPTIONS_DATA = [
     usageThisMonth: { tryOnCount: 22, stylistSessions: 8 },
   },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     planName: "monthly",
     status: SubscriptionStatus.cancelled,
     startedAt: new Date("2026-03-01T00:00:00Z"),
@@ -344,20 +344,20 @@ const SUBSCRIPTIONS_DATA = [
 
 const FAVORITES_DATA = [
   {
-    email: "test@example.com",
+    email: "demo_test@example.com",
     skus: ["AN-TOP-002", "AN-DRE-001", "AN-OUT-001", "AN-FOT-002", "AN-ACC-004"],
   },
   { email: "demo@xuno.app", skus: ["AN-DRE-002", "AN-TOP-002", "AN-BOT-003", "AN-FOT-006"] },
   { email: "judge@competition.ai", skus: ["AN-OUT-006", "AN-TOP-003", "AN-BOT-007", "AN-ACC-001"] },
   { email: "admin@xuno.app", skus: ["AN-TOP-003", "AN-DRE-003", "AN-OUT-002"] },
   { email: "user5@test.com", skus: ["AN-TOP-002", "AN-DRE-002", "AN-ACC-003", "AN-BOT-006"] },
-  { email: "user6@test.com", skus: ["AN-ACT-001", "AN-FOT-005", "AN-TOP-006"] },
+  { email: "demo_user6@test.com", skus: ["AN-ACT-001", "AN-FOT-005", "AN-TOP-006"] },
   {
-    email: "user7@test.com",
+    email: "demo_user7@test.com",
     skus: ["AN-DRE-001", "AN-DRE-004", "AN-OUT-001", "AN-FOT-002", "AN-ACC-004"],
   },
-  { email: "user8@test.com", skus: ["AN-OUT-003", "AN-TOP-006", "AN-BOT-004", "AN-FOT-004"] },
-  { email: "user9@test.com", skus: ["AN-TOP-003", "AN-DRE-003", "AN-BOT-002"] },
+  { email: "demo_user8@test.com", skus: ["AN-OUT-003", "AN-TOP-006", "AN-BOT-004", "AN-FOT-004"] },
+  { email: "demo_user9@test.com", skus: ["AN-TOP-003", "AN-DRE-003", "AN-BOT-002"] },
   { email: "user10@test.com", skus: ["AN-OUT-006", "AN-BOT-007", "AN-TOP-003", "AN-ACC-001"] },
 ];
 
@@ -467,7 +467,7 @@ export async function seedEcommerce(
     { email: "test@example.com", code: "WELCOME10", status: UserCouponStatus.AVAILABLE },
     { email: "test@example.com", code: "SPRING30", status: UserCouponStatus.AVAILABLE },
     {
-      email: "demo@xuno.app",
+      email: "demo_user@xuno.local",
       code: "WELCOME10",
       status: UserCouponStatus.USED,
       usedAt: new Date("2026-04-10T14:30:00Z"),
@@ -539,7 +539,7 @@ export async function seedEcommerce(
   // ===== CartItem =====
   const cartItems = [
     {
-      email: "test@example.com",
+      email: "demo_test@example.com",
       sku: "AN-TOP-002",
       color: "奶白色",
       size: "M",
@@ -547,7 +547,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "test@example.com",
+      email: "demo_test@example.com",
       sku: "AN-BOT-001",
       color: "深蓝色",
       size: "M",
@@ -555,7 +555,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "test@example.com",
+      email: "demo_test@example.com",
       sku: "AN-ACC-004",
       color: "黑色",
       size: "均码",
@@ -563,7 +563,7 @@ export async function seedEcommerce(
       selected: false,
     },
     {
-      email: "demo@xuno.app",
+      email: "demo_user@xuno.local",
       sku: "AN-DRE-002",
       color: "粉底碎花",
       size: "S",
@@ -571,7 +571,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "demo@xuno.app",
+      email: "demo_user@xuno.local",
       sku: "AN-FOT-003",
       color: "黑色",
       size: "37",
@@ -579,7 +579,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "judge@competition.ai",
+      email: "demo_judge@competition.ai",
       sku: "AN-OUT-006",
       color: "黑色",
       size: "L",
@@ -587,7 +587,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "user5@test.com",
+      email: "demo_user5@test.com",
       sku: "AN-TOP-002",
       color: "樱花粉",
       size: "S",
@@ -595,7 +595,7 @@ export async function seedEcommerce(
       selected: true,
     },
     {
-      email: "user7@test.com",
+      email: "demo_user7@test.com",
       sku: "AN-DRE-001",
       color: "黑色",
       size: "M",
@@ -640,7 +640,7 @@ export async function seedEcommerce(
   const now = new Date();
   const ordersData = [
     {
-      email: "test@example.com",
+      email: "demo_test@example.com",
       orderNo: "XN20260415001",
       status: OrderStatus.delivered,
       items: [
@@ -681,7 +681,7 @@ export async function seedEcommerce(
       expressNo: "SF1234567890",
     },
     {
-      email: "test@example.com",
+      email: "demo_test@example.com",
       orderNo: "XN20260417001",
       status: OrderStatus.paid,
       items: [
@@ -710,7 +710,7 @@ export async function seedEcommerce(
       paidAt: new Date("2026-04-17T16:20:00Z"),
     },
     {
-      email: "judge@competition.ai",
+      email: "demo_judge@competition.ai",
       orderNo: "XN20260412001",
       status: OrderStatus.shipped,
       items: [
