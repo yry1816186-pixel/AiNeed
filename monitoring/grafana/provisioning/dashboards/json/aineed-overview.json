@@ -319,8 +319,33 @@
       ]
     },
     {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+      "id": 20,
+      "title": "AI Endpoint Quota Usage (5m)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(increase(ai_quota_exceeded_total[5m]))",
+          "legendFormat": "Quota Exceeded",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(ai_service_calls_total[5m]))",
+          "legendFormat": "Total AI Calls",
+          "refId": "B"
+        }
+      ]
+    },
+    {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
       "id": 400,
       "title": "基础设施",
       "type": "row"
@@ -333,7 +358,7 @@
           "unit": "percentunit"
         }
       },
-      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 24 },
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 32 },
       "id": 13,
       "title": "CPU 使用率",
       "type": "timeseries",
@@ -353,7 +378,7 @@
           "unit": "bytes"
         }
       },
-      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 24 },
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 32 },
       "id": 14,
       "title": "内存使用",
       "type": "timeseries",
@@ -373,7 +398,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 24 },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 32 },
       "id": 15,
       "title": "DB 连接数",
       "type": "timeseries",
@@ -405,7 +430,7 @@
           "unit": "percentunit"
         }
       },
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 24 },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 32 },
       "id": 16,
       "title": "Redis 缓存命中率",
       "type": "gauge",
@@ -418,7 +443,7 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
       "id": 500,
       "title": "业务详情",
       "type": "row"
@@ -431,7 +456,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 33 },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 41 },
       "id": 17,
       "title": "订单趋势",
       "type": "timeseries",
@@ -451,7 +476,7 @@
           "unit": "s"
         }
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 33 },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 41 },
       "id": 18,
       "title": "向量搜索延迟 P95",
       "type": "timeseries",
@@ -471,7 +496,7 @@
           "unit": "short"
         }
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 33 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 41 },
       "id": 19,
       "title": "订阅活跃数",
       "type": "timeseries",
