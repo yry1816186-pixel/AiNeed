@@ -1,14 +1,23 @@
 groups:
-  - name: critical
+  - name: production-critical
     rules:
       - alert: HighErrorRate
-        expr: rate(http_requests_total{status_code=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.01
+        expr: rate(http_requests_total{status_code=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
         for: 5m
         labels:
           severity: critical
         annotations:
-          summary: "API 5xx错误率超过1%"
+          summary: "API 5xx错误率超过5%"
           description: "当前5xx错误率 {{ $value | humanizePercentage }}"
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "服务 {{ $labels.instance }} 不可达"
+          description: "服务已停止响应超过1分钟"
 
       - alert: DatabaseConnectionPoolHigh
         expr: db_connections_active > 80
@@ -47,6 +56,31 @@ groups:
         annotations:
           summary: "API P95延迟超过2秒"
           description: "当前P95延迟 {{ $value }}s"
+
+      - alert: DiskFull
+        expr: node_filesystem_avail_bytes / node_filesystem_size_bytes < 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "磁盘使用超过80%"
+
+      - alert: HighMemory
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "可用内存低于15%"
+
+      - alert: AIQuotaExceeded
+        expr: rate(ai_quota_exceeded_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AI配额超限事件检测"
+          description: "检测到AI服务配额超限"
 
       - alert: RedisMemoryHigh
         expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.8
