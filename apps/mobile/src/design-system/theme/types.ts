@@ -1,5 +1,7 @@
-export type ThemeMode = "light" | "dark" | "system";
-export type ResolvedMode = "light" | "dark";
+import type { ThemeMode as NewThemeMode, ResolvedMode } from "./themeStore";
+
+export type ThemeMode = NewThemeMode;
+export { ResolvedMode };
 
 export interface SemanticColorPalette {
   surface: {
