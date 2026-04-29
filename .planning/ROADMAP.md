@@ -92,28 +92,28 @@
 
 ## Requirement Coverage
 
-| Requirement | Phase   | Status  |
-| ----------- | ------- | ------- |
-| DEMO-01     | Phase 5 | Pending |
-| DEMO-02     | Phase 5 | Pending |
-| DEMO-03     | Phase 5 | Pending |
-| DEMO-04     | Phase 5 | Pending |
-| DEMO-05     | Phase 5 | Pending |
-| DEMO-06     | Phase 5 | Pending |
-| DEMO-07     | Phase 5 | Pending |
-| DEMO-08     | Phase 5 | Pending |
-| DEMO-09     | Phase 5 | Pending |
-| DEMO-10     | Phase 5 | Pending |
-| DEMO-11     | Phase 5 | Pending |
-| DEMO-12     | Phase 5 | Pending |
-| DEMO-13     | Phase 5 | Pending |
-| PROD-01     | Phase 6 | Pending |
-| PROD-02     | Phase 6 | Pending |
-| PROD-03     | Phase 6 | Pending |
-| PROD-04     | Phase 6 | Pending |
-| PROD-05     | Phase 6 | Pending |
-| PROD-06     | Phase 6 | Pending |
-| PROD-07     | Phase 6 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| DEMO-01     | Phase 5 | Pending  |
+| DEMO-02     | Phase 5 | Pending  |
+| DEMO-03     | Phase 5 | Complete |
+| DEMO-04     | Phase 5 | Complete |
+| DEMO-05     | Phase 5 | Pending  |
+| DEMO-06     | Phase 5 | Pending  |
+| DEMO-07     | Phase 5 | Complete |
+| DEMO-08     | Phase 5 | Pending  |
+| DEMO-09     | Phase 5 | Pending  |
+| DEMO-10     | Phase 5 | Pending  |
+| DEMO-11     | Phase 5 | Pending  |
+| DEMO-12     | Phase 5 | Pending  |
+| DEMO-13     | Phase 5 | Pending  |
+| PROD-01     | Phase 6 | Pending  |
+| PROD-02     | Phase 6 | Pending  |
+| PROD-03     | Phase 6 | Pending  |
+| PROD-04     | Phase 6 | Pending  |
+| PROD-05     | Phase 6 | Pending  |
+| PROD-06     | Phase 6 | Pending  |
+| PROD-07     | Phase 6 | Pending  |
 
 **Coverage:**
 
