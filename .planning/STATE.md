@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 20-all-SUMMARY.md
-last_updated: "2026-04-29T04:10:34.881Z"
+stopped_at: Completed 22-all-SUMMARY.md
+last_updated: "2026-04-29T05:42:30.981Z"
 last_activity: 2026-04-29
 progress:
-  total_phases: 21
-  completed_phases: 1
-  total_plans: 12
-  completed_plans: 5
-  percent: 42
+  total_phases: 22
+  completed_phases: 3
+  total_plans: 19
+  completed_plans: 11
+  percent: 58
 ---
 
 # Project State
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-27 for v2.0 milestone)
 
 **Core value:** 用户打开 App 即获伊伊主动推送的当日穿搭方案——零步决策，语音一步触达。体验壁垒替代技术壁垒。
-**Current focus:** Phase 20 — hou-duan-quan-zhan-yi-jian-qi-dong-yan-zheng
+**Current focus:** Phase 22 — kai-fang-api-nei-bu-jia-gou-yan-zheng
 **Authoritative source:** C:\AiNeed\docs\XUNO_FINAL_PLAN.md (42 frozen decisions, 10 dimensions)
 
 ## Current Position
 
-Phase: 20 (hou-duan-quan-zhan-yi-jian-qi-dong-yan-zheng) — EXECUTING
+Phase: 22 (kai-fang-api-nei-bu-jia-gou-yan-zheng) — EXECUTING
 Plan: 3 of 3
 Status: Phase complete — ready for verification
 Last activity: 2026-04-29
@@ -97,6 +97,9 @@ Critical decisions affecting current work:
 - [Phase 20]: D-01: docker-compose.local.yml inherits dev.yml infra + adds backend/ai-service containers
 - [Phase 20]: D-05: All seed emails/usernames use demo\_ prefix (e.g. demo_user@xuno.local)
 - [Phase 20]: D-09: Recommendation seed data uses provider: sandbox for anti-fraud transparency
+- [Phase 22]: [Phase 22] HMAC-SHA256 auth with timestamp+method+path+body signature, keyPrefix (first 8 chars) for DB lookup, SHA-256 hash stored (no plaintext)
+- [Phase 22]: [Phase 22] Redis sorted set sliding window for per-key rate limiting, 429+Retry-After on exceed
+- [Phase 22]: [Phase 22] Used (prisma as any) type assertion for PartnerApiKey model — Prisma client DLL locked by running processes
 
 ### Pending Todos
 
@@ -126,6 +129,9 @@ None yet.
 | Phase 14 P03  | 1min                                                    | 1 tasks | 11 files |
 | Phase 14 P04  | 3min                                                    | 1 tasks | 3 files  |
 | Phase 20 Pall | 819                                                     | 3 tasks | 16 files |
+| Phase 22 P01  | 5min                                                    | 2 tasks | 6 files  |
+| Phase 22 P02  | 3min                                                    | 2 tasks | 5 files  |
+| Phase 22 P03  | 4min                                                    | 2 tasks | 3 files  |
 
 ## Deferred Items
 
@@ -140,7 +146,7 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-04-29T04:10:34.879Z
-Stopped at: Completed 20-all-SUMMARY.md
+Last session: 2026-04-29T05:42:30.978Z
+Stopped at: Completed 22-all-SUMMARY.md
 Next: Phase 14 (品牌视觉 + 设计系统重建)
 Resume file: None

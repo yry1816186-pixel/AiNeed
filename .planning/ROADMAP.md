@@ -228,7 +228,7 @@ Plans:
 **Track D: Backend Full-Stack Verification (Phase 20-22)**
 
 - [ ] **Phase 20: 后端全栈一键启动验证** - docker-compose 一键启动所有服务，health check 全绿，seed demo 数据就绪，本地启动文档完整
-- [ ] **Phase 22: 开放 API 内部架构验证** - Partner API 鉴权+限流中间件技术验证，5 个转发端点，OpenAPI 文档
+- [x] **Phase 22: 开放 API 内部架构验证** - Partner API 鉴权+限流中间件技术验证，5 个转发端点，OpenAPI 文档 (completed 2026-04-29)
 
 **Track E: v2.0 Frontend Restructuring (Phases 13-19)**
 
@@ -429,13 +429,13 @@ Plans:
 5. Prisma schema 包含 PartnerApiKey 和 PartnerApiCallLog 模型
 6. PartnerApiCallLog 记录每次 API 调用
 
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 
-- [ ] 22-01-PLAN.md — Prisma Schema + 鉴权 Guard (HMAC-SHA256 + 时间窗口) (OAPI-01, OAPI-02)
-- [ ] 22-02-PLAN.md — 限流中间件 (Redis 滑动窗口) + Partner API 控制器 (OAPI-03, OAPI-04)
-- [ ] 22-03-PLAN.md — OpenAPI 文档 + Seed Script + 集成验证 (OAPI-05)
+- [x] 22-01-PLAN.md — Prisma Schema + 鉴权 Guard (HMAC-SHA256 + 时间窗口) (OAPI-01, OAPI-02)
+- [x] 22-02-PLAN.md — 限流中间件 (Redis 滑动窗口) + Partner API 控制器 (OAPI-03, OAPI-04)
+- [x] 22-03-PLAN.md — OpenAPI 文档 + Seed Script + 集成验证 (OAPI-05)
 
 ## Progress
 
@@ -465,7 +465,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending     |            |
 | 20. 后端全栈一键启动验证                        | 1/3            | In Progress |            |
 | 21. 移动端 Week 每周推荐端到端验证              | 2/2            | Complete    | 2026-04-29 |
-| 22. 开放 API 内部架构验证                       | 0/3            | Pending     |            |
+| 22. 开放 API 内部架构验证                       | 3/3            | Complete    | 2026-04-29 |
 
 ---
 
