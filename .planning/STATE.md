@@ -11,22 +11,22 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 
 ## Phase Status
 
-| Phase | Name                   | Status     | Progress |
-| ----- | ---------------------- | ---------- | -------- |
-| 1     | Foundation             | ✓ Complete | 100%     |
-| 2     | Onboarding             | ✓ Complete | 100%     |
-| 3     | Core AI                | ✓ Complete | 100%     |
-| 4     | Commerce + Discovery   | ✓ Complete | 100%     |
-| 5     | E2E Integration + Demo | ✓ Complete | 100%     |
-| 6     | Production + Legal     | ○ Pending  | 0%       |
+| Phase | Name                   | Status        | Progress |
+| ----- | ---------------------- | ------------- | -------- |
+| 1     | Foundation             | ✓ Complete    | 100%     |
+| 2     | Onboarding             | ✓ Complete    | 100%     |
+| 3     | Core AI                | ✓ Complete    | 100%     |
+| 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
+| 5     | E2E Integration + Demo | ✓ Complete    | 100%     |
+| 6     | Production + Legal     | ◉ In Progress | 25%      |
 
 ## Current Focus
 
-Phase 5: E2E Integration + Competition Demo — All 5 plans complete (05-01 through 05-05). Ready for verification.
+Phase 6: Production + Legal — Plan 04 (CI/CD Pipeline + Deploy Tooling) complete. 4 plans total in phase.
 
 ## Next Action
 
-Phase 5 execution complete. Run `/gsd-verify-work 5` to validate all 13 DEMO requirements. Or proceed to Phase 6: Production + Legal.
+Continue Phase 6 execution with remaining plans (06-01 through 06-03).
 
 ## Decisions
 
@@ -45,6 +45,9 @@ Phase 5 execution complete. Run `/gsd-verify-work 5` to validate all 13 DEMO req
 | TTS text-only fallback with status field             | Returns TtsFallbackResult with audio_unavailable for mobile UI control | 2026-04-29 |
 | E2E runner adopts check()/record_result() pattern    | Consistent with existing demo scripts for maintainability              | 2026-04-29 |
 | 3-gate pre-run validation with distinct exit codes   | 2=preflight fail, 3=warmup fail, 1=checks fail, 0=all pass             | 2026-04-29 |
+| Staging deploys on develop (GitFlow convention)      | Standard GitFlow: develop→staging, v\* tags→production                 | 2026-04-29 |
+| Verify-deploy.sh with configurable timeout           | 120s default, 10s retry, supports slow-starting AI service             | 2026-04-29 |
+| 4-scenario rollback runbook                          | Image, config, full infra, blue-green slot with decision criteria      | 2026-04-29 |
 
 ## Performance
 
@@ -53,7 +56,8 @@ Phase 5 execution complete. Run `/gsd-verify-work 5` to validate all 13 DEMO req
 - **05-03:** 10min, 2 tasks, 7 files | Commits: f058e509, 34d4b709
 - **05-04:** 10min, 3 tasks, 9 files | Commits: 2e17ef74, 58912f8b, faf3285d
 - **05-05:** 7min, 2 tasks, 3 files | Commits: eb98d69b, d7245d90
+- **06-04:** 5min, 2 tasks, 2 files | Commit: cfdaa2a0
 
 ---
 
-_State updated: 2026-04-29 after Phase 5 Plan 05 execution_
+_State updated: 2026-04-29 after Phase 6 Plan 04 execution_
