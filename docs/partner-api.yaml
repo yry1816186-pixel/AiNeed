@@ -1,0 +1,199 @@
+openapi: "3.0.3"
+info:
+  title: "XUNO Partner API — Internal Architecture Verification"
+  description: >
+    **Internal Use Only · Not Production Ready** — This API is a technical verification
+    of partner API architecture (authentication + rate limiting). Not intended for production use.
+  version: "0.1.0-internal"
+
+servers:
+  - url: "http://localhost:3001/api/v1"
+    description: "Local development (Internal Use Only)"
+
+security:
+  - PartnerAuth: []
+
+paths:
+  /partner/recommendation:
+    post:
+      summary: "Get outfit recommendations"
+      description: "**[Internal Use Only]** Forward recommendation request to internal orchestrator."
+      tags: [Recommendations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerRecommendationRequest"
+      responses:
+        "200":
+          description: "Recommendation results"
+        "401":
+          description: "Authentication failure"
+        "429":
+          description: "Rate limit exceeded"
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: "Seconds until rate limit window resets"
+        "500":
+          description: "Server error"
+
+  /partner/try-on:
+    post:
+      summary: "Create virtual try-on request"
+      description: "**[Internal Use Only]** Forward try-on request to internal TryOnService."
+      tags: [TryOn]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerTryOnRequest"
+      responses:
+        "200":
+          description: "Try-on result"
+        "401":
+          description: "Authentication failure"
+        "429":
+          description: "Rate limit exceeded"
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+        "500":
+          description: "Server error"
+
+  /partner/body-analysis:
+    post:
+      summary: "Analyze body shape from photo"
+      description: "**[Internal Use Only]** Forward body analysis request to AI integration service."
+      tags: [AI Analysis]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerImageRequest"
+      responses:
+        "200":
+          description: "Body analysis result"
+        "401":
+          description: "Authentication failure"
+        "429":
+          description: "Rate limit exceeded"
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+        "500":
+          description: "Server error"
+
+  /partner/color-analysis:
+    post:
+      summary: "Analyze color season from photo"
+      description: "**[Internal Use Only]** Forward color analysis request to AI integration service."
+      tags: [AI Analysis]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerImageRequest"
+      responses:
+        "200":
+          description: "Color season analysis result"
+        "401":
+          description: "Authentication failure"
+        "429":
+          description: "Rate limit exceeded"
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+        "500":
+          description: "Server error"
+
+  /partner/wardrobe/tagging:
+    post:
+      summary: "Search and tag wardrobe items"
+      description: "**[Internal Use Only]** Forward wardrobe tagging request to ClothingService."
+      tags: [Wardrobe]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerWardrobeTaggingRequest"
+      responses:
+        "200":
+          description: "Search/tagging results"
+        "401":
+          description: "Authentication failure"
+        "429":
+          description: "Rate limit exceeded"
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+        "500":
+          description: "Server error"
+
+components:
+  securitySchemes:
+    PartnerAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: >
+        HMAC-SHA256 authentication. Requires three headers:
+        - **X-Api-Key**: Full API key (used for HMAC secret)
+        - **X-Timestamp**: Unix timestamp in milliseconds
+        - **X-Signature**: HMAC-SHA256(timestamp + method + path + body, apiKey)
+
+  schemas:
+    PartnerRecommendationRequest:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: string
+        occasion:
+          type: string
+        season:
+          type: string
+        limit:
+          type: integer
+          default: 20
+
+    PartnerTryOnRequest:
+      type: object
+      required: [userId, photoId, itemId]
+      properties:
+        userId:
+          type: string
+        photoId:
+          type: string
+        itemId:
+          type: string
+
+    PartnerImageRequest:
+      type: object
+      required: [imageBase64]
+      properties:
+        imageBase64:
+          type: string
+          description: "Base64-encoded image"
+
+    PartnerWardrobeTaggingRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+        category:
+          type: string
+        limit:
+          type: integer
+          default: 20
