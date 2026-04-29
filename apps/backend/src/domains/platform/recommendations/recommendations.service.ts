@@ -5,6 +5,7 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
 import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
+import { DiversityScorerService } from "./services/diversity-scorer.service";
 
 interface UserProfile {
   bodyType?: BodyType | null;
@@ -186,7 +187,11 @@ const OUTFIT_TEMPLATES: Array<{
 export class RecommendationsService {
   private readonly logger = new Logger(RecommendationsService.name);
 
-  constructor(private prisma: PrismaService, private cacheService: CacheService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cacheService: CacheService,
+    private diversityScorer: DiversityScorerService
+  ) {}
 
   // ==================== 主推荐入口 ====================
 
@@ -239,6 +244,21 @@ export class RecommendationsService {
 
         // 多样性重排：避免同类别/同品牌过于集中
         const diversified = this.applyDiversityReranking(scoredItems);
+
+        const diversityScore = this.diversityScorer.scoreDiversity(
+          diversified.map((d) => ({
+            category: d.item.category,
+            styleTags: (d.item.attributes as Record<string, unknown>)?.styleTags as
+              | string[]
+              | undefined,
+            price: Number(d.item.price),
+          }))
+        );
+        this.logger.debug(
+          `Recommendation diversity score: ${diversityScore.toFixed(3)} (${
+            diversified.length
+          } items)`
+        );
 
         return diversified.slice(0, limit);
       },

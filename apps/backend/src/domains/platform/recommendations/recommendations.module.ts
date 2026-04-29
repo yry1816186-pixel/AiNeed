@@ -30,6 +30,7 @@ import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
 import { BodyMetricsService } from "./services/body-metrics.service";
+import { DiversityScorerService } from "./services/diversity-scorer.service";
 import { GoldenRecommendationService } from "./services/golden-recommendation.service";
 import { Neo4jService } from "./services/neo4j.service";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
@@ -92,6 +93,8 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     RuleEngineService,
     // Body metrics
     BodyMetricsService,
+    // Diversity scoring
+    DiversityScorerService,
     // Profile completeness
     ProfileCompletenessService,
     // Wardrobe complementary recommendations
@@ -126,6 +129,8 @@ import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./
     RuleEngineService,
     // Wardrobe complementary
     WardrobeComplementaryService,
+    // Diversity scoring
+    DiversityScorerService,
   ],
 })
 export class RecommendationsModule {}
