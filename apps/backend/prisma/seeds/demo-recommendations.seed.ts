@@ -42,6 +42,8 @@ export async function seedDemoRecommendations(
       data: {
         userId: demoUser.id,
         algorithm: "demo-sandbox",
+        is_demo: true,
+        provider: "sandbox",
         context: {
           occasion: OCCASIONS[i],
           date: date.toISOString().split("T")[0],
@@ -71,6 +73,8 @@ export async function seedDemoRecommendations(
         score: 0.85 + i * 0.02,
         isViewed: i < 3,
         isLiked: i === 0,
+        is_demo: true,
+        provider: "sandbox",
       },
     });
 
