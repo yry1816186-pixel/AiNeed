@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T12:45Z
+**Updated:** 2026-04-29T12:47Z
 
 ## Project Reference
 
@@ -18,15 +18,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 | 3     | Core AI                | ✓ Complete    | 100%     |
 | 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
 | 5     | E2E Integration + Demo | ✓ Complete    | 100%     |
-| 6     | Production + Legal     | ◉ In Progress | 56%      |
+| 6     | Production + Legal     | ◉ In Progress | 67%      |
 
 ## Current Focus
 
-Phase 6: Production + Legal — Plans 01, 02, 03, 04, 05, 08 complete. Security hardening, rate limiting, legal docs, API documentation, backup/restore done.
+Phase 6: Production + Legal — Plans 01, 02, 03, 04, 05, 06, 08 complete. Security hardening, rate limiting, legal docs, API documentation, backup/restore, observability done.
 
 ## Next Action
 
-Continue Phase 6 execution with remaining plans (06-06, 06-07, 06-09).
+Continue Phase 6 execution with remaining plans (06-07, 06-09).
 
 ## Decisions
 
@@ -55,6 +55,9 @@ Continue Phase 6 execution with remaining plans (06-06, 06-07, 06-09).
 | pnpm audit deferred to network-accessible env            | npmjs.org timeout from China; overrides provide compensating controls  | 2026-04-29 |
 | Curated YAML spec alongside auto-generated JSON          | Human-readable YAML with rate limit docs + machine-generated JSON      | 2026-04-29 |
 | Swagger UI already correctly env-gated                   | Verified NODE_ENV gate in main.ts — no code change needed              | 2026-04-29 |
+| HighErrorRate threshold 5% for production                | Plan spec; 1% was overly aggressive for initial production launch      | 2026-04-29 |
+| AI quota panel shows exceeded events + total call rate   | Dual metric view provides operational context for quota management     | 2026-04-29 |
+| Retained domain-specific alerts alongside standard ones  | BruteForceDetected, TryOnServiceDown, PaymentFailureSpike remain       | 2026-04-29 |
 | Production backup uses prod-\* container prefix          | Matches docker-compose.production.yml actual names                     | 2026-04-29 |
 | Neo4j backup/restore gracefully skips when unavailable   | Optional service not in production compose yet                         | 2026-04-29 |
 | MinIO off-instance backup storage                        | S3-compatible storage already deployed, avoids separate S3 dependency  | 2026-04-29 |
@@ -71,7 +74,8 @@ Continue Phase 6 execution with remaining plans (06-06, 06-07, 06-09).
 - **06-03:** 21min, 2 tasks, 6 files | Commits: f7fd3767, 35bfd40f
 - **06-08:** 4min, 2 tasks, 2 files | Commits: 561e56d4, 28f5ea23
 - **06-05:** 5min, 2 tasks, 4 files | Commits: 8b8cbcd0, a5c5ec7e
+- **06-06:** 8min, 2 tasks, 4 files | Commits: 24c7f0be, b7b05825
 
 ---
 
-_State updated: 2026-04-29 after Phase 6 Plan 05 execution_
+_State updated: 2026-04-29 after Phase 6 Plan 06 execution_
