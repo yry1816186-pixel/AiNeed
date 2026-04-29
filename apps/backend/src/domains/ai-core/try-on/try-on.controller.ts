@@ -23,6 +23,8 @@ import {
 } from "@nestjs/swagger";
 import type { Response } from "express";
 
+import { Throttle } from "@nestjs/throttler";
+
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
@@ -40,6 +42,7 @@ export class TryOnController {
   constructor(private readonly tryOnService: TryOnService) {}
 
   @Post()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("try-on")
   @ApiOperation({
@@ -235,6 +238,7 @@ export class TryOnController {
   }
 
   @Post(":id/retry")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("try-on")
   @ApiOperation({

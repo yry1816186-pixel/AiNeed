@@ -194,6 +194,7 @@ export class AiStylistController {
   }
 
   @Post("dialog/chat")
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
   @ApiOperation({
@@ -348,6 +349,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/messages")
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
   @ApiOperation({
@@ -474,6 +476,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/resolve")
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
   @ApiOperation({
@@ -669,6 +672,7 @@ export class AiStylistController {
   }
 
   @Post("chat")
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
   @ApiOperation({

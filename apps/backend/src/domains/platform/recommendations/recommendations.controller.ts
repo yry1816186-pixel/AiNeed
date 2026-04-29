@@ -126,6 +126,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @CacheKey("recommendations:personalized")
   @CacheTTL(180)
   @ApiBearerAuth()
