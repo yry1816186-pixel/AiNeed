@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T17:10Z
+**Updated:** 2026-04-29T17:28Z
 
 ## Project Reference
 
@@ -17,16 +17,16 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 | 2     | Onboarding             | ✓ Complete    | 100%     |
 | 3     | Core AI                | ✓ Complete    | 100%     |
 | 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
-| 5     | E2E Integration + Demo | ○ In Progress | 40%      |
+| 5     | E2E Integration + Demo | ○ In Progress | 60%      |
 | 6     | Production + Legal     | ○ Pending     | 0%       |
 
 ## Current Focus
 
-Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02 complete)
+Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02, 05-03 complete)
 
 ## Next Action
 
-Run `/gsd-execute-phase 5` to continue with Plan 05-03 (3-run rehearsal testing).
+Run `/gsd-execute-phase 5` to continue with Plan 05-04 (E2E script automation).
 
 ## Decisions
 
@@ -38,12 +38,16 @@ Run `/gsd-execute-phase 5` to continue with Plan 05-03 (3-run rehearsal testing)
 | ScreenErrorBoundaries.ts centralized config          | Per-screen ErrorBoundary config in single file for maintainability     | 2026-04-29 |
 | Today/Discover exports converted to wrapped defaults | Cleaner lazy-load integration without .then() remapping in navigator   | 2026-04-29 |
 | Onboarding step screens get individual ErrorBoundary | Granular crash isolation — one step crash doesn't cascade whole wizard | 2026-04-29 |
+| Demo toggle in SettingsScreen Developer section      | **DEV** only exposure, long-press version easter egg as fallback       | 2026-04-29 |
+| Seed profiles as compile-time constants              | Zero I/O overhead vs runtime JSON loading for demo performance         | 2026-04-29 |
+| Demo API interceptor mock+block pattern              | Returns cached data for reads, blocks mutations during demo mode       | 2026-04-29 |
 
 ## Performance
 
 - **05-01:** 10min, 2 tasks, 6 files | Commits: 6e0531fb, 03f19d34
 - **05-02:** 13min, 2 tasks, 8 files | Commit: c4d773df
+- **05-03:** 10min, 2 tasks, 7 files | Commits: f058e509, 34d4b709
 
 ---
 
-_State updated: 2026-04-29 after Phase 5 Plan 02 execution_
+_State updated: 2026-04-29 after Phase 5 Plan 03 execution_

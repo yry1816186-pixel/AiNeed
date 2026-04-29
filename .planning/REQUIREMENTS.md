@@ -17,10 +17,10 @@ Requirements for ongoing development. Each maps to roadmap phases.
 - [ ] **DEMO-06**: GLM-4-Flash auto-fails over to Qwen within 5s timeout
 - [x] **DEMO-07**: Offline demo mode displays pre-cached data when network unavailable
 - [x] **DEMO-08**: Error boundaries prevent single-component crashes from killing the app
-- [ ] **DEMO-09**: Demo mode toggle enables demo data + disables real API calls
+- [x] **DEMO-09**: Demo mode toggle enables demo data + disables real API calls
 - [ ] **DEMO-10**: Pre-recorded demo video available as Plan B fallback
 - [ ] **DEMO-11**: PPT screenshot walkthrough available as Plan C fallback
-- [ ] **DEMO-12**: ProfileDebugPanel switches between 10+ diverse profiles seamlessly
+- [x] **DEMO-12**: ProfileDebugPanel switches between 10+ diverse profiles seamlessly
 - [ ] **DEMO-13**: RecommendationFunnel displays all 6 layers correctly
 
 ### Production & Legal (Phase 6)

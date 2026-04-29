@@ -102,10 +102,10 @@
 | DEMO-06     | Phase 5 | Pending  |
 | DEMO-07     | Phase 5 | Complete |
 | DEMO-08     | Phase 5 | Complete |
-| DEMO-09     | Phase 5 | Pending  |
+| DEMO-09     | Phase 5 | Complete |
 | DEMO-10     | Phase 5 | Pending  |
 | DEMO-11     | Phase 5 | Pending  |
-| DEMO-12     | Phase 5 | Pending  |
+| DEMO-12     | Phase 5 | Complete |
 | DEMO-13     | Phase 5 | Pending  |
 | PROD-01     | Phase 6 | Pending  |
 | PROD-02     | Phase 6 | Pending  |
