@@ -383,7 +383,14 @@ Plans: (none yet)
 7. 完整本地启动步骤文档（README 或 docs/local-setup.md），明确标注 demo/sandbox 模式服务
 8. 反欺诈约束满足：不得暗示未实现功能已可用、骨架/placeholder 标注"开发中"、API 响应含 provider 字段
 
-Plans: (none yet)
+**Plans:** 4 plans (3 executed + 1 gap closure)
+
+Plans:
+
+- [x] 20-01-PLAN.md — Docker 化全栈环境 (docker-compose.local.yml 一键启动) ✓ 2026-04-29
+- [x] 20-02-PLAN.md — Seed 数据系统改造 (is_demo 标记 + demo 前缀 + 7 天推荐) ✓ 2026-04-29
+- [x] 20-03-PLAN.md — Health Check 脚本 + 本地开发文档 ✓ 2026-04-29
+- [ ] 20-04-PLAN.md — [GAP CLOSURE] RecommendationBatch/StyleRecommendation schema 添加 is_demo + provider 字段
 
 ### Phase 21: 移动端 Week 每周推荐端到端验证
 
