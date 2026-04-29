@@ -49,7 +49,7 @@ class EmbeddingService:
         self._processor = None
         model_display = self.config.model_name
         if "chinese-fashion-clip" in model_display:
-            model_display = f"ChineseFashionCLIP ({model_display})"
+            model_display = f"FashionSigLIP local ({model_display})"
         elif "fashionSigLIP" in model_display:
             model_display = f"FashionSigLIP ({model_display})"
         logger.info(f"EmbeddingService initialized with model={model_display}, device={self.config.device}")

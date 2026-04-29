@@ -86,7 +86,7 @@ class IntelligentStyleRecommender:
         
         self.clip_model = clip_model
         if self.clip_model is None:
-            model_path = self.config.get("clip_model_path", "./models/fashion_clip")
+            model_path = self.config.get("clip_model_path", "./ml/models/chinese-fashion-clip/best_model")
             if Path(model_path).exists():
                 try:
                     self.clip_model = FashionCLIPInference(model_path)

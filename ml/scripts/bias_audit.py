@@ -1,7 +1,7 @@
 """
 Bias Audit Script for Recommendation System
 
-Audits recommendation results across 5 diverse user profiles to detect
+Audits recommendation results across 10 diverse user profiles to detect
 algorithmic bias. Measures whether different profiles receive meaningfully
 different recommendations for the same scene.
 
@@ -14,6 +14,7 @@ Output:
   - Per-profile recommendation summary
   - Cross-profile similarity matrix
   - Bias score (0 = no bias, 1 = all profiles get same results)
+  - Diversity score (0 = no diversity, 1 = maximal diversity)
   - PASS/WARN/FAIL verdict
 
 Usage:
@@ -40,7 +41,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 5 test profiles covering diverse body types, style expressions, and scenarios
+# 10 test profiles covering diverse body types, style expressions, and scenarios
 PROFILES = {
     "default": {
         "bodyType": "hourglass",
@@ -66,6 +67,31 @@ PROFILES = {
         "bodyType": "inverted-triangle",
         "styleExpression": "romantic",
         "primaryScenarios": ["date", "vacation"],
+    },
+    "creative_youth": {
+        "bodyType": "triangle",
+        "styleExpression": "streetwear",
+        "primaryScenarios": ["campus", "casual"],
+    },
+    "plus_size_warm": {
+        "bodyType": "oval",
+        "styleExpression": "bohemian",
+        "primaryScenarios": ["vacation", "party"],
+    },
+    "mature_elegant": {
+        "bodyType": "apple",
+        "styleExpression": "classic",
+        "primaryScenarios": ["business", "formal"],
+    },
+    "tall_athletic": {
+        "bodyType": "athletic",
+        "styleExpression": "sporty",
+        "primaryScenarios": ["workout", "casual"],
+    },
+    "petite_romantic": {
+        "bodyType": "petite",
+        "styleExpression": "romantic",
+        "primaryScenarios": ["date", "wedding"],
     },
 }
 
@@ -271,12 +297,13 @@ def run_audit(api_url: str, scene: str, limit: int = 20) -> Dict[str, Any]:
 
     # Compute bias score
     bias_score = compute_bias_score(profile_results, profile_names)
-    logger.info(f"Bias score: {bias_score:.4f}")
+    diversity_score = round(1.0 - bias_score, 4)
+    logger.info(f"Bias score: {bias_score:.4f} (diversity score: {diversity_score:.4f})")
 
-    # Determine verdict
-    if bias_score < 0.3:
+    # Determine verdict — threshold for 10 profiles: bias < 0.2 (diversity > 0.8)
+    if bias_score < 0.2:
         verdict = "PASS"
-    elif bias_score <= 0.6:
+    elif bias_score <= 0.5:
         verdict = "WARN"
     else:
         verdict = "FAIL"
@@ -305,11 +332,12 @@ def run_audit(api_url: str, scene: str, limit: int = 20) -> Dict[str, Any]:
         "profile_summaries": profile_summaries,
         "similarity_matrix": similarity_matrix,
         "bias_score": round(bias_score, 4),
+        "diversity_score": diversity_score,
         "verdict": verdict,
         "thresholds": {
-            "pass": "< 0.3",
-            "warn": "0.3 - 0.6",
-            "fail": "> 0.6",
+            "pass": "bias < 0.2 (diversity > 0.8)",
+            "warn": "bias 0.2 - 0.5",
+            "fail": "bias > 0.5",
         },
     }
 
@@ -339,11 +367,12 @@ def main():
 
     # Print summary
     print("\n" + "=" * 60)
-    print("BIAS AUDIT SUMMARY")
+    print("BIAS AUDIT SUMMARY (10 profiles)")
     print("=" * 60)
     print(f"Scene: {report['scene']}")
     print(f"Profiles tested: {report['profiles_tested']}")
     print(f"Bias score: {report['bias_score']:.4f}")
+    print(f"Diversity score: {report['diversity_score']:.4f}")
     print(f"Verdict: {report['verdict']}")
     print("=" * 60)
 

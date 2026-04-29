@@ -485,7 +485,7 @@ class FashionKnowledgeRAG:
         """Get embedding service"""
         if self._embedding_service is None:
             self._embedding_service = EmbeddingService(
-                model_type="fashion_clip",
+                model_type="fashion_siglip",
                 config=EmbeddingConfig(
                     model_name=self.config.embedding_model,
                     device=self.config.embedding_device

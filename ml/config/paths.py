@@ -24,14 +24,10 @@ class ModelPaths:
 
     @staticmethod
     def get_clip_model_path() -> Path:
-        """获取CLIP模型路径（优先ChineseFashionCLIP > clip_fashion > 原始CLIP）"""
+        """获取FashionSigLIP模型路径（优先ChineseFashionCLIP本地微调 > 原始CLIP缓存）"""
         chinese_clip_path = ML_MODELS_ROOT / "chinese-fashion-clip" / "best_model"
         if chinese_clip_path.exists() and (chinese_clip_path / "config.json").exists():
             return chinese_clip_path
-
-        fashion_clip_path = ML_MODELS_ROOT / "clip_fashion"
-        if fashion_clip_path.exists() and (fashion_clip_path / "model.safetensors").exists():
-            return fashion_clip_path
 
         clip_cache = ML_MODELS_ROOT / "clip"
         return clip_cache
@@ -76,14 +72,11 @@ class ModelPaths:
 
     @staticmethod
     def get_fashion_clip_path() -> Optional[Path]:
-        """获取FashionCLIP微调模型路径（优先ChineseFashionCLIP）"""
+        """获取FashionSigLIP微调模型路径（优先ChineseFashionCLIP本地微调）"""
         chinese_clip_path = ML_MODELS_ROOT / "chinese-fashion-clip" / "best_model"
         if chinese_clip_path.exists() and (chinese_clip_path / "config.json").exists():
             return chinese_clip_path
 
-        path = ML_MODELS_ROOT / "clip_fashion"
-        if path.exists() and (path / "model.safetensors").exists():
-            return path
         return None
 
     @staticmethod
@@ -132,8 +125,8 @@ def check_model_availability() -> dict:
         "sam_path": str(ModelPaths.get_sam_model_path() or "未找到"),
         "glm_api": bool(os.getenv("GLM_API_KEY")),
         "glm_api_endpoint": os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4"),
-        "fashion_clip": ModelPaths.get_fashion_clip_path() is not None,
-        "fashion_clip_path": str(ModelPaths.get_fashion_clip_path() or "未找到"),
+        "fashion_siglip": ModelPaths.get_fashion_clip_path() is not None,
+        "fashion_siglip_path": str(ModelPaths.get_fashion_clip_path() or "未找到"),
     }
 
 
