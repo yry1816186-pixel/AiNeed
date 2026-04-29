@@ -23,6 +23,7 @@ import { authApi } from "../../../services/api/auth.api";
 import { apiClient } from "../../../services/api/client";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useTranslation } from "../../../i18n";
+import { useDemoStore } from "../../../shared/stores/demoStore";
 
 import type { RootStackParamList } from "../../../types/navigation";
 import { DesignTokens } from "../../../design-system/theme";
@@ -34,20 +35,22 @@ export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const { user, logout } = useAuthStore();
   const { isDark, setMode } = useTheme();
+  const demoMode = useDemoStore((s) => s.demoMode);
+  const enableDemoMode = useDemoStore((s) => s.enableDemoMode);
+  const disableDemoMode = useDemoStore((s) => s.disableDemoMode);
+  const preloadedSeedIds = useDemoStore((s) => s.preloadedSeedIds);
 
   const [outfitReminders, setOutfitReminders] = useState(true);
   const [newArrivals, setNewArrivals] = useState(true);
   const [sales, setSales] = useState(false);
   const [updatingPrefs, setUpdatingPrefs] = useState(false);
 
-  // Password modal state
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
 
-  // Delete account confirmation
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
 
@@ -68,11 +71,37 @@ export const SettingsScreen: React.FC = () => {
   }, [user]);
 
   const handleDarkModeToggle = useCallback(
-    async (value: boolean) => {
-      setMode(value ? "dark" : "light");
+    async (_value: boolean) => {
+      setMode("light");
     },
     [setMode]
   );
+
+  const handleDemoModeToggle = useCallback(
+    (value: boolean) => {
+      if (value) {
+        enableDemoMode();
+        Alert.alert(
+          "演示模式已启用",
+          "已加载10个预设Profile，API调用将使用缓存数据，不会发送真实请求。"
+        );
+      } else {
+        disableDemoMode();
+        Alert.alert("演示模式已关闭", "已恢复正常模式，API调用恢复正常。");
+      }
+    },
+    [enableDemoMode, disableDemoMode]
+  );
+
+  const [devTapCount, setDevTapCount] = useState(0);
+  const handleVersionLongPress = useCallback(() => {
+    setDevTapCount((c) => c + 1);
+    if (devTapCount + 1 >= 5 && !demoMode) {
+      setDevTapCount(0);
+      enableDemoMode();
+      Alert.alert("开发者模式", "已通过版本号长按启用演示模式");
+    }
+  }, [devTapCount, demoMode, enableDemoMode]);
 
   const handleNotificationToggle = useCallback(
     async (key: "outfitReminders" | "newArrivals" | "sales", value: boolean) => {
@@ -396,9 +425,37 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>寻裳 v1.0.0</Text>
-        </View>
+        {__DEV__ && (
+          <>
+            <Text style={styles.sectionTitle}>Developer</Text>
+            <View style={styles.section}>
+              <View style={styles.settingItem}>
+                <Ionicons name="flask-outline" size={22} color={colors.textSecondary} />
+                <View style={styles.settingTextGroup}>
+                  <Text style={styles.settingText}>Demo Mode</Text>
+                  {demoMode && (
+                    <Text style={styles.settingHint}>
+                      已加载 {preloadedSeedIds.length} 个预设 Profile
+                    </Text>
+                  )}
+                </View>
+                <Switch
+                  value={demoMode}
+                  onValueChange={handleDemoModeToggle}
+                  trackColor={{ false: colors.placeholderBg, true: colors.primary }}
+                  thumbColor={colors.surface}
+                  accessibilityLabel="Demo Mode"
+                />
+              </View>
+            </View>
+          </>
+        )}
+
+        <TouchableOpacity onLongPress={handleVersionLongPress} activeOpacity={0.8}>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>寻裳 v1.0.0</Text>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Change Password Modal */}
@@ -525,6 +582,12 @@ const styles = StyleSheet.create({
   },
   settingItemLast: { borderBottomWidth: 0 },
   settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
+  settingTextGroup: { flex: 1 },
+  settingHint: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: "center",

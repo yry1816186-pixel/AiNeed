@@ -8,6 +8,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useShallow } from "zustand/react/shallow";
 import { ErrorBoundary } from "./src/shared/components/ErrorBoundary";
 import { RootNavigator } from "./src/navigation/RootNavigator";
+import { DemoModeBanner } from "./src/shared/components/common/DemoModeBanner";
+import { useDemoStore } from "./src/shared/stores/demoStore";
 import {
   navigationRef,
   setNavigationReady,
@@ -55,13 +57,8 @@ const DEV_TEST_ACCOUNT_CONFIG = {
 };
 
 function ThemedStatusBar() {
-  const { isDark, colors } = useTheme();
-  return (
-    <StatusBar
-      barStyle={isDark ? "light-content" : "dark-content"}
-      backgroundColor={colors.surface}
-    />
-  );
+  const { colors } = useTheme();
+  return <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />;
 }
 
 function SplashScreen() {
@@ -102,6 +99,8 @@ export default function App() {
     }))
   );
 
+  const demoMode = useDemoStore((s) => s.demoMode);
+
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
   const pendingDeepLinkUrlRef = useRef<string | null>(null);
@@ -131,6 +130,14 @@ export default function App() {
       pendingDeepLinkUrlRef.current = null;
     }
   }, [isAuthenticated, isLoading]);
+
+  // Demo mode side effects: suppress analytics & crash reporting
+  useEffect(() => {
+    if (demoMode) {
+      analytics.destroy();
+      console.log("[DemoMode] Analytics & crash reporting suppressed");
+    }
+  }, [demoMode]);
 
   useEffect(() => {
     if (
@@ -284,6 +291,7 @@ export default function App() {
           onStateChange={navigationReadyHandler.onStateChange}
         >
           <ThemedStatusBar />
+          <DemoModeBanner />
           <OfflineBanner />
           <RootNavigator isAuthenticated={isAuthenticated} />
         </NavigationContainer>
