@@ -155,6 +155,29 @@ check_port "Backend API" 3001 "/api/docs"
 check_port "AI Service" 8002 "/health"
 
 # ==========================================
+# 5. 预缓存状态检查
+# ==========================================
+echo ""
+echo "--- 预缓存状态 ---"
+echo ""
+
+STATUS_JSON=$(curl -sf "http://localhost:3001/api/v1/demo/pre-cache/status" --max-time 5 2>/dev/null || echo "{}")
+
+if [ "$STATUS_JSON" != "{}" ]; then
+  ALL_REQUIRED=$(echo "$STATUS_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('allRequiredPresent', False))" 2>/dev/null || echo "False")
+  REDIS_KEYS=$(echo "$STATUS_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('redisKeys', 0))" 2>/dev/null || echo "0")
+
+  if [ "$ALL_REQUIRED" = "True" ]; then
+    check "预缓存就绪状态" PASS "allRequiredPresent=true, ${REDIS_KEYS} keys"
+  else
+    MISSING=$(echo "$STATUS_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('missingKeys', [])))" 2>/dev/null || echo "?")
+    check "预缓存就绪状态" WARN "allRequiredPresent=false, 缺失 ${MISSING} keys"
+  fi
+else
+  check "预缓存状态端点" WARN "Backend API 未响应，跳过预缓存检查"
+fi
+
+# ==========================================
 # 总结
 # ==========================================
 echo ""

@@ -95,10 +95,15 @@ export class DemoCacheService {
       ttsPhrases,
       sceneConfigs,
       errors,
+      offlineReady: this.calculateOfflineReady(recommendations, ttsPhrases, sceneConfigs),
     };
   }
 
   async getStatus(): Promise<{
+    redisKeys: number;
+    allRequiredPresent: boolean;
+    missingKeys: string[];
+    ttlRemaining: Record<string, number>;
     recommendations: number;
     ttsPhrases: number;
     sceneConfigs: number;
@@ -108,6 +113,8 @@ export class DemoCacheService {
     let recommendations = 0;
     let ttsPhrases = 0;
     let sceneConfigs = 0;
+    const missingKeys: string[] = [];
+    const ttlRemaining: Record<string, number> = {};
 
     try {
       const seedData = this.loadSeedData();
@@ -118,6 +125,16 @@ export class DemoCacheService {
           const exists = await this.redisService.exists(key);
           if (exists) {
             recommendations++;
+            try {
+              const ttl = await this.redisService.ttl(key);
+              if (ttl > 0) {
+                ttlRemaining[key] = ttl;
+              }
+            } catch {
+              // ttl not available
+            }
+          } else {
+            missingKeys.push(key);
           }
         }
       }
@@ -131,6 +148,16 @@ export class DemoCacheService {
         const exists = await this.redisService.exists(key);
         if (exists) {
           ttsPhrases++;
+          try {
+            const ttl = await this.redisService.ttl(key);
+            if (ttl > 0) {
+              ttlRemaining[key] = ttl;
+            }
+          } catch {
+            // ttl not available
+          }
+        } else {
+          missingKeys.push(key);
         }
       }
     } catch (err) {
@@ -141,6 +168,14 @@ export class DemoCacheService {
       const scenesKey = `${this.redisPrefix}scenes`;
       const exists = await this.redisService.exists(scenesKey);
       if (exists) {
+        try {
+          const ttl = await this.redisService.ttl(scenesKey);
+          if (ttl > 0) {
+            ttlRemaining[scenesKey] = ttl;
+          }
+        } catch {
+          // ttl not available
+        }
         const raw = await this.redisService.get(scenesKey);
         if (raw) {
           const parsed = JSON.parse(raw);
@@ -150,18 +185,27 @@ export class DemoCacheService {
             ? Object.keys(parsed).length
             : 0;
         }
+      } else {
+        missingKeys.push(scenesKey);
       }
     } catch (err) {
       this.logger.warn(`检查场景配置缓存状态失败: ${err}`);
     }
 
     const total = recommendations + ttsPhrases + sceneConfigs;
+    const redisKeys = total;
+    const allRequiredPresent = missingKeys.length === 0;
+
     return {
+      redisKeys,
+      allRequiredPresent,
+      missingKeys,
+      ttlRemaining,
       recommendations,
       ttsPhrases,
       sceneConfigs,
       total,
-      status: total > 0 ? "initialized" : "empty",
+      status: allRequiredPresent ? "ready" : total > 0 ? "partial" : "empty",
     };
   }
 
@@ -294,6 +338,23 @@ export class DemoCacheService {
     await this.redisService.setex(key, this.cacheTtl, JSON.stringify(scenes));
     this.logger.log(`场景配置预缓存完成: ${scenes.length} 个场景`);
     return scenes.length;
+  }
+
+  private calculateOfflineReady(
+    recommendations: number,
+    ttsPhrases: number,
+    sceneConfigs: number
+  ): boolean {
+    const seedData = this.loadSeedData();
+    const totalExpectedRecs = seedData.users.length * DEMO_SCENES.length;
+    const totalExpectedTts = TTS_PHRASES.length;
+    const totalExpectedScenes = 1;
+
+    return (
+      recommendations >= totalExpectedRecs &&
+      ttsPhrases >= totalExpectedTts &&
+      sceneConfigs >= totalExpectedScenes
+    );
   }
 
   private loadSeedData(): SeedData {
