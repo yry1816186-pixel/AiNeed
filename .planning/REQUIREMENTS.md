@@ -29,8 +29,8 @@ Requirements for ongoing development. Each maps to roadmap phases.
 - [ ] **PROD-02**: Marqo-FashionSigLIP replaces FashionCLIP in recommendation pipeline
 - [ ] **PROD-03**: Diversity scoring layer ensures varied recommendations across profiles
 - [ ] **PROD-04**: Legal TOS and privacy policy documents finalized
-- [ ] **PROD-05**: Security audit findings from audit-output.json addressed
-- [ ] **PROD-06**: Production environment configuration separated from dev/staging
+- [x] **PROD-05**: Security audit findings from audit-output.json addressed
+- [x] **PROD-06**: Production environment configuration separated from dev/staging
 - [ ] **PROD-07**: Rate limiting applied to try-on and recommendation endpoints
 
 ## v2 Requirements
@@ -85,8 +85,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | PROD-02     | Phase 6 | Pending  |
 | PROD-03     | Phase 6 | Pending  |
 | PROD-04     | Phase 6 | Pending  |
-| PROD-05     | Phase 6 | Pending  |
-| PROD-06     | Phase 6 | Pending  |
+| PROD-05     | Phase 6 | ✓ Done   |
+| PROD-06     | Phase 6 | ✓ Done   |
 | PROD-07     | Phase 6 | Pending  |
 
 **Coverage:**

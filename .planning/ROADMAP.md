@@ -68,6 +68,19 @@
 
 **Goal:** Software copyright, ML model diversity improvements, production security hardening
 **Requirements:** PROD-01, PROD-02, PROD-03, PROD-04, PROD-05, PROD-06, PROD-07
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 06-01-PLAN.md — FashionSigLIP cleanup, diversity scorer, 10-profile bias audit
+- [ ] 06-02-PLAN.md — Copyright materials + legal document finalization
+- [ ] 06-03-PLAN.md — Security verification + production hardening + rate limiting
+- [ ] 06-04-PLAN.md — CI/CD pipeline verification + post-deploy smoke tests + rollback docs
+- [x] 06-05-PLAN.md — Database backup/restore scripts + disaster recovery runbook
+- [ ] 06-06-PLAN.md — Observability stack verification + alert rules + monitoring runbook
+- [ ] 06-07-PLAN.md — k6 load testing + capacity planning + auto-scale triggers
+- [ ] 06-08-PLAN.md — OpenAPI spec completion + Swagger UI + API changelog
+- [ ] 06-09-PLAN.md — Migration script + deploy rollback + deployment checklist
 
 **Success criteria:**
 
