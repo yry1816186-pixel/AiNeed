@@ -385,6 +385,28 @@ Plans: (none yet)
 
 Plans: (none yet)
 
+### Phase 21: 移动端 Week 每周推荐端到端验证
+
+**Goal**: 修复 Week tab 前后端 API 契约不匹配，确保完整调用链路（API 路径、响应结构、数据渲染、导航可达）工作正常，满足反欺诈约束
+**Depends on**: Phase 12 (v1.0 complete)
+**Requirements**: WEEK-E2E-01, WEEK-E2E-02, WEEK-E2E-03, WEEK-E2E-04, WEEK-E2E-05, WEEK-E2E-06, WEEK-E2E-07
+**Success Criteria** (what must be TRUE):
+
+1. Week tab 可点击，显示 7 天穿搭计划结构（plans 数组，非 days）
+2. 每天卡片显示：场景标签 (sceneTag)、搭配建议 (outfit.coverImage)、衣橱复用率
+3. 天气 fallback (provider=fallback) 时显示 "天气数据不可用，使用通用季节建议" 警告
+4. loading → 数据渲染 → error 重试，三种状态完整流转
+5. OutfitDiary 和 WeeklyReport 通过 WeekStack 导航可达
+6. Week 相关文件中不存在 constellation/zodiac/horoscope/星座 引用
+7. 反欺诈约束：无误导性 "AI 深度学习" 文案，provider 字段标注数据来源
+
+**Plans:** 2 plans
+
+Plans:
+
+- [ ] 21-01-PLAN.md — API 契约修复 + 天气 provider + WeekScreen 重写 (WEEK-E2E-01~04)
+- [ ] 21-02-PLAN.md — 端到端验证 + 人工验收 (WEEK-E2E-05~07)
+
 ## Progress
 
 **Execution Order:**
@@ -412,6 +434,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 18. 衣橱 + 个人页重构                           | 0/?            | Pending  |            |
 | 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending  |            |
 | 20. 后端全栈一键启动验证                        | 0/?            | Pending  |            |
+| 21. 移动端 Week 每周推荐端到端验证              | 0/2            | Planning |            |
 
 ---
 
@@ -420,3 +443,4 @@ _Phase 11 added: 2026-04-26_
 _Phase 12 added: 2026-04-27_
 _v2.0 phases 13-19 added: 2026-04-27_
 _Phase 20 added: 2026-04-28_
+_Phase 21 added: 2026-04-29_
