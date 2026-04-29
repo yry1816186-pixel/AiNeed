@@ -13,7 +13,7 @@
 | 3   | Core AI                | Yiyi stylist + try-on + voice          | STYL, TRYN, VOIC       | ✓ Complete |
 | 4   | Commerce + Discovery   | Shopping, community, wardrobe          | COMM, DISC, WARD, CART | ✓ Complete |
 | 5   | E2E Integration + Demo | Competition-ready demo with resilience | DEMO-01~DEMO-13        | ✓ Complete |
-| 6   | Production + Legal     | Copyright, diversity, hardening        | PROD-01~PROD-07        | ○ Pending  |
+| 6   | Production + Legal     | Copyright, diversity, hardening        | PROD-01~PROD-07        | ✓ Complete |
 
 ## Phase Details
 
@@ -80,7 +80,7 @@ Plans:
 - [x] 06-06-PLAN.md — Observability stack verification + alert rules + monitoring runbook
 - [x] 06-07-PLAN.md — k6 load testing + capacity planning + auto-scale triggers
 - [x] 06-08-PLAN.md — OpenAPI spec completion + Swagger UI + API changelog
-- [ ] 06-09-PLAN.md — Migration script + deploy rollback + deployment checklist
+- [x] 06-09-PLAN.md — Migration script + deploy rollback + deployment checklist
 
 **Success criteria:**
 
@@ -120,13 +120,13 @@ Plans:
 | DEMO-11     | Phase 5 | Complete |
 | DEMO-12     | Phase 5 | Complete |
 | DEMO-13     | Phase 5 | Complete |
-| PROD-01     | Phase 6 | Pending  |
-| PROD-02     | Phase 6 | Pending  |
-| PROD-03     | Phase 6 | Pending  |
-| PROD-04     | Phase 6 | Pending  |
-| PROD-05     | Phase 6 | Pending  |
-| PROD-06     | Phase 6 | Pending  |
-| PROD-07     | Phase 6 | Pending  |
+| PROD-01     | Phase 6 | Complete |
+| PROD-02     | Phase 6 | Complete |
+| PROD-03     | Phase 6 | Complete |
+| PROD-04     | Phase 6 | Complete |
+| PROD-05     | Phase 6 | Complete |
+| PROD-06     | Phase 6 | Complete |
+| PROD-07     | Phase 6 | Complete |
 
 **Coverage:**
 

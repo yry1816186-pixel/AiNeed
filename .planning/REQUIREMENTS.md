@@ -25,10 +25,10 @@ Requirements for ongoing development. Each maps to roadmap phases.
 
 ### Production & Legal (Phase 6)
 
-- [ ] **PROD-01**: Software copyright application filed with all required materials
-- [ ] **PROD-02**: Marqo-FashionSigLIP replaces FashionCLIP in recommendation pipeline
-- [ ] **PROD-03**: Diversity scoring layer ensures varied recommendations across profiles
-- [ ] **PROD-04**: Legal TOS and privacy policy documents finalized
+- [x] **PROD-01**: Software copyright application filed with all required materials
+- [x] **PROD-02**: Marqo-FashionSigLIP replaces FashionCLIP in recommendation pipeline
+- [x] **PROD-03**: Diversity scoring layer ensures varied recommendations across profiles
+- [x] **PROD-04**: Legal TOS and privacy policy documents finalized
 - [x] **PROD-05**: Security audit findings from audit-output.json addressed
 - [x] **PROD-06**: Production environment configuration separated from dev/staging
 - [x] **PROD-07**: Rate limiting applied to try-on and recommendation endpoints
@@ -81,10 +81,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEMO-11     | Phase 5 | Pending  |
 | DEMO-12     | Phase 5 | Pending  |
 | DEMO-13     | Phase 5 | Complete |
-| PROD-01     | Phase 6 | Pending  |
-| PROD-02     | Phase 6 | Pending  |
-| PROD-03     | Phase 6 | Pending  |
-| PROD-04     | Phase 6 | Pending  |
+| PROD-01     | Phase 6 | ✓ Done   |
+| PROD-02     | Phase 6 | ✓ Done   |
+| PROD-03     | Phase 6 | ✓ Done   |
+| PROD-04     | Phase 6 | ✓ Done   |
 | PROD-05     | Phase 6 | ✓ Done   |
 | PROD-06     | Phase 6 | ✓ Done   |
 | PROD-07     | Phase 6 | ✓ Done   |
@@ -98,4 +98,4 @@ Deferred to future release. Tracked but not in current roadmap.
 ---
 
 _Requirements defined: 2026-04-29_
-_Last updated: 2026-04-29 after initial definition_
+_Last updated: 2026-04-29 after Phase 6 completion_
