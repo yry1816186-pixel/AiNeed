@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T17:28Z
+**Updated:** 2026-04-29T17:46Z
 
 ## Project Reference
 
@@ -17,16 +17,16 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 | 2     | Onboarding             | ✓ Complete    | 100%     |
 | 3     | Core AI                | ✓ Complete    | 100%     |
 | 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
-| 5     | E2E Integration + Demo | ○ In Progress | 60%      |
+| 5     | E2E Integration + Demo | ○ In Progress | 80%      |
 | 6     | Production + Legal     | ○ Pending     | 0%       |
 
 ## Current Focus
 
-Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02, 05-03 complete)
+Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02, 05-03, 05-04 complete)
 
 ## Next Action
 
-Run `/gsd-execute-phase 5` to continue with Plan 05-04 (E2E script automation).
+Run `/gsd-execute-phase 5` to continue with Plan 05-05 (Demo rehearsal verification).
 
 ## Decisions
 
@@ -41,13 +41,16 @@ Run `/gsd-execute-phase 5` to continue with Plan 05-04 (E2E script automation).
 | Demo toggle in SettingsScreen Developer section      | **DEV** only exposure, long-press version easter egg as fallback       | 2026-04-29 |
 | Seed profiles as compile-time constants              | Zero I/O overhead vs runtime JSON loading for demo performance         | 2026-04-29 |
 | Demo API interceptor mock+block pattern              | Returns cached data for reads, blocks mutations during demo mode       | 2026-04-29 |
+| AiFallbackService: direct HTTP GLM->Qwen             | Explicit priority chain with configurable 5s timeout per tier          | 2026-04-29 |
+| TTS text-only fallback with status field             | Returns TtsFallbackResult with audio_unavailable for mobile UI control | 2026-04-29 |
 
 ## Performance
 
 - **05-01:** 10min, 2 tasks, 6 files | Commits: 6e0531fb, 03f19d34
 - **05-02:** 13min, 2 tasks, 8 files | Commit: c4d773df
 - **05-03:** 10min, 2 tasks, 7 files | Commits: f058e509, 34d4b709
+- **05-04:** 10min, 3 tasks, 9 files | Commits: 2e17ef74, 58912f8b, faf3285d
 
 ---
 
-_State updated: 2026-04-29 after Phase 5 Plan 03 execution_
+_State updated: 2026-04-29 after Phase 5 Plan 04 execution_

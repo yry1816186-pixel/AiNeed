@@ -98,13 +98,13 @@
 | DEMO-02     | Phase 5 | Pending  |
 | DEMO-03     | Phase 5 | Complete |
 | DEMO-04     | Phase 5 | Complete |
-| DEMO-05     | Phase 5 | Pending  |
-| DEMO-06     | Phase 5 | Pending  |
+| DEMO-05     | Phase 5 | Complete |
+| DEMO-06     | Phase 5 | Complete |
 | DEMO-07     | Phase 5 | Complete |
 | DEMO-08     | Phase 5 | Complete |
 | DEMO-09     | Phase 5 | Complete |
-| DEMO-10     | Phase 5 | Pending  |
-| DEMO-11     | Phase 5 | Pending  |
+| DEMO-10     | Phase 5 | Complete |
+| DEMO-11     | Phase 5 | Complete |
 | DEMO-12     | Phase 5 | Complete |
 | DEMO-13     | Phase 5 | Pending  |
 | PROD-01     | Phase 6 | Pending  |
