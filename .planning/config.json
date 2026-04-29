@@ -1,6 +1,7 @@
 {
+  "version": "1.0",
   "mode": "yolo",
-  "granularity": "standard",
+  "granularity": "fine",
   "parallelization": true,
   "commit_docs": true,
   "model_profile": "quality",
@@ -10,9 +11,7 @@
     "verifier": true,
     "nyquist_validation": true,
     "auto_advance": true,
-    "_auto_chain_active": false
-  },
-  "planning": {
-    "commit_docs": true
+    "research_before_questions": false,
+    "text_mode": false
   }
 }
