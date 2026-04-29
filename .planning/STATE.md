@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29
+**Updated:** 2026-04-29T17:10Z
 
 ## Project Reference
 
@@ -17,29 +17,33 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 | 2     | Onboarding             | ✓ Complete    | 100%     |
 | 3     | Core AI                | ✓ Complete    | 100%     |
 | 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
-| 5     | E2E Integration + Demo | ○ In Progress | 20%      |
+| 5     | E2E Integration + Demo | ○ In Progress | 40%      |
 | 6     | Production + Legal     | ○ Pending     | 0%       |
 
 ## Current Focus
 
-Phase 5: E2E Integration + Competition Demo (Plan 05-01 complete)
+Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02 complete)
 
 ## Next Action
 
-Run `/gsd-execute-phase 5` to continue with Plan 05-02 (ErrorBoundary HOC expansion).
+Run `/gsd-execute-phase 5` to continue with Plan 05-03 (3-run rehearsal testing).
 
 ## Decisions
 
-| Decision                               | Rationale                                                | Date       |
-| -------------------------------------- | -------------------------------------------------------- | ---------- |
-| Pre-cache endpoint unauthenticated     | Called by warmup scripts during infra setup              | 2026-04-29 |
-| TTS precache with HTTP fallback        | Calls own endpoint first, local cache markers if offline | 2026-04-29 |
-| Mock recommendation data for pre-cache | Real AI pipeline needs full session context              | 2026-04-29 |
+| Decision                                             | Rationale                                                              | Date       |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- | ---------- |
+| Pre-cache endpoint unauthenticated                   | Called by warmup scripts during infra setup                            | 2026-04-29 |
+| TTS precache with HTTP fallback                      | Calls own endpoint first, local cache markers if offline               | 2026-04-29 |
+| Mock recommendation data for pre-cache               | Real AI pipeline needs full session context                            | 2026-04-29 |
+| ScreenErrorBoundaries.ts centralized config          | Per-screen ErrorBoundary config in single file for maintainability     | 2026-04-29 |
+| Today/Discover exports converted to wrapped defaults | Cleaner lazy-load integration without .then() remapping in navigator   | 2026-04-29 |
+| Onboarding step screens get individual ErrorBoundary | Granular crash isolation — one step crash doesn't cascade whole wizard | 2026-04-29 |
 
 ## Performance
 
-- **05-01:** 10min, 2 tasks, 6 files | Commit: 6e0531fb, 03f19d34
+- **05-01:** 10min, 2 tasks, 6 files | Commits: 6e0531fb, 03f19d34
+- **05-02:** 13min, 2 tasks, 8 files | Commit: c4d773df
 
 ---
 
-_State updated: 2026-04-29 after Phase 5 Plan 01 execution_
+_State updated: 2026-04-29 after Phase 5 Plan 02 execution_
