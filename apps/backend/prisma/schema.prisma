@@ -548,6 +548,8 @@ model RecommendationBatch {
   context     Json?
   itemCount   Int      @default(0)
   createdAt   DateTime @default(now())
+  is_demo     Boolean  @default(false)
+  provider    String   @default("real")
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   impressions RecommendationImpression[]
@@ -555,6 +557,8 @@ model RecommendationBatch {
   @@index([userId])
   @@index([algorithm])
   @@index([createdAt(sort: Desc)])
+  @@index([is_demo])
+  @@index([provider])
   @@map("recommendation_batches")
 }
 
@@ -833,6 +837,8 @@ model StyleRecommendation {
 
   isViewed  Boolean  @default(false)
   isLiked   Boolean  @default(false)
+  is_demo   Boolean  @default(false)
+  provider  String   @default("real")
 
   createdAt DateTime @default(now())
 
@@ -846,6 +852,8 @@ model StyleRecommendation {
   @@index([userId, createdAt(sort: Desc)])
   @@index([type, createdAt(sort: Desc)])
   @@index([userId, type, createdAt(sort: Desc)])
+  @@index([is_demo])
+  @@index([provider])
 }
 
 enum RecommendationType {
