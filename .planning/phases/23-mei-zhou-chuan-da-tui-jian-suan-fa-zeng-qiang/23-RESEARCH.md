@@ -797,24 +797,20 @@ generateRiskNotes(dayIndex: number, forecasts: DailyForecast[],
 | A2  | FullOutfitEngine scoring can be applied to pre-assembled outfits without anchor piece logic | FullOutfitEngine | Medium — `_score_outfit()` takes `List[ClothingItem]` which should work standalone; verify via integration test |
 | A3  | No other services write to `OutfitPlan` outside CalendarPlanService                         | Prisma Migration | Low — verified by codebase grep; no other service references OutfitPlan.create                                  |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **FastAPI service URL in NestJS config**
+1. **FastAPI service URL in NestJS config** ✅ RESOLVED
 
-   - What we know: `ai-stylist.service.ts` uses `this.mlServiceUrl` from config
-   - What's unclear: Exact env var name (`ML_SERVICE_URL` vs custom)
-   - Recommendation: Check `config/env` files or docker-compose for exact key name
+   - Config key confirmed: `ML_SERVICE_URL` (default `http://ai-service:8000`), found in `ai-stylist.service.ts` line 350 — matches docker-compose.local.yml ai-service port 8000.
+   - Resolution: Use `ConfigService.get<string>("ML_SERVICE_URL", "http://ai-service:8000")` pattern.
 
-2. **Mobile `calendar-plan.api.ts` update scope**
+2. **Mobile `calendar-plan.api.ts` update scope** ✅ RESOLVED
 
-   - What we know: File exists at `apps/mobile/src/services/api/calendar-plan.api.ts`
-   - What's unclear: Whether mobile code directly references `DayPlanResponseDto` fields or uses mapped types
-   - Recommendation: Plan mobile API layer update as final wave after backend changes are stable
+   - Confirmed: mobile code uses its own interface types (not NestJS DTOs), so new optional fields are backward-compatible.
+   - Resolution: Plan 23-04 Task 2 adds optional `?` fields to mobile `DayPlanResponse` interface — no breaking changes.
 
-3. **FullOutfitEngine `score_outfit_candidates()` per-candidate latency**
-   - What we know: `_score_outfit()` runs color harmony + style consistency + body fit + weather + occasion calculations
-   - What's unclear: End-to-end latency for 5 candidates with real data
-   - Recommendation: Add timing logs in Wave 1; if >800ms for 5 candidates, consider parallel scoring with `asyncio.gather`
+3. **FullOutfitEngine `score_outfit_candidates()` per-candidate latency** ✅ RESOLVED
+   - Resolution: Use synchronous scoring (loop over candidates). 5s axios timeout on NestJS side handles worst case. Add timing logs per `logger.info` in Task 3. No asyncio.gather needed for initial implementation.
 
 ## Environment Availability
 
