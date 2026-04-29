@@ -123,23 +123,56 @@
 
 ### 13. 预录视频
 
-- [ ] **预录 3 分钟 backup 视频已拷贝到演示设备**
-  - 路径: `docs/PRESENTATION/XUNO-DEMO-BACKUP.mp4`
+- [x] **预录 3 分钟 backup 视频已拷贝到演示设备** (DEMO-10)
+  - 路径: `docs/PRESENTATION/demo-recording.mp4` (Plan B)
   - 格式: MP4, 分辨率 1080p
   - 播放器: 系统默认，全屏模式预设
+  - 验证: `bash scripts/demo-fallback-test.sh` — Test 4: 演示视频
 
 ### 14. 视频即时切换
 
-- [ ] **视频播放器可即时播放 (零延迟切换)**
+- [x] **视频播放器可即时播放 (零延迟切换)** (DEMO-10)
   - 验证: 打开播放器 -> 暂停 -> 按空格键可立即播放
   - Live demo 失败时: 评委说 "看预录视频" -> 按空格 -> 0 秒切换
 
 ### 15. PPT 最新版
 
-- [ ] **PPT 最新版已拷贝到演示设备**
-  - 路径: `docs/PRESENTATION/XUNO-FINAL.pptx`
+- [x] **PPT 最新版已拷贝到演示设备** (DEMO-11)
+  - 路径: `docs/PRESENTATION/XUNO-FINAL.pptx` (Plan C)
   - 确认包含最新截图和数据
   - 投屏测试: 确认字体、图片正常显示
+  - 验证: `bash scripts/demo-fallback-test.sh` — Test 5: PPT file
+
+---
+
+## 五、E2E 自动化验证 (演示前 5 分钟)
+
+> **自动化**: 运行 `bash scripts/demo-e2e-run.sh` 可自动执行 12 项检查
+
+### 16. E2E 冒烟测试
+
+- [ ] **E2E 冒烟测试全部通过 (PASS == 12/12)** (DEMO-01, DEMO-02, DEMO-13)
+  - 执行: `bash scripts/demo-e2e-run.sh`
+  - 预检门控: demo-preflight.sh → demo-warmup.sh → pre-cache status
+  - 导航冒烟 (4): Backend health, AI service health, 15 Docker services, Demo mode
+  - AI 管道冒烟 (5): Recommendation endpoint, Try-on endpoint, TTS health, STT response time, RecommendationFunnel
+  - 数据完整性 (3): 10 seed profiles, TTS cache files, Demo recording + PPT
+  - 结果追加: `demo-e2e-run-log.txt` 带时间戳
+
+### 17. RecommendationFunnel 6 层验证 (DEMO-13)
+
+> 6 层推荐漏斗每层必须在 3-run 排练中正确展示
+
+| 层  | 名称            | 说明                       | Run 1 | Run 2 | Run 3 |
+| --- | --------------- | -------------------------- | ----- | ----- | ----- |
+| 1   | Scene Filter    | 场景筛选 (面试/约会/日常…) | [ ]   | [ ]   | [ ]   |
+| 2   | Body Type Match | 体型匹配过滤               | [ ]   | [ ]   | [ ]   |
+| 3   | Style Alignment | 风格对齐排序               | [ ]   | [ ]   | [ ]   |
+| 4   | Color Harmony   | 色彩协调评分               | [ ]   | [ ]   | [ ]   |
+| 5   | Budget Filter   | 预算过滤                   | [ ]   | [ ]   | [ ]   |
+| 6   | Final Ranking   | 最终排序 TOP-3             | [ ]   | [ ]   | [ ]   |
+
+- 验证命令: `curl -s http://localhost:3001/api/v1/stylist/funnel/demo-001 | jq '.layers | length'` 返回 >= 6
 
 ---
 

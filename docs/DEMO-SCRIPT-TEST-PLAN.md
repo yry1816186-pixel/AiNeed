@@ -11,9 +11,25 @@ Before each run, confirm:
 
 1. **Docker services**: `docker compose ps` shows all healthy
 2. **Demo warmup**: `bash scripts/demo-warmup.sh` completed with all PASS
-3. **App installed**: Latest build installed on device/emulator
-4. **Demo mode**: Settings -> Developer options -> Demo mode ON
-5. **adb logcat running**: `adb logcat | grep -E "FATAL|ReactNative|crash" > crash-log-run[N].txt`
+3. **E2E pre-run gate**: `bash scripts/demo-e2e-run.sh` pre-run section passes (preflight + warmup + pre-cache status)
+4. **App installed**: Latest build installed on device/emulator
+5. **Demo mode**: Settings -> Developer options -> Demo mode ON
+6. **adb logcat running**: `adb logcat | grep -E "FATAL|ReactNative|crash" > crash-log-run[N].txt`
+
+### Automated E2E Runner (新增)
+
+Plan 05-05 introduces `scripts/demo-e2e-run.sh` — an automated E2E smoke test runner:
+
+- **Pre-run gate**: demo-preflight.sh → demo-warmup.sh → pre-cache status (exits 2/3 on failure)
+- **12 automated checks**: 4 navigation smoke + 5 AI pipeline smoke + 3 data integrity
+- **Result logging**: Appends timestamped results to `demo-e2e-run-log.txt`
+- **Exit codes**: 0 = all pass, 1 = FAIL present, 2 = preflight failed, 3 = warmup failed
+
+**Run after warmup before manual demo flow:**
+
+```bash
+bash scripts/demo-e2e-run.sh
+```
 
 ---
 
@@ -54,9 +70,9 @@ Based on code analysis of timeout values, API call chains, and animation duratio
 
 ### Run 1
 
-**Date**: ******\_\_\_******
-**Tester**: ******\_\_\_******
-**Device**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
+**Tester**: **\*\***\_\_\_**\*\***
+**Device**: **\*\***\_\_\_**\*\***
 
 | Time | Step | Action                         | Result                | Time Spent | Notes       |
 | ---- | ---- | ------------------------------ | --------------------- | ---------- | ----------- |
@@ -96,8 +112,8 @@ Based on code analysis of timeout values, API call chains, and animation duratio
 
 ### Run 2
 
-**Date**: ******\_\_\_******
-**Tester**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
+**Tester**: **\*\***\_\_\_**\*\***
 
 | Time | Step | Action                         | Result                | Time Spent | Notes       |
 | ---- | ---- | ------------------------------ | --------------------- | ---------- | ----------- |
@@ -137,8 +153,8 @@ Based on code analysis of timeout values, API call chains, and animation duratio
 
 ### Run 3
 
-**Date**: ******\_\_\_******
-**Tester**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
+**Tester**: **\*\***\_\_\_**\*\***
 
 | Time | Step | Action                         | Result                | Time Spent | Notes       |
 | ---- | ---- | ------------------------------ | --------------------- | ---------- | ----------- |
@@ -195,21 +211,23 @@ If any of the following occur during a run, use the fallback:
 
 ## Final Summary
 
-| Run | Time  | Crashes | Failures | Result      |
-| --- | ----- | ------- | -------- | ----------- |
-| 1   | **:** | \_\_    | \_\_     | PASS / FAIL |
-| 2   | **:** | \_\_    | \_\_     | PASS / FAIL |
-| 3   | **:** | \_\_    | \_\_     | PASS / FAIL |
+| Run | Time  | E2E Runner | Crashes | Failures | Result      |
+| --- | ----- | ---------- | ------- | -------- | ----------- |
+| 1   | **:** | PASS/FAIL  | \_\_    | \_\_     | PASS / FAIL |
+| 2   | **:** | PASS/FAIL  | \_\_    | \_\_     | PASS / FAIL |
+| 3   | **:** | PASS/FAIL  | \_\_    | \_\_     | PASS / FAIL |
 
 **Overall**: PASS (3/3 zero crash) / FAIL (needs fixes)
 
+**E2E Runner Log**: See `demo-e2e-run-log.txt` for per-run automated check results.
+
 **Sign-off**:
 
-- Tester: ******\_\_\_******
-- Date: ******\_\_\_******
-- Approved by: ******\_\_\_******
+- Tester: **\*\***\_\_\_**\*\***
+- Date: **\*\***\_\_\_**\*\***
+- Approved by: **\*\***\_\_\_**\*\***
 
 ---
 
-_Document version: 2026-04-27_
-_Related: docs/demo-script.md, docs/DEMO-CHECKLIST.md, docs/SMOKE-TEST.md_
+_Document version: 2026-04-29 (updated with Plan 05-05 E2E runner integration)_
+_Related: docs/demo-script.md, docs/DEMO-CHECKLIST.md, docs/SMOKE-TEST.md, scripts/demo-e2e-run.sh_
