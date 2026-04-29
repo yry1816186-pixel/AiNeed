@@ -2,6 +2,18 @@
 
 AI 驱动的智能私人形象定制平台。基于用户画像（体型/肤色/风格/场合），提供精准穿搭推荐，通过多模态 AI 生成换装效果图。
 
+## 本地开发快速启动
+
+一键启动所有后端服务：
+
+```bash
+docker compose -f docker-compose.local.yml up --build
+```
+
+详细步骤请参考 [docs/local-setup.md](docs/local-setup.md)。
+
+> 注意：所有 seed 数据仅供开发测试，标记 is_demo: true，不代表真实用户或商品。
+
 ## 核心功能
 
 - **AI 造型师** — 多轮对话式穿搭咨询，基于用户画像精准推荐
@@ -55,9 +67,9 @@ cd apps/backend && pnpm dev
 cd apps/mobile && npx react-native start --port 8081
 ```
 
-### 测试账号
+### 测试账号 (demo 数据 — 仅供开发测试)
 
-- 邮箱: `test@example.com`
+- 邮箱: `demo_test@example.com`
 - 密码: `Test123456!`
 
 ## API 文档
