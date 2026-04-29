@@ -6,14 +6,14 @@
 
 ## Phase Overview
 
-| #   | Phase                  | Goal                                   | Requirements           | Status        |
-| --- | ---------------------- | -------------------------------------- | ---------------------- | ------------- |
-| 1   | Foundation             | User auth + basic app shell            | AUTH, NAV              | ✓ Complete    |
-| 2   | Onboarding             | 4-step user profile setup              | PROF, QUIZ             | ✓ Complete    |
-| 3   | Core AI                | Yiyi stylist + try-on + voice          | STYL, TRYN, VOIC       | ✓ Complete    |
-| 4   | Commerce + Discovery   | Shopping, community, wardrobe          | COMM, DISC, WARD, CART | ✓ Complete    |
-| 5   | E2E Integration + Demo | Competition-ready demo with resilience | DEMO-01~DEMO-13        | ○ In Progress |
-| 6   | Production + Legal     | Copyright, diversity, hardening        | PROD-01~PROD-07        | ○ Pending     |
+| #   | Phase                  | Goal                                   | Requirements           | Status     |
+| --- | ---------------------- | -------------------------------------- | ---------------------- | ---------- |
+| 1   | Foundation             | User auth + basic app shell            | AUTH, NAV              | ✓ Complete |
+| 2   | Onboarding             | 4-step user profile setup              | PROF, QUIZ             | ✓ Complete |
+| 3   | Core AI                | Yiyi stylist + try-on + voice          | STYL, TRYN, VOIC       | ✓ Complete |
+| 4   | Commerce + Discovery   | Shopping, community, wardrobe          | COMM, DISC, WARD, CART | ✓ Complete |
+| 5   | E2E Integration + Demo | Competition-ready demo with resilience | DEMO-01~DEMO-13        | ✓ Complete |
+| 6   | Production + Legal     | Copyright, diversity, hardening        | PROD-01~PROD-07        | ○ Pending  |
 
 ## Phase Details
 
@@ -94,8 +94,8 @@
 
 | Requirement | Phase   | Status   |
 | ----------- | ------- | -------- |
-| DEMO-01     | Phase 5 | Pending  |
-| DEMO-02     | Phase 5 | Pending  |
+| DEMO-01     | Phase 5 | Complete |
+| DEMO-02     | Phase 5 | Complete |
 | DEMO-03     | Phase 5 | Complete |
 | DEMO-04     | Phase 5 | Complete |
 | DEMO-05     | Phase 5 | Complete |
@@ -106,7 +106,7 @@
 | DEMO-10     | Phase 5 | Complete |
 | DEMO-11     | Phase 5 | Complete |
 | DEMO-12     | Phase 5 | Complete |
-| DEMO-13     | Phase 5 | Pending  |
+| DEMO-13     | Phase 5 | Complete |
 | PROD-01     | Phase 6 | Pending  |
 | PROD-02     | Phase 6 | Pending  |
 | PROD-03     | Phase 6 | Pending  |

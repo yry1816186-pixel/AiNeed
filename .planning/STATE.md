@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T17:46Z
+**Updated:** 2026-04-29T18:00Z
 
 ## Project Reference
 
@@ -11,22 +11,22 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 
 ## Phase Status
 
-| Phase | Name                   | Status        | Progress |
-| ----- | ---------------------- | ------------- | -------- |
-| 1     | Foundation             | ✓ Complete    | 100%     |
-| 2     | Onboarding             | ✓ Complete    | 100%     |
-| 3     | Core AI                | ✓ Complete    | 100%     |
-| 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
-| 5     | E2E Integration + Demo | ○ In Progress | 80%      |
-| 6     | Production + Legal     | ○ Pending     | 0%       |
+| Phase | Name                   | Status     | Progress |
+| ----- | ---------------------- | ---------- | -------- |
+| 1     | Foundation             | ✓ Complete | 100%     |
+| 2     | Onboarding             | ✓ Complete | 100%     |
+| 3     | Core AI                | ✓ Complete | 100%     |
+| 4     | Commerce + Discovery   | ✓ Complete | 100%     |
+| 5     | E2E Integration + Demo | ✓ Complete | 100%     |
+| 6     | Production + Legal     | ○ Pending  | 0%       |
 
 ## Current Focus
 
-Phase 5: E2E Integration + Competition Demo (Plans 05-01, 05-02, 05-03, 05-04 complete)
+Phase 5: E2E Integration + Competition Demo — All 5 plans complete (05-01 through 05-05). Ready for verification.
 
 ## Next Action
 
-Run `/gsd-execute-phase 5` to continue with Plan 05-05 (Demo rehearsal verification).
+Phase 5 execution complete. Run `/gsd-verify-work 5` to validate all 13 DEMO requirements. Or proceed to Phase 6: Production + Legal.
 
 ## Decisions
 
@@ -43,6 +43,8 @@ Run `/gsd-execute-phase 5` to continue with Plan 05-05 (Demo rehearsal verificat
 | Demo API interceptor mock+block pattern              | Returns cached data for reads, blocks mutations during demo mode       | 2026-04-29 |
 | AiFallbackService: direct HTTP GLM->Qwen             | Explicit priority chain with configurable 5s timeout per tier          | 2026-04-29 |
 | TTS text-only fallback with status field             | Returns TtsFallbackResult with audio_unavailable for mobile UI control | 2026-04-29 |
+| E2E runner adopts check()/record_result() pattern    | Consistent with existing demo scripts for maintainability              | 2026-04-29 |
+| 3-gate pre-run validation with distinct exit codes   | 2=preflight fail, 3=warmup fail, 1=checks fail, 0=all pass             | 2026-04-29 |
 
 ## Performance
 
@@ -50,7 +52,8 @@ Run `/gsd-execute-phase 5` to continue with Plan 05-05 (Demo rehearsal verificat
 - **05-02:** 13min, 2 tasks, 8 files | Commit: c4d773df
 - **05-03:** 10min, 2 tasks, 7 files | Commits: f058e509, 34d4b709
 - **05-04:** 10min, 3 tasks, 9 files | Commits: 2e17ef74, 58912f8b, faf3285d
+- **05-05:** 7min, 2 tasks, 3 files | Commits: eb98d69b, d7245d90
 
 ---
 
-_State updated: 2026-04-29 after Phase 5 Plan 04 execution_
+_State updated: 2026-04-29 after Phase 5 Plan 05 execution_

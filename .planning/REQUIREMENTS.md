@@ -9,19 +9,19 @@ Requirements for ongoing development. Each maps to roadmap phases.
 
 ### Demo & E2E Integration (Phase 5)
 
-- [ ] **DEMO-01**: App completes 3 consecutive demo runs with zero crashes
-- [ ] **DEMO-02**: Each demo run completes within 150 seconds total time
+- [x] **DEMO-01**: App completes 3 consecutive demo runs with zero crashes
+- [x] **DEMO-02**: Each demo run completes within 150 seconds total time
 - [x] **DEMO-03**: Preflight script verifies all 15 Docker services are healthy
 - [x] **DEMO-04**: Demo warmup script pre-caches all AI recommendations
-- [ ] **DEMO-05**: Voice input reliably triggers Yiyi response with visual feedback
-- [ ] **DEMO-06**: GLM-4-Flash auto-fails over to Qwen within 5s timeout
+- [x] **DEMO-05**: Voice input reliably triggers Yiyi response with visual feedback
+- [x] **DEMO-06**: GLM-4-Flash auto-fails over to Qwen within 5s timeout
 - [x] **DEMO-07**: Offline demo mode displays pre-cached data when network unavailable
 - [x] **DEMO-08**: Error boundaries prevent single-component crashes from killing the app
 - [x] **DEMO-09**: Demo mode toggle enables demo data + disables real API calls
-- [ ] **DEMO-10**: Pre-recorded demo video available as Plan B fallback
-- [ ] **DEMO-11**: PPT screenshot walkthrough available as Plan C fallback
+- [x] **DEMO-10**: Pre-recorded demo video available as Plan B fallback
+- [x] **DEMO-11**: PPT screenshot walkthrough available as Plan C fallback
 - [x] **DEMO-12**: ProfileDebugPanel switches between 10+ diverse profiles seamlessly
-- [ ] **DEMO-13**: RecommendationFunnel displays all 6 layers correctly
+- [x] **DEMO-13**: RecommendationFunnel displays all 6 layers correctly
 
 ### Production & Legal (Phase 6)
 
@@ -68,8 +68,8 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase   | Status   |
 | ----------- | ------- | -------- |
-| DEMO-01     | Phase 5 | Pending  |
-| DEMO-02     | Phase 5 | Pending  |
+| DEMO-01     | Phase 5 | Complete |
+| DEMO-02     | Phase 5 | Complete |
 | DEMO-03     | Phase 5 | Complete |
 | DEMO-04     | Phase 5 | Complete |
 | DEMO-05     | Phase 5 | Pending  |
@@ -80,7 +80,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEMO-10     | Phase 5 | Pending  |
 | DEMO-11     | Phase 5 | Pending  |
 | DEMO-12     | Phase 5 | Pending  |
-| DEMO-13     | Phase 5 | Pending  |
+| DEMO-13     | Phase 5 | Complete |
 | PROD-01     | Phase 6 | Pending  |
 | PROD-02     | Phase 6 | Pending  |
 | PROD-03     | Phase 6 | Pending  |
