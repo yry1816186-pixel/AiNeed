@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { DesignTokens } from "../../../../design-system/theme";
@@ -13,6 +13,9 @@ import Animated, {
   SlideInUp,
 } from "react-native-reanimated";
 import { Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
+
+import { withErrorBoundary } from "../../../../shared/components/ErrorBoundary";
+import { screenErrorBoundaryConfigs } from "../../../../shared/components/ErrorBoundary/ScreenErrorBoundaries";
 
 import { flatColors as colors } from "../../../../design-system/theme";
 
@@ -56,7 +59,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
         <View style={styles.iconWrapper}>
           <Animated.View style={[styles.iconOuter, iconAnimatedStyle]}>
             <LinearGradient
-              colors={[colors.primary, DesignTokens.colors.brand.camel]}
+              colors={[colors.primary, DesignTokens.colors.brand.gold]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
@@ -210,4 +213,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompleteStep;
+export default withErrorBoundary(
+  CompleteStep as unknown as React.ComponentType<Record<string, unknown>>,
+  screenErrorBoundaryConfigs.CompleteStep
+);

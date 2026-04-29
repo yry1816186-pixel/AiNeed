@@ -20,6 +20,8 @@ import {
   DesignTokens,
   flatColors as colors,
 } from "../../../design-system/theme";
+import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { screenErrorBoundaryConfigs } from "../../../shared/components/ErrorBoundary/ScreenErrorBoundaries";
 import { useTheme } from "../../../shared/contexts/ThemeContext";
 import { useOnboardingStore } from "../stores/onboardingStore";
 import type { OnboardingStep } from "../stores/onboardingStore";
@@ -366,4 +368,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnboardingWizard;
+export default withErrorBoundary(OnboardingWizard, screenErrorBoundaryConfigs.OnboardingWizard);

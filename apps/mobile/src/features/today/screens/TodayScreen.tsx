@@ -22,7 +22,10 @@ type TodaySection =
   | { type: "insight" }
   | { type: "quickReply" };
 
-export function TodayScreen() {
+import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { screenErrorBoundaryConfigs } from "../../../shared/components/ErrorBoundary/ScreenErrorBoundaries";
+
+function TodayScreen() {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const demoMode = useDemoStore((s) => s.demoMode);
@@ -187,3 +190,5 @@ const useStyles = createStyles((colors) => ({
     paddingTop: 16,
   },
 }));
+
+export default withErrorBoundary(TodayScreen, screenErrorBoundaryConfigs.TodayScreen);

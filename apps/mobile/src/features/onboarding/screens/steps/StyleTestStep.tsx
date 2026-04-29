@@ -4,6 +4,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "../../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, FadeIn } from "react-native-reanimated";
 import { Spacing, BorderRadius, flatColors as colors } from "../../../../design-system/theme";
+import { withErrorBoundary } from "../../../../shared/components/ErrorBoundary";
+import { screenErrorBoundaryConfigs } from "../../../../shared/components/ErrorBoundary/ScreenErrorBoundaries";
 import { DesignTokens } from "../../../../design-system/theme";
 import type { OnboardingFormData } from "../../stores/onboardingStore";
 
@@ -324,4 +326,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StyleTestStep;
+export default withErrorBoundary(
+  StyleTestStep as unknown as React.ComponentType<Record<string, unknown>>,
+  screenErrorBoundaryConfigs.StyleTestStep
+);

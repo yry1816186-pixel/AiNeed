@@ -21,6 +21,8 @@ export {
 export type { WithErrorBoundaryOptions } from "./withErrorBoundary";
 
 // 错误处理工具
+export { screenErrorBoundaryConfigs } from "./ScreenErrorBoundaries";
+
 export {
   ErrorCategory,
   ErrorSeverity,

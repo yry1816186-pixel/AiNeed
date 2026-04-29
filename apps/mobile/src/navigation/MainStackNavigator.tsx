@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type {
   TodayStackParamList,
   DiscoverStackParamList,
+  WeekStackParamList,
   StylistStackParamList,
   ProfileStackParamList,
 } from "./types";
@@ -51,12 +52,8 @@ const screenLoader = (
 
 const commonScreenOptions = { headerShown: false } as const;
 
-const TodayScreen = lazy(() =>
-  import("../features/today/screens/TodayScreen").then((m) => ({ default: m.TodayScreen }))
-);
-const DiscoverScreen = lazy(() =>
-  import("../features/discover/screens/DiscoverScreen").then((m) => ({ default: m.DiscoverScreen }))
-);
+const TodayScreen = lazy(() => import("../features/today/screens/TodayScreen"));
+const DiscoverScreen = lazy(() => import("../features/discover/screens/DiscoverScreen"));
 const SearchScreen = lazy(() =>
   import("../features/search/screens/SearchScreen").then((m) => ({ default: m.SearchScreen }))
 );
@@ -140,6 +137,20 @@ const LegalScreenLazy = lazy(() => import("../features/profile/screens/LegalScre
 function LegalScreenWrapper() {
   return <LegalScreenLazy type="terms" />;
 }
+
+const WeekScreen = lazy(() =>
+  import("../features/week/screens/WeekScreen").then((m) => ({ default: m.WeekScreen }))
+);
+const OutfitDiaryScreen = lazy(() =>
+  import("../features/home/components/OutfitDiaryScreen").then((m) => ({
+    default: m.OutfitDiaryScreen,
+  }))
+);
+const WeeklyReportScreen = lazy(() =>
+  import("../features/home/components/WeeklyReportScreen").then((m) => ({
+    default: m.WeeklyReportScreen,
+  }))
+);
 
 const AdvisorListScreen = lazy(() => import("../features/consultant/screens/AdvisorListScreen"));
 const AdvisorProfileScreen = lazy(
@@ -330,6 +341,35 @@ export function StylistStackNavigator() {
 }
 
 // ============================================================
+// Week Stack
+// ============================================================
+const WeekStack = createNativeStackNavigator<WeekStackParamList>();
+
+export function WeekStackNavigator() {
+  return (
+    <SuspenseWrapper>
+      <WeekStack.Navigator screenOptions={commonScreenOptions} initialRouteName="WeekMain">
+        <WeekStack.Screen
+          name="WeekMain"
+          options={{ animation: "slide_from_right" }}
+          component={WeekScreen}
+        />
+        <WeekStack.Screen
+          name="OutfitDiary"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(OutfitDiaryScreen, "OutfitDiary")}
+        />
+        <WeekStack.Screen
+          name="WeeklyReport"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(WeeklyReportScreen, "WeeklyReport")}
+        />
+      </WeekStack.Navigator>
+    </SuspenseWrapper>
+  );
+}
+
+// ============================================================
 // Profile Stack (Me Tab)
 // ============================================================
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
@@ -452,6 +492,76 @@ export function ProfileStackNavigator() {
           name="Legal"
           options={{ animation: "slide_from_bottom" }}
           component={LegalScreenWrapper}
+        />
+        <ProfileStack.Screen
+          name="DiscoverMain"
+          options={{ animation: "slide_from_right" }}
+          component={DiscoverScreen}
+        />
+        <ProfileStack.Screen
+          name="CommunityFeed"
+          options={{ animation: "slide_from_right" }}
+          component={CommunityFeedScreen}
+        />
+        <ProfileStack.Screen
+          name="PostDetail"
+          options={{ animation: "slide_from_right" }}
+          component={PostDetailScreenLazy}
+        />
+        <ProfileStack.Screen
+          name="PostCreate"
+          options={{ animation: "slide_from_bottom" }}
+          component={withGuard(PostCreateScreenLazy, "PostCreate")}
+        />
+        <ProfileStack.Screen
+          name="InfluencerProfile"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(InfluencerProfileScreenLazy, "InfluencerProfile")}
+        />
+        <ProfileStack.Screen
+          name="InspirationWardrobe"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(InspirationWardrobeScreenLazy, "InspirationWardrobe")}
+        />
+        <ProfileStack.Screen
+          name="BloggerDashboard"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(BloggerDashboardScreen, "BloggerDashboard")}
+        />
+        <ProfileStack.Screen
+          name="BloggerProfile"
+          options={{ animation: "slide_from_right" }}
+          component={BloggerProfileScreen}
+        />
+        <ProfileStack.Screen
+          name="BloggerProduct"
+          options={{ animation: "slide_from_right" }}
+          component={BloggerProductScreen}
+        />
+        <ProfileStack.Screen
+          name="VirtualTryOn"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(VirtualTryOnScreen, "VirtualTryOn")}
+        />
+        <ProfileStack.Screen
+          name="TryOnResult"
+          options={{ animation: "fade" }}
+          component={withGuard(TryOnResultScreenLazy, "TryOnResult")}
+        />
+        <ProfileStack.Screen
+          name="TryOnHistory"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(TryOnHistoryScreenLazy, "TryOnHistory")}
+        />
+        <ProfileStack.Screen
+          name="Wardrobe"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(WardrobeScreen, "Wardrobe")}
+        />
+        <ProfileStack.Screen
+          name="Favorites"
+          options={{ animation: "slide_from_right" }}
+          component={withGuard(FavoritesScreen, "Favorites")}
         />
       </ProfileStack.Navigator>
     </SuspenseWrapper>

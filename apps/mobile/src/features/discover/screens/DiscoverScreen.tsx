@@ -17,7 +17,10 @@ type DiscoverSection =
   | { type: "hotScenes"; scenes: string[] | undefined }
   | { type: "productFeed" };
 
-export function DiscoverScreen() {
+import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { screenErrorBoundaryConfigs } from "../../../shared/components/ErrorBoundary/ScreenErrorBoundaries";
+
+function DiscoverScreen() {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [searchText, setSearchText] = useState("");
@@ -148,3 +151,5 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: 24,
   },
 }));
+
+export default withErrorBoundary(DiscoverScreen, screenErrorBoundaryConfigs.DiscoverScreen);
