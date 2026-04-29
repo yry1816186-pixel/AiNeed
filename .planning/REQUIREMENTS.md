@@ -31,7 +31,7 @@ Requirements for ongoing development. Each maps to roadmap phases.
 - [ ] **PROD-04**: Legal TOS and privacy policy documents finalized
 - [x] **PROD-05**: Security audit findings from audit-output.json addressed
 - [x] **PROD-06**: Production environment configuration separated from dev/staging
-- [ ] **PROD-07**: Rate limiting applied to try-on and recommendation endpoints
+- [x] **PROD-07**: Rate limiting applied to try-on and recommendation endpoints
 
 ## v2 Requirements
 
@@ -87,7 +87,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | PROD-04     | Phase 6 | Pending  |
 | PROD-05     | Phase 6 | ✓ Done   |
 | PROD-06     | Phase 6 | ✓ Done   |
-| PROD-07     | Phase 6 | Pending  |
+| PROD-07     | Phase 6 | ✓ Done   |
 
 **Coverage:**
 

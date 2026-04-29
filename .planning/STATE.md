@@ -1,7 +1,7 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T12:47Z
+**Updated:** 2026-04-29T20:57Z
 
 ## Project Reference
 
@@ -18,15 +18,15 @@ See: `.planning/PROJECT.md` (updated 2026-04-29)
 | 3     | Core AI                | ✓ Complete    | 100%     |
 | 4     | Commerce + Discovery   | ✓ Complete    | 100%     |
 | 5     | E2E Integration + Demo | ✓ Complete    | 100%     |
-| 6     | Production + Legal     | ◉ In Progress | 67%      |
+| 6     | Production + Legal     | ◉ In Progress | 78%      |
 
 ## Current Focus
 
-Phase 6: Production + Legal — Plans 01, 02, 03, 04, 05, 06, 08 complete. Security hardening, rate limiting, legal docs, API documentation, backup/restore, observability done.
+Phase 6: Production + Legal — Plans 01, 02, 03, 04, 05, 06, 07, 08 complete. Security hardening, rate limiting, legal docs, API documentation, backup/restore, observability, load testing done.
 
 ## Next Action
 
-Continue Phase 6 execution with remaining plans (06-07, 06-09).
+Continue Phase 6 execution with remaining plan (06-09).
 
 ## Decisions
 
@@ -61,6 +61,9 @@ Continue Phase 6 execution with remaining plans (06-07, 06-09).
 | Production backup uses prod-\* container prefix          | Matches docker-compose.production.yml actual names                     | 2026-04-29 |
 | Neo4j backup/restore gracefully skips when unavailable   | Optional service not in production compose yet                         | 2026-04-29 |
 | MinIO off-instance backup storage                        | S3-compatible storage already deployed, avoids separate S3 dependency  | 2026-04-29 |
+| k6 scenario imports renamed to avoid recursion           | runChatFlow/runRecommendationFlow/runTryonFlow prevent name shadowing  | 2026-04-29 |
+| Load test uses actual DTO fields (photoId/itemId)        | Cross-referenced with CreateTryOnDto and RecommendationsController     | 2026-04-29 |
+| 2x backend instances recommended for production HA       | Single-instance has no failover; 2x provides basic high availability   | 2026-04-29 |
 
 ## Performance
 
@@ -75,7 +78,8 @@ Continue Phase 6 execution with remaining plans (06-07, 06-09).
 - **06-08:** 4min, 2 tasks, 2 files | Commits: 561e56d4, 28f5ea23
 - **06-05:** 5min, 2 tasks, 4 files | Commits: 8b8cbcd0, a5c5ec7e
 - **06-06:** 8min, 2 tasks, 4 files | Commits: 24c7f0be, b7b05825
+- **06-07:** 6min, 2 tasks, 7 files | Commits: 04f47490, 633545a7
 
 ---
 
-_State updated: 2026-04-29 after Phase 6 Plan 06 execution_
+_State updated: 2026-04-29 after Phase 6 Plan 07 execution_
