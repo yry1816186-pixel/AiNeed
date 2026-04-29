@@ -230,6 +230,10 @@ Plans:
 - [ ] **Phase 20: 后端全栈一键启动验证** - docker-compose 一键启动所有服务，health check 全绿，seed demo 数据就绪，本地启动文档完整
 - [x] **Phase 22: 开放 API 内部架构验证** - Partner API 鉴权+限流中间件技术验证，5 个转发端点，OpenAPI 文档 (completed 2026-04-29)
 
+**Track D: Backend Algorithm Enhancement (Phase 23)**
+
+- [ ] **Phase 23: 每周穿搭推荐算法增强** - 两阶段推荐流水线(粗排+精排) + 6 维 score_breakdown + WeeklyPlanFeedback + Regenerate + 衣橱复用率
+
 **Track E: v2.0 Frontend Restructuring (Phases 13-19)**
 
 - [x] **Phase 13: 全流程深度审计** - Playwright 逐页截图, 标杆差距分析, 组件一致性审计, 性能基线, WCAG 2.1 AA 审计 ✓ 2026-04-28
@@ -239,6 +243,29 @@ Plans:
 - [ ] **Phase 17: AI 对话 + 发现页重构** - 流式对话气泡, 打字机效果, 内嵌搭配卡, 瀑布流发现页
 - [ ] **Phase 18: 衣橱 + 个人页重构** - 分类管理, 拖拽排序, 穿搭组合, Style DNA 雷达图, 穿搭日历
 - [ ] **Phase 19: 技术升级 + 微交互 + 暗色模式完善** - FlashList, expo-image, 离线体验, 共享元素过渡, 点赞/刷新动效
+
+### Phase 23: 每周穿搭推荐算法增强
+
+**Goal**: 将每周穿搭推荐从基础 CRUD 升级为两阶段多维度可解释推荐系统：CalendarPlanService 粗排（reuse_boost + 反馈权重）→ FullOutfitEngine 精排（6 维评分），增强 API 响应（score_breakdown/alternatives/wardrobe_reuse_rate/risk_notes），新建 WeeklyPlanFeedback 反馈回流（维度独立衰减 + 硬排除），实现单天/全周 Regenerate 策略
+**Depends on**: Phase 21
+**Requirements**: REC23-01, REC23-02, REC23-03, REC23-04, REC23-05
+**Success Criteria** (what must be TRUE):
+
+1. generateWeeklyPlan() 重构为两阶段流水线：粗排（CalendarPlanService 增强）→ 精排（HTTP 调用 FullOutfitEngine），精排不可用时回退粗排结果
+2. DayPlanResponseDto 包含 score_breakdown（6 维细分）、alternatives（top 2 备选）、wardrobe_reuse_rate、risk_notes 字段
+3. WeeklyPlanFeedback 模型创建，反馈类型 9 种枚举，维度独立衰减 + dont_want_this 硬排除
+4. regenerate_day 和 regenerate_week 端点可用，lock_item/exclude_item 约束正确生效
+5. wardrobe_reuse_rate 计算正确展示，reuse_boost 参数在粗排阶段影响排序
+6. 反欺诈约束：API response 包含 provider 字段，推荐结论可解释（score_breakdown 或 explanation），无 "AI 深度学习" 暗示文案
+
+**Plans:** 4 plans
+
+Plans:
+
+- [ ] 23-01-PLAN.md — Prisma schema (OutfitPlan +3 fields, WeeklyPlanFeedback) + FullOutfitEngine.score_outfit_candidates() + FastAPI /score-outfits
+- [ ] 23-02-PLAN.md — Enhanced DayPlanResponseDto (4 fields) + Feedback/Regenerate DTOs + FullOutfitEngineClient HTTP
+- [ ] 23-03-PLAN.md — CalendarPlanService two-stage pipeline + reuse_boost + RiskNotesService + WeeklyFeedbackService
+- [ ] 23-04-PLAN.md — Controller 5 endpoints (regenerate×2, lock, exclude, feedback) + Module + Mobile API
 
 ## Phase Details (v2.0)
 
@@ -466,6 +493,7 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 20. 后端全栈一键启动验证                        | 1/3            | In Progress |            |
 | 21. 移动端 Week 每周推荐端到端验证              | 2/2            | Complete    | 2026-04-29 |
 | 22. 开放 API 内部架构验证                       | 3/3            | Complete    | 2026-04-29 |
+| 23. 每周穿搭推荐算法增强                        | 0/4            | Pending     |            |
 
 ---
 
