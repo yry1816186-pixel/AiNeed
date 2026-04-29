@@ -65,6 +65,7 @@ import { SystemReadinessService } from "./modules/system/system-readiness.servic
 import { UsersModule } from "./domains/identity/users/users.module";
 import { WeatherModule } from "./domains/fashion/weather/weather.module";
 import { JwtAuthGuard } from "./domains/identity/auth/guards/jwt-auth.guard";
+import { PartnerApiModule } from "./domains/platform/partner-api/partner-api.module";
 import { WSModule } from "./modules/ws/ws.module";
 
 @Module({
@@ -150,6 +151,7 @@ import { WSModule } from "./modules/ws/ws.module";
     QueueModule,
     FeatureFlagModule,
     AdminModule,
+    PartnerApiModule,
 
     // Unmigrated Modules
     WSModule,
