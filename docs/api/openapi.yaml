@@ -1,0 +1,1312 @@
+openapi: 3.0.3
+info:
+  title: 寻裳 XunO API
+  description: |
+    AI-powered fashion styling platform API.
+    
+    ## Authentication
+    All protected endpoints require a JWT Bearer token in the Authorization header.
+    
+    ## Rate Limiting
+    - Standard endpoints: 60 req/min
+    - AI endpoints (stylist, try-on, recommendations): 20 req/min
+    - Auth endpoints: 5 req/min (login, register), 10 req/min (refresh)
+    - Try-on quota: 3 generations/day per user
+    
+    ## Versioning
+    All endpoints are versioned via URI: `/api/v1/...`
+  version: 1.0.0
+  contact:
+    name: XunO Team
+
+servers:
+  - url: http://localhost:3001
+    description: Development
+  - url: https://staging-api.xuno.app
+    description: Staging
+  - url: https://api.xuno.app
+    description: Production
+
+tags:
+  - name: Auth
+    description: Authentication - login, register, token refresh
+  - name: AI Stylist
+    description: AI styling consultation sessions and chat
+  - name: Try-On
+    description: Virtual try-on image generation
+  - name: Recommendations
+    description: Personalized outfit and style recommendations
+  - name: Wardrobe
+    description: Wardrobe management, favorites, and collections
+  - name: Discover
+    description: Community discovery feed and social features
+  - name: Profile
+    description: User profile, preferences, and image analysis
+
+paths:
+  # ─── Auth ─────────────────────────────────────────────
+  /api/v1/auth/register:
+    post:
+      operationId: register
+      summary: User registration
+      description: "Create a new user account. Password must be 8-32 characters with upper/lowercase and digits. Rate limited: 5 req/min."
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  maxLength: 32
+                  example: Pass1234
+                nickname:
+                  type: string
+                  example: FashionLover
+            example:
+              email: user@example.com
+              password: Pass1234
+              nickname: FashionLover
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+                  refreshToken: { type: string }
+                  user: { type: object }
+              example:
+                accessToken: "eyJhbGciOiJIUzI1NiIs..."
+                refreshToken: "eyJhbGciOiJIUzI1NiIs..."
+                user: { id: "uuid", email: "user@example.com", nickname: "FashionLover" }
+        "400":
+          description: Invalid parameters
+        "409":
+          description: Email already registered
+        "429":
+          description: Rate limited - 5 req/min
+
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      summary: User login
+      description: "Login with email and password. Rate limited: 5 req/min."
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+            example:
+              email: user@example.com
+              password: Pass1234
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              example:
+                accessToken: "eyJhbGciOiJIUzI1NiIs..."
+                refreshToken: "eyJhbGciOiJIUzI1NiIs..."
+                user: { id: "uuid", email: "user@example.com", nickname: "FashionLover" }
+        "401":
+          description: Invalid credentials
+        "429":
+          description: Rate limited - 5 req/min
+
+  /api/v1/auth/refresh:
+    post:
+      operationId: refreshToken
+      summary: Refresh access token
+      description: "Exchange a refresh token for new access/refresh tokens. Rate limited: 10 req/min."
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken: { type: string }
+            example:
+              refreshToken: "eyJhbGciOiJIUzI1NiIs..."
+      responses:
+        "200":
+          description: Token refreshed
+          content:
+            application/json:
+              example:
+                accessToken: "eyJhbGciOiJIUzI1NiIs..."
+                refreshToken: "eyJhbGciOiJIUzI1NiIs..."
+        "401":
+          description: Invalid or expired refresh token
+        "429":
+          description: Rate limited - 10 req/min
+
+  /api/v1/auth/logout:
+    post:
+      operationId: logout
+      summary: User logout
+      description: Invalidate current session. Optionally pass refreshToken to revoke it.
+      tags: [Auth]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: { type: string, description: "Optional - revoke specific refresh token" }
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              example: { success: true }
+        "401":
+          description: Unauthorized
+
+  /api/v1/auth/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get current user info
+      description: Returns the authenticated user's basic profile.
+      tags: [Auth]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User info
+          content:
+            application/json:
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                email: "user@example.com"
+                nickname: "FashionLover"
+                avatar: "https://cdn.xuno.app/avatars/default.png"
+        "401":
+          description: Unauthorized
+
+  /api/v1/auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      summary: Request password reset email
+      description: "Sends a password reset link. Returns same response regardless of email existence to prevent enumeration. Rate limited: 3 req/min."
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+            example:
+              email: user@example.com
+      responses:
+        "200":
+          description: Request processed
+          content:
+            application/json:
+              example: { message: "If the email exists, a reset link has been sent." }
+        "429":
+          description: Rate limited - 3 req/min
+
+  # ─── AI Stylist ───────────────────────────────────────
+  /api/v1/ai-stylist/sessions:
+    post:
+      operationId: createStylistSession
+      summary: Create AI stylist session
+      description: "Start a new AI styling consultation session. Rate limited: 20 req/min, 50 daily quota."
+      tags: [AI Stylist]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                  description: "Styling goal (e.g., interview outfit, date night)"
+                  example: "interview outfit"
+                scene:
+                  type: string
+                  enum: [SCENE, DIRECT, CHAT]
+                  example: "SCENE"
+            example:
+              goal: "interview outfit"
+              scene: "SCENE"
+      responses:
+        "201":
+          description: Session created
+          content:
+            application/json:
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                status: "active"
+                goal: "interview outfit"
+                createdAt: "2026-04-29T12:00:00Z"
+        "401":
+          description: Unauthorized
+        "429":
+          description: "Rate limited: 20 req/min, 50 daily quota"
+
+    get:
+      operationId: listStylistSessions
+      summary: List AI stylist sessions
+      description: "Get all sessions for current user. Rate limited: 20 req/min."
+      tags: [AI Stylist]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        "200":
+          description: Session list
+          content:
+            application/json:
+              example:
+                sessions:
+                  - id: "uuid"
+                    status: "active"
+                    goal: "interview outfit"
+                    createdAt: "2026-04-29T12:00:00Z"
+                total: 5
+
+  /api/v1/ai-stylist/sessions/{sessionId}:
+    get:
+      operationId: getStylistSession
+      summary: Get session status
+      description: "Get detailed session info including message history. Rate limited: 20 req/min."
+      tags: [AI Stylist]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Session details
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                status: "active"
+                goal: "interview outfit"
+                messages: []
+                createdAt: "2026-04-29T12:00:00Z"
+        "404":
+          description: Session not found
+
+    delete:
+      operationId: deleteStylistSession
+      summary: Delete session
+      description: Delete a session and all associated data.
+      tags: [AI Stylist]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              example: { success: true }
+        "404":
+          description: Session not found
+
+  /api/v1/ai-stylist/sessions/{sessionId}/messages:
+    post:
+      operationId: sendStylistMessage
+      summary: Send message to AI stylist
+      description: "Send a message in the styling session. AI responds with outfit advice. Rate limited: 20 req/min, 50 daily quota."
+      tags: [AI Stylist]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  maxLength: 2000
+                  example: "I have a tech company interview next week"
+            example:
+              content: "I have a tech company interview next week"
+      responses:
+        "201":
+          description: Message sent, AI response included
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                role: "assistant"
+                content: "For a tech company interview, I'd recommend smart casual..."
+                createdAt: "2026-04-29T12:01:00Z"
+        "400":
+          description: Empty message or exceeds 2000 chars
+        "429":
+          description: "Rate limited: 20 req/min"
+
+  /api/v1/ai-stylist/chat:
+    post:
+      operationId: legacyChat
+      summary: Stateless AI chat (deprecated)
+      description: "Legacy stateless chat. Use sessions API instead. Rate limited: 20 req/min."
+      tags: [AI Stylist]
+      deprecated: true
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messages]
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role: { type: string }
+                      content: { type: string }
+            example:
+              messages:
+                - role: "user"
+                  content: "What should I wear for a date?"
+      responses:
+        "201":
+          description: AI response
+          content:
+            application/json:
+              example:
+                response: "For a casual date, try a well-fitted blazer over a plain tee..."
+        "429":
+          description: "Rate limited: 20 req/min"
+
+  # ─── Try-On ───────────────────────────────────────────
+  /api/v1/try-on:
+    post:
+      operationId: createTryOn
+      summary: Create virtual try-on
+      description: "Submit a virtual try-on request combining user photo with clothing item. Async processing - poll status. Quota: 3 generations/day."
+      tags: [Try-On]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [photoId, itemId]
+              properties:
+                photoId:
+                  type: string
+                  format: uuid
+                  description: User photo ID
+                itemId:
+                  type: string
+                  format: uuid
+                  description: Clothing item ID
+            example:
+              photoId: "550e8400-e29b-41d4-a716-446655440001"
+              itemId: "550e8400-e29b-41d4-a716-446655440002"
+      responses:
+        "201":
+          description: Try-on request created
+          content:
+            application/json:
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440003"
+                status: "pending"
+                createdAt: "2026-04-29T12:00:00Z"
+        "400":
+          description: Invalid photoId or itemId
+        "401":
+          description: Unauthorized
+        "429":
+          description: "Daily quota exceeded: 3/day"
+
+  /api/v1/try-on/history:
+    get:
+      operationId: getTryOnHistory
+      summary: Get try-on history
+      description: "List try-on records with pagination and status filter. Rate limited: 20 req/min."
+      tags: [Try-On]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, processing, completed, failed] }
+      responses:
+        "200":
+          description: Try-on history
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    status: "completed"
+                    resultImageUrl: "https://cdn.xuno.app/tryon/result.jpg"
+                    createdAt: "2026-04-29T12:00:00Z"
+                total: 10
+
+  /api/v1/try-on/{id}:
+    get:
+      operationId: getTryOnStatus
+      summary: Get try-on status
+      description: "Check the status of a try-on request. Rate limited: 20 req/min."
+      tags: [Try-On]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Try-on details
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                status: "completed"
+                resultImageUrl: "https://cdn.xuno.app/tryon/result.jpg"
+                createdAt: "2026-04-29T12:00:00Z"
+        "404":
+          description: Try-on not found
+
+    delete:
+      operationId: deleteTryOn
+      summary: Delete try-on record
+      description: Delete a try-on record and its result image.
+      tags: [Try-On]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  # ─── Recommendations ──────────────────────────────────
+  /api/v1/recommendations:
+    get:
+      operationId: getRecommendations
+      summary: Get personalized recommendations
+      description: "Returns personalized clothing recommendations based on user profile and behavior. Rate limited: 20 req/min."
+      tags: [Recommendations]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: occasion
+          in: query
+          schema: { type: string, example: "daily" }
+          description: "Occasion filter (daily, work, party, date)"
+        - name: season
+          in: query
+          schema: { type: string, example: "spring" }
+          description: "Season filter (spring, summer, autumn, winter)"
+        - name: category
+          in: query
+          schema: { type: string, enum: [tops, bottoms, dresses, outerwear, footwear, accessories, activewear, swimwear] }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Recommendations
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    name: "Classic Blazer"
+                    category: "outerwear"
+                    imageUrl: "https://cdn.xuno.app/items/blazer.jpg"
+                    score: 0.95
+                total: 20
+        "401":
+          description: Unauthorized
+        "429":
+          description: "Rate limited: 20 req/min"
+
+  /api/v1/recommendations/advanced:
+    get:
+      operationId: getAdvancedRecommendations
+      summary: Multi-strategy fused recommendations
+      description: "Uses collaborative filtering, content-based, and trending strategies. Rate limited: 20 req/min."
+      tags: [Recommendations]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: occasion
+          in: query
+          schema: { type: string }
+        - name: season
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Advanced recommendations
+          content:
+            application/json:
+              example:
+                items: []
+                strategies: ["collaborative", "content", "trending"]
+        "429":
+          description: "Rate limited: 20 req/min"
+
+  /api/v1/recommendations/daily:
+    get:
+      operationId: getDailyOutfit
+      summary: Daily outfit recommendation
+      description: "Returns a curated daily outfit based on user profile and weather. Rate limited: 20 req/min."
+      tags: [Recommendations]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Daily outfit
+          content:
+            application/json:
+              example:
+                outfit:
+                  top: { id: "uuid", name: "White Oxford Shirt" }
+                  bottom: { id: "uuid", name: "Navy Chinos" }
+                  shoes: { id: "uuid", name: "Brown Loafers" }
+
+  /api/v1/recommendations/trending:
+    get:
+      operationId: getTrending
+      summary: Trending items
+      description: "Platform-wide trending items. No auth required. Rate limited: 20 req/min."
+      tags: [Recommendations]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Trending items
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    name: "Oversized Blazer"
+                    trendingScore: 0.92
+        "429":
+          description: "Rate limited: 20 req/min"
+
+  /api/v1/recommendations/occasion:
+    get:
+      operationId: getOccasionRecommendations
+      summary: Occasion-based recommendations
+      description: "Returns outfit suggestions for specific occasions (interview, date, party, etc.). Rate limited: 20 req/min."
+      tags: [Recommendations]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema: { type: string, example: "interview" }
+          description: "Occasion type (daily, interview, date, party, workout, travel)"
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        "200":
+          description: Occasion recommendations
+          content:
+            application/json:
+              example:
+                items: []
+                occasion: "interview"
+
+  /api/v1/recommendations/discover:
+    get:
+      operationId: getDiscoverRecommendations
+      summary: Discover page recommendations
+      description: "Personalized for logged-in users, trending for anonymous. Rate limited: 20 req/min."
+      tags: [Recommendations]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Discover feed
+          content:
+            application/json:
+              example:
+                items: []
+
+  /api/v1/recommendations/feedback:
+    post:
+      operationId: submitFeedback
+      summary: Submit recommendation feedback
+      description: "Submit like/dislike/ignore feedback to improve future recommendations."
+      tags: [Recommendations]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemId, action]
+              properties:
+                itemId: { type: string, format: uuid }
+                action: { type: string, enum: [like, dislike, ignore] }
+            example:
+              itemId: "550e8400-e29b-41d4-a716-446655440000"
+              action: "like"
+      responses:
+        "200":
+          description: Feedback recorded
+          content:
+            application/json:
+              example: { success: true }
+
+  # ─── Wardrobe ─────────────────────────────────────────
+  /api/v1/wardrobe:
+    get:
+      operationId: getWardrobeItems
+      summary: Get wardrobe items
+      description: "List all items in user's wardrobe with optional filtering. Rate limited: 60 req/min."
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: season
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Wardrobe items
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    name: "White T-Shirt"
+                    category: "tops"
+                    imageUrl: "https://cdn.xuno.app/wardrobe/tshirt.jpg"
+                    addedAt: "2026-04-29T12:00:00Z"
+                total: 25
+        "401":
+          description: Unauthorized
+
+    post:
+      operationId: addWardrobeItem
+      summary: Add item to wardrobe
+      description: "Add a clothing item to the user's wardrobe."
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, category]
+              properties:
+                name: { type: string }
+                category: { type: string }
+                imageUrl: { type: string }
+                brand: { type: string }
+                color: { type: string }
+                season: { type: string }
+            example:
+              name: "Navy Blazer"
+              category: "outerwear"
+              color: "navy"
+              season: "autumn"
+      responses:
+        "201":
+          description: Item added
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                name: "Navy Blazer"
+                category: "outerwear"
+        "401":
+          description: Unauthorized
+
+  /api/v1/wardrobe/{id}:
+    get:
+      operationId: getWardrobeItem
+      summary: Get wardrobe item details
+      description: Get a single wardrobe item by ID.
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Item details
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                name: "Navy Blazer"
+                category: "outerwear"
+                color: "navy"
+                wearCount: 12
+        "404":
+          description: Item not found
+
+    put:
+      operationId: updateWardrobeItem
+      summary: Update wardrobe item
+      description: Update a wardrobe item's properties.
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                category: { type: string }
+                color: { type: string }
+                season: { type: string }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              example: { id: "uuid", name: "Updated Blazer" }
+
+    delete:
+      operationId: deleteWardrobeItem
+      summary: Remove wardrobe item
+      description: Remove an item from the user's wardrobe.
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              example: { success: true }
+        "404":
+          description: Item not found
+
+  /api/v1/wardrobe/curated:
+    get:
+      operationId: getCuratedWardrobe
+      summary: Get curated wardrobe view
+      description: "Returns a curated view of wardrobe organized by category. Rate limited: 60 req/min."
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Curated wardrobe
+          content:
+            application/json:
+              example:
+                tops: [{ id: "uuid", name: "White Shirt" }]
+                bottoms: []
+                outerwear: []
+
+  /api/v1/wardrobe/curated/wishlist:
+    get:
+      operationId: getWishlist
+      summary: Get wishlist items
+      description: Returns items in the user's wishlist.
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Wishlist
+          content:
+            application/json:
+              example:
+                items: []
+
+  /api/v1/wardrobe/curated/stats:
+    get:
+      operationId: getWardrobeStats
+      summary: Get wardrobe statistics
+      description: Returns wardrobe statistics (item counts by category, usage frequency, etc.).
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Wardrobe stats
+          content:
+            application/json:
+              example:
+                totalItems: 25
+                categories: { tops: 8, bottoms: 6, outerwear: 4 }
+                mostWorn: { id: "uuid", name: "White T-Shirt", wearCount: 30 }
+
+  /api/v1/wardrobe/collections:
+    get:
+      operationId: getWardrobeCollections
+      summary: Get wardrobe collections
+      description: List all wardrobe collections (outfit groupings).
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Collections list
+          content:
+            application/json:
+              example:
+                items: []
+
+    post:
+      operationId: createWardrobeCollection
+      summary: Create wardrobe collection
+      description: Create a new outfit collection within the wardrobe.
+      tags: [Wardrobe]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                description: { type: string }
+            example:
+              name: "Summer Work Outfits"
+              description: "Light and professional"
+      responses:
+        "201":
+          description: Collection created
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                name: "Summer Work Outfits"
+
+  # ─── Discover (Community) ─────────────────────────────
+  /api/v1/community/posts:
+    get:
+      operationId: getCommunityPosts
+      summary: Get community feed
+      description: "Browse community posts with pagination. Rate limited: 60 req/min."
+      tags: [Discover]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: sort
+          in: query
+          schema: { type: string, enum: [latest, trending, popular] }
+      responses:
+        "200":
+          description: Community posts
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    author: { id: "uuid", nickname: "StyleGuru", avatar: "url" }
+                    content: "My interview outfit today!"
+                    images: ["https://cdn.xuno.app/posts/img1.jpg"]
+                    likeCount: 42
+                    commentCount: 5
+                    createdAt: "2026-04-29T12:00:00Z"
+                total: 100
+
+    post:
+      operationId: createCommunityPost
+      summary: Create community post
+      description: "Share an outfit or styling tip with the community. Rate limited: 10 req/min."
+      tags: [Discover]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, maxLength: 500 }
+                images: { type: array, items: { type: string } }
+                tags: { type: array, items: { type: string } }
+            example:
+              content: "My interview outfit today!"
+              images: ["https://cdn.xuno.app/uploads/img1.jpg"]
+              tags: ["interview", "formal"]
+      responses:
+        "201":
+          description: Post created
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                content: "My interview outfit today!"
+                createdAt: "2026-04-29T12:00:00Z"
+        "429":
+          description: "Rate limited: 10 req/min"
+
+  /api/v1/community/trending:
+    get:
+      operationId: getTrendingPosts
+      summary: Get trending posts
+      description: "Top trending community posts. Rate limited: 60 req/min."
+      tags: [Discover]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Trending posts
+          content:
+            application/json:
+              example:
+                items: []
+
+  /api/v1/community/posts/{id}/like:
+    post:
+      operationId: likePost
+      summary: Like a post
+      description: Toggle like on a community post.
+      tags: [Discover]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Like toggled
+          content:
+            application/json:
+              example: { liked: true, likeCount: 43 }
+
+  /api/v1/community/posts/{id}/comments:
+    get:
+      operationId: getPostComments
+      summary: Get post comments
+      description: Retrieve comments for a community post.
+      tags: [Discover]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Comments
+          content:
+            application/json:
+              example:
+                items:
+                  - id: "uuid"
+                    author: { nickname: "Fan" }
+                    content: "Great outfit!"
+                    createdAt: "2026-04-29T12:05:00Z"
+
+    post:
+      operationId: addComment
+      summary: Add comment to post
+      description: Add a comment to a community post.
+      tags: [Discover]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, maxLength: 300 }
+            example:
+              content: "Great outfit!"
+      responses:
+        "201":
+          description: Comment added
+          content:
+            application/json:
+              example:
+                id: "uuid"
+                content: "Great outfit!"
+
+  /api/v1/community/users/{id}/follow:
+    post:
+      operationId: followUser
+      summary: Follow a user
+      description: Follow or unfollow a community member.
+      tags: [Discover]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Follow toggled
+          content:
+            application/json:
+              example: { following: true }
+
+  # ─── Profile ──────────────────────────────────────────
+  /api/v1/profile:
+    get:
+      operationId: getProfile
+      summary: Get user profile
+      description: "Get complete user profile including body data, style preferences. Rate limited: 60 req/min."
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              example:
+                userId: "uuid"
+                bodyType: "slim"
+                height: 175
+                weight: 70
+                skinTone: "warm"
+                stylePreferences: ["minimalist", "smart-casual"]
+                colorPreferences: ["navy", "white", "olive"]
+                priceRange: { min: 100, max: 500 }
+                createdAt: "2026-01-15T10:00:00Z"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Profile not found
+
+    put:
+      operationId: updateProfile
+      summary: Update user profile
+      description: Update profile information including body data and preferences.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                height: { type: number }
+                weight: { type: number }
+                stylePreferences: { type: array, items: { type: string } }
+            example:
+              height: 175
+              weight: 70
+              stylePreferences: ["minimalist", "smart-casual"]
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              example:
+                userId: "uuid"
+                height: 175
+                stylePreferences: ["minimalist", "smart-casual"]
+        "401":
+          description: Unauthorized
+
+  /api/v1/profile/body-analysis:
+    get:
+      operationId: getBodyAnalysis
+      summary: Get body analysis report
+      description: Generate a body type analysis with styling recommendations.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Body analysis
+          content:
+            application/json:
+              example:
+                bodyType: "rectangle"
+                recommendations: ["Structured jackets", "Layered looks"]
+        "401":
+          description: Unauthorized
+
+  /api/v1/profile/color-analysis:
+    get:
+      operationId: getColorAnalysis
+      summary: Get color analysis report
+      description: Generate a seasonal color analysis with best/avoid colors.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Color analysis
+          content:
+            application/json:
+              example:
+                season: "autumn"
+                bestColors: ["olive", "burgundy", "camel"]
+                avoidColors: ["neon pink", "pastel blue"]
+
+  /api/v1/profile/preferences:
+    get:
+      operationId: getPreferences
+      summary: Get style preferences
+      description: Get user's style, color, and price preferences.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Preferences
+          content:
+            application/json:
+              example:
+                styles: ["minimalist", "smart-casual"]
+                colors: ["navy", "white", "olive"]
+                priceRange: { min: 100, max: 500 }
+
+    put:
+      operationId: updatePreferences
+      summary: Update style preferences
+      description: Update user's style, color, and price preferences.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                styles: { type: array, items: { type: string } }
+                colors: { type: array, items: { type: string } }
+                priceRange: { type: object }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              example: { success: true }
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token obtained from /auth/login or /auth/register"
+
+security:
+  - BearerAuth: []
