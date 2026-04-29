@@ -47,8 +47,8 @@ import { OutfitPlanService } from "./services/outfit-plan.service";
 import { PresetQuestionsService } from "./services/preset-questions.service";
 import { SessionArchiveService } from "./services/session-archive.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
+import { TtsFallbackService } from "./services/tts-fallback.service";
 import { SystemContextService } from "./system-context.service";
-import { EdgeTTSService } from "./tts.service";
 
 /**
  * 会话列表响应
@@ -169,7 +169,7 @@ export class AiStylistController {
     private readonly presetQuestionsService: PresetQuestionsService,
     private readonly weatherIntegrationService: WeatherIntegrationService,
     private readonly dialogStateService: DialogStateService,
-    private readonly ttsService: EdgeTTSService
+    private readonly ttsFallbackService: TtsFallbackService
   ) {}
 
   @Post("dialog/session")
@@ -229,7 +229,7 @@ export class AiStylistController {
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @ApiOperation({
     summary: "文字转语音",
-    description: "将文字转换为语音，返回音频 URL。调用 Python Edge-TTS 服务生成音频。",
+    description: "将文字转换为语音，返回音频 URL。主路径: Edge-TTS，降级路径: 纯文本返回。",
   })
   @ApiBody({
     schema: {
@@ -242,18 +242,20 @@ export class AiStylistController {
   })
   @ApiResponse({
     status: 201,
-    description: "TTS 合成成功",
+    description: "TTS 结果",
     schema: {
       type: "object",
       properties: {
         audioUrl: { type: "string", description: "音频文件 URL", nullable: true },
+        status: { type: "string", enum: ["audio_ready", "audio_unavailable"] },
+        text: { type: "string" },
       },
     },
   })
   @ApiResponse({ status: 401, description: "未授权" })
   async synthesizeSpeech(@Body() body: { text: string }) {
-    const audioUrl = await this.ttsService.synthesizeAndUpload(body.text);
-    return { audioUrl };
+    const result = await this.ttsFallbackService.synthesizeWithFallback(body.text);
+    return result;
   }
 
   @Post("sessions")

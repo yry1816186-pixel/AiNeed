@@ -17,6 +17,7 @@ import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";
 import { AiStylistRecommendationService } from "./services/recommendation.service";
 import { AiStylistSessionService } from "./services/session.service";
+import { AiFallbackService } from "./services/ai-fallback.service";
 import type { StylistContextInternal } from "./services/session.service";
 import type {
   ChatMessage,
@@ -66,7 +67,8 @@ export class AiStylistService {
     private contextService: AiStylistContextService,
     private recommendationService: AiStylistRecommendationService,
     private dialogStateService: DialogStateService,
-    private bodyPositiveFilter: BodyPositiveFilter
+    private bodyPositiveFilter: BodyPositiveFilter,
+    private aiFallbackService: AiFallbackService
   ) {
     this.mlServiceUrl = this.configService.get<string>(
       "ML_SERVICE_URL",
@@ -320,23 +322,31 @@ export class AiStylistService {
         });
         if (profile) {
           const memory: Record<string, string> = {};
-          if (profile.bodyType) {memory.bodyType = profile.bodyType;}
+          if (profile.bodyType) {
+            memory.bodyType = profile.bodyType;
+          }
           if (profile.stylePreferences) {
             const styles = Array.isArray(profile.stylePreferences)
               ? (profile.stylePreferences as string[]).join(", ")
               : String(profile.stylePreferences);
-            if (styles) {memory.stylePreferences = styles;}
+            if (styles) {
+              memory.stylePreferences = styles;
+            }
           }
           if (profile.colorPreferences) {
             const colors = Array.isArray(profile.colorPreferences)
               ? (profile.colorPreferences as string[]).join(", ")
               : String(profile.colorPreferences);
-            if (colors) {memory.colorPreferences = colors;}
+            if (colors) {
+              memory.colorPreferences = colors;
+            }
           }
-          if (profile.priceRangeMin !== null && profile.priceRangeMin !== undefined)
-            {memory.budgetMin = String(profile.priceRangeMin);}
-          if (profile.priceRangeMax !== null && profile.priceRangeMax !== undefined)
-            {memory.budgetMax = String(profile.priceRangeMax);}
+          if (profile.priceRangeMin !== null && profile.priceRangeMin !== undefined) {
+            memory.budgetMin = String(profile.priceRangeMin);
+          }
+          if (profile.priceRangeMax !== null && profile.priceRangeMax !== undefined) {
+            memory.budgetMax = String(profile.priceRangeMax);
+          }
           context.preferenceMemory = memory;
         }
       } catch (err) {
@@ -357,7 +367,13 @@ export class AiStylistService {
         },
         {
           timeout: 15000,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-ML-API-Key": this.configService.get<string>(
+              "ML_API_KEY",
+              "xuno-dev-key-change-me-in-production"
+            ),
+          },
         }
       );
 
