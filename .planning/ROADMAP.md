@@ -225,9 +225,10 @@ Plans:
 - [x] 12-05-PLAN.md — 模拟器冒烟测试 + Demo Script 实跑 + 崩溃日志 ✓ 2026-04-27
 - [x] 12-06-PLAN.md — 比赛材料终审 (PPT + Q-A + Demo Script + 软著) ✓ 2026-04-27
 
-**Track D: Backend Full-Stack Verification (Phase 20)**
+**Track D: Backend Full-Stack Verification (Phase 20-22)**
 
 - [ ] **Phase 20: 后端全栈一键启动验证** - docker-compose 一键启动所有服务，health check 全绿，seed demo 数据就绪，本地启动文档完整
+- [ ] **Phase 22: 开放 API 内部架构验证** - Partner API 鉴权+限流中间件技术验证，5 个转发端点，OpenAPI 文档
 
 **Track E: v2.0 Frontend Restructuring (Phases 13-19)**
 
@@ -411,8 +412,30 @@ Plans:
 
 Plans:
 
-- [ ] 21-01-PLAN.md — API 契约修复 + 天气 provider + WeekScreen 重写 (WEEK-E2E-01~04)
-- [ ] 21-02-PLAN.md — 端到端验证 + 人工验收 (WEEK-E2E-05~07)
+- [x] 21-01-PLAN.md — API 契约修复 + 天气 provider + WeekScreen 重写 (WEEK-E2E-01~04) ✓ 2026-04-29
+- [x] 21-02-PLAN.md — 端到端验证 + 人工验收 (WEEK-E2E-05~07) ✓ 2026-04-29
+
+### Phase 22: 开放 API 内部架构验证
+
+**Goal**: 内部技术验证 Partner API 鉴权(HMAC-SHA256)和限流(Redis 滑动窗口)中间件架构，5 个端点转发到现有内部 API，OpenAPI 3.0 文档每页标注 Internal Use Only
+**Depends on**: Phase 20 (后端基础设施就绪)
+**Requirements**: OAPI-01, OAPI-02, OAPI-03, OAPI-04, OAPI-05
+**Success Criteria** (what must be TRUE):
+
+1. curl -H "X-Api-Key: ...; X-Timestamp: ...; X-Signature: ..." POST /api/v1/partner/recommendation 返回推荐结果
+2. 错误/过期 key 返回 401
+3. 超限请求返回 429 + Retry-After header
+4. grep "Internal Use Only" docs/partner-api.yaml 返回匹配
+5. Prisma schema 包含 PartnerApiKey 和 PartnerApiCallLog 模型
+6. PartnerApiCallLog 记录每次 API 调用
+
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 22-01-PLAN.md — Prisma Schema + 鉴权 Guard (HMAC-SHA256 + 时间窗口) (OAPI-01, OAPI-02)
+- [ ] 22-02-PLAN.md — 限流中间件 (Redis 滑动窗口) + Partner API 控制器 (OAPI-03, OAPI-04)
+- [ ] 22-03-PLAN.md — OpenAPI 文档 + Seed Script + 集成验证 (OAPI-05)
 
 ## Progress
 
@@ -441,7 +464,8 @@ Phases execute sequentially: 1 -> 2 -> 3 -> 4 -> 5 (sprint) -> 6 -> 7 -> 8 -> 9 
 | 18. 衣橱 + 个人页重构                           | 0/?            | Pending     |            |
 | 19. 技术升级 + 微交互 + 暗色模式完善            | 0/?            | Pending     |            |
 | 20. 后端全栈一键启动验证                        | 1/3            | In Progress |            |
-| 21. 移动端 Week 每周推荐端到端验证              | 0/2            | Planning    |            |
+| 21. 移动端 Week 每周推荐端到端验证              | 2/2            | Complete    | 2026-04-29 |
+| 22. 开放 API 内部架构验证                       | 0/3            | Pending     |            |
 
 ---
 
@@ -451,3 +475,4 @@ _Phase 12 added: 2026-04-27_
 _v2.0 phases 13-19 added: 2026-04-27_
 _Phase 20 added: 2026-04-28_
 _Phase 21 added: 2026-04-29_
+_Phase 22 added: 2026-04-29_
