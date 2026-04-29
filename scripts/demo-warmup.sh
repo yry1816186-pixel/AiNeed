@@ -192,6 +192,109 @@ if [ "$PRECACHE_OK" = false ]; then
   done
 fi
 
+# --- Step 3a: 预缓存校验 ---
+echo "[Step 3a/5] 校验预缓存..."
+
+STEP3A_START=$(date +%s)
+
+# 3a.1: 调用 status 端点检查缓存状态
+STATUS_JSON=$(curl -sf --max-time 15 "${BACKEND_URL}/api/v1/demo/pre-cache/status" 2>/dev/null || echo "")
+if [ -n "$STATUS_JSON" ]; then
+  RECO_COUNT=$(echo "$STATUS_JSON" | grep -o '"recommendations":[0-9]*' | grep -o '[0-9]*' || echo "0")
+  TTS_COUNT=$(echo "$STATUS_JSON" | grep -o '"ttsPhrases":[0-9]*' | grep -o '[0-9]*' || echo "0")
+  SCENE_COUNT=$(echo "$STATUS_JSON" | grep -o '"sceneConfigs":[0-9]*' | grep -o '[0-9]*' || echo "0")
+
+  echo "  缓存状态: recommendations=${RECO_COUNT} ttsPhrases=${TTS_COUNT} sceneConfigs=${SCENE_COUNT}"
+
+  if [ "$RECO_COUNT" -ge 50 ]; then
+    echo "  [OK] 推荐预缓存数量达标 (${RECO_COUNT} >= 50)"
+    record_result "pre-cache recommendations" PASS "${RECO_COUNT} items"
+  else
+    echo "  [WARN] 推荐预缓存数量不足 (${RECO_COUNT} < 50)"
+    record_result "pre-cache recommendations" WARN "${RECO_COUNT}/50"
+  fi
+
+  if [ "$TTS_COUNT" -ge 14 ]; then
+    echo "  [OK] TTS预缓存数量达标 (${TTS_COUNT} >= 14)"
+    record_result "pre-cache ttsPhrases" PASS "${TTS_COUNT} items"
+  else
+    echo "  [WARN] TTS预缓存数量不足 (${TTS_COUNT} < 14)"
+    record_result "pre-cache ttsPhrases" WARN "${TTS_COUNT}/14"
+  fi
+
+  if [ "$SCENE_COUNT" -ge 7 ]; then
+    echo "  [OK] 场景配置预缓存数量达标 (${SCENE_COUNT} >= 7)"
+    record_result "pre-cache sceneConfigs" PASS "${SCENE_COUNT} items"
+  else
+    echo "  [WARN] 场景配置预缓存数量不足 (${SCENE_COUNT} < 7)"
+    record_result "pre-cache sceneConfigs" WARN "${SCENE_COUNT}/7"
+  fi
+else
+  echo "  [FAIL] 无法获取缓存状态"
+  record_result "pre-cache status" FAIL "status endpoint unreachable"
+fi
+
+# 3a.2: TTS 音频文件校验
+TTS_CACHE_DIR="${TTS_CACHE_DIR:-${PROJECT_ROOT}/ml/data/tts-cache}"
+TTS_PHRASE_KEYS=("greeting" "scene_prompt" "style_question" "generating" "outfit_ready" \
+  "outfit_explain" "item_detail" "feedback_thanks" "adjust_try" "session_end" \
+  "welcome_back" "scene_switch" "today_recommend" "cross_scene_memory")
+
+if [ -d "$TTS_CACHE_DIR" ]; then
+  TTS_FILES_FOUND=0
+  TTS_FILES_MISSING=0
+  for phrase in "${TTS_PHRASE_KEYS[@]}"; do
+    if ls "${TTS_CACHE_DIR}/${phrase}"* 2>/dev/null | head -1 | grep -q .; then
+      TTS_FILES_FOUND=$((TTS_FILES_FOUND + 1))
+    else
+      TTS_FILES_MISSING=$((TTS_FILES_MISSING + 1))
+    fi
+  done
+  echo "  TTS音频文件: 找到${TTS_FILES_FOUND}/14, 缺失${TTS_FILES_MISSING}/14"
+  if [ "$TTS_FILES_FOUND" -eq 14 ]; then
+    record_result "pre-cache TTS files" PASS "14/14"
+  elif [ "$TTS_FILES_FOUND" -gt 0 ]; then
+    record_result "pre-cache TTS files" WARN "${TTS_FILES_FOUND}/14"
+  else
+    record_result "pre-cache TTS files" SKIP "no cached audio files"
+  fi
+else
+  echo "  [SKIP] TTS缓存目录不存在: ${TTS_CACHE_DIR}"
+  record_result "pre-cache TTS files" SKIP "no TTS cache dir"
+fi
+
+# 3a.3: 预缓存延迟测量
+echo "  测量 pre-cache 端点响应时间..."
+PRECACHE_LATENCY=$(curl -s -o /dev/null -w "%{time_total}" \
+  -X POST "${BACKEND_URL}/api/v1/demo/pre-cache" \
+  --max-time "$ITEM_TIMEOUT" 2>/dev/null || echo "0")
+PRECACHE_STATUS_HTTP=$(curl -sf -o /dev/null -w "%{http_code}" \
+  -X POST "${BACKEND_URL}/api/v1/demo/pre-cache" \
+  --max-time "$ITEM_TIMEOUT" 2>/dev/null || echo "000")
+
+if [ "$PRECACHE_STATUS_HTTP" = "200" ] || [ "$PRECACHE_STATUS_HTTP" = "201" ]; then
+  LATENCY_MS=$(echo "$PRECACHE_LATENCY * 1000" | bc 2>/dev/null || echo "$PRECACHE_LATENCY")
+  if command -v bc >/dev/null 2>&1; then
+    LATENCY_CHECK=$(echo "$PRECACHE_LATENCY > 5" | bc 2>/dev/null || echo "0")
+  else
+    LATENCY_CHECK=$(awk -v t="$PRECACHE_LATENCY" 'BEGIN { print (t > 5) ? 1 : 0 }')
+  fi
+  if [ "$LATENCY_CHECK" = "1" ]; then
+    echo "  [WARN] pre-cache 端点延迟过高 (${PRECACHE_LATENCY}s > 5s)"
+    record_result "pre-cache latency" WARN "${PRECACHE_LATENCY}s"
+  else
+    echo "  [OK] pre-cache 端点延迟正常 (${PRECACHE_LATENCY}s <= 5s)"
+    record_result "pre-cache latency" PASS "${PRECACHE_LATENCY}s"
+  fi
+else
+  echo "  [FAIL] pre-cache 端点不可用 (HTTP ${PRECACHE_STATUS_HTTP})"
+  record_result "pre-cache latency" FAIL "HTTP ${PRECACHE_STATUS_HTTP}"
+fi
+
+STEP3A_END=$(date +%s)
+STEP3A_DURATION=$((STEP3A_END - STEP3A_START))
+echo "  Step 3a 耗时: ${STEP3A_DURATION}s"
+
 # --- Step 4: Seed 用户推荐热起 ---
 echo "[Step 4/5] Seed 用户推荐缓存热起..."
 
