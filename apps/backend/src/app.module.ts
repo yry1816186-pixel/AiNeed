@@ -12,8 +12,8 @@ import { envValidationFactory } from "./common/config/env.validation";
 import { EmailModule } from "./common/email/email.module";
 import { EncryptionModule } from "./common/encryption/encryption.module";
 import { GatewayModule } from "./common/gateway/gateway.module";
-import { CsrfModule } from "./common/guards/csrf/csrf.module";
 import { CsrfGuard } from "./common/guards/csrf/csrf.guard";
+import { CsrfModule } from "./common/guards/csrf/csrf.module";
 import {
   JsonApiInterceptor,
   CacheInterceptor,
@@ -33,8 +33,20 @@ import { PhotosModule } from "./domains/ai-core/photos/photos.module";
 import { TryOnModule } from "./domains/ai-core/try-on/try-on.module";
 import { CommerceModule } from "./domains/commerce/commerce.module";
 import { CustomizationModule } from "./domains/customization/customization/customization.module";
+import { ShareTemplateModule } from "./domains/customization/share-template/share-template.module";
 import { BrandsModule } from "./domains/fashion/brands/brands.module";
+import { ClothingModule } from "./domains/fashion/clothing/clothing.module";
+import { SearchModule } from "./domains/fashion/search/search.module";
+import { StyleAssessmentModule } from "./domains/fashion/style-assessment/style-assessment.module";
+import { WardrobeModule } from "./domains/fashion/wardrobe/wardrobe.module";
+import { WeatherModule } from "./domains/fashion/weather/weather.module";
 import { AuthModule } from "./domains/identity/auth/auth.module";
+import { JwtAuthGuard } from "./domains/identity/auth/guards/jwt-auth.guard";
+import { OnboardingModule } from "./domains/identity/onboarding/onboarding.module";
+import { PrivacyModule } from "./domains/identity/privacy/privacy.module";
+import { ConsentGuard } from "./domains/identity/privacy/consent.guard";
+import { ProfileModule } from "./domains/identity/profile/profile.module";
+import { UsersModule } from "./domains/identity/users/users.module";
 import { AdminModule } from "./domains/platform/admin/admin.module";
 import { AnalyticsModule } from "./domains/platform/analytics/analytics.module";
 import { FeatureFlagModule } from "./domains/platform/feature-flags/feature-flag.module";
@@ -42,30 +54,19 @@ import { HealthModule } from "./domains/platform/health/health.module";
 import { MerchantModule } from "./domains/platform/merchant/merchant.module";
 import { MetricsModule } from "./domains/platform/metrics/metrics.module";
 import { MetricsService } from "./domains/platform/metrics/metrics.service";
-import { BloggerModule } from "./domains/social/blogger/blogger.module";
-import { CacheModule } from "./modules/cache/cache.module";
-import { CacheService } from "./modules/cache/cache.service";
-import { ChatModule } from "./domains/social/chat/chat.module";
-import { ClothingModule } from "./domains/fashion/clothing/clothing.module";
-import { CommunityModule } from "./domains/social/community/community.module";
-import { ConsultantModule } from "./domains/social/consultant/consultant.module";
-import { DatabaseModule } from "./modules/database/database.module";
-import { WardrobeModule } from "./domains/fashion/wardrobe/wardrobe.module";
 import { NotificationModule } from "./domains/platform/notification/notification.module";
-import { OnboardingModule } from "./domains/identity/onboarding/onboarding.module";
-import { PrivacyModule } from "./domains/identity/privacy/privacy.module";
-import { ProfileModule } from "./domains/identity/profile/profile.module";
+import { PartnerApiModule } from "./domains/platform/partner-api/partner-api.module";
 import { QueueModule } from "./domains/platform/queue/queue.module";
 import { RecommendationsModule } from "./domains/platform/recommendations/recommendations.module";
-import { SearchModule } from "./domains/fashion/search/search.module";
+import { BloggerModule } from "./domains/social/blogger/blogger.module";
+import { ChatModule } from "./domains/social/chat/chat.module";
+import { CommunityModule } from "./domains/social/community/community.module";
+import { ConsultantModule } from "./domains/social/consultant/consultant.module";
+import { CacheModule } from "./modules/cache/cache.module";
+import { CacheService } from "./modules/cache/cache.service";
+import { DatabaseModule } from "./modules/database/database.module";
 import { SecurityModule } from "./modules/security/security.module";
-import { ShareTemplateModule } from "./domains/customization/share-template/share-template.module";
-import { StyleAssessmentModule } from "./domains/fashion/style-assessment/style-assessment.module";
 import { SystemReadinessService } from "./modules/system/system-readiness.service";
-import { UsersModule } from "./domains/identity/users/users.module";
-import { WeatherModule } from "./domains/fashion/weather/weather.module";
-import { JwtAuthGuard } from "./domains/identity/auth/guards/jwt-auth.guard";
-import { PartnerApiModule } from "./domains/platform/partner-api/partner-api.module";
 import { WSModule } from "./modules/ws/ws.module";
 
 @Module({
@@ -181,6 +182,10 @@ import { WSModule } from "./modules/ws/ws.module";
     {
       provide: APP_GUARD,
       useClass: CsrfGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ConsentGuard,
     },
   ],
 })

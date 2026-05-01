@@ -29,6 +29,7 @@ import axios from "axios";
 
 import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
 import { OptionalAuthGuard } from "../../../domains/identity/auth/guards/optional-auth.guard";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 
 import { SearchService } from "./search.service";
 import { VisualSearchService } from "./services/visual-search.service";
@@ -97,6 +98,7 @@ export class SearchController {
   @Post("image")
   @UseGuards(OptionalAuthGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @RequireConsent("photos")
   @ApiConsumes("multipart/form-data")
   @ApiOperation({
     summary: "以图搜图 - 上传图片搜索",
@@ -161,6 +163,7 @@ export class SearchController {
 
   @Post("image/url")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "以图搜图 - 通过图片URL搜索",
     description: "通过图片URL进行视觉相似搜索，仅支持公网可访问的图片地址。",

@@ -111,8 +111,6 @@ export class GlmVisionAnalysisService {
     return this.parseColorResult(response);
   }
 
-  // TODO(CONSENT): P1 — Add consent check (photos, body_metrics) before GLM vision API call.
-  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async callVisionApi(imageBase64: string, prompt: string): Promise<string> {
     const model = this.configService.get<string>("GLM_VISION_MODEL") || "glm-4v-plus";
 
@@ -180,28 +178,44 @@ export class GlmVisionAnalysisService {
   }
 
   private extractJson<T>(text: string): T {
+    let parsed: unknown = null;
+
     // Try to find JSON in the response (may be wrapped in markdown code block)
     const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch?.[1]) {
       try {
-        return JSON.parse(jsonMatch[1].trim()) as T;
+        parsed = JSON.parse(jsonMatch[1].trim());
       } catch {
         // Fall through to direct parse
       }
     }
 
     // Try direct parse
-    try {
-      return JSON.parse(text.trim()) as T;
-    } catch {
-      // Try to find JSON object in text
-      const braceMatch = text.match(/\{[\s\S]*\}/);
-      if (braceMatch) {
-        return JSON.parse(braceMatch[0]) as T;
+    if (parsed === null) {
+      try {
+        parsed = JSON.parse(text.trim());
+      } catch {
+        // Try to find JSON object in text
+        const braceMatch = text.match(/\{[\s\S]*\}/);
+        if (braceMatch) {
+          try {
+            parsed = JSON.parse(braceMatch[0]);
+          } catch {
+            // Parsing failed
+          }
+        }
       }
     }
 
-    this.logger.warn("Failed to parse JSON from GLM response, using defaults");
+    // Validate the parsed result is a proper object (not a string, array, or null)
+    if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as T;
+    }
+
+    this.logger.warn(
+      `GLM response did not contain a valid JSON object. ` +
+      `Raw (first 200 chars): ${text.substring(0, 200)}`
+    );
     return {} as T;
   }
 }

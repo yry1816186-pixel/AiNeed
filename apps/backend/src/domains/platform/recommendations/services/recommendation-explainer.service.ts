@@ -2,7 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-
 import type {
   RecommendationBreakdown,
   RecommendationExplanationDetail,
@@ -274,7 +273,7 @@ export class RecommendationExplainerService {
       const stylePrefs = Array.isArray(profile.stylePreferences)
         ? (profile.stylePreferences as Array<Record<string, unknown> | string>)
             .map((s) =>
-              typeof s === "string" ? s : String((s as Record<string, unknown>)?.name || "")
+              typeof s === "string" ? s : String((s)?.name || "")
             )
             .filter((s: string) => s.length > 0)
         : [];
@@ -322,7 +321,7 @@ export class RecommendationExplainerService {
       ? Array.isArray(profile.stylePreferences)
         ? (profile.stylePreferences as Array<Record<string, unknown> | string>)
             .map((s) =>
-              typeof s === "string" ? s : String((s as Record<string, unknown>)?.name || "")
+              typeof s === "string" ? s : String((s)?.name || "")
             )
             .filter((s: string) => s.length > 0)
         : []
@@ -685,8 +684,6 @@ ${matchingFactors
     }
   }
 
-  // TODO(CONSENT): P1 — Add consent check (ai_features) before GLM API call.
-  // See ConsentGuard / @RequireConsent in domains/identity/privacy/consent.guard.ts
   private async callGLM(prompt: string): Promise<string | null> {
     const apiKey = this.configService.get("GLM_API_KEY");
     if (!apiKey) {

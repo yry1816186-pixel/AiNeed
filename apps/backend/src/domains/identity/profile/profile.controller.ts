@@ -209,7 +209,6 @@ export class ProfileController {
     }
 
     // MVP placeholder: return a basic body analysis structure
-    // TODO: integrate with external ML analysis API for real results
     return {
       bodyType: "rectangle",
       bodyTypeName: "矩形体型",
@@ -285,7 +284,6 @@ export class ProfileController {
     }
 
     // MVP placeholder: return a basic color analysis structure
-    // TODO: integrate with external ML analysis API for real results
     return {
       colorSeason: "autumn_warm",
       colorSeasonName: "暖秋型",

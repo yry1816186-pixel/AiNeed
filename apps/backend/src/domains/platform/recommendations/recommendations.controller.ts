@@ -6,6 +6,7 @@ import { CacheKey, CacheTTL } from "../../../common/decorators/cache.decorators"
 import { ClothingCategory } from "../../../types/prisma-enums";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { Public } from "../../identity/auth/decorators/public.decorator";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 import { OptionalAuthGuard } from "../../identity/auth/guards/optional-auth.guard";
 
@@ -129,6 +130,7 @@ export class RecommendationsController {
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @CacheKey("recommendations:personalized")
   @CacheTTL(180)
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取个性化推荐",
@@ -191,6 +193,7 @@ export class RecommendationsController {
   @Get("feed")
   @CacheKey("recommendations:feed")
   @CacheTTL(180)
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取推荐 Feed（分页）",
@@ -210,6 +213,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("advanced")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取高级个性化推荐（多策略融合）",
@@ -264,6 +268,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("daily")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({ summary: "获取每日穿搭推荐" })
   @ApiResponse({ status: 200, description: "每日穿搭推荐" })
@@ -273,6 +278,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("occasion")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取场合推荐",
@@ -344,6 +350,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("style-guide")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取风格指南",
@@ -398,6 +405,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("complete-the-look/:clothingId")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取搭配推荐（Complete the Look）",
@@ -488,6 +496,7 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("cold-start")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取冷启动推荐",
