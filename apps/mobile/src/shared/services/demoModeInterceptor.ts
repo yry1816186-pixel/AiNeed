@@ -1,4 +1,5 @@
 import { useDemoStore } from "../stores/demoStore";
+import { logger } from "../utils/logger";
 
 export function isDemoModeEnabled(): boolean {
   return useDemoStore.getState().demoMode;
@@ -6,9 +7,9 @@ export function isDemoModeEnabled(): boolean {
 
 export function getDemoMockResponse(endpoint: string): unknown | null {
   const state = useDemoStore.getState();
-  if (!state.demoMode) return null;
+  if (!state.demoMode) {return null;}
 
-  console.log("[DemoMode] Intercepting API call:", endpoint);
+  if (__DEV__) { logger.debug("[DemoMode] Intercepting API call:", endpoint); }
 
   if (endpoint.includes("/recommendation") || endpoint.includes("/ai-stylist")) {
     return {
@@ -42,9 +43,9 @@ export function getDemoMockResponse(endpoint: string): unknown | null {
 
 export function shouldBlockMutation(endpoint: string): boolean {
   const state = useDemoStore.getState();
-  if (!state.demoMode) return false;
+  if (!state.demoMode) {return false;}
 
-  console.log("[DemoMode] Blocking mutation:", endpoint);
+  if (__DEV__) { logger.debug("[DemoMode] Blocking mutation:", endpoint); }
 
   const mutationEndpoints = [
     "/wardrobe",
@@ -66,6 +67,6 @@ export function shouldBlockMutation(endpoint: string): boolean {
 
 export function demoModeGuard(): void {
   if (isDemoModeEnabled()) {
-    console.log("[DemoMode] Demo mode enabled - zero live API dependency during demo");
+    if (__DEV__) { logger.debug("[DemoMode] Demo mode enabled - zero live API dependency during demo"); }
   }
 }
