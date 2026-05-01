@@ -1,4 +1,4 @@
-import { randomUUID, createHash } from "crypto";
+import { randomUUID, createHash, timingSafeEqual } from "crypto";
 
 import {
   Injectable,
@@ -387,7 +387,8 @@ export class AuthService {
     }
 
     const resetToken = randomUUID();
-    const resetKey = `auth:password_reset:${resetToken}`;
+    const hashedToken = createHash('sha256').update(resetToken).digest('hex');
+    const resetKey = `auth:password_reset:${hashedToken}`;
     const RESET_TOKEN_TTL = 3600;
 
     await this.redisService.setWithTtl(resetKey, user.id, RESET_TOKEN_TTL);
@@ -409,13 +410,19 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string): Promise<void> {
     this.logger.log("重置密码请求", { tokenPrefix: token.substring(0, 8) });
 
-    const resetKey = `auth:password_reset:${token}`;
-    const userId = await this.redisService.get(resetKey);
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+    const resetKey = `auth:password_reset:${hashedToken}`;
+    const storedUserId = await this.redisService.get(resetKey);
 
-    if (!userId) {
+    if (!storedUserId) {
+      // Constant-time guard to prevent timing-based token enumeration
+      const dummy = Buffer.alloc(64, 0);
+      timingSafeEqual(dummy, dummy);
       this.logger.warn("重置密码失败：Token无效或已过期", { tokenPrefix: token.substring(0, 8) });
       throw new BadRequestException("无效或已过期的重置令牌");
     }
+
+    const userId = storedUserId;
 
     const hashedPassword = await bcrypt.hash(newPassword);
 
