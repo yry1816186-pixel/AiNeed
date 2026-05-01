@@ -11,6 +11,7 @@ import httpx
 from PIL import Image
 
 from ml.api.config import settings
+from ml.services.common.ssrf_protection import validate_image_url
 from ml.services.tryon.tryon_preprocessor import TryonPreprocessor
 from ml.services.tryon.tryon_prompt_engine import TryonPromptEngine
 from ml.services.tryon.tryon_postprocessor import TryonPostprocessor
@@ -135,14 +136,34 @@ class VirtualTryonService:
     def _decode_image(self, image_input: str) -> Image.Image:
         """Decode base64 or URL image to PIL Image."""
         if image_input.startswith("data:image"):
-            b64 = image_input.split(",", 1)[1]
+            header, b64 = image_input.split(",", 1)
+            if not header.startswith("data:image/") or ";" not in header:
+                raise ValueError(
+                    "Invalid data URL format: expected data:image/<type>;base64,..."
+                )
             img_bytes = base64.b64decode(b64)
-            return Image.open(io.BytesIO(img_bytes))
-        if image_input.startswith("http"):
+        elif image_input.startswith("http"):
             raise ValueError("URL images need to be fetched first")
-        # Assume raw base64
-        img_bytes = base64.b64decode(image_input)
-        return Image.open(io.BytesIO(img_bytes))
+        else:
+            img_bytes = base64.b64decode(image_input)
+
+        if not img_bytes:
+            raise ValueError("Decoded image data is empty")
+
+        try:
+            img = Image.open(io.BytesIO(img_bytes))
+        except Exception:
+            raise ValueError(
+                "Failed to decode image: invalid or corrupted image data"
+            )
+
+        if img.format not in ("JPEG", "PNG", "WEBP"):
+            raise ValueError(
+                f"Unsupported image format: {img.format or 'unknown'}. "
+                "Only JPEG, PNG, and WebP are supported."
+            )
+
+        return img
 
     async def _call_doubao_seedream(
         self,
@@ -376,13 +397,21 @@ class VirtualTryonService:
                     break
 
         if not result_url:
-            # P0-2: Explicitly raise error instead of silently returning invalid result
             raise ValueError(
                 "GLM API returned text-only response, no image generated. "
                 "The images/generations endpoint is not available and the "
                 "chat/completions endpoint does not support image generation. "
                 "Please check GLM API configuration or use a different provider."
             )
+
+        # P0-2: Validate AI-extracted URL against SSRF protection
+        try:
+            result_url = validate_image_url(result_url)
+        except Exception as e:
+            logger.error("SSRF validation failed for AI-extracted URL '%s': %s", result_url, e)
+            raise ValueError(
+                f"GLM returned an unsafe or invalid image URL: {e}"
+            ) from e
 
         return {
             "success": True,
