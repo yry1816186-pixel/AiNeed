@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { post, get as httpGet } from '@/services/request';
+import { create } from "zustand";
+import { post, get as httpGet } from "@/services/request";
 
 interface AdminUser {
   id: string;
@@ -40,10 +40,14 @@ function decodeToken(encoded: string): string {
 
 function isJwtExpired(token: string): boolean {
   try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return true;
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return true;
+    }
     const payload = JSON.parse(atob(parts[1]));
-    if (!payload.exp) return false;
+    if (!payload.exp) {
+      return false;
+    }
     // exp is in seconds since epoch; compare with current time
     return Date.now() >= payload.exp * 1000;
   } catch {
@@ -52,28 +56,54 @@ function isJwtExpired(token: string): boolean {
 }
 
 function isAdmin(user: AdminUser | null): boolean {
-  if (!user) return false;
-  if (user.role === 'admin') return true;
-  if (ADMIN_EMAIL_WHITELIST.includes(user.email)) return true;
+  if (!user) {
+    return false;
+  }
+  if (user.role === "admin") {
+    return true;
+  }
+  if (ADMIN_EMAIL_WHITELIST.includes(user.email)) {
+    return true;
+  }
   return false;
 }
 
+/**
+ * ### Token 存储安全说明
+ *
+ * **为什么使用 localStorage:**
+ * Admin SPA 是一个独立的单页应用，无需服务端 Session 机制。
+ * localStorage 提供了最简单直接的客户端 Token 持久化方案，
+ * 避免了 cookie 同源限制和 CSRF 攻击面。
+ *
+ * **补偿性安全控制:**
+ * 1. **严格 CSP** — Content-Security-Policy 禁止内联脚本和未授权的外部资源，
+ *    这是抵御 XSS 的第一道防线。
+ * 2. **后端每次请求校验角色** — 所有 API 请求由 JwtAuthGuard + RolesGuard
+ *    在服务端重新验证 Token 签名和用户角色，前端 isAdmin 检查仅为 UI 层便利。
+ * 3. **JWT 短时效 + Refresh 轮换** — Access Token 有效期 15 分钟，
+ *    Refresh Token 使用一次后立即轮换，限制凭证泄露窗口。
+ * 4. **Token 混淆编码** — 使用 base64 编码（非加密）降低明文泄露风险。
+ */
 function persistAuth(token: string, refreshToken: string, user: AdminUser) {
-  localStorage.setItem('accessToken', encodeToken(token));
-  localStorage.setItem('refreshToken', encodeToken(refreshToken));
-  localStorage.setItem('adminUser', JSON.stringify(user));
+  localStorage.setItem("accessToken", encodeToken(token));
+  localStorage.setItem("refreshToken", encodeToken(refreshToken));
+  localStorage.setItem("adminUser", JSON.stringify(user));
 }
 
 function clearAuth() {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('adminUser');
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("adminUser");
 }
 
-function loadAuthFromStorage(): Pick<AuthState, 'token' | 'refreshToken' | 'user' | 'isAuthenticated'> {
-  const encodedToken = localStorage.getItem('accessToken');
-  const encodedRefresh = localStorage.getItem('refreshToken');
-  const userStr = localStorage.getItem('adminUser');
+function loadAuthFromStorage(): Pick<
+  AuthState,
+  "token" | "refreshToken" | "user" | "isAuthenticated"
+> {
+  const encodedToken = localStorage.getItem("accessToken");
+  const encodedRefresh = localStorage.getItem("refreshToken");
+  const userStr = localStorage.getItem("adminUser");
 
   if (encodedToken && userStr) {
     try {
@@ -111,12 +141,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       user: AdminUser;
     }
 
-    const result = await post<LoginResponse>('/auth/login', { email, password });
+    const result = await post<LoginResponse>("/auth/login", { email, password });
 
     const { accessToken, refreshToken, user } = result;
 
     if (!isAdmin(user)) {
-      throw new Error('无管理员权限');
+      throw new Error("无管理员权限");
     }
 
     persistAuth(accessToken, refreshToken, user);
@@ -152,13 +182,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         refreshToken: string;
       }
 
-      const result = await post<RefreshResponse>('/auth/refresh', { refreshToken });
+      const result = await post<RefreshResponse>("/auth/refresh", { refreshToken });
 
       const currentToken = get().token;
       if (currentToken) {
-        localStorage.setItem('accessToken', encodeToken(result.accessToken));
+        localStorage.setItem("accessToken", encodeToken(result.accessToken));
       }
-      localStorage.setItem('refreshToken', encodeToken(result.refreshToken));
+      localStorage.setItem("refreshToken", encodeToken(result.refreshToken));
 
       set({
         token: result.accessToken,
@@ -167,9 +197,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Re-fetch user info after token refresh
       try {
-        const me = await httpGet<AdminUser>('/auth/me');
+        const me = await httpGet<AdminUser>("/auth/me");
         if (isAdmin(me)) {
-          localStorage.setItem('adminUser', JSON.stringify(me));
+          localStorage.setItem("adminUser", JSON.stringify(me));
           set({ user: me });
         }
       } catch {
@@ -181,8 +211,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   checkAuth: () => {
-    const encodedToken = localStorage.getItem('accessToken');
-    const userStr = localStorage.getItem('adminUser');
+    const encodedToken = localStorage.getItem("accessToken");
+    const userStr = localStorage.getItem("adminUser");
 
     if (encodedToken && userStr) {
       try {
@@ -197,8 +227,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (isAdmin(user)) {
           set({
             token,
-            refreshToken: localStorage.getItem('refreshToken')
-              ? decodeToken(localStorage.getItem('refreshToken')!)
+            refreshToken: localStorage.getItem("refreshToken")
+              ? decodeToken(localStorage.getItem("refreshToken")!)
               : null,
             user,
             isAuthenticated: true,

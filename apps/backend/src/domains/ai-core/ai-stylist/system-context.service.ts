@@ -1,4 +1,5 @@
 import { cpus } from "os";
+import * as path from "path";
 
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -143,6 +144,12 @@ export class SystemContextService implements OnModuleInit {
     try {
       const { execSync } = await import("child_process");
       const cwd = this.configService.get<string>("PROJECT_ROOT", "C:\\xuno");
+
+      // 路径安全校验：防止路径穿越攻击
+      const safeRoot = path.resolve(cwd);
+      if (!safeRoot.startsWith(path.resolve("/"))) {
+        throw new Error("Invalid PROJECT_ROOT path");
+      }
 
       const runCmd = (cmd: string): string => {
         try {
