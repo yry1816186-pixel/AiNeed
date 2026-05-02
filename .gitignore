@@ -190,3 +190,38 @@ read_pdf.py
 # --- Node.js Cache ---
 0/
 *.keystore
+*.bak
+bugreport-*.zip
+
+# --- UI Dump & Logcat ---
+ui-dump*.xml
+logcat*.txt
+registerWithPhone.txt
+
+# --- Audit & Security One-off Reports ---
+audit-output.json
+SECURITY_DIFF_EVIDENCE.txt
+SECURITY_FIX_REPORT.md
+SECURITY_AUDIT_STATUS.md
+OPTIMIZATION_DELIVERY_REPORT.md
+REVIEW-FIX.md
+ui.md
+
+# --- Screenshots (root) ---
+screenshot-*.png
+tests/screenshot_*.png
+tests/ui_dump.xml
+tests/ui*.xml
+tests/emulator_*.png
+
+# --- E2E results ---
+e2e-results.json
+
+# --- Metro asset leaks in Android drawable ---
+**/drawable-*/__node_modules_*
+
+# --- Phase/docs artifacts ---
+**/docs/PHASE*.md
+**/UI_CONSISTENCY_REPORT.md
+**/REVIEW.md
+**/design-system-migration_*.md

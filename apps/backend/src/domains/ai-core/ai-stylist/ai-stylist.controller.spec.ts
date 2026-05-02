@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
+import { AiQuotaGuard } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
 import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";
+import { DialogStateService } from "./dialog-state.service";
 import { ItemReplacementService } from "./services/item-replacement.service";
 import { OutfitPlanService } from "./services/outfit-plan.service";
 import { PresetQuestionsService } from "./services/preset-questions.service";
 import { SessionArchiveService } from "./services/session-archive.service";
+import { TtsFallbackService } from "./services/tts-fallback.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { SystemContextService } from "./system-context.service";
 
@@ -206,8 +210,14 @@ describe("AiStylistController", () => {
         { provide: SessionArchiveService, useValue: mockSessionArchiveService },
         { provide: PresetQuestionsService, useValue: mockPresetQuestionsService },
         { provide: WeatherIntegrationService, useValue: mockWeatherIntegrationService },
+        { provide: DialogStateService, useValue: {} },
+        { provide: TtsFallbackService, useValue: {} },
+        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue(null) } },
       ],
-    }).compile();
+    })
+      .overrideGuard(AiQuotaGuard)
+      .useValue({ canActivate: jest.fn().mockResolvedValue(true) })
+      .compile();
 
     controller = module.get<AiStylistController>(AiStylistController);
   });
