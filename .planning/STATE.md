@@ -1,88 +1,83 @@
 # Project State
 
 **Project:** 寻裳 XunO
-**Updated:** 2026-04-29T21:05Z
+**Updated:** 2026-05-05T05:09Z
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-04-29)
+See: `.planning/PROJECT.md` (updated 2026-05-05)
 
 **Core value:** 伊伊（AI 造型师）通过自然对话理解用户需求，精准推荐穿搭方案
 
+**Current milestone:** Renovation v1 — 系统性改造（治理 → 清理 → 依赖 → 平台 → UI → 动效 → 回归）
+
 ## Phase Status
 
-| Phase | Name                   | Status     | Progress |
-| ----- | ---------------------- | ---------- | -------- |
-| 1     | Foundation             | ✓ Complete | 100%     |
-| 2     | Onboarding             | ✓ Complete | 100%     |
-| 3     | Core AI                | ✓ Complete | 100%     |
-| 4     | Commerce + Discovery   | ✓ Complete | 100%     |
-| 5     | E2E Integration + Demo | ✓ Complete | 100%     |
-| 6     | Production + Legal     | ✓ Complete | 100%     |
+| Phase | Name     | Status      | Progress |
+| ----- | -------- | ----------- | -------- |
+| 0     | 基线确认 | ✓ Complete  | 100%     |
+| 1     | 治理底座 | ○ Pending   | 0%       |
+| 1.5   | 文件清理 | ○ Pending   | 0%       |
+| 2     | 依赖治理 | ○ Pending   | 0%       |
+| 3     | 平台评估 | In Progress | 100%     |
+| 4     | 平台升级 | ○ Pending   | 0%       |
+| 5     | UI 审计  | ○ Pending   | 0%       |
+| 6     | UI 落地  | ○ Pending   | 0%       |
+| 7     | 动效落地 | ○ Pending   | 0%       |
+| 8     | 回归验证 | ○ Pending   | 0%       |
+
+## Previous Milestones (Archived)
+
+| #   | Name         | Phases | Status     |
+| --- | ------------ | ------ | ---------- |
+| M1  | Core Product | 1-6    | ✓ Complete |
 
 ## Current Focus
 
-Phase 6: Production + Legal — All 9 plans complete. Security hardening, rate limiting, legal docs, API docs, CI/CD, backup/restore, observability, load testing, migration/rollback all done.
+Phase 3: 平台评估 — Wave 2 完成 (03-02)，工具链升级方案 + 行为变更评估 + 稳定性风险报告已生成。
 
-## Next Action
-
-Phase 6 complete. Ready for milestone wrap-up via `/gsd-complete-milestone`.
+**Next action:** Phase 3 全部完成，推进 Phase 4 (平台升级) 或 Phase 5 (UI 审计)
 
 ## Decisions
 
-| Decision                                                 | Rationale                                                               | Date       |
-| -------------------------------------------------------- | ----------------------------------------------------------------------- | ---------- |
-| Pre-cache endpoint unauthenticated                       | Called by warmup scripts during infra setup                             | 2026-04-29 |
-| TTS precache with HTTP fallback                          | Calls own endpoint first, local cache markers if offline                | 2026-04-29 |
-| Mock recommendation data for pre-cache                   | Real AI pipeline needs full session context                             | 2026-04-29 |
-| ScreenErrorBoundaries.ts centralized config              | Per-screen ErrorBoundary config in single file for maintainability      | 2026-04-29 |
-| Today/Discover exports converted to wrapped defaults     | Cleaner lazy-load integration without .then() remapping in navigator    | 2026-04-29 |
-| Onboarding step screens get individual ErrorBoundary     | Granular crash isolation — one step crash doesn't cascade whole wizard  | 2026-04-29 |
-| Demo toggle in SettingsScreen Developer section          | **DEV** only exposure, long-press version easter egg as fallback        | 2026-04-29 |
-| Seed profiles as compile-time constants                  | Zero I/O overhead vs runtime JSON loading for demo performance          | 2026-04-29 |
-| Demo API interceptor mock+block pattern                  | Returns cached data for reads, blocks mutations during demo mode        | 2026-04-29 |
-| AiFallbackService: direct HTTP GLM->Qwen                 | Explicit priority chain with configurable 5s timeout per tier           | 2026-04-29 |
-| TTS text-only fallback with status field                 | Returns TtsFallbackResult with audio_unavailable for mobile UI control  | 2026-04-29 |
-| E2E runner adopts check()/record_result() pattern        | Consistent with existing demo scripts for maintainability               | 2026-04-29 |
-| 3-gate pre-run validation with distinct exit codes       | 2=preflight fail, 3=warmup fail, 1=checks fail, 0=all pass              | 2026-04-29 |
-| Staging deploys on develop (GitFlow convention)          | Standard GitFlow: develop→staging, v\* tags→production                  | 2026-04-29 |
-| Verify-deploy.sh with configurable timeout               | 120s default, 10s retry, supports slow-starting AI service              | 2026-04-29 |
-| 4-scenario rollback runbook                              | Image, config, full infra, blue-green slot with decision criteria       | 2026-04-29 |
-| FashionSigLIP-only ML pipeline                           | Removed all FashionCLIP fallbacks and references from active code       | 2026-04-29 |
-| Diversity scorer: entropy 40% + style 35% + price 25%    | 3-metric weighted scoring for recommendation diversity observability    | 2026-04-29 |
-| Bias audit threshold <0.2 for 10 profiles                | Tightened from <0.3 to ensure >0.8 diversity across diverse profiles    | 2026-04-29 |
-| Dual rate limiting: @Throttle burst + AiQuotaGuard daily | Per-minute burst protection + daily quota on all AI endpoints           | 2026-04-29 |
-| pnpm audit deferred to network-accessible env            | npmjs.org timeout from China; overrides provide compensating controls   | 2026-04-29 |
-| Curated YAML spec alongside auto-generated JSON          | Human-readable YAML with rate limit docs + machine-generated JSON       | 2026-04-29 |
-| Swagger UI already correctly env-gated                   | Verified NODE_ENV gate in main.ts — no code change needed               | 2026-04-29 |
-| HighErrorRate threshold 5% for production                | Plan spec; 1% was overly aggressive for initial production launch       | 2026-04-29 |
-| AI quota panel shows exceeded events + total call rate   | Dual metric view provides operational context for quota management      | 2026-04-29 |
-| Retained domain-specific alerts alongside standard ones  | BruteForceDetected, TryOnServiceDown, PaymentFailureSpike remain        | 2026-04-29 |
-| Production backup uses prod-\* container prefix          | Matches docker-compose.production.yml actual names                      | 2026-04-29 |
-| Neo4j backup/restore gracefully skips when unavailable   | Optional service not in production compose yet                          | 2026-04-29 |
-| MinIO off-instance backup storage                        | S3-compatible storage already deployed, avoids separate S3 dependency   | 2026-04-29 |
-| k6 scenario imports renamed to avoid recursion           | runChatFlow/runRecommendationFlow/runTryonFlow prevent name shadowing   | 2026-04-29 |
-| Load test uses actual DTO fields (photoId/itemId)        | Cross-referenced with CreateTryOnDto and RecommendationsController      | 2026-04-29 |
-| 2x backend instances recommended for production HA       | Single-instance has no failover; 2x provides basic high availability    | 2026-04-29 |
-| migrate-db.sh uses prisma migrate diff for detection     | More reliable than parsing status output for pending migrations         | 2026-04-29 |
-| Rollback with optional --with-db-restore flag            | Separates image revert from database restore for deployment flexibility | 2026-04-29 |
-
-## Performance
-
-- **05-01:** 10min, 2 tasks, 6 files | Commits: 6e0531fb, 03f19d34
-- **05-02:** 13min, 2 tasks, 8 files | Commit: c4d773df
-- **05-03:** 10min, 2 tasks, 7 files | Commits: f058e509, 34d4b709
-- **05-04:** 10min, 3 tasks, 9 files | Commits: 2e17ef74, 58912f8b, faf3285d
-- **05-05:** 7min, 2 tasks, 3 files | Commits: eb98d69b, d7245d90
-- **06-04:** 5min, 2 tasks, 2 files | Commit: cfdaa2a0
-- **06-01:** 12min, 3 tasks, 10 files | Commits: 3490d4ee, f946795d, db23999c, 84f7e29a
-- **06-03:** 21min, 2 tasks, 6 files | Commits: f7fd3767, 35bfd40f
-- **06-08:** 4min, 2 tasks, 2 files | Commits: 561e56d4, 28f5ea23
-- **06-05:** 5min, 2 tasks, 4 files | Commits: 8b8cbcd0, a5c5ec7e
-- **06-06:** 8min, 2 tasks, 4 files | Commits: 24c7f0be, b7b05825
-- **06-07:** 6min, 2 tasks, 7 files | Commits: 04f47490, 633545a7
-- **06-09:** 4min, 2 tasks, 4 files | Commits: e168a1bc, 17a5f4b2
+| Decision                                                      | Rationale                                                      | Date       |
+| ------------------------------------------------------------- | -------------------------------------------------------------- | ---------- |
+| Phase 0-8 分批改造                                            | 先治理再改造，零业务侵入，每 phase 可验证可回滚                | 2026-05-05 |
+| JDK 17/Gradle 8.11.1/AGP 8.9.1/Kotlin 1.9.25 保持不变         | API 36 不要求工具链强制升级，仅 buildToolsVersion 需对齐       | 2026-05-05 |
+| Kotlin K2 迁移标记为高风险延后项                              | 项目 Kotlin 代码仅 56 行但 RN 框架兼容性未确认                 | 2026-05-05 |
+| 16KB 页面兼容性 + foregroundServiceType 为 Phase 4 最高优先级 | 2 个 Critical 风险需在平台升级前验证                           | 2026-05-05 |
+| 零业务侵入原则                                                | 禁止修改鉴权/支付/订单/AI/数据库/权限/核心业务                 | 2026-05-05 |
+| 先审计再计划再修改再验证                                      | 禁止一上来直接改代码                                           | 2026-05-05 |
+| 先识别分类 → 加入忽略 → 验证无引用 → 分批删除                 | 文件清理四轮制                                                 | 2026-05-05 |
+| 预处理缓存端点未认证                                          | 初始化期间由预热脚本调用                                       | 2026-04-29 |
+| TTS 预缓存 with HTTP fallback                                 | 优先调用自身端点，离线时本地缓存标记                           | 2026-04-29 |
+| 预缓存 mock 推荐数据                                          | 真实 AI 流水线需要完整会话上下文                               | 2026-04-29 |
+| ScreenErrorBoundaries.ts 集中配置                             | 单文件维护各屏幕 ErrorBoundary 配置                            | 2026-04-29 |
+| Today/Discover exports 转换                                   | 更清晰的懒加载集成，无需 navigator 中 .then() 重映射           | 2026-04-29 |
+| 引导步骤屏幕各自 ErrorBoundary                                | 细粒度崩溃隔离                                                 | 2026-04-29 |
+| Demo 开关在 SettingsScreen Developer 区域                     | 仅 DEV 暴露，长按版本号彩蛋兜底                                | 2026-04-29 |
+| Seed profiles 编译时常量                                      | Demo 性能零 I/O 开销                                           | 2026-04-29 |
+| Demo API 拦截器 mock+block 模式                               | 读取返回缓存，写入在 demo 模式下阻止                           | 2026-04-29 |
+| AiFallbackService: 直连 HTTP GLM→Qwen                         | 明确优先级链，每层可配置 5s 超时                               | 2026-04-29 |
+| TTS text-only fallback + status 字段                          | 返回 TtsFallbackResult，audio_unavailable 用于移动端 UI 控制   | 2026-04-29 |
+| E2E runner 使用 check()/record_result() 模式                  | 与已有 demo 脚本保持一致                                       | 2026-04-29 |
+| 3-gate pre-run 验证，不同退出码                               | 2=preflight fail, 3=warmup fail, 1=checks fail, 0=all pass     | 2026-04-29 |
+| FashionSigLIP-only ML pipeline                                | 移除所有 FashionCLIP fallback 和引用                           | 2026-04-29 |
+| Diversity scorer: entropy 40% + style 35% + price 25%         | 推荐多样性可观测性的 3 指标加权评分                            | 2026-04-29 |
+| Bias audit threshold <0.2 for 10 profiles                     | 从 <0.3 收紧以确保 >0.8 多样性                                 | 2026-04-29 |
+| 双速率限制: @Throttle burst + AiQuotaGuard daily              | AI 端点每分钟突发保护 + 每日配额                               | 2026-04-29 |
+| pnpm audit 推迟到有网络的环境                                 | 中国内地 npmjs.org 超时；overrides 提供补偿控制                | 2026-04-29 |
+| 策划 YAML spec 与自动生成 JSON                                | 人类可读 YAML（含速率限制文档）+ 机器生成 JSON                 | 2026-04-29 |
+| Swagger UI 已正确环境门控                                     | main.ts 中 NODE_ENV gate 已验证                                | 2026-04-29 |
+| HighErrorRate threshold 生产环境 5%                           | Plan 规范；初始生产启动 1% 过于激进                            | 2026-04-29 |
+| AI quota 面板同时显示超限事件 + 总调用率                      | 双指标视图提供配额管理运营上下文                               | 2026-04-29 |
+| 保留领域特定告警 + 标准告警                                   | BruteForceDetected, TryOnServiceDown, PaymentFailureSpike 保留 | 2026-04-29 |
+| Pre-cache endpoint unauthenticated                            | 预热脚本调用时无需认证                                         | 2026-04-29 |
+| k6 scenario imports 重命名避免递归                            | runChatFlow/runRecommendationFlow/runTryonFlow 防止名称遮蔽    | 2026-04-29 |
+| 2x 后端实例推荐生产 HA                                        | 单实例无故障转移；2x 提供基本高可用                            | 2026-04-29 |
+| migrate-db.sh 使用 prisma migrate diff                        | 比解析状态输出更可靠                                           | 2026-04-29 |
+| Rollback with optional --with-db-restore flag                 | 从数据库恢复中分离镜像回退                                     | 2026-04-29 |
 
 ---
 
-_State updated: 2026-04-29 after Phase 6 Plan 09 execution_
+_State updated: 2026-05-05 after Phase 3 Plan 02 completion_
