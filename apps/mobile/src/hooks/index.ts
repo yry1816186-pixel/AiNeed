@@ -13,3 +13,5 @@ export * from "../shared/hooks/useInfiniteScroll";
 export * from "../shared/hooks/useLazyLoad";
 export * from "../shared/hooks/useSeasonAccent";
 export * from "./useOfflineNetworkStatus";
+export { useReducedMotion } from "./useReducedMotion";
+export { useAccessibility } from "./useAccessibility";
