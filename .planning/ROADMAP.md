@@ -210,9 +210,9 @@ python -c "import ml" 2>/dev/null  # ML package import check
 
 ---
 
-## Phase 4: 平台升级与兼容修复
+## Phase 4: 平台升级与兼容修复 ✓
 
-**Status:** In Progress (Plan 01/02 complete)
+**Status:** Complete
 **Goal:** 按 Phase 3 计划分批执行平台升级和兼容修复。
 
 **Canonical refs:** `TOOLCHAIN_UPGRADE_PLAN.md`, `TARGETSDK36_BEHAVIOR_CHANGES.md`
@@ -223,7 +223,7 @@ python -c "import ml" 2>/dev/null  # ML package import check
 | Plan | Name | Status | Summary |
 |------|------|--------|---------|
 | 04-01 | 工具链升级与 SDK 版本升级 | Complete | buildToolsVersion 36.0.0 + targetSdk 36 |
-| 04-02 | 行为变更修复与稳定性加固 | Pending | Android 16 behavior changes |
+| 04-02 | 行为变更修复与稳定性加固 | Complete | requestLegacyExternalStorage 移除 + API36 兼容报告 |
 
 **Success criteria:**
 
@@ -233,10 +233,10 @@ python -c "import ml" 2>/dev/null  # ML package import check
 4. ~~AndroidX/Jetpack 兼容处理~~ (04-01: core-splashscreen 1.0.1 保持，兼容 API 36)
 5. ~~三方依赖分组处理~~ (04-01: 锁定模块不变，其他库保持)
 6. ~~targetSdkVersion 升级~~ (04-01: 35 -> 36)
-7. Android 16 行为变更修复 (04-02)
-8. 稳定性加固完成 (04-02)
-9. 构建/lint/测试全量回归通过 (04-02)
-10. API 36 兼容验证报告 (04-02)
+7. ~~Android 16 行为变更修复~~ (04-02: 1 fixed, 9 not-affected)
+8. ~~稳定性加固完成~~ (04-02: 4/4 audited, 1 fix, 3 documented)
+9. ~~构建/lint/测试全量回归通过~~ (04-02: assembleDebug SUCCESS, lint PASS)
+10. ~~API 36 兼容验证报告~~ (04-02: API36_COMPAT_REPORT.md generated)
 
 **Execution constraints:**
 
