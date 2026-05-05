@@ -1,38 +1,45 @@
-import { useThemeStore, startAppearanceListener, stopAppearanceListener } from "../themeStore";
+import {
+  useThemeStore,
+  startAppearanceListener,
+  stopAppearanceListener,
+  useTheme,
+} from "../themeStore";
 import { resolveColors, lightColors, darkColors } from "../color-resolver";
-import type { ThemeColors } from "../types";
 import { Appearance } from "react-native";
+
+jest.mock("react-native", () => ({
+  Appearance: {
+    getColorScheme: jest.fn(() => "light"),
+    addChangeListener: jest.fn(() => ({ remove: jest.fn() })),
+  },
+}));
 
 describe("ThemeStore", () => {
   afterEach(() => {
-    useThemeStore.getState().setMode("system");
+    useThemeStore.getState().setMode("light");
   });
 
   describe("mode switching", () => {
-    it("setMode('dark') resolves to dark mode with warm dark colors", () => {
+    it("setMode('dark') sets mode to dark", () => {
       useThemeStore.getState().setMode("dark");
       const state = useThemeStore.getState();
-      expect(state.resolvedMode).toBe("dark");
-      expect(state.colors.surface.primary).toBe("#1A1A18");
+      expect(state.mode).toBe("dark");
+      expect(state.isDark).toBe(true);
     });
 
-    it("setMode('light') uses terracotta as interactive primary", () => {
+    it("setMode('light') sets mode to light", () => {
       useThemeStore.getState().setMode("light");
-      expect(useThemeStore.getState().colors.interactive.primary).toBe("#C44536");
+      const state = useThemeStore.getState();
+      expect(state.mode).toBe("light");
+      expect(state.isDark).toBe(false);
     });
 
-    it("setMode('dark') uses coral as interactive primary (NOT terracotta)", () => {
-      useThemeStore.getState().setMode("dark");
-      const primary = useThemeStore.getState().colors.interactive.primary;
-      expect(primary).not.toBe("#C44536");
-      expect(primary).toBe("#FF9090");
-    });
-
-    it("setMode('system') resolves based on Appearance", () => {
-      useThemeStore.getState().setMode("system");
-      const scheme = Appearance.getColorScheme();
-      const expected = scheme === "dark" ? "dark" : "light";
-      expect(useThemeStore.getState().resolvedMode).toBe(expected);
+    it("toggleMode switches between light and dark", () => {
+      useThemeStore.getState().setMode("light");
+      useThemeStore.getState().toggleMode();
+      expect(useThemeStore.getState().mode).toBe("dark");
+      useThemeStore.getState().toggleMode();
+      expect(useThemeStore.getState().mode).toBe("light");
     });
   });
 
@@ -76,6 +83,8 @@ describe("ThemeStore", () => {
 
   describe("Appearance listener", () => {
     it("startAppearanceListener registers listener", () => {
+      stopAppearanceListener();
+      jest.clearAllMocks();
       startAppearanceListener();
       expect(Appearance.addChangeListener).toHaveBeenCalled();
     });

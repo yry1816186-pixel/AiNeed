@@ -12,7 +12,7 @@ import {
   FashionColors,
 } from "./tokens/colors";
 import type { FlatColors, WarmPrimaryPalette, ColorShadePalette } from "./FlatColors";
-export { DesignTokens, darkTokens } from "./tokens/legacy-map";
+export { DesignTokens, darkTokens };
 export type { DesignTokensType, DarkTokensType } from "./tokens/legacy-map";
 
 export {
@@ -542,7 +542,7 @@ export const ZIndex = {
 };
 
 function buildFlatThemeColors(
-  base: typeof DesignTokens.colors,
+  base: typeof DesignTokens.colors | typeof darkTokens.colors,
   wp: WarmPrimaryPalette
 ): FlatColors {
   return {
@@ -581,7 +581,12 @@ function buildFlatThemeColors(
     backgrounds: base.backgrounds,
     text: base.text,
     borders: base.borders,
-    colorSeasons: base.colorSeasons,
+    colorSeasons: {
+      spring: { ...base.colorSeasons.spring, colors: [...base.colorSeasons.spring.colors] },
+      summer: { ...base.colorSeasons.summer, colors: [...base.colorSeasons.summer.colors] },
+      autumn: { ...base.colorSeasons.autumn, colors: [...base.colorSeasons.autumn.colors] },
+      winter: { ...base.colorSeasons.winter, colors: [...base.colorSeasons.winter.colors] },
+    },
     surface: base.backgrounds.primary,
     surfaceSecondary: base.backgrounds.secondary,
     surfaceTertiary: base.backgrounds.tertiary,
@@ -633,7 +638,13 @@ function buildFlatThemeColors(
     purple: base.semantic.purple,
     secondaryLight: base.brand.sageLight,
     gradients: {
-      ...DesignTokens.gradients,
+      brand: [...DesignTokens.gradients.brand],
+      brandSoft: [...DesignTokens.gradients.brandSoft],
+      sage: [...DesignTokens.gradients.sage],
+      hero: [...DesignTokens.gradients.hero],
+      card: [...DesignTokens.gradients.card],
+      warm: [...DesignTokens.gradients.warm],
+      cool: [...DesignTokens.gradients.cool],
       warmAccent: [...DesignTokens.gradients.warmAccent] as [string, string],
       coolAccent: [...DesignTokens.gradients.coolAccent] as [string, string],
       heroAccent: [...DesignTokens.gradients.heroAccent] as [string, string],
@@ -676,19 +687,9 @@ export const theme = {
 
 export default theme;
 
-export {
-  DesignTokens,
-  darkTokens,
-  Spacing,
-  BorderRadius,
-  Shadows,
-  Typography,
-  Animation,
-  Layout,
-  ZIndex,
-} from "./tokens/legacy-map";
-export type { DesignTokensType, DarkTokensType } from "./tokens/legacy-map";
 export { useThemeStore, startAppearanceListener, stopAppearanceListener } from "./themeStore";
 export { resolveColors, lightColors, darkColors } from "./color-resolver";
 export { mmkvStorage } from "./mmkv-storage";
+export { useThemeTokens } from "./useThemeTokens";
+export type { UseThemeTokensReturn } from "./useThemeTokens";
 export type { ThemeMode, ResolvedMode, ThemeColors } from "./types";

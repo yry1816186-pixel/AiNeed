@@ -40,12 +40,28 @@ export const useThemeStore = create<ThemeStore>()(
   )
 );
 
-Appearance.addChangeListener(({ colorScheme }) => {
-  const store = useThemeStore.getState();
-  if (colorScheme && (colorScheme === "light" || colorScheme === "dark")) {
-    store.setMode(colorScheme);
+let appearanceSubscription: { remove: () => void } | null = null;
+
+export function startAppearanceListener() {
+  if (appearanceSubscription) {
+    return appearanceSubscription;
   }
-});
+
+  appearanceSubscription = Appearance.addChangeListener(({ colorScheme }) => {
+    const store = useThemeStore.getState();
+    if (colorScheme && (colorScheme === "light" || colorScheme === "dark")) {
+      store.setMode(colorScheme);
+    }
+  });
+  return appearanceSubscription;
+}
+
+export function stopAppearanceListener() {
+  appearanceSubscription?.remove();
+  appearanceSubscription = null;
+}
+
+startAppearanceListener();
 
 type DeepResolve<T> = T extends { light: infer L; dark: infer D }
   ? L

@@ -1,7 +1,7 @@
-import { MMKV } from "react-native-mmkv";
+import { createMMKV } from "react-native-mmkv";
 import type { StateStorage } from "zustand/middleware";
 
-const themeStorage = new MMKV({ id: "theme-storage" });
+const themeStorage = createMMKV({ id: "theme-storage" });
 
 export const mmkvStorage: StateStorage = {
   getItem: (name: string): string | null => {
@@ -11,6 +11,6 @@ export const mmkvStorage: StateStorage = {
     themeStorage.set(name, value);
   },
   removeItem: (name: string): void => {
-    themeStorage.delete(name);
+    themeStorage.remove(name);
   },
 };

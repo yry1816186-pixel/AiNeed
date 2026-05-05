@@ -34,9 +34,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type GradientColors = readonly [string, string, ...string[]];
 
-/**
- * @deprecated 使用 primitives/Card 中的 Card 组件替代。此组件将在未来版本中移除。
- */
 export interface GradientCardProps {
   children: React.ReactNode;
   gradient?: keyof typeof Colors.gradient;
@@ -45,7 +42,6 @@ export interface GradientCardProps {
   padding?: number;
 }
 
-/** @deprecated 使用 primitives/Card 中的 Card 组件替代 */
 export const GradientCard: React.FC<GradientCardProps> = ({
   children,
   gradient = "primary",
@@ -68,7 +64,6 @@ export const GradientCard: React.FC<GradientCardProps> = ({
   );
 };
 
-/** @deprecated 使用 primitives/Card 中的 Card (variant="glass") 替代 */
 export interface GlassCardProps {
   children: React.ReactNode;
   style?: ViewStyle;
@@ -76,7 +71,6 @@ export interface GlassCardProps {
   tint?: "light" | "dark";
 }
 
-/** @deprecated 使用 primitives/Card 中的 Card (variant="glass") 替代 */
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
   style,
@@ -95,7 +89,6 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   );
 };
 
-/** @deprecated 使用 ui/Button 替代 */
 export interface ModernButtonProps {
   title: string;
   onPress: () => void;
@@ -109,7 +102,6 @@ export interface ModernButtonProps {
   style?: ViewStyle;
 }
 
-/** @deprecated 使用 ui/Button 替代 */
 export const ModernButton: React.FC<ModernButtonProps> = ({
   title,
   onPress,
@@ -227,7 +219,6 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   );
 };
 
-/** @deprecated 使用 ui/ProductGrid 中的 ProductCard 替代 */
 export interface ProductCardProps {
   id: string;
   name: string;
@@ -243,7 +234,6 @@ export interface ProductCardProps {
   isFavorite?: boolean;
 }
 
-/** @deprecated 使用 ui/ProductGrid 中的 ProductCard 替代 */
 export const ProductCard: React.FC<ProductCardProps> = ({
   name,
   price,
@@ -356,7 +346,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-/** @deprecated 使用 primitives/Card 中的 Card (variant="gradient") 替代 */
 export interface FeatureCardProps {
   icon: string;
   title: string;
@@ -365,7 +354,6 @@ export interface FeatureCardProps {
   onPress: () => void;
 }
 
-/** @deprecated 使用 primitives/Card 中的 Card (variant="gradient") 替代 */
 export const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   title,
@@ -415,7 +403,6 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   );
 };
 
-/** @deprecated 在业务页面中直接实现 SectionHeader */
 export interface SectionHeaderProps {
   title: string;
   subtitle?: string;
@@ -425,7 +412,6 @@ export interface SectionHeaderProps {
   };
 }
 
-/** @deprecated 在业务页面中直接实现 SectionHeader */
 export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, action }) => {
   const styles = useStyles(colors);
   return (
@@ -443,7 +429,6 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, a
   );
 };
 
-/** @deprecated 使用 skeleton/Skeleton 替代 */
 export interface SkeletonProps {
   width?: DimensionValue;
   height?: number;
@@ -451,12 +436,6 @@ export interface SkeletonProps {
   style?: ViewStyle;
 }
 
-/**
- * Skeleton - 委托至 skeleton/Skeleton.tsx 的统一实现
- * 保留此导出以维持向后兼容
- *
- * @deprecated 使用 skeleton/Skeleton 替代
- */
 export const Skeleton: React.FC<SkeletonProps> = ({
   width = "100%",
   height = 20,
@@ -473,14 +452,12 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   );
 };
 
-/** @deprecated 使用 ui/Badge 替代 */
 export interface BadgeProps {
   text: string;
   variant?: "primary" | "success" | "warning" | "error" | "neutral";
   size?: "sm" | "md" | "lg";
 }
 
-/** @deprecated 使用 ui/Badge 替代 */
 export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = "md" }) => {
   const styles = useStyles(colors);
   const variantStyles: Record<string, { bg: string; text: string }> = {
@@ -521,7 +498,6 @@ export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = 
   );
 };
 
-/** @deprecated 使用业务页面中的头像组件替代 */
 export interface AvatarProps {
   source?: string;
   name?: string;
@@ -529,7 +505,6 @@ export interface AvatarProps {
   online?: boolean;
 }
 
-/** @deprecated 使用业务页面中的头像组件替代 */
 export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => {
   const styles = useStyles(colors);
   const sizeMap = {

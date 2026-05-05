@@ -1,8 +1,5 @@
 /**
  * Skeleton - UI layer re-export from skeleton/Skeleton
- *
- * @deprecated Use `skeleton/Skeleton` instead. This file re-exports
- * the canonical implementation for backward compatibility.
  */
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, ViewStyle, DimensionValue } from "react-native";
@@ -62,9 +59,6 @@ export interface SkeletonProps {
 
 /**
  * Skeleton - shimmer loading placeholder
- *
- * @deprecated Use `skeleton/Skeleton` for the canonical implementation with
- * proper shimmer animation. This version uses a simpler opacity pulse.
  */
 export const Skeleton: React.FC<SkeletonProps> = ({
   width = "100%",
@@ -96,7 +90,6 @@ export interface CircleSkeletonProps {
   style?: ViewStyle;
 }
 
-/** @deprecated Use `skeleton/Skeleton` instead */
 export const CircleSkeleton: React.FC<CircleSkeletonProps> = ({ size = 48, style }) => {
   const { colors } = useTheme();
   const animatedStyle = useShimmerAnimation();
@@ -123,7 +116,6 @@ export interface TextSkeletonProps {
   style?: ViewStyle;
 }
 
-/** @deprecated Use `skeleton/Skeleton` or `SkeletonText` instead */
 export const TextSkeleton: React.FC<TextSkeletonProps> = ({
   lines = 3,
   lineHeight = 16,
@@ -155,7 +147,6 @@ export interface CardSkeletonProps {
   style?: ViewStyle;
 }
 
-/** @deprecated Use `skeleton/SkeletonCard` instead */
 export const CardSkeleton: React.FC<CardSkeletonProps> = ({ style }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);

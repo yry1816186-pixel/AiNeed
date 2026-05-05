@@ -3,9 +3,6 @@
  *
  * This file re-exports the canonical EmptyState from primitives/EmptyState
  * with additional UI-layer-specific styling.
- *
- * @deprecated Use `primitives/EmptyState` for the canonical implementation.
- * This file is kept for backward compatibility.
  */
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
@@ -40,8 +37,6 @@ export interface EmptyStateProps {
 
 /**
  * EmptyState - UI-layer variant with FadeInUp animation
- *
- * @deprecated Use `primitives/EmptyState` for the canonical implementation.
  */
 export const EmptyState: React.FC<EmptyStateProps> = ({
   icon = "shirt-outline",

@@ -74,7 +74,7 @@ export const ShadowPresets = {
 export const GlowPresets = {
   primary: Platform.select({
     ios: {
-      shadowColor: "#6366F1",
+      shadowColor: DesignTokens.colors.brand.terracotta,
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
@@ -96,7 +96,7 @@ export const GlowPresets = {
   }),
   success: Platform.select({
     ios: {
-      shadowColor: "#10B981",
+      shadowColor: DesignTokens.colors.semantic.success,
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
@@ -107,7 +107,7 @@ export const GlowPresets = {
   }),
   error: Platform.select({
     ios: {
-      shadowColor: "#EF4444",
+      shadowColor: DesignTokens.colors.semantic.error,
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.4,
       shadowRadius: 20,

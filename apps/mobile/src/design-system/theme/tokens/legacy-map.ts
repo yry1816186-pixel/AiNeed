@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { primitiveTokens } from "./generated/primitive-tokens";
 import { semanticTokens } from "./generated/semantic-tokens";
 
@@ -20,6 +21,8 @@ export const DesignTokens = {
       slate: brand.slate[500],
       slateLight: brand.slate[300],
       slateDark: brand.slate[700],
+      gold: "#D4A853",
+      jade: "#5BB5A2",
     },
     neutral: {
       white: neutral.white,
@@ -37,16 +40,16 @@ export const DesignTokens = {
     },
     semantic: {
       success: status.success.light,
-      successLight: status.success.lightBg,
+      successLight: status.successLight.light,
       successDark: "#1B7A3D",
       warning: status.warning.light,
-      warningLight: status.warning.lightBg,
+      warningLight: status.warningLight.light,
       warningDark: "#8B6914",
       error: status.error.light,
-      errorLight: status.error.lightBg,
+      errorLight: status.errorLight.light,
       errorDark: "#A12525",
       info: status.info.light,
-      infoLight: status.info.lightBg,
+      infoLight: status.infoLight.light,
       like: "#FF4757",
       bookmark: "#F1C40F",
       chartGood: "#4CAF50",
@@ -182,6 +185,7 @@ export const DesignTokens = {
   },
 
   typography: {
+    /** 字体选型需设计确认后替换 — 当前使用系统回退字体作为占位 */
     fontFamily: {
       heading: {
         ios: "Georgia",
@@ -282,48 +286,102 @@ export const DesignTokens = {
       shadowRadius: 0,
       elevation: 0,
     },
-    xs: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.04,
-      shadowRadius: 2,
-      elevation: 1,
-    },
-    sm: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    md: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08,
-      shadowRadius: 8,
-      elevation: 4,
-    },
-    lg: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.1,
-      shadowRadius: 16,
-      elevation: 8,
-    },
-    xl: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: 0.12,
-      shadowRadius: 24,
-      elevation: 12,
-    },
-    brand: {
-      shadowColor: brand.terracotta[500],
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 12,
-      elevation: 6,
-    },
+    xs: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 2,
+      },
+      android: { elevation: 1 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 2,
+        elevation: 1,
+      },
+    }),
+    sm: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+      },
+      android: { elevation: 2 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+        elevation: 2,
+      },
+    }),
+    md: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: { elevation: 4 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 4,
+      },
+    }),
+    lg: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+      },
+      android: { elevation: 8 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        elevation: 8,
+      },
+    }),
+    xl: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.12,
+        shadowRadius: 24,
+      },
+      android: { elevation: 12 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.12,
+        shadowRadius: 24,
+        elevation: 12,
+      },
+    }),
+    brand: Platform.select({
+      ios: {
+        shadowColor: brand.terracotta[500],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+      },
+      android: { elevation: 6 },
+      default: {
+        shadowColor: brand.terracotta[500],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+        elevation: 6,
+      },
+    }),
   },
 
   animation: {
@@ -399,6 +457,8 @@ export const darkTokens = {
       slate: brand.slate[300],
       slateLight: brand.slate[200],
       slateDark: brand.slate[600],
+      gold: "#E0BB63",
+      jade: "#7ED4AD",
     },
     neutral: {
       white: neutral.black,
@@ -416,16 +476,16 @@ export const darkTokens = {
     },
     semantic: {
       success: status.success.dark,
-      successLight: status.success.darkBg,
+      successLight: status.successLight.dark,
       successDark: "#2D8A4E",
       warning: status.warning.dark,
-      warningLight: status.warning.darkBg,
+      warningLight: status.warningLight.dark,
       warningDark: "#D9A441",
       error: status.error.dark,
-      errorLight: status.error.darkBg,
+      errorLight: status.errorLight.dark,
       errorDark: "#D45546",
       info: status.info.dark,
-      infoLight: status.info.darkBg,
+      infoLight: status.infoLight.dark,
       like: "#FF6B7A",
       bookmark: "#F5D44A",
       chartGood: "#6BCB77",
@@ -501,48 +561,102 @@ export const darkTokens = {
   borderRadius: DesignTokens.borderRadius,
   shadows: {
     none: DesignTokens.shadows.none,
-    xs: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
-      elevation: 1,
-    },
-    sm: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    md: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 4,
-    },
-    lg: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.35,
-      shadowRadius: 16,
-      elevation: 8,
-    },
-    xl: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: 0.4,
-      shadowRadius: 24,
-      elevation: 12,
-    },
-    brand: {
-      shadowColor: brand.terracotta[300],
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 6,
-    },
+    xs: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+      },
+      android: { elevation: 1 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 1,
+      },
+    }),
+    sm: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+      },
+      android: { elevation: 2 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 2,
+      },
+    }),
+    md: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: { elevation: 4 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+      },
+    }),
+    lg: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.35,
+        shadowRadius: 16,
+      },
+      android: { elevation: 8 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.35,
+        shadowRadius: 16,
+        elevation: 8,
+      },
+    }),
+    xl: Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.4,
+        shadowRadius: 24,
+      },
+      android: { elevation: 12 },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.4,
+        shadowRadius: 24,
+        elevation: 12,
+      },
+    }),
+    brand: Platform.select({
+      ios: {
+        shadowColor: brand.terracotta[300],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+      },
+      android: { elevation: 6 },
+      default: {
+        shadowColor: brand.terracotta[300],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 6,
+      },
+    }),
   },
   animation: DesignTokens.animation,
   breakpoints: DesignTokens.breakpoints,

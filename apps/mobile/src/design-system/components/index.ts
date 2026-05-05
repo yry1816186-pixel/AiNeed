@@ -34,3 +34,6 @@ export type { ToastProps, ToastVariant, ToastPosition } from "./Toast/Toast";
 
 export { SmartImage } from "./SmartImage/SmartImage";
 export type { SmartImageProps } from "./SmartImage/SmartImage";
+
+export { LogoPlaceholder } from "./LogoPlaceholder/LogoPlaceholder";
+export type { LogoPlaceholderProps, LogoVariant } from "./LogoPlaceholder/LogoPlaceholder";

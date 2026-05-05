@@ -58,15 +58,10 @@ export type { SimilarityHeatmapProps } from "./SimilarityHeatmap";
 export { LoadingSpinner, InlineSpinner } from "./LoadingSpinner";
 export type { LoadingSpinnerProps, SpinnerSize } from "./LoadingSpinner";
 
-// @deprecated Use `LoadingSpinner` instead
-export { LoadingSpinner as Loading } from "./LoadingSpinner";
-
 export { Rating, RatingBadge } from "./Rating";
 export type { RatingProps, RatingBadgeProps } from "./Rating";
 
 export { ProductGrid, HorizontalProductList } from "./ProductGrid";
-// @deprecated Use `ProductCard` from `../../design-system/primitives/Card` instead
-export { ProductCard as ProductGridCard } from "./ProductGrid";
 export type { Product } from "./ProductGrid";
 
 export {
@@ -112,14 +107,6 @@ export {
   FeatureCard,
   SectionHeader,
 } from "./ModernComponents";
-// @deprecated Use `ProductCard` from `../../design-system/primitives/Card` instead
-export { ProductCard as ModernProductCard } from "./ModernComponents";
-// @deprecated Use `Skeleton` from `./Skeleton` instead
-export { Skeleton as AnimatedSkeleton } from "./ModernComponents";
-// @deprecated Use `Badge` from `./Badge` instead
-export { Badge as ModernBadge } from "./ModernComponents";
-// @deprecated Use `Avatar` from `./Avatar` instead
-export { Avatar as ModernAvatar } from "./ModernComponents";
 export type {
   GradientCardProps,
   GlassCardProps,
@@ -127,14 +114,6 @@ export type {
   FeatureCardProps,
   SectionHeaderProps,
 } from "./ModernComponents";
-// @deprecated Use `ProductCardProps` from `../../design-system/primitives/Card` instead
-export type { ProductCardProps as ModernProductCardProps } from "./ModernComponents";
-// @deprecated Use `SkeletonProps` from `./Skeleton` instead
-export type { SkeletonProps as AnimatedSkeletonProps } from "./ModernComponents";
-// @deprecated Use `BadgeProps` from `./Badge` instead
-export type { BadgeProps as ModernBadgeProps } from "./ModernComponents";
-// @deprecated Use `AvatarProps` from `./Avatar` instead
-export type { AvatarProps as ModernAvatarProps } from "./ModernComponents";
 
 // ─── Fluid Animations ─────────────────────────────────────────────────
 export {
@@ -146,10 +125,6 @@ export {
   SkeletonLoader,
   StaggeredList,
 } from "./FluidAnimations";
-// @deprecated Use `MagneticButton` from `../interactions/MicroInteractions` instead
-export { MagneticButton as FluidMagneticButton } from "./FluidAnimations";
-// @deprecated Use `RippleEffect` from `../interactions/MicroInteractions` instead
-export { RippleEffect as FluidRippleEffect } from "./FluidAnimations";
 export type {
   LiquidGlassCardProps,
   ParallaxScrollViewProps,
@@ -159,10 +134,6 @@ export type {
   SkeletonLoaderProps,
   StaggeredListProps,
 } from "./FluidAnimations";
-// @deprecated Use `MagneticButtonProps` from `../interactions/MicroInteractions` instead
-export type { MagneticButtonProps as FluidMagneticButtonProps } from "./FluidAnimations";
-// @deprecated Use `RippleEffectProps` from `../interactions/MicroInteractions` instead
-export type { RippleEffectProps as FluidRippleEffectProps } from "./FluidAnimations";
 
 // ─── Page Transitions ─────────────────────────────────────────────────
 export {
@@ -203,8 +174,6 @@ export {
   PulseLoader,
   OrbitLoader,
 } from "../loading/LoadingStates";
-// @deprecated Use `Skeleton` from `./Skeleton` instead
-export { Skeleton as LoadingSkeleton } from "../loading/LoadingStates";
 export type {
   SkeletonCardProps,
   SkeletonListProps,
@@ -216,23 +185,6 @@ export type {
   PulseLoaderProps,
   OrbitLoaderProps,
 } from "../loading/LoadingStates";
-// @deprecated Use `SkeletonProps` from `./Skeleton` instead
-export type { SkeletonProps as LoadingSkeletonProps } from "../loading/LoadingStates";
-
-// ─── Theme System ─────────────────────────────────────────────────────
-// @deprecated ThemeSystem 组件已迁移至消费统一 ThemeContext。
-// 新代码请直接使用：
-//   - ThemeProvider / useTheme 来自 `../../contexts/ThemeContext`
-//   - PaperThemeProvider 来自 `./PaperThemeProvider`
-export {
-  useTheme,
-  ThemedView,
-  ThemedText,
-  ThemeSwitch,
-  ThemeSettingsSheet,
-} from "../theme/ThemeSystem";
-// @deprecated 使用 `ThemeProvider` from `../../contexts/ThemeContext` 代替
-export { ThemeProvider as AdvancedThemeProvider } from "../theme/ThemeSystem";
 
 // ─── Animation Hooks ──────────────────────────────────────────────────
 export {
@@ -253,5 +205,3 @@ export {
   useTypewriter,
   useCountUp,
 } from "../../hooks/useAdvancedAnimations";
-// @deprecated Use `useMagneticButton` instead
-export { useMagneticButton as useMagneticButtonAnimation } from "../../hooks/useAdvancedAnimations";
