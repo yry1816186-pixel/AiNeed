@@ -1,0 +1,97 @@
+# ============================================================
+# .agentignore — Agent context reduction rules
+# Phase 1 / GOV-02: 禁止 Agent 读取以下目录和文件
+# ============================================================
+
+# ---- 依赖 ----
+node_modules/
+
+# ---- 构建产物 ----
+dist/
+build/
+.next/
+out/
+.gradle/
+android/app/build/
+android/build/
+ios/build/
+ios/Pods/
+
+# ---- 编译产物 (Python) ----
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+*.so
+
+# ---- Turborepo 缓存 ----
+.turbo/
+
+# ---- 缓存与临时 ----
+.cache/
+*.log
+logs/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.tmp/
+tmp/
+
+# ---- IDE & 工具 ----
+.idea/
+.vscode/
+*.sublime-*
+
+# ---- Expo ----
+.expo/
+android/.expo/
+ios/.expo/
+
+# ---- 测试产物 ----
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# ---- 环境文件 (安全) ----
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+
+# ---- Python 工具缓存 ----
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# ---- Prisma ----
+# 允许读取 schema，但不读取生成的 client
+node_modules/.prisma/
+
+# ---- Metro / RN ----
+metro-cache/
+
+# ---- Docker ----
+# 不读取 Docker 数据卷内容
+
+# ---- 归档与备份 ----
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# ---- 保留规则 (这些目录仍然可访问) ----
+!assets/
+!public/
+!res/
+!resources/
+!apps/mobile/assets/
+!apps/admin/public/
+!apps/backend/prisma/schema.prisma
