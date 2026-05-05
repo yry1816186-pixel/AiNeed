@@ -10,6 +10,7 @@ import {
   NativeSyntheticEvent,
   GestureResponderEvent,
   View,
+  Platform,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -37,6 +38,9 @@ import { createStyles } from "../../shared/contexts/ThemeContext";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
+
+/** True on platforms that support iOS-style shadow properties. */
+const USES_SHADOW_PROPS = Platform.OS !== "android";
 
 export interface LiquidGlassCardProps {
   children: React.ReactNode;
@@ -93,10 +97,14 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
       { rotateY: `${rotateY.value}deg` },
       { scale: scale.value },
     ],
-    shadowColor: glowColor,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: enableGlow ? interpolate(glowValue.value, [0, 1], [0.1, 0.3]) : 0,
-    shadowRadius: enableGlow ? interpolate(glowValue.value, [0, 1], [15, 30]) : 0,
+    ...(USES_SHADOW_PROPS
+      ? {
+          shadowColor: glowColor,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: enableGlow ? interpolate(glowValue.value, [0, 1], [0.1, 0.3]) : 0,
+          shadowRadius: enableGlow ? interpolate(glowValue.value, [0, 1], [15, 30]) : 0,
+        }
+      : {}),
     elevation: enableGlow ? interpolate(glowValue.value, [0, 1], [8, 16]) : 4,
   }));
 
@@ -169,10 +177,14 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
       { translateY: translateY.value },
       { scale: scale.value },
     ],
-    shadowColor: colors.primary[500],
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: interpolate(glowIntensity.value, [0, 1], [0.2, 0.5]),
-    shadowRadius: interpolate(glowIntensity.value, [0, 1], [10, 25]),
+    ...(USES_SHADOW_PROPS
+      ? {
+          shadowColor: colors.primary[500],
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: interpolate(glowIntensity.value, [0, 1], [0.2, 0.5]),
+          shadowRadius: interpolate(glowIntensity.value, [0, 1], [10, 25]),
+        }
+      : {}),
     elevation: interpolate(glowIntensity.value, [0, 1], [5, 15]),
   }));
 
