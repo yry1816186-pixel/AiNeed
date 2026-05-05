@@ -42,8 +42,8 @@ Requirements for the renovation milestone. Each maps to a roadmap phase.
 - [x] **PLT-03**: 生成 TOOLCHAIN_UPGRADE_PLAN.md — JDK/Gradle/AGP/Kotlin 分期升级方案
 - [x] **PLT-04**: 生成 TARGETSDK36_BEHAVIOR_CHANGES.md — 行为变更逐项评估（不涉及项明确标注）
 - [x] **PLT-05**: 生成 STABILITY_RISK_REPORT.md — 空指针、生命周期、协程泄漏、主线程阻塞、崩溃风险
-- [ ] **PLT-06**: 工具链升级执行 — JDK → Gradle → AGP → Kotlin/KSP → AndroidX → 三方库，逐组构建验证
-- [ ] **PLT-07**: compileSdk / targetSdk 升级执行
+- [x] **PLT-06**: 工具链升级执行 — JDK → Gradle → AGP → Kotlin/KSP → AndroidX → 三方库，逐组构建验证
+- [x] **PLT-07**: compileSdk / targetSdk 升级执行
 - [ ] **PLT-08**: Android 16 行为变更修复 + 稳定性加固
 - [ ] **PLT-09**: 构建/lint/测试回归通过
 - [ ] **PLT-10**: API 36 兼容验证报告
@@ -122,4 +122,4 @@ Requirements for the renovation milestone. Each maps to a roadmap phase.
 ---
 
 _Requirements defined: 2026-05-05_
-_Last updated: 2026-05-05 after Phase 3 Plan 02 completion (PLT-01~05 done)_
+_Last updated: 2026-05-05 after Phase 4 Plan 01 completion (PLT-06~07 done)_
