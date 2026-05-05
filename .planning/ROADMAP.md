@@ -168,8 +168,9 @@ python -c "import ml" 2>/dev/null  # ML package import check
 
 ---
 
-## Phase 3: Android/API 36 平台兼容升级评估
+## Phase 3: Android/API 36 平台兼容升级评估 ✓
 
+**Status:** Complete
 **Goal:** 评估 Android 16 / API 36 兼容性。只评估，不直接做高风险修改。
 
 **Canonical refs:** `.planning/codebase/STACK.md` (§Frameworks, §Key Dependencies), `apps/mobile/android/`
