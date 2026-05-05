@@ -1,5 +1,5 @@
 ﻿import { logger } from "../../../shared/utils/logger";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,9 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 import { useAuthStore } from "../../auth/stores";
 import { authApi, userApi } from "../../auth/services/auth.api";
 import { ProfileCompletenessBar } from "../components/ProfileCompletenessBar";
+import { StyleDnaRadar } from "../components/StyleDnaRadar";
+import type { StyleDnaData } from "../components/StyleDnaRadar";
+import { ColorPalette } from "../components/ColorPalette";
 import { useProfileStore } from "../stores/profileStore";
 import type { UserStats, User } from "../../auth/types/user";
 import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
@@ -61,6 +64,31 @@ export const ProfileScreenComponent: React.FC = () => {
 
   // 季节强调色，回退到品牌色
   const accentColor = seasonAccent?.accent ?? colors.primary;
+
+  const styleDna: StyleDnaData = useMemo(
+    () => [
+      { label: "经典", value: 65 },
+      { label: "前卫", value: 48 },
+      { label: "简约", value: 82 },
+      { label: "华丽", value: 55 },
+      { label: "休闲", value: 70 },
+      { label: "正式", value: 42 },
+    ],
+    []
+  );
+
+  const paletteColors = useMemo(
+    () =>
+      seasonAccent?.gradient ?? [
+        "#C8956C",
+        "#D4A574",
+        "#B8860B",
+        "#DEB887",
+        "#CD853F",
+        "#A0522D",
+      ],
+    [seasonAccent]
+  );
 
   const fetchStats = useCallback(async () => {
     try {
@@ -390,6 +418,16 @@ export const ProfileScreenComponent: React.FC = () => {
             </View>
           </View>
         )}
+
+        {/* Style DNA Radar Chart */}
+        <StyleDnaRadar data={styleDna} size={280} />
+
+        {/* Personal Color Palette */}
+        <ColorPalette
+          colors={paletteColors}
+          title="你的专属色板"
+          subtitle="基于你的色彩季型推荐"
+        />
 
         {/* Menu Section */}
         <BrandDivider />
