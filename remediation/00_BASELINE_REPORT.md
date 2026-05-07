@@ -204,4 +204,11 @@ Phase 0 is strictly read-only. No application code, configuration, or data was m
 
 ---
 
-**Phase 0 Status**: NEARLY COMPLETE — awaiting baseline-auditor confirmation and final-verifier review.
+**Phase 0 Status**: COMPLETE
+
+Final-verifier review completed 2026-05-07. Two P0 findings identified and resolved:
+
+- F-001: EVIDENCE_LEDGER E-002 reclassified from CONFIRMED to AUDIT-REPORTED (pnpm install never locally verified)
+- F-002: All remediation files committed to branch `audit-remediation/20260507-1449` (commit `08a7eae9`)
+
+All 15 audit checksums verified unchanged. Evidence protection ensured via git commit.
