@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -32,10 +33,29 @@ import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive
 import { PhotoType } from "../../../types/prisma-enums";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 
 import { PhotoUploadResultDto, PhotoResponseDto, SuccessResponseDto } from "./dto";
 import { PhotosService } from "./photos.service";
 import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
+
+const IMAGE_UPLOAD_OPTIONS = {
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter(
+    _req: Express.Request,
+    file: Express.Multer.File,
+    callback: (error: Error | null, acceptFile: boolean) => void
+  ) {
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      callback(null, true);
+    } else {
+      callback(new BadRequestException("仅支持 JPEG、PNG 和 WebP 格式的图片"), false);
+    }
+  },
+};
 
 @ApiTags("photos")
 @ApiBearerAuth()
@@ -51,6 +71,7 @@ export class PhotosController {
   ) {}
 
   @Post("upload")
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: "上传用户照片",
@@ -74,7 +95,7 @@ export class PhotosController {
   @ApiResponse({ status: 201, description: "上传成功", type: PhotoUploadResultDto })
   @ApiResponse({ status: 400, description: "文件格式不支持或文件过大" })
   @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FileInterceptor("file", IMAGE_UPLOAD_OPTIONS))
   async uploadPhoto(
     @CurrentUser("id") userId: string,
     @UploadedFile() file: Express.Multer.File,
@@ -104,6 +125,7 @@ export class PhotosController {
   }
 
   @Get()
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取用户照片列表",
     description: "获取当前用户的所有照片，可按类型筛选。",
@@ -116,6 +138,7 @@ export class PhotosController {
   }
 
   @Get(":id")
+  @RequireConsent("photos")
   @ApiOperation({ summary: "获取照片详情", description: "根据照片 ID 获取单张照片的详细信息。" })
   @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
   @ApiResponse({ status: 200, description: "获取成功", type: PhotoResponseDto })
@@ -126,6 +149,7 @@ export class PhotosController {
   }
 
   @Get(":id/asset")
+  @RequireConsent("photos")
   @ApiOperation({ summary: "获取照片原图", description: "获取照片的原始文件资源。" })
   @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
   @ApiResponse({ status: 200, description: "获取成功，返回图片二进制流" })
@@ -145,6 +169,7 @@ export class PhotosController {
   }
 
   @Get(":id/thumbnail")
+  @RequireConsent("photos")
   @ApiOperation({ summary: "获取照片缩略图", description: "获取照片的缩略图资源。" })
   @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
   @ApiResponse({ status: 200, description: "获取成功，返回缩略图二进制流" })
@@ -164,6 +189,7 @@ export class PhotosController {
   }
 
   @Delete(":id")
+  @RequireConsent("photos")
   @ApiOperation({ summary: "删除照片", description: "删除指定照片及其关联的存储文件。" })
   @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
   @ApiResponse({ status: 200, description: "删除成功", type: SuccessResponseDto })

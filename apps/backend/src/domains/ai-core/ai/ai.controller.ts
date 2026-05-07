@@ -26,6 +26,7 @@ import { Throttle } from "@nestjs/throttler";
 import { ClothingCategory } from "../../../types/prisma-enums";
 import { Public } from "../../identity/auth/decorators/public.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 
 import { AIIntegrationService } from "./services/ai-integration.service";
 
@@ -83,6 +84,7 @@ export class AIController {
   }
 
   @Post("analyze")
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
   @ApiConsumes("multipart/form-data")
@@ -134,6 +136,7 @@ export class AIController {
   }
 
   @Post("body-analysis")
+  @RequireConsent("photos", "body_metrics")
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
   @ApiConsumes("multipart/form-data")
@@ -168,6 +171,7 @@ export class AIController {
   }
 
   @Post("similar")
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 15, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
   @ApiConsumes("multipart/form-data")

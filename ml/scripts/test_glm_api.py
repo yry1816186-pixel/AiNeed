@@ -38,7 +38,7 @@ def test_glm_api():
     
     api_key = os.environ.get("GLM_API_KEY")
     api_endpoint = os.environ.get("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4")
-    model = os.environ.get("GLM_MODEL", "glm-5")
+    model = os.environ.get("GLM_MODEL", "glm-4.5")
     
     if not api_key:
         print("❌ GLM_API_KEY not found in environment variables")

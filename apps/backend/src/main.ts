@@ -3,18 +3,28 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule } from "@nestjs/swagger";
 import compression from "compression";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, json, urlencoded } from "express";
 import helmet from "helmet";
 
+import "./common/redis/ioredis-defaults";
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters";
 import { ErrorHandlerMiddleware } from "./common/middleware/error-handler.middleware";
 import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
 import { XssSanitizationPipe } from "./common/pipes/xss-sanitization.pipe";
+import { loadSecretsFromVault } from "./common/secret-manager/vault-loader";
 import { createSwaggerConfig } from "./config/swagger.config";
 import { MetricsService } from "./domains/platform/metrics/metrics.service";
 
 async function bootstrap() {
+  await loadSecretsFromVault();
+  const corsOrigins = process.env.CORS_ORIGINS?.split(",").filter(Boolean) || [];
+  const isProductionLike = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
+
+  if (isProductionLike && corsOrigins.length === 0) {
+    throw new Error("CORS_ORIGINS environment variable is required in production/staging");
+  }
+
   const app = await NestFactory.create(AppModule);
 
   // 获取 MetricsService 实例
@@ -45,7 +55,7 @@ async function bootstrap() {
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", "data:", "blob:"],
-          connectSrc: ["'self'", "ws://localhost:8081"],
+          connectSrc: ["'self'", ...corsOrigins],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
           upgradeInsecureRequests: [],
@@ -66,13 +76,16 @@ async function bootstrap() {
     })
   );
 
+  // 请求体大小限制 (防DoS)
+  app.use(json({ limit: '10mb' }));
+  app.use(urlencoded({ limit: '10mb', extended: true }));
+
   // CORS 配置
-  const corsOrigins = process.env.CORS_ORIGINS?.split(",").filter(Boolean) || [];
   app.enableCors({
     origin:
       corsOrigins.length > 0
         ? corsOrigins
-        : process.env.NODE_ENV === "production"
+        : isProductionLike
         ? []
         : ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
@@ -134,4 +147,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+void bootstrap();

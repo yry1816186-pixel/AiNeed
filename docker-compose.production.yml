@@ -26,7 +26,7 @@ services:
       - "5432"
     volumes:
       - prod_postgres_data:/var/lib/postgresql/data
-      - ./infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./infrastructure/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
@@ -173,7 +173,8 @@ services:
       - "8200"
     volumes:
       - prod_vault_data:/vault/file
-      - ./infra/vault/config:/vault/config:ro
+      - ./infrastructure/vault/config:/vault/config:ro
+      - ./infrastructure/vault/tls:/vault/tls:ro
     command: server -config=/vault/config/vault.hcl
     cap_add:
       - IPC_LOCK
@@ -281,7 +282,7 @@ services:
       AI_SERVICE_URL: http://ai-service:8002
       GLM_API_KEY: ${GLM_API_KEY}
       GLM_API_ENDPOINT: ${GLM_API_ENDPOINT:-https://open.bigmodel.cn/api/paas/v4}
-      GLM_MODEL: ${GLM_MODEL:-glm-5}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
       PORT: 3001
       # Demo mode: allows Android emulator/device to connect (0.0.0.0 binding)
       DEMO_MODE: ${DEMO_MODE:-false}
@@ -345,6 +346,8 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'
       - '--web.enable-admin-api'
+    depends_on:
+      - alertmanager
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
       interval: 30s
@@ -365,6 +368,40 @@ services:
       options:
         max-size: "50m"
         max-file: "5"
+
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: prod-alertmanager
+    restart: unless-stopped
+    expose:
+      - "9093"
+    volumes:
+      - ./infrastructure/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - prod_alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--cluster.listen-address='
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - production-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
 
   grafana:
     image: grafana/grafana:10.2.2
@@ -418,6 +455,7 @@ services:
     expose:
       - "3100"
     volumes:
+      - ./infrastructure/loki/loki.yml:/etc/loki/local-config.yaml:ro
       - prod_loki_data:/loki
     command: -config.file=/etc/loki/local-config.yaml
     healthcheck:
@@ -626,6 +664,7 @@ volumes:
   prod_qdrant_snapshots:
   prod_vault_data:
   prod_prometheus_data:
+  prod_alertmanager_data:
   prod_grafana_data:
   prod_loki_data:
 

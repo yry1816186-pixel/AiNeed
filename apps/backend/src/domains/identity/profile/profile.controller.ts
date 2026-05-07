@@ -23,6 +23,7 @@ import { Throttle } from "@nestjs/throttler";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RequireConsent } from "../privacy/consent.guard";
 
 import {
   UpdateProfileDto,
@@ -120,6 +121,7 @@ export class ProfileController {
   }
 
   @Get("body-analysis")
+  @RequireConsent("body_metrics")
   @ApiOperation({
     summary: "获取体型分析报告",
     description: "根据用户的体型数据生成详细的体型分析报告，包括体型类型、穿搭建议、适合风格等。",
@@ -156,6 +158,7 @@ export class ProfileController {
   }
 
   @Post("body-analysis/upload")
+  @RequireConsent("body_metrics")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("file"))
   @ApiConsumes("multipart/form-data")
@@ -231,6 +234,7 @@ export class ProfileController {
   }
 
   @Post("color-analysis/upload")
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("file"))
   @ApiConsumes("multipart/form-data")
@@ -312,6 +316,7 @@ export class ProfileController {
   }
 
   @Get("body-metrics")
+  @RequireConsent("body_metrics")
   @ApiOperation({
     summary: "获取身体指标计算",
     description: "根据用户的身高、体重等数据计算身体指标，如 BMI、腰臀比等。",

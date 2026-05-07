@@ -6,6 +6,8 @@ groups:
         for: 5m
         labels:
           severity: critical
+          team: backend
+          service: stylemind-backend
         annotations:
           summary: "API 5xx错误率超过5%"
           description: "当前5xx错误率 {{ $value | humanizePercentage }}"
@@ -15,6 +17,9 @@ groups:
         for: 1m
         labels:
           severity: critical
+          team: platform
+          service: "{{ $labels.service }}"
+          category: availability
         annotations:
           summary: "服务 {{ $labels.instance }} 不可达"
           description: "服务已停止响应超过1分钟"
@@ -24,6 +29,9 @@ groups:
         for: 2m
         labels:
           severity: critical
+          team: database
+          service: stylemind-postgres
+          category: database
         annotations:
           summary: "PostgreSQL连接数过高"
           description: "当前活跃连接数 {{ $value }}"
@@ -33,6 +41,9 @@ groups:
         for: 1m
         labels:
           severity: critical
+          team: backend
+          service: stylemind-backend
+          category: security
         annotations:
           summary: "检测到暴力破解攻击"
           description: "登录失败速率 {{ $value }}/s"
@@ -42,6 +53,9 @@ groups:
         for: 3m
         labels:
           severity: critical
+          team: ai
+          service: stylemind-ai
+          category: availability
         annotations:
           summary: "虚拟试穿服务异常"
           description: "5分钟内试穿错误数 {{ $value }}"
@@ -53,6 +67,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: backend
+          service: stylemind-backend
+          category: performance
         annotations:
           summary: "API P95延迟超过2秒"
           description: "当前P95延迟 {{ $value }}s"
@@ -62,6 +79,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: platform
+          service: stylemind-node-exporter
+          category: resource
         annotations:
           summary: "磁盘使用超过80%"
 
@@ -70,6 +90,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: platform
+          service: stylemind-node-exporter
+          category: resource
         annotations:
           summary: "可用内存低于15%"
 
@@ -78,6 +101,9 @@ groups:
         for: 1m
         labels:
           severity: warning
+          team: ai
+          service: stylemind-ai
+          category: cost
         annotations:
           summary: "AI配额超限事件检测"
           description: "检测到AI服务配额超限"
@@ -87,6 +113,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: platform
+          service: stylemind-redis
+          category: resource
         annotations:
           summary: "Redis内存使用超过80%"
 
@@ -95,6 +124,9 @@ groups:
         for: 3m
         labels:
           severity: warning
+          team: ai
+          service: stylemind-ai
+          category: performance
         annotations:
           summary: "AI API P95延迟超过10秒"
           description: "当前P95延迟 {{ $value }}s"
@@ -104,6 +136,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: ai
+          service: stylemind-ai
+          category: availability
         annotations:
           summary: "虚拟试穿失败率超过10%"
           description: "当前失败率 {{ $value | humanizePercentage }}"
@@ -113,6 +148,9 @@ groups:
         for: 10m
         labels:
           severity: warning
+          team: platform
+          service: stylemind-node-exporter
+          category: resource
         annotations:
           summary: "磁盘空间不足20%"
 
@@ -121,6 +159,9 @@ groups:
         for: 10m
         labels:
           severity: warning
+          team: backend
+          service: stylemind-backend
+          category: cache
         annotations:
           summary: "Redis缓存命中率低于50%"
           description: "当前命中率 {{ $value | humanizePercentage }}"
@@ -130,6 +171,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: ai
+          service: stylemind-ai
+          category: availability
         annotations:
           summary: "AI服务错误率超过5%"
           description: "当前错误率 {{ $value | humanizePercentage }}"
@@ -139,6 +183,9 @@ groups:
         for: 5m
         labels:
           severity: warning
+          team: business
+          service: stylemind-backend
+          category: business
         annotations:
           summary: "支付失败数异常增长"
           description: "10分钟内失败数 {{ $value }}"

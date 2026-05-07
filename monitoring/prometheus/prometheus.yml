@@ -2,6 +2,10 @@ global:
   scrape_interval: 15s
   scrape_timeout: 5s
   evaluation_interval: 15s
+  external_labels:
+    cluster: 'xuno-prod'
+    environment: 'production'
+    team: 'platform'
 
 rule_files:
   - '/etc/prometheus/alert.rules.yml'
@@ -9,33 +13,77 @@ rule_files:
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: []
+        - targets:
+            - 'alertmanager:9093'
+      timeout: 10s
+      api_version: v2
 
 scrape_configs:
   - job_name: 'backend'
-    metrics_path: /metrics
+    metrics_path: '/api/v1/metrics'
     static_configs:
       - targets: ['backend:3001']
+        labels:
+          service: 'stylemind-backend'
+          team: 'backend'
+          env: 'production'
+          tier: 'application'
     scrape_interval: 10s
 
   - job_name: 'ai-service'
-    metrics_path: /metrics
+    metrics_path: '/metrics'
     static_configs:
-      - targets: ['ai-service:8000']
+      - targets: ['ai-service:8002']
+        labels:
+          service: 'stylemind-ai'
+          team: 'ai'
+          env: 'production'
+          tier: 'application'
     scrape_interval: 10s
+
+  - job_name: 'ai-task-worker'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['ai-task-worker:8003']
+        labels:
+          service: 'stylemind-task-worker'
+          team: 'ai'
+          env: 'production'
+          tier: 'application'
+    scrape_interval: 15s
 
   - job_name: 'node-exporter'
     static_configs:
       - targets: ['node-exporter:9100']
+        labels:
+          service: 'stylemind-node-exporter'
+          team: 'platform'
+          env: 'production'
+          tier: 'infrastructure'
 
   - job_name: 'postgres-exporter'
     static_configs:
       - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'stylemind-postgres-exporter'
+          team: 'platform'
+          env: 'production'
+          tier: 'data'
 
   - job_name: 'redis-exporter'
     static_configs:
       - targets: ['redis-exporter:9121']
+        labels:
+          service: 'stylemind-redis-exporter'
+          team: 'platform'
+          env: 'production'
+          tier: 'data'
 
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
+        labels:
+          service: 'stylemind-cadvisor'
+          team: 'platform'
+          env: 'production'
+          tier: 'infrastructure'

@@ -30,6 +30,11 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from ml.models.coordination_model import CoordinationModel
+from ml.features.feature_extractor import (
+    extract_item_aux,
+    extract_pair_aux_from_rule,
+    validate_aux_vectors,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -174,6 +179,9 @@ class CoordinationDataset(Dataset):
             "item_b_aux": torch.tensor(
                 sample.get("item_b_aux", [0.0] * 16), dtype=torch.float32
             ),
+            "pair_aux": torch.tensor(
+                sample.get("pair_aux", [0.0] * 16), dtype=torch.float32
+            ),
             "label": torch.tensor(sample["label"], dtype=torch.float32),
         }
 
@@ -249,10 +257,11 @@ def train_model(
             item_b = batch["item_b_category"].to(device)
             aux_a = batch["item_a_aux"].to(device)
             aux_b = batch["item_b_aux"].to(device)
+            pair_aux = batch["pair_aux"].to(device)
             labels = batch["label"].to(device)
 
             optimizer.zero_grad()
-            preds = model(item_a, item_b, aux_a, aux_b)
+            preds = model(item_a, item_b, aux_a, aux_b, pair_aux)
             loss = criterion(preds, labels)
             loss.backward()
             optimizer.step()
@@ -274,9 +283,10 @@ def train_model(
                 item_b = batch["item_b_category"].to(device)
                 aux_a = batch["item_a_aux"].to(device)
                 aux_b = batch["item_b_aux"].to(device)
+                pair_aux = batch["pair_aux"].to(device)
                 labels = batch["label"].to(device)
 
-                preds = model(item_a, item_b, aux_a, aux_b)
+                preds = model(item_a, item_b, aux_a, aux_b, pair_aux)
                 loss = criterion(preds, labels)
                 val_loss += loss.item()
 
@@ -382,10 +392,12 @@ async def predict(req: PredictRequest) -> PredictResponse:
     item_a = torch.tensor([CATEGORY_TO_ID[req.item_a_category]], dtype=torch.long)
     item_b = torch.tensor([CATEGORY_TO_ID[req.item_b_category]], dtype=torch.long)
     aux_a = torch.tensor(
-        [req.item_a_aux or [0.0] * 16], dtype=torch.float32
+        [req.item_a_aux if req.item_a_aux else extract_item_aux(req.item_a_category)],
+        dtype=torch.float32,
     )
     aux_b = torch.tensor(
-        [req.item_b_aux or [0.0] * 16], dtype=torch.float32
+        [req.item_b_aux if req.item_b_aux else extract_item_aux(req.item_b_category)],
+        dtype=torch.float32,
     )
 
     with torch.no_grad():
@@ -423,8 +435,12 @@ async def predict_batch(req: BatchPredictRequest) -> BatchPredictResponse:
             )
         item_a_ids.append(CATEGORY_TO_ID[pair.item_a_category])
         item_b_ids.append(CATEGORY_TO_ID[pair.item_b_category])
-        aux_a_list.append(pair.item_a_aux or [0.0] * 16)
-        aux_b_list.append(pair.item_b_aux or [0.0] * 16)
+        aux_a_list.append(
+            pair.item_a_aux if pair.item_a_aux else extract_item_aux(pair.item_a_category)
+        )
+        aux_b_list.append(
+            pair.item_b_aux if pair.item_b_aux else extract_item_aux(pair.item_b_category)
+        )
 
     item_a = torch.tensor(item_a_ids, dtype=torch.long)
     item_b = torch.tensor(item_b_ids, dtype=torch.long)

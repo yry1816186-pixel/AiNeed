@@ -21,13 +21,14 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import type { Response } from "express";
 
-import { Throttle } from "@nestjs/throttler";
 
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 
 import { CreateTryOnDto, GetTryOnHistoryQueryDto } from "./dto/try-on.dto";
 import { TryOnService } from "./try-on.service";
@@ -42,6 +43,7 @@ export class TryOnController {
   constructor(private readonly tryOnService: TryOnService) {}
 
   @Post()
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("try-on")
@@ -71,6 +73,7 @@ export class TryOnController {
   }
 
   @Get("history")
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取试衣历史",
     description: "获取当前用户的虚拟试衣历史记录，支持分页和状态筛选。",
@@ -116,6 +119,7 @@ export class TryOnController {
   }
 
   @Get("daily-quota")
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取每日试衣配额",
     description: "获取当前用户今日的试衣配额使用情况。",
@@ -129,6 +133,7 @@ export class TryOnController {
   }
 
   @Get(":id")
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取试衣详情",
     description: "获取指定试衣记录的详细状态信息。",
@@ -156,6 +161,7 @@ export class TryOnController {
   }
 
   @Get(":id/result-image")
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取试衣结果图片",
     description: "直接获取试衣结果图片的二进制数据。仅在试衣完成后可用。",
@@ -206,6 +212,7 @@ export class TryOnController {
   }
 
   @Get(":id/share-image")
+  @RequireConsent("photos")
   @ApiOperation({
     summary: "获取试衣分享图",
     description: "获取带水印的试衣结果图片，用于分享。",
@@ -238,6 +245,7 @@ export class TryOnController {
   }
 
   @Post(":id/retry")
+  @RequireConsent("photos")
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("try-on")
@@ -264,6 +272,7 @@ export class TryOnController {
   }
 
   @Delete(":id")
+  @RequireConsent("photos")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: "删除试衣记录",

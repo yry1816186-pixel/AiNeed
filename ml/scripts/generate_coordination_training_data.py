@@ -8,6 +8,9 @@ Data sources:
   - ml/data/fashion_rules/item_compatibility.json (primary positive samples)
   - ml/data/fashion_rules/fabric_rules.json (augmentation, optional)
 
+v1.1 — Now populates item_a_aux and item_b_aux with real category-derived
+       features via ml.features.feature_extractor.
+
 Usage:
   python -m ml.scripts.generate_coordination_training_data
 """
@@ -17,6 +20,11 @@ import random
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+from ml.features.feature_extractor import (
+    extract_item_aux,
+    extract_pair_aux_from_rule,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,19 +60,6 @@ BOTTOM_CATEGORIES: List[str] = [
 
 CATEGORY_TO_ID: Dict[str, int] = {cat: idx for idx, cat in enumerate(ALL_CATEGORIES)}
 
-SEASON_ENCODING = {
-    "spring": [1, 0, 0, 0],
-    "summer": [0, 1, 0, 0],
-    "autumn": [0, 0, 1, 0],
-    "winter": [0, 0, 0, 1],
-}
-
-STYLE_ENCODING = {
-    "casual": 0, "smart_casual": 1, "business": 2, "formal": 3,
-    "elegant": 4, "romantic": 5, "bohemian": 6, "streetwear": 7,
-    "sporty": 8, "minimalist": 9,
-}
-
 
 def load_compatibility_rules(path: Optional[Path] = None) -> List[Dict]:
     """Load item compatibility rules from JSON file."""
@@ -85,32 +80,18 @@ def load_fabric_rules(path: Optional[Path] = None) -> Optional[Dict]:
         return json.load(f)
 
 
-def _encode_aux_features(rule: Dict) -> List[float]:
-    """Encode auxiliary features: style match count + season overlap count.
+def _encode_pair_aux(rule: Dict) -> List[float]:
+    """Encode pair-level auxiliary features from a compatibility rule.
 
-    Returns a 16-dimensional vector:
-      - 10 dims: style multi-hot (one per style category)
-      - 4 dims: season multi-hot for top item
-      - 2 dims: [top_formality_approx, bottom_formality_approx] placeholder
+    Delegates to feature_extractor.extract_pair_aux_from_rule.
+    Returns a 16-dimensional vector.
     """
-    styles = rule.get("suitable_styles", [])
-    style_vec = [0.0] * 10
-    for s in styles:
-        if s in STYLE_ENCODING:
-            style_vec[STYLE_ENCODING[s]] = 1.0
-
-    seasons = rule.get("suitable_seasons", [])
-    season_vec = [0.0] * 4
-    for s in seasons:
-        if s in SEASON_ENCODING:
-            idx = ["spring", "summer", "autumn", "winter"].index(s)
-            season_vec[idx] = 1.0
-
-    # Two placeholder formality indicators
-    occasion_count = len(rule.get("suitable_occasions", []))
-    formality_indicator = [occasion_count / 5.0, rule.get("compatibility_score", 0.5)]
-
-    return style_vec + season_vec + formality_indicator
+    return extract_pair_aux_from_rule(
+        suitable_styles=rule.get("suitable_styles", []),
+        suitable_seasons=rule.get("suitable_seasons", []),
+        suitable_occasions=rule.get("suitable_occasions", []),
+        compatibility_score=rule.get("compatibility_score", 0.5),
+    )
 
 
 def generate_positive_samples(
@@ -131,16 +112,18 @@ def generate_positive_samples(
             logger.warning(f"Unknown category in rule {rule.get('id')}: {top_cat}/{bottom_cat}")
             continue
 
-        aux = _encode_aux_features(rule)
+        pair_aux = _encode_pair_aux(rule)
+        item_a_aux = extract_item_aux(top_cat)
+        item_b_aux = extract_item_aux(bottom_cat)
 
         samples.append({
             "item_a_category": top_cat,
             "item_a_category_id": CATEGORY_TO_ID[top_cat],
             "item_b_category": bottom_cat,
             "item_b_category_id": CATEGORY_TO_ID[bottom_cat],
-            "item_a_aux": [0.0] * 16,  # per-item aux, populated at training time
-            "item_b_aux": [0.0] * 16,
-            "pair_aux": aux,
+            "item_a_aux": item_a_aux,
+            "item_b_aux": item_b_aux,
+            "pair_aux": pair_aux,
             "label": 1,
             "score": score,
             "source": "item_compatibility",
@@ -198,9 +181,9 @@ def generate_negative_samples(
             "item_a_category_id": CATEGORY_TO_ID[top_cat],
             "item_b_category": bottom_cat,
             "item_b_category_id": CATEGORY_TO_ID[bottom_cat],
-            "item_a_aux": [0.0] * 16,
-            "item_b_aux": [0.0] * 16,
-            "pair_aux": [0.0] * 16,
+            "item_a_aux": extract_item_aux(top_cat),
+            "item_b_aux": extract_item_aux(bottom_cat),
+            "pair_aux": _encode_pair_aux(rule),
             "label": 0,
             "score": score,
             "source": "low_score_rule",
@@ -239,9 +222,9 @@ def generate_negative_samples(
                 "item_a_category_id": CATEGORY_TO_ID[top],
                 "item_b_category": bottom,
                 "item_b_category_id": CATEGORY_TO_ID[bottom],
-                "item_a_aux": [0.0] * 16,
-                "item_b_aux": [0.0] * 16,
-                "pair_aux": [0.0] * 16,
+                "item_a_aux": extract_item_aux(top),
+                "item_b_aux": extract_item_aux(bottom),
+                "pair_aux": extract_pair_aux_from_rule(compatibility_score=neg_score),
                 "label": 0,
                 "score": neg_score,
                 "source": "random_negative",
@@ -288,9 +271,9 @@ def augment_with_fabric_rules(
                 "item_a_category_id": CATEGORY_TO_ID[top_cat],
                 "item_b_category": bottom_cat,
                 "item_b_category_id": CATEGORY_TO_ID[bottom_cat],
-                "item_a_aux": [0.0] * 16,
-                "item_b_aux": [0.0] * 16,
-                "pair_aux": [0.0] * 16,
+                "item_a_aux": extract_item_aux(top_cat),
+                "item_b_aux": extract_item_aux(bottom_cat),
+                "pair_aux": extract_pair_aux_from_rule(compatibility_score=0.75),
                 "label": 1,
                 "score": 0.75,
                 "source": "fabric_augmentation",
@@ -308,9 +291,9 @@ def augment_with_fabric_rules(
                 "item_a_category_id": CATEGORY_TO_ID[top_cat],
                 "item_b_category": bottom_cat,
                 "item_b_category_id": CATEGORY_TO_ID[bottom_cat],
-                "item_a_aux": [0.0] * 16,
-                "item_b_aux": [0.0] * 16,
-                "pair_aux": [0.0] * 16,
+                "item_a_aux": extract_item_aux(top_cat),
+                "item_b_aux": extract_item_aux(bottom_cat),
+                "pair_aux": extract_pair_aux_from_rule(compatibility_score=0.75),
                 "label": 1,
                 "score": 0.75,
                 "source": "fabric_augmentation",

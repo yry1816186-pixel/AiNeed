@@ -28,6 +28,7 @@ import { Throttle } from "@nestjs/throttler";
 import { AuthenticatedRequest } from "../../../common/types/auth.types";
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
 import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
+import { RequireConsent } from "../../identity/privacy/consent.guard";
 import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiStylistService } from "./ai-stylist.service";
@@ -46,8 +47,8 @@ import { ItemReplacementService } from "./services/item-replacement.service";
 import { OutfitPlanService } from "./services/outfit-plan.service";
 import { PresetQuestionsService } from "./services/preset-questions.service";
 import { SessionArchiveService } from "./services/session-archive.service";
-import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { TtsFallbackService } from "./services/tts-fallback.service";
+import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { SystemContextService } from "./system-context.service";
 
 /**
@@ -173,6 +174,7 @@ export class AiStylistController {
   ) {}
 
   @Post("dialog/session")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "创建对话状态机会话",
     description:
@@ -189,11 +191,12 @@ export class AiStylistController {
     },
   })
   @ApiResponse({ status: 401, description: "未授权" })
-  async createDialogSession(@Request() req: AuthenticatedRequest) {
+  async createDialogSession(@Request() _req: AuthenticatedRequest) {
     return this.stylistService.createDialogSession();
   }
 
   @Post("dialog/chat")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
@@ -214,6 +217,7 @@ export class AiStylistController {
   }
 
   @Delete("dialog/session/:id")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "结束对话状态机会话",
     description: "清除对话状态机的会话上下文。",
@@ -227,6 +231,7 @@ export class AiStylistController {
   }
 
   @Post("tts")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @ApiOperation({
     summary: "文字转语音",
@@ -260,6 +265,7 @@ export class AiStylistController {
   }
 
   @Post("sessions")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "创建 AI 造型师会话",
     description: "创建一个新的 AI 造型师咨询会话，可指定目标（如面试穿搭、约会穿搭等）。",
@@ -279,6 +285,7 @@ export class AiStylistController {
   }
 
   @Get("sessions")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取 AI 造型师会话列表",
     description: "获取当前用户的所有 AI 造型师会话列表，支持分页。",
@@ -318,6 +325,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/:sessionId")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取 AI 造型师会话状态",
     description: "获取指定会话的详细状态，包括消息历史和已上传的照片。",
@@ -349,6 +357,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/messages")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
@@ -400,6 +409,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/photo")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: "上传 AI 造型师照片",
@@ -476,6 +486,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/resolve")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
@@ -514,6 +525,7 @@ export class AiStylistController {
   }
 
   @Delete("sessions/:sessionId")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "删除 AI 造型师会话",
     description: "删除指定的会话及其所有相关数据（消息、照片等）。",
@@ -547,6 +559,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/:sessionId/outfit-plan")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取穿搭方案页数据",
     description: "获取指定会话的穿搭方案页数据，包含整体效果图描述、单品列表和推荐理由。",
@@ -574,6 +587,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/:sessionId/items/alternatives")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取同类商品替代列表",
     description: "获取指定会话中某单品的同类替代商品列表，已按用户画像过滤排序。",
@@ -596,6 +610,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/items/replace")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "替换单品",
     description: "将方案中的指定单品替换为新商品，自动更新方案总价和推荐理由。",
@@ -619,6 +634,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/calendar")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取方案日历视图",
     description: "获取指定月份有穿搭方案的日期列表，用于日历视图展示。",
@@ -639,6 +655,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/date/:date")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取指定日期的方案列表",
     description: "获取指定日期（YYYY-MM-DD）的所有穿搭方案。",
@@ -659,6 +676,7 @@ export class AiStylistController {
   }
 
   @Get("preset-questions")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取预设引导问题",
     description:
@@ -672,6 +690,7 @@ export class AiStylistController {
   }
 
   @Post("chat")
+  @RequireConsent("ai_domestic_no_crossborder")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("ai-stylist")
@@ -705,11 +724,12 @@ export class AiStylistController {
           item &&
           (item.role === "user" || item.role === "assistant" || item.role === "system") &&
           typeof item.content === "string"
-      ) as Array<{ role: "user" | "assistant" | "system"; content: string }>
+      )
     );
   }
 
   @Get("quota")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "查询 AI 造型师配额",
     description: "获取当前用户的 AI 造型师每日配额使用情况，包括已用次数、限额和重置时间。",
@@ -727,6 +747,7 @@ export class AiStylistController {
   }
 
   @Get("suggestions")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取 AI 造型师快捷建议",
     description: "获取预设的快捷建议列表，用于引导用户开始对话。",
@@ -748,6 +769,7 @@ export class AiStylistController {
   }
 
   @Get("options/styles")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取动态生成的风格选项",
     description: "获取系统支持的风格选项列表，用于用户选择穿搭风格。",
@@ -762,6 +784,7 @@ export class AiStylistController {
   }
 
   @Get("options/occasions")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取动态生成的场景选项",
     description: "获取系统支持的场景选项列表，用于用户选择穿搭场景。",
@@ -776,6 +799,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/feedback")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "提交穿搭方案反馈",
     description: "用户对 AI 推荐的穿搭方案进行点赞或点踩，用于优化后续推荐。",
@@ -822,6 +846,7 @@ export class AiStylistController {
   }
 
   @Get("sessions/:sessionId/feedback")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取会话反馈记录",
     description: "获取指定会话中用户提交的所有反馈记录。",
@@ -867,6 +892,7 @@ export class AiStylistController {
   }
 
   @Get("system-context")
+  @RequireConsent("ai_domestic_no_crossborder")
   @ApiOperation({
     summary: "获取系统上下文信息",
     description:

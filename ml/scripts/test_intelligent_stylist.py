@@ -171,7 +171,7 @@ async def main():
         return
     
     print(f"\n✅ GLM API Key: {api_key[:10]}...")
-    print(f"✅ 模型: {os.getenv('GLM_MODEL', 'glm-5')}")
+    print(f"✅ 模型: {os.getenv('GLM_MODEL', 'glm-4.5')}")
     
     try:
         await test_fashion_trends()
