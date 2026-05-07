@@ -1,12 +1,12 @@
 {
   "apps/backend/src/**/*.{ts,tsx}": [
-    "node node_modules/eslint/bin/eslint.js --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
+    "pnpm exec eslint --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
   ],
   "apps/admin/src/**/*.{ts,tsx}": [
-    "node node_modules/eslint/bin/eslint.js --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
+    "pnpm exec eslint --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
   ],
   "packages/**/*.{ts,tsx}": [
-    "node node_modules/eslint/bin/eslint.js --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
+    "pnpm exec eslint --config .eslintrc.cjs --no-eslintrc --ext .ts,.tsx --fix --quiet"
   ],
   "**/*.{ts,tsx,js,jsx,json,md,css,scss}": ["pnpm exec prettier --write"]
 }

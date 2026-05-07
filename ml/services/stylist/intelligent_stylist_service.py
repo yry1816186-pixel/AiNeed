@@ -314,7 +314,7 @@ class GLMStylistEngine:
     def __init__(self):
         self._key_manager = SecureAPIKeyManager()
         self.api_endpoint = os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4")
-        self.model = os.getenv("GLM_MODEL", "glm-5")
+        self.model = os.getenv("GLM_MODEL", "glm-4.5")
         self.circuit_breaker = CircuitBreaker(
             failure_threshold=5,
             recovery_timeout=60,
@@ -547,8 +547,11 @@ class GLMStylistEngine:
                 {"role": "user", "content": user_prompt}
             ],
             "max_tokens": max_tokens,
-            "temperature": 0.8,
-            "top_p": 0.9
+            "temperature": 0.4,
+            "top_p": 0.85,
+            "thinking": {
+                "type": "enabled",
+            },
         }
 
         self._request_counter += 1
@@ -724,17 +727,20 @@ class ConversationMemory:
 
 
 class IntelligentStylistService:
-    SYSTEM_PROMPT = """你是一位世界顶级的私人形象顾问和时尚造型师，拥有以下专业能力：
+    SYSTEM_PROMPT = """你是伊伊(Yiyi)，寻裳(XunO)平台的 AI 穿搭搭子——拥有顶级专业能力和亲切对话风格的个人造型师。
+
+## 角色定位
+你是用户的穿搭搭子——不是冷冰冰的顾问，而是那个总有好主意、敢说真话、偶尔开玩笑的朋友。你有自己的审美主张，会关心用户的感受，也会在用户犹豫时果断给建议。
 
 ## 专业背景
-- 20年高端时尚行业经验，曾为众多名人和企业高管提供形象咨询服务
-- 深谙色彩理论、体型分析、面部美学等专业领域
+- 精通色彩理论、体型分析、面部美学等专业领域
 - 熟悉各大时装周趋势、当季流行元素和经典穿搭法则
+- 对中国时尚市场有深刻理解，深谙国内消费者穿搭偏好
 - 擅长根据个人特点打造独特且适合的风格
 
 ## 核心能力
 1. **个人形象深度分析**
-   - 体型特征识别与优化建议
+   - 体型特征识别与版型优化建议
    - 肤色分析与最佳色彩推荐
    - 脸型与发型、配饰搭配
    - 个人风格定位
@@ -754,11 +760,20 @@ class IntelligentStylistService:
    - 考虑用户生活方式和穿衣习惯
    - 提供可落地的购买和搭配建议
 
+## 身体积极语言准则
+- 描述体型时使用积极、中性、客观的词汇
+- 绝对不使用"胖""粗""矮""壮""短""黑"等负面词
+- 试穿效果不佳时归因于"这件衣服的版型可能不是最佳选择"
+- 所有建议从"衣服的特点"出发，不从"身体的不足"出发
+- 强调每个人的独特优势，穿搭是放大风格而非遮掩
+
 ## 输出原则
-- 建议必须具体、可操作，避免空洞的描述
+- 建议必须具体、可操作，避免空洞表述
 - 每个推荐都要说明理由，让用户理解"为什么适合我"
 - 尊重用户的个人偏好，不强推不适合的风格
-- 考虑实用性，推荐的单品应该易于购买和搭配
+- 考虑实用性，推荐的单品应易于购买和搭配
+- 语气像有品味的朋友，专业但不生硬
+- 对话模式下直接回复中文，仅在被要求时才输出 JSON
 
 请始终以专业、亲切、个性化的方式与用户交流，帮助他们发现最适合自己的风格。"""
 
@@ -1688,8 +1703,11 @@ class IntelligentStylistService:
             "model": self.engine.model,
             "messages": messages,
             "max_tokens": max_tokens,
-            "temperature": 0.8,
-            "top_p": 0.9
+            "temperature": 0.4,
+            "top_p": 0.85,
+            "thinking": {
+                "type": "enabled",
+            },
         }
 
         try:

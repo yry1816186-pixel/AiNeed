@@ -101,7 +101,7 @@ class TestCheckAlignmentTilted(unittest.TestCase):
 
     def test_has_tilt_suggestion(self):
         suggestions_text = " ".join(self.result.suggestions)
-        self.assertTrue("�? in suggestions_text or "调整" in suggestions_text)
+        self.assertTrue("歪斜" in suggestions_text or "调整" in suggestions_text)
 
 
 class TestCheckAlignmentOffCenter(unittest.TestCase):
@@ -114,7 +114,7 @@ class TestCheckAlignmentOffCenter(unittest.TestCase):
 
     def test_has_centering_suggestion(self):
         suggestions_text = " ".join(self.result.suggestions)
-        self.assertTrue("移动" in suggestions_text or "�? in suggestions_text)
+        self.assertTrue("移动" in suggestions_text or "偏移" in suggestions_text)
 
 
 class TestCheckAlignmentFacingLeft(unittest.TestCase):
