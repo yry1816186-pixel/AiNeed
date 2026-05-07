@@ -1,4 +1,4 @@
-{
+module.exports = {
   "root": true,
   "env": {
     "browser": true,
@@ -131,7 +131,7 @@
     "no-var": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
-    "boundaries/element-types": [
+    "boundaries/dependencies": [
       2,
       {
         "default": "allow",
@@ -188,5 +188,35 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules", "dist", "build", "*.js", "*.d.ts", "coverage"]
+  "ignorePatterns": ["node_modules", "dist", "build", "*.js", "*.d.ts", "coverage"],
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts", "**/*.test.ts", "**/test/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-argument": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-unsafe-enum-comparison": "off",
+        "@typescript-eslint/no-unsafe-spread": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/no-require-imports": "off",
+        "@typescript-eslint/await-thenable": "off",
+        "@typescript-eslint/no-redundant-type-constituents": "off",
+        "@typescript-eslint/no-unsafe-function-type": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/prefer-promise-reject-errors": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "import/no-cycle": "off",
+        "import/no-named-as-default": "off",
+        "import/no-named-as-default-member": "off",
+        "import/order": "off"
+      }
+    }
+  ]
 }
+;

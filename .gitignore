@@ -18,7 +18,6 @@
 .env
 .env.*
 !.env.example
-!.env.security.example
 *.keystore
 *.jks
 *.pem
@@ -106,9 +105,14 @@ ml/scripts/models/
 *.bin
 checkpoints/
 data/
-datasets/
+!docs/data/
 models/
 paper/
+apps/backend/prisma/import_brands.json
+apps/backend/prisma/import_products.json
+apps/backend/prisma/import_report.json
+apps/backend/prisma/import_social_posts.json
+apps/backend/prisma/import_social_posts_report.json
 
 # --- ML: Release signing ---
 ml/release.keystore
@@ -203,6 +207,7 @@ audit-output.json
 SECURITY_DIFF_EVIDENCE.txt
 SECURITY_FIX_REPORT.md
 SECURITY_AUDIT_STATUS.md
+XUNO_GOVERNANCE_FINAL_REPORT.md
 OPTIMIZATION_DELIVERY_REPORT.md
 REVIEW-FIX.md
 ui.md
